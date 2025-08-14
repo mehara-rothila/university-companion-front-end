@@ -1,26 +1,340 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* Custom styles for the educational platform */
+
+/* CSS Variables for theming */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --primary-light: #ddd6fe;
+  --hero-bg-start: #6d28d9;
+  --hero-bg-end: #4c1d95;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Dark theme overrides for CSS Variables */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #1a1a1a;
+  --card-border: #2d2d2d;
+  --primary-light: #4c1d95;
+  --hero-bg-start: #4c1d95;
+  --hero-bg-end: #2e1065;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Apply base background and text color using variables */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================== NAVIGATION STYLES =========================== */
+
+/* Navigation Link base styles using @layer */
+@layer components {
+  .nav-link {
+    @apply text-gray-600 dark:text-gray-300 hover:text-purple-800 dark:hover:text-purple-400 transition-colors duration-200 font-medium text-sm;
+  }
+  .mobile-nav-link {
+     @apply flex items-center py-2.5 px-4 rounded-lg text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-gray-700 transition-colors duration-200;
+     /* Add icons here if needed within the link content */
+  }
+  .mobile-login-button {
+    @apply block w-full text-center text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-4 py-3 rounded-lg shadow-md hover:shadow-lg dark:shadow-purple-900/20 transition-all duration-200 font-medium;
+  }
+}
+
+/* Dark mode toggle styles - Updated for better alignment */
+.dark-mode-toggle {
+  @apply relative inline-flex items-center cursor-pointer p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-offset-gray-800;
+  /* Added vertical alignment to match other nav items */
+  height: 28px;
+  vertical-align: middle;
+}
+
+.dark-mode-toggle-track {
+  @apply w-10 h-5 bg-gray-300 dark:bg-gray-700 rounded-full transition-colors duration-300;
+}
+
+/* Style for the track when dark mode is active */
+.dark-mode-toggle-track.active {
+   @apply bg-purple-500 dark:bg-purple-600;
+}
+
+.dark-mode-toggle-thumb {
+  @apply absolute w-4 h-4 bg-white rounded-full transform transition-transform duration-300 flex items-center justify-center shadow-md;
+  /* Adjusted positioning */
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Style for the thumb when dark mode is active (moves right) */
+.dark-mode-toggle-thumb.active {
+  transform: translateY(-50%) translateX(20px);
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light mode track */
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e1e1e; /* Dark mode track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd; /* Light mode thumb */
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #6d28d9; /* Dark mode thumb */
+   border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa; /* Light mode hover */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #8b5cf6; /* Dark mode hover */
+}
+
+/* =========================== ANIMATIONS =========================== */
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes widthGrow {
+  from { width: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation utility classes */
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-widthGrow {
+  animation: widthGrow 1s ease-out;
+}
+
+.animate-float, .floating-icon {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-icon-reverse {
+  animation: float-reverse 7s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.animate-appear {
+  animation: appear 0.6s ease-out forwards;
+}
+
+/* Enhanced floating effects for math symbols and icons */
+.floating-icon {
+  animation: float 6s ease-in-out infinite;
+  filter: drop-shadow(0 10px 8px rgba(0,0,0,0.04)) drop-shadow(0 4px 3px rgba(0,0,0,0.1));
+  will-change: transform;
+}
+
+.floating-icon-reverse {
+  animation: float-reverse 7s ease-in-out infinite;
+  filter: drop-shadow(0 10px 8px rgba(0,0,0,0.04)) drop-shadow(0 4px 3px rgba(0,0,0,0.1));
+  will-change: transform;
+}
+
+.floating-icon-slow {
+  animation: float 10s ease-in-out infinite;
+  filter: drop-shadow(0 10px 8px rgba(0,0,0,0.04)) drop-shadow(0 4px 3px rgba(0,0,0,0.1));
+  will-change: transform;
+}
+
+/* Enhanced float animations with more movement */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes float-reverse {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(15px) rotate(-5deg) scale(1.03); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* Scroll animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: opacity, transform;
+}
+
+/* Background patterns */
+.bg-dots-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+.dark .bg-dots-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Text utilities */
+.line-clamp-1 { 
+  overflow: hidden; 
+  display: -webkit-box; 
+  -webkit-box-orient: vertical; 
+  -webkit-line-clamp: 1; 
+}
+
+.line-clamp-2 { 
+  overflow: hidden; 
+  display: -webkit-box; 
+  -webkit-box-orient: vertical; 
+  -webkit-line-clamp: 2; 
+}
+
+.line-clamp-3 { 
+  overflow: hidden; 
+  display: -webkit-box; 
+  -webkit-box-orient: vertical; 
+  -webkit-line-clamp: 3; 
+}
+
+/* Fancy link underline animation */
+.animated-link {
+  position: relative;
+  display: inline-block;
+}
+
+.animated-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: theme('colors.purple.500');
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.animated-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400;
+}
+
+/* Card hover effects */
+.feature-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(107, 70, 193, 0.1), 0 10px 10px -5px rgba(107, 70, 193, 0.1);
+}
+
+.dark .feature-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.1), 0 10px 10px -5px rgba(139, 92, 246, 0.1);
+}
+
+/* Button effects */
+.btn-glow:hover {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+/* Font size utilities for large background icons */
+.text-10xl { font-size: 9rem; line-height: 1; }
+.text-11xl { font-size: 10rem; line-height: 1; }
+
+/* Reusable animation classes for the background component */
+.floating-icon { 
+  animation: float 6s ease-in-out infinite; 
+}
+.floating-icon-reverse { 
+  animation: float-reverse 7s ease-in-out infinite; 
+}
+.floating-icon-slow { 
+  animation: float 10s ease-in-out infinite; 
+}
+
+@keyframes float { 
+  0% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(-15px) rotate(5deg); } 
+  100% { transform: translateY(0) rotate(0deg); } 
+}
+
+@keyframes float-reverse { 
+  0% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(15px) rotate(-5deg); } 
+  100% { transform: translateY(0) rotate(0deg); } 
+}
+
+.animate-rotate-slow {
+  animation: spin linear infinite;
 }
