@@ -224,16 +224,16 @@ export default function Home() {
               {/* Feature Highlights Pills */}
               <div className="flex flex-wrap justify-center gap-4 my-12 animate-fadeIn" style={{ animationDuration: '2s', animationDelay: '1.0s' }}>
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 text-white">
-                  <span className="text-sm font-medium">､AI Chatbot Assistant</span>
+                  <span className="text-sm font-medium">AI Chatbot Assistant</span>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 text-white">
-                  <span className="text-sm font-medium">桃 Smart Navigation</span>
+                  <span className="text-sm font-medium">Smart Navigation</span>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 text-white">
-                  <span className="text-sm font-medium">答 Study Space Finder</span>
+                  <span className="text-sm font-medium">Study Space Finder</span>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 text-white">
-                  <span className="text-sm font-medium">丁 Wellness Support</span>
+                  <span className="text-sm font-medium">Wellness Support</span>
                 </div>
               </div>
 
@@ -715,7 +715,7 @@ export default function Home() {
             {/* Copyright & Bottom Row */}
             <div className="pt-12 border-t border-gray-800 text-center text-gray-400">
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <p>ﾂｩ {new Date().getFullYear()} Smart Campus Companion - Designathon Project. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} Smart Campus Companion - Designathon Project. All rights reserved.</p>
                 <div className="mt-4 md:mt-0">
                   <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors duration-300 mx-3">Terms</Link>
                   <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors duration-300 mx-3">Privacy</Link>
@@ -730,4 +730,5 @@ export default function Home() {
         </footer>
       </main>
     </>
-  )
+  );
+}
