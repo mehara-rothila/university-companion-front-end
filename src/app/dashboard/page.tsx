@@ -626,7 +626,7 @@ export default function Dashboard() {
                     ].map((mood) => (
                       <button
                         key={mood.key}
-                        onClick={() => setWellnessCheckIn(prev => ({ ...prev, mood: mood.key as any }))}
+                        onClick={() => setWellnessCheckIn(prev => ({ ...prev, mood: mood.key as WellnessCheckIn['mood'] }))}
                         className={`p-3 rounded-lg text-center transition-all duration-200 ${
                           wellnessCheckIn.mood === mood.key
                             ? 'bg-purple-100 border-2 border-purple-500 text-purple-700 dark:bg-purple-900/30 dark:border-purple-400 dark:text-purple-300'
@@ -673,7 +673,7 @@ export default function Dashboard() {
                 {/* Notes */}
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                    Anything you'd like to share? (Optional)
+                    Anything you&apos;d like to share? (Optional)
                   </label>
                   <textarea
                     value={wellnessCheckIn.notes}

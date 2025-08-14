@@ -1,7 +1,7 @@
 // src/app/social/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
@@ -75,22 +75,25 @@ interface AIRecommendation {
   actionUrl?: string;
 }
 
-export default function SocialPage() {
-  const { isDarkMode } = useDarkMode();
-  const [activeTab, setActiveTab] = useState<'events' | 'clubs' | 'feed' | 'discover'>('events');
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
+type ActiveTab = 'events' | 'clubs' | 'feed' | 'discover';
 
-  // Mock data
-  const [events, setEvents] = useState<Event[]>([]);
-  const [clubs, setClubs] = useState<Club[]>([]);
-  const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
+// --- Helper Functions ---
+const toRelativeTimeString = (date: Date): string => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  const minutes = Math.floor(diffInSeconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
 
-  // Mock events data
-  const mockEvents: Event[] = [
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
+
+// --- Constants ---
+const MOCK_EVENTS: Event[] = [
     {
       id: '1',
       title: 'AI in Healthcare Tech Talk',
@@ -191,10 +194,9 @@ export default function SocialPage() {
       tags: ['Volunteer', 'Environment', 'Gardening', 'Community'],
       similarInterests: 58
     }
-  ];
+];
 
-  // Mock clubs data
-  const mockClubs: Club[] = [
+const MOCK_CLUBS: Club[] = [
     {
       id: '1',
       name: 'Tech Innovation Club',
@@ -285,10 +287,9 @@ export default function SocialPage() {
       president: 'Priya Sharma',
       founded: new Date('2014-09-12')
     }
-  ];
+];
 
-  // Mock social posts
-  const mockSocialPosts: SocialPost[] = [
+const MOCK_SOCIAL_POSTS: SocialPost[] = [
     {
       id: '1',
       author: 'Tech Innovation Club',
@@ -352,14 +353,28 @@ export default function SocialPage() {
       isLiked: false,
       tags: ['Study Spaces', 'Engineering', 'Question']
     }
-  ];
+];
+
+export default function SocialPage() {
+  const { isDarkMode } = useDarkMode();
+  const [activeTab, setActiveTab] = useState<ActiveTab>('events');
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
+
+  // Mock data
+  const [events, setEvents] = useState<Event[]>([]);
+  const [clubs, setClubs] = useState<Club[]>([]);
+  const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
 
   // Initialize component
   useEffect(() => {
     setTimeout(() => {
-      setEvents(mockEvents);
-      setClubs(mockClubs);
-      setSocialPosts(mockSocialPosts);
+      setEvents(MOCK_EVENTS);
+      setClubs(MOCK_CLUBS);
+      setSocialPosts(MOCK_SOCIAL_POSTS);
       
       // Generate AI recommendations
       const recommendations: AIRecommendation[] = [
@@ -462,7 +477,7 @@ export default function SocialPage() {
   };
 
   // Handle event registration
-  const handleEventRegistration = (eventId: string) => {
+  const handleEventRegistration = useCallback((eventId: string) => {
     setEvents(prev => 
       prev.map(event => 
         event.id === eventId 
@@ -474,10 +489,10 @@ export default function SocialPage() {
           : event
       )
     );
-  };
+  }, []);
 
   // Handle club join
-  const handleClubJoin = (clubId: string) => {
+  const handleClubJoin = useCallback((clubId: string) => {
     setClubs(prev => 
       prev.map(club => 
         club.id === clubId 
@@ -489,10 +504,10 @@ export default function SocialPage() {
           : club
       )
     );
-  };
+  }, []);
 
   // Handle post like
-  const handlePostLike = (postId: string) => {
+  const handlePostLike = useCallback((postId: string) => {
     setSocialPosts(prev =>
       prev.map(post =>
         post.id === postId
@@ -504,7 +519,7 @@ export default function SocialPage() {
           : post
       )
     );
-  };
+  }, []);
 
   if (isLoading) {
     return (
@@ -599,7 +614,7 @@ export default function SocialPage() {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as ActiveTab)}
                   className={`flex-1 px-6 py-4 font-medium transition-colors duration-200 ${
                     activeTab === tab.id
                       ? `${isDarkMode ? 'text-purple-400 border-purple-400' : 'text-purple-600 border-purple-600'} border-b-2`
@@ -915,7 +930,7 @@ export default function SocialPage() {
                           {post.author}
                         </h3>
                         <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {post.authorRole} • {new Date(post.timestamp).toRelativeTimeString()}
+                          {post.authorRole} • {toRelativeTimeString(post.timestamp)}
                         </p>
                       </div>
                     </div>
@@ -1158,7 +1173,7 @@ export default function SocialPage() {
                 <button
                   onClick={() => {
                     setShowCreateModal(false);
-                    alert('Event created successfully!');
+                    // A custom modal or toast notification would be better than alert() in a real app
                   }}
                   className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                 >

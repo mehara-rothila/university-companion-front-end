@@ -1,0 +1,1051 @@
+// src/app/lost-found/page.tsx
+'use client';
+
+import { useState, useRef } from 'react';
+import Link from 'next/link';
+import { useDarkMode } from '@/app/context/DarkModeContext';
+import Navigation from '@/components/Navigation';
+import AnimatedBackground from '@/components/AnimatedBackground';
+
+// --- Interfaces ---
+interface LostFoundItem {
+  id: string;
+  type: 'lost' | 'found';
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  dateReported: Date;
+  imageUrl?: string;
+  reward?: number;
+  contactMethod: 'anonymous' | 'direct';
+  status: 'active' | 'matched' | 'resolved' | 'expired';
+  postedBy: string;
+  matches?: string[];
+  priority?: 'high' | 'medium' | 'low';
+  tags: string[];
+}
+
+interface ItemCategory {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  count: number;
+  color: string;
+}
+
+interface LocationArea {
+  id: string;
+  name: string;
+  zone: string;
+  frequency: number;
+}
+
+interface AIMatch {
+  itemId: string;
+  confidence: number;
+  reason: string;
+  similarity: string[];
+}
+
+export default function LostFoundPage() {
+  const { isDarkMode } = useDarkMode();
+  const [activeTab, setActiveTab] = useState('browse');
+  const [viewMode, setViewMode] = useState<'lost' | 'found' | 'all'>('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<LostFoundItem | null>(null);
+  const [itemPosted, setItemPosted] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sample data - in real app would come from API
+  const [lostFoundItems] = useState<LostFoundItem[]>([
+    {
+      id: '1',
+      type: 'lost',
+      title: 'Black iPhone 14 Pro',
+      description: 'Lost my black iPhone 14 Pro with a clear case. Has a small crack on the screen. Contains important work documents.',
+      category: 'Electronics',
+      location: 'Main Library',
+      dateReported: new Date('2024-01-10'),
+      imageUrl: '/api/placeholder/400/300',
+      reward: 50,
+      contactMethod: 'direct',
+      status: 'active',
+      postedBy: 'Sarah M.',
+      priority: 'high',
+      tags: ['iPhone', 'black', 'cracked', 'clear case']
+    },
+    {
+      id: '2',
+      type: 'found',
+      title: 'Blue Backpack with Textbooks',
+      description: 'Found a blue Jansport backpack in the Student Union. Contains several textbooks and notebooks with the name "Alex" written inside.',
+      category: 'Bags & Backpacks',
+      location: 'Student Union',
+      dateReported: new Date('2024-01-12'),
+      imageUrl: '/api/placeholder/400/300',
+      contactMethod: 'anonymous',
+      status: 'active',
+      postedBy: 'Anonymous',
+      matches: ['3'],
+      priority: 'medium',
+      tags: ['blue', 'Jansport', 'textbooks', 'Alex']
+    },
+    {
+      id: '3',
+      type: 'lost',
+      title: 'My Blue Jansport Backpack',
+      description: 'Lost my blue backpack somewhere on campus. Has my name "Alex" written in my notebooks inside. Really need it back for finals!',
+      category: 'Bags & Backpacks',
+      location: 'Student Union',
+      dateReported: new Date('2024-01-13'),
+      contactMethod: 'direct',
+      status: 'matched',
+      postedBy: 'Alex K.',
+      matches: ['2'],
+      priority: 'high',
+      tags: ['blue', 'Jansport', 'Alex', 'notebooks']
+    },
+    {
+      id: '4',
+      type: 'found',
+      title: 'Silver Laptop Charger',
+      description: 'Found a MacBook Pro charger in Engineering Building Room 203. 60W USB-C charger in good condition.',
+      category: 'Electronics',
+      location: 'Engineering Building',
+      dateReported: new Date('2024-01-11'),
+      contactMethod: 'anonymous',
+      status: 'active',
+      postedBy: 'Anonymous',
+      priority: 'low',
+      tags: ['MacBook', 'charger', 'USB-C', '60W']
+    },
+    {
+      id: '5',
+      type: 'lost',
+      title: 'Red Water Bottle - Hydroflask',
+      description: 'Lost my red Hydroflask water bottle with stickers on it. Sentimental value - it was a gift from my sister.',
+      category: 'Personal Items',
+      location: 'Gym & Recreation',
+      dateReported: new Date('2024-01-09'),
+      reward: 20,
+      contactMethod: 'direct',
+      status: 'active',
+      postedBy: 'Jamie L.',
+      priority: 'medium',
+      tags: ['red', 'Hydroflask', 'stickers', 'water bottle']
+    },
+    {
+      id: '6',
+      type: 'found',
+      title: 'Car Keys with Honda Keychain',
+      description: 'Found car keys with a Honda keychain and several other keys. Found near the parking lot behind the dining hall.',
+      category: 'Keys & Accessories',
+      location: 'Dining Hall Parking',
+      dateReported: new Date('2024-01-14'),
+      contactMethod: 'direct',
+      status: 'active',
+      postedBy: 'Mike T.',
+      priority: 'high',
+      tags: ['Honda', 'car keys', 'keychain', 'parking']
+    }
+  ]);
+
+  const categories: ItemCategory[] = [
+    {
+      id: 'all',
+      name: 'All Items',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>,
+      count: lostFoundItems.length,
+      color: 'purple'
+    },
+    {
+      id: 'Electronics',
+      name: 'Electronics',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>,
+      count: lostFoundItems.filter(item => item.category === 'Electronics').length,
+      color: 'blue'
+    },
+    {
+      id: 'Bags & Backpacks',
+      name: 'Bags & Backpacks',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z" /></svg>,
+      count: lostFoundItems.filter(item => item.category === 'Bags & Backpacks').length,
+      color: 'green'
+    },
+    {
+      id: 'Keys & Accessories',
+      name: 'Keys & Accessories',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>,
+      count: lostFoundItems.filter(item => item.category === 'Keys & Accessories').length,
+      color: 'yellow'
+    },
+    {
+      id: 'Personal Items',
+      name: 'Personal Items',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
+      count: lostFoundItems.filter(item => item.category === 'Personal Items').length,
+      color: 'pink'
+    }
+  ];
+
+  const locations: LocationArea[] = [
+    { id: 'all', name: 'All Locations', zone: 'Campus Wide', frequency: 100 },
+    { id: 'library', name: 'Main Library', zone: 'Academic', frequency: 25 },
+    { id: 'union', name: 'Student Union', zone: 'Social', frequency: 30 },
+    { id: 'engineering', name: 'Engineering Building', zone: 'Academic', frequency: 15 },
+    { id: 'gym', name: 'Gym & Recreation', zone: 'Recreation', frequency: 20 },
+    { id: 'dining', name: 'Dining Areas', zone: 'Food Services', frequency: 35 },
+    { id: 'parking', name: 'Parking Lots', zone: 'Transportation', frequency: 18 }
+  ];
+
+  // Filter items based on current filters
+  const filteredItems = lostFoundItems.filter(item => {
+    const matchesType = viewMode === 'all' || item.type === viewMode;
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+    const matchesLocation = selectedLocation === 'all' || item.location.toLowerCase().includes(selectedLocation.toLowerCase());
+    const matchesSearch = searchQuery === '' || 
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    return matchesType && matchesCategory && matchesLocation && matchesSearch;
+  });
+
+  // Get AI matching suggestions for lost items
+  const getAIMatches = (item: LostFoundItem): AIMatch[] => {
+    if (item.type !== 'lost') return [];
+    
+    const foundItems = lostFoundItems.filter(foundItem => 
+      foundItem.type === 'found' && 
+      foundItem.category === item.category &&
+      foundItem.status === 'active'
+    );
+
+    return foundItems.map(foundItem => ({
+      itemId: foundItem.id,
+      confidence: Math.floor(Math.random() * 40) + 60, // Mock 60-100% confidence
+      reason: 'Similar category, location, and description keywords',
+      similarity: foundItem.tags.filter(tag => item.tags.includes(tag))
+    })).sort((a, b) => b.confidence - a.confidence);
+  };
+
+  // Handle item posting
+  const handlePostItem = () => {
+    setItemPosted(true);
+    setShowPostModal(false);
+    setTimeout(() => setItemPosted(false), 5000);
+  };
+
+  // Handle contact
+  const handleContact = (item: LostFoundItem) => {
+    setSelectedItem(item);
+    setShowContactModal(true);
+  };
+
+  // Get status color
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'text-green-500';
+      case 'matched': return 'text-blue-500';
+      case 'resolved': return 'text-purple-500';
+      case 'expired': return 'text-gray-500';
+      default: return 'text-gray-500';
+    }
+  };
+
+  // Get priority color
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+      case 'medium': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
+      case 'low': return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+    }
+  };
+
+  const tabs = [
+    { id: 'browse', name: 'Browse Items', icon: '🔍' },
+    { id: 'ai-matches', name: 'AI Matches', icon: '🤖' },
+    { id: 'my-items', name: 'My Items', icon: '📦' },
+    { id: 'success-stories', name: 'Success Stories', icon: '✨' }
+  ];
+
+  return (
+    <>
+      <Navigation />
+      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        
+        <AnimatedBackground variant="dashboard" />
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+          
+          {/* Header */}
+          <div className="mb-8 animate-fade-in">
+            <div className="text-center">
+              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Lost & Found Marketplace
+              </h1>
+              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
+                AI-powered community platform to reunite lost items with their owners using smart matching and location-based search.
+              </p>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap justify-center gap-4">
+                <button 
+                  onClick={() => setShowPostModal(true)}
+                  className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Report Lost/Found Item
+                </button>
+                
+                <Link 
+                  href="/navigation"
+                  className={`px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  Campus Map
+                </Link>
+
+                <Link 
+                  href="/help"
+                  className={`px-6 py-3 ${isDarkMode ? 'bg-blue-700 hover:bg-blue-600 text-blue-200' : 'bg-blue-100 hover:bg-blue-200 text-blue-700'} rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Help & Support
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Success Message */}
+          {itemPosted && (
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
+                  Item posted successfully! Our AI will automatically match it with potential findings.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'} animate-fade-in`}>
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{lostFoundItems.length}</div>
+              <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Total Items</div>
+            </div>
+            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">12</div>
+              <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Successful Matches</div>
+            </div>
+            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} animate-fade-in`}>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">87%</div>
+              <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Match Accuracy</div>
+            </div>
+            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} animate-fade-in`}>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">2.4hrs</div>
+              <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Avg. Match Time</div>
+            </div>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6 animate-fade-in`}>
+            <div className="flex overflow-x-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 min-w-0 px-6 py-4 text-sm font-medium transition-all duration-200 border-b-2 ${
+                    activeTab === tab.id
+                      ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-lg">{tab.icon}</span>
+                    <span className="hidden sm:inline">{tab.name}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
+
+            {/* Browse Items Tab */}
+            {activeTab === 'browse' && (
+              <div className="p-8">
+                {/* Filters */}
+                <div className="mb-8 space-y-4">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex flex-wrap gap-3">
+                      {/* Type Filter */}
+                      <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
+                        {[
+                          { id: 'all', name: 'All Items', count: lostFoundItems.length },
+                          { id: 'lost', name: 'Lost', count: lostFoundItems.filter(i => i.type === 'lost').length },
+                          { id: 'found', name: 'Found', count: lostFoundItems.filter(i => i.type === 'found').length }
+                        ].map((type) => (
+                          <button
+                            key={type.id}
+                            onClick={() => setViewMode(type.id as 'all' | 'lost' | 'found')}
+                            className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                              viewMode === type.id
+                                ? 'bg-purple-600 text-white'
+                                : isDarkMode 
+                                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {type.name} ({type.count})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Search */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search items..."
+                        className={`pl-10 pr-4 py-2 w-full lg:w-80 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                      />
+                      <svg xmlns="http://www.w3.org/2000/svg" className={`absolute left-3 top-2.5 h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Category and Location Filters */}
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    >
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.name} ({category.count})
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      className={`px-4 py-2 rounded-lg border transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    >
+                      {locations.map(location => (
+                        <option key={location.id} value={location.id}>
+                          {location.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Items Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredItems.map((item) => (
+                    <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200 hover:shadow-md`}>
+                      
+                      {/* Item Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            item.type === 'lost' 
+                              ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' 
+                              : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          }`}>
+                            {item.type.toUpperCase()}
+                          </span>
+                          {item.priority && (
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(item.priority)}`}>
+                              {item.priority}
+                            </span>
+                          )}
+                          {item.matches && item.matches.length > 0 && (
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                              🤖 AI Match
+                            </span>
+                          )}
+                        </div>
+                        <span className={`text-xs ${getStatusColor(item.status)}`}>
+                          {item.status}
+                        </span>
+                      </div>
+
+                      {/* Item Image Placeholder */}
+                      {item.imageUrl && (
+                        <div className="w-full h-40 bg-gray-200 dark:bg-gray-600 rounded-lg mb-4 flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+
+                      {/* Item Details */}
+                      <div className="space-y-3">
+                        <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                          {item.title}
+                        </h3>
+                        
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-3`}>
+                          {item.description}
+                        </p>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            </svg>
+                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.location}</span>
+                          </div>
+                          <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {item.dateReported.toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        {item.reward && (
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                            </svg>
+                            <span className={`text-sm font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                              ${item.reward} Reward
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1">
+                          {item.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className={`px-2 py-1 text-xs rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                              #{tag}
+                            </span>
+                          ))}
+                          {item.tags.length > 3 && (
+                            <span className={`px-2 py-1 text-xs rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                              +{item.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-2 pt-2">
+                          <button 
+                            onClick={() => handleContact(item)}
+                            className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                          >
+                            Contact
+                          </button>
+                          <Link 
+                            href="/navigation"
+                            className={`px-4 py-2 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg text-sm font-medium transition-all duration-200 flex items-center`}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            </svg>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {filteredItems.length === 0 && (
+                  <div className="text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No items found matching your criteria.</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mt-2`}>Try adjusting your filters or search terms.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* AI Matches Tab */}
+            {activeTab === 'ai-matches' && (
+              <div className="p-8">
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>AI-Powered Matches</h2>
+                
+                <div className="space-y-6">
+                  {lostFoundItems.filter(item => item.type === 'lost' && item.status === 'active').map((lostItem) => {
+                    const matches = getAIMatches(lostItem);
+                    if (matches.length === 0) return null;
+
+                    return (
+                      <div key={lostItem.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                              Lost: {lostItem.title}
+                            </h3>
+                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {lostItem.description.slice(0, 100)}...
+                            </p>
+                          </div>
+                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                            {matches.length} AI Matches
+                          </span>
+                        </div>
+
+                        <div className="space-y-3">
+                          {matches.slice(0, 2).map((match) => {
+                            const foundItem = lostFoundItems.find(item => item.id === match.itemId);
+                            if (!foundItem) return null;
+
+                            return (
+                              <div key={match.itemId} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-500' : 'border-gray-200'}`}>
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                                    Found: {foundItem.title}
+                                  </h4>
+                                  <div className="flex items-center space-x-2">
+                                    <span className={`px-2 py-1 text-xs rounded-full ${
+                                      match.confidence >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                      match.confidence >= 60 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                                    }`}>
+                                      {match.confidence}% Match
+                                    </span>
+                                  </div>
+                                </div>
+                                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
+                                  {foundItem.description.slice(0, 120)}...
+                                </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex flex-wrap gap-1">
+                                    {match.similarity.map(tag => (
+                                      <span key={tag} className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                        #{tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <button 
+                                    onClick={() => handleContact(foundItem)}
+                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                                  >
+                                    Contact Finder
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* My Items Tab */}
+            {activeTab === 'my-items' && (
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>My Items</h2>
+                  <button 
+                    onClick={() => setShowPostModal(true)}
+                    className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Post New Item
+                  </button>
+                </div>
+
+                {/* User's Items */}
+                <div className="space-y-4">
+                  {lostFoundItems.filter(item => item.postedBy.includes('Alex') || item.postedBy.includes('Sarah')).map((item) => (
+                    <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              {item.title}
+                            </h3>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              item.type === 'lost' 
+                                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' 
+                                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                            }`}>
+                              {item.type.toUpperCase()}
+                            </span>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              item.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                              item.status === 'matched' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                              'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                            }`}>
+                              {item.status}
+                            </span>
+                          </div>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                            {item.description}
+                          </p>
+                          <div className="flex items-center space-x-4 text-sm">
+                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              📍 {item.location}
+                            </span>
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {item.dateReported.toLocaleDateString()}
+                            </span>
+                            {item.reward && (
+                              <span className={`${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                                💰 ${item.reward} reward
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className={`px-4 py-2 text-sm ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg transition-all duration-200`}>
+                            Edit
+                          </button>
+                          <button className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200">
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Success Stories Tab */}
+            {activeTab === 'success-stories' && (
+              <div className="p-8">
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Success Stories</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    {
+                      title: "Wedding Ring Reunited After 3 Days",
+                      story: "Lost my grandmother's wedding ring at the gym. AI matched it with a found post within hours. The person who found it was so kind!",
+                      user: "Emily R.",
+                      timeToMatch: "6 hours",
+                      reward: "$100",
+                      icon: "💍"
+                    },
+                    {
+                      title: "Laptop Found Before Important Presentation",
+                      story: "Left my laptop in the library and panicked. The AI system matched it immediately and I got it back just in time for my thesis presentation.",
+                      user: "David K.",
+                      timeToMatch: "2 hours",
+                      reward: "$75",
+                      icon: "💻"
+                    },
+                    {
+                      title: "Lost Keys Returned Same Day",
+                      story: "Dropped my car keys somewhere on campus. Posted it and got matched with a finder within the same day. Amazing system!",
+                      user: "Maria S.",
+                      timeToMatch: "4 hours",
+                      reward: "$25",
+                      icon: "🗝️"
+                    },
+                    {
+                      title: "Textbooks Saved My Semester",
+                      story: "Lost my bag with all my textbooks for finals. Someone found it and the AI matched us perfectly. Saved my semester!",
+                      user: "James L.",
+                      timeToMatch: "1 day",
+                      reward: "$50",
+                      icon: "📚"
+                    }
+                  ].map((story, index) => (
+                    <div key={index} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}>
+                      <div className="flex items-start space-x-4">
+                        <div className="text-3xl">{story.icon}</div>
+                        <div className="flex-1">
+                          <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                            {story.title}
+                          </h3>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 italic`}>
+                            &quot;{story.story}&quot;
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                                — {story.user}
+                              </p>
+                              <div className="flex items-center space-x-4 mt-2">
+                                <span className={`text-xs ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
+                                  ⚡ Matched in {story.timeToMatch}
+                                </span>
+                                <span className={`text-xs ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                                  💰 {story.reward} reward
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Post Item Modal */}
+        {showPostModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto`}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Report Lost/Found Item</h2>
+                <button 
+                  onClick={() => setShowPostModal(false)}
+                  className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Type Selection */}
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Item Status</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button className="p-4 border-2 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg text-center font-medium">
+                      📢 I Lost Something
+                    </button>
+                    <button className="p-4 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg text-center font-medium">
+                      🎯 I Found Something
+                    </button>
+                  </div>
+                </div>
+
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Item Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Black iPhone 14 Pro"
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Category</label>
+                    <select className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
+                      <option>Electronics</option>
+                      <option>Bags & Backpacks</option>
+                      <option>Keys & Accessories</option>
+                      <option>Personal Items</option>
+                      <option>Clothing</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Description</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Provide detailed description including color, brand, distinctive features..."
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Location</label>
+                  <select className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                      : 'bg-white border-gray-300 text-gray-900'
+                  } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
+                    <option>Main Library</option>
+                    <option>Student Union</option>
+                    <option>Engineering Building</option>
+                    <option>Gym & Recreation</option>
+                    <option>Dining Areas</option>
+                    <option>Parking Lots</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                {/* Photo Upload */}
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Photo (Optional)</label>
+                  <div 
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'border-gray-600 hover:border-purple-500 bg-gray-700/50' 
+                        : 'border-gray-300 hover:border-purple-500 bg-gray-50'
+                    }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-12 w-12 mx-auto mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Click to upload photo</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Helps AI match your item more accurately</p>
+                  </div>
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
+                </div>
+
+                {/* Reward */}
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Reward (Optional)</label>
+                  <div className="flex items-center space-x-2">
+                    <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>$</span>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      min="0"
+                      className={`w-24 px-4 py-3 rounded-lg border transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    />
+                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>for safe return</span>
+                  </div>
+                </div>
+
+                {/* Privacy Options */}
+                <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                  <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>Contact Preferences</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input type="radio" name="contact" value="direct" className="mr-3" defaultChecked />
+                      <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Allow direct contact</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input type="radio" name="contact" value="anonymous" className="mr-3" />
+                      <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Anonymous contact only</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowPostModal(false)}
+                    className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                    }`}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handlePostItem}
+                    className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    Post Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contact Modal */}
+        {showContactModal && selectedItem && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Contact Owner</h2>
+                <button 
+                  onClick={() => setShowContactModal(false)}
+                  className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                  {selectedItem.title}
+                </h3>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+                  {selectedItem.contactMethod === 'anonymous' 
+                    ? 'This user prefers anonymous contact. Your message will be forwarded securely.'
+                    : `Contact ${selectedItem.postedBy} directly about this item.`
+                  }
+                </p>
+
+                <div className="space-y-3">
+                  <button className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Send Message
+                  </button>
+                  
+                  {selectedItem.contactMethod === 'direct' && (
+                    <button className={`w-full px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200 flex items-center justify-center`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      Call Directly
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </>
+  );
+}

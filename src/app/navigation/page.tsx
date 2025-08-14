@@ -1,8 +1,7 @@
 // src/app/navigation/page.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
@@ -69,10 +68,37 @@ interface AIRecommendation {
   estimatedSavings?: string;
 }
 
+// --- Constants ---
+// Moved outside component to prevent re-creation on render
+const MOCK_TRAFFIC_ALERTS: TrafficAlert[] = [
+    {
+      id: '1',
+      type: 'construction',
+      title: 'Library Entrance Construction',
+      description: 'Main entrance under renovation. Use north entrance.',
+      location: 'Main Library',
+      severity: 'medium',
+      startTime: new Date(),
+      endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      affectedRoutes: ['main-library']
+    },
+    {
+      id: '2',
+      type: 'event',
+      title: 'Graduation Ceremony',
+      description: 'Large crowd expected. Allow extra travel time.',
+      location: 'Central Quad',
+      severity: 'high',
+      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      endTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
+      affectedRoutes: ['central-campus']
+    }
+];
+
 export default function NavigationPage() {
   const { isDarkMode } = useDarkMode();
-  const [currentLocation, setCurrentLocation] = useState<string>('Main Campus Entrance');
-  const [destination, setDestination] = useState<string>('');
+  const [currentLocation] = useState<string>('Main Campus Entrance');
+  const [destination, setDestination] = useState<string>('Main Library');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -183,32 +209,6 @@ export default function NavigationPage() {
     }
   ];
 
-  // Mock traffic alerts
-  const mockTrafficAlerts: TrafficAlert[] = [
-    {
-      id: '1',
-      type: 'construction',
-      title: 'Library Entrance Construction',
-      description: 'Main entrance under renovation. Use north entrance.',
-      location: 'Main Library',
-      severity: 'medium',
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      affectedRoutes: ['main-library']
-    },
-    {
-      id: '2',
-      type: 'event',
-      title: 'Graduation Ceremony',
-      description: 'Large crowd expected. Allow extra travel time.',
-      location: 'Central Quad',
-      severity: 'high',
-      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      endTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
-      affectedRoutes: ['central-campus']
-    }
-  ];
-
   // Filter locations based on search
   const filteredLocations = campusLocations.filter(location =>
     location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -226,7 +226,7 @@ export default function NavigationPage() {
     }
 
     setTimeout(() => {
-      setTrafficAlerts(mockTrafficAlerts);
+      setTrafficAlerts(MOCK_TRAFFIC_ALERTS);
       
       // Generate AI recommendations
       const recommendations: AIRecommendation[] = [
@@ -295,7 +295,7 @@ export default function NavigationPage() {
       steps: mockSteps,
       avoidsCrowds: filters.avoidCrowds,
       isAccessible: filters.accessibleOnly,
-      warnings: mockTrafficAlerts.length > 0 ? ['Construction near destination'] : undefined
+      warnings: MOCK_TRAFFIC_ALERTS.length > 0 ? ['Construction near destination'] : undefined
     };
   };
 
@@ -593,7 +593,7 @@ export default function NavigationPage() {
                           🚶 {selectedRoute.difficulty}
                         </span>
                         {selectedRoute.isAccessible && (
-                          <span className="text-green-500">♿ Accessible</span>
+                          <span className="text-xs text-green-500">♿</span>
                         )}
                       </div>
                       {selectedRoute.warnings && (

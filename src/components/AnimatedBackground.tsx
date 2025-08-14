@@ -32,29 +32,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
     }
   };
 
-  const getIconOpacity = () => {
-    switch (variant) {
-      case 'hero':
-        return 'opacity-25';
-      case 'features':
-        return 'opacity-20 dark:opacity-10';
-      case 'testimonials':
-        return 'opacity-20 dark:opacity-10';
-      case 'stats':
-        return 'opacity-15 dark:opacity-5';
-      case 'cta':
-        return 'opacity-15 dark:opacity-5';
-      case 'faq':
-        return 'opacity-20 dark:opacity-10';
-      case 'footer':
-        return 'opacity-5';
-      default:
-        return 'opacity-20 dark:opacity-10';
-    }
-  };
-
   const opacityClass = getOpacityClass();
-  const iconOpacity = getIconOpacity();
 
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}>

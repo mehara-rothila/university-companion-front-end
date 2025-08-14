@@ -85,72 +85,9 @@ interface NotificationFilter {
   readStatus: string;
 }
 
-export default function NotificationsPage() {
-  const { isDarkMode } = useDarkMode();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'archived' | 'settings'>('all');
-  const [showSettings, setShowSettings] = useState(false);
-  
-  const [filters, setFilters] = useState<NotificationFilter>({
-    type: 'all',
-    priority: 'all',
-    timeframe: 'all',
-    readStatus: 'all'
-  });
-
-  const [settings, setSettings] = useState<NotificationSettings>({
-    academic: {
-      enabled: true,
-      assignments: true,
-      grades: true,
-      scheduleChanges: true,
-      deadlineReminders: true
-    },
-    social: {
-      enabled: true,
-      events: true,
-      clubs: true,
-      friendUpdates: false,
-      invitations: true
-    },
-    system: {
-      enabled: true,
-      maintenance: true,
-      updates: false,
-      security: true
-    },
-    wellness: {
-      enabled: true,
-      checkInReminders: true,
-      goalProgress: true,
-      moodTracking: false
-    },
-    emergency: {
-      enabled: true,
-      campusAlerts: true,
-      weatherWarnings: true,
-      safetyUpdates: true
-    },
-    delivery: {
-      push: true,
-      email: true,
-      sms: false,
-      inApp: true
-    },
-    schedule: {
-      quietHours: {
-        enabled: true,
-        start: '22:00',
-        end: '08:00'
-      },
-      weekends: false
-    }
-  });
-
-  // Mock notifications data
-  const mockNotifications: Notification[] = [
+// --- Constants ---
+// Moved outside component to prevent re-creation on render
+const MOCK_NOTIFICATIONS: Notification[] = [
     {
       id: '1',
       type: 'emergency',
@@ -274,13 +211,77 @@ export default function NotificationsPage() {
       actionText: 'Update Now',
       source: 'System'
     }
-  ];
+];
+
+export default function NotificationsPage() {
+  const { isDarkMode } = useDarkMode();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'archived' | 'settings'>('all');
+  const [showSettings, setShowSettings] = useState(false);
+  
+  const [filters, setFilters] = useState<NotificationFilter>({
+    type: 'all',
+    priority: 'all',
+    timeframe: 'all',
+    readStatus: 'all'
+  });
+
+  const [settings, setSettings] = useState<NotificationSettings>({
+    academic: {
+      enabled: true,
+      assignments: true,
+      grades: true,
+      scheduleChanges: true,
+      deadlineReminders: true
+    },
+    social: {
+      enabled: true,
+      events: true,
+      clubs: true,
+      friendUpdates: false,
+      invitations: true
+    },
+    system: {
+      enabled: true,
+      maintenance: true,
+      updates: false,
+      security: true
+    },
+    wellness: {
+      enabled: true,
+      checkInReminders: true,
+      goalProgress: true,
+      moodTracking: false
+    },
+    emergency: {
+      enabled: true,
+      campusAlerts: true,
+      weatherWarnings: true,
+      safetyUpdates: true
+    },
+    delivery: {
+      push: true,
+      email: true,
+      sms: false,
+      inApp: true
+    },
+    schedule: {
+      quietHours: {
+        enabled: true,
+        start: '22:00',
+        end: '08:00'
+      },
+      weekends: false
+    }
+  });
 
   // Initialize component
   useEffect(() => {
     setTimeout(() => {
-      setNotifications(mockNotifications);
-      setFilteredNotifications(mockNotifications);
+      setNotifications(MOCK_NOTIFICATIONS);
+      setFilteredNotifications(MOCK_NOTIFICATIONS);
       setIsLoading(false);
     }, 1000);
   }, []);
@@ -320,7 +321,6 @@ export default function NotificationsPage() {
 
     // Filter by timeframe
     if (filters.timeframe !== 'all') {
-      const now = new Date();
       const cutoff = new Date();
       
       switch (filters.timeframe) {
@@ -410,8 +410,7 @@ export default function NotificationsPage() {
 
   // Get time ago string
   const getTimeAgo = (timestamp: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
+    const diff = new Date().getTime() - timestamp.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
@@ -508,7 +507,7 @@ export default function NotificationsPage() {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as 'all' | 'unread' | 'archived' | 'settings')}
                   className={`flex-1 px-6 py-4 font-medium transition-colors duration-200 ${
                     activeTab === tab.id
                       ? `${isDarkMode ? 'text-purple-400 border-purple-400' : 'text-purple-600 border-purple-600'} border-b-2`

@@ -1,7 +1,7 @@
 // src/app/profile/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
@@ -114,7 +114,11 @@ export default function ProfilePage() {
   });
 
   // Handle profile updates
-  const handleProfileUpdate = (section: keyof UserProfile, field: string, value: any) => {
+  const handleProfileUpdate = (
+    section: keyof UserProfile, 
+    field: string, 
+    value: string | boolean | string[] | UserProfile['preferences']['notifications']
+  ) => {
     setUserProfile(prev => ({
       ...prev,
       [section]: {

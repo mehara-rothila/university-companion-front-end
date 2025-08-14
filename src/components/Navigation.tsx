@@ -4,11 +4,12 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
-import { Home, BookOpen, HelpCircle, FileText, MessageSquare, LogIn, UserPlus, User, LogOut, Bot, MapPin, Calendar, Heart } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isDarkMode } = useDarkMode();
+  // Removed unused isDarkMode variable
+  useDarkMode();
 
   // Effect to close mobile menu on resize
   useEffect(() => {

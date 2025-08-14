@@ -1,7 +1,7 @@
 // src/app/chatbot/page.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
@@ -28,7 +28,7 @@ interface QuickAction {
 interface ChatAttachment {
   type: 'image' | 'file' | 'location' | 'link';
   content: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>; // Changed 'any' to a safer type
 }
 
 interface TypingIndicator {
@@ -36,17 +36,9 @@ interface TypingIndicator {
   duration: number;
 }
 
-export default function ChatbotPage() {
-  const { isDarkMode } = useDarkMode();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [typingIndicator, setTypingIndicator] = useState<TypingIndicator>({ isTyping: false, duration: 0 });
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Quick action suggestions
-  const quickActions: QuickAction[] = [
+// --- Constants ---
+// Moved quickActions outside the component to prevent re-creation on every render
+const QUICK_ACTIONS: QuickAction[] = [
     {
       id: '1',
       text: 'Find study spaces',
@@ -92,7 +84,16 @@ export default function ChatbotPage() {
         </svg>
       )
     }
-  ];
+];
+
+export default function ChatbotPage() {
+  const { isDarkMode } = useDarkMode();
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [typingIndicator, setTypingIndicator] = useState<TypingIndicator>({ isTyping: false, duration: 0 });
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize with welcome message
   useEffect(() => {
@@ -101,45 +102,18 @@ export default function ChatbotPage() {
       type: 'ai',
       content: "Hi! I'm your Smart Campus AI assistant. I can help you with study spaces, navigation, academic planning, wellness support, and much more. How can I assist you today?",
       timestamp: new Date(),
-      suggestions: quickActions.slice(0, 3)
+      suggestions: QUICK_ACTIONS.slice(0, 3)
     };
     setMessages([welcomeMessage]);
-  }, []);
+  }, []); // Empty dependency array is now correct as QUICK_ACTIONS is a stable constant
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typingIndicator.isTyping]);
 
-  // Handle sending message
-  const handleSendMessage = async (content: string = inputValue) => {
-    if (!content.trim()) return;
-
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      type: 'user',
-      content: content.trim(),
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
-    setIsLoading(true);
-
-    // Simulate AI typing
-    setTypingIndicator({ isTyping: true, duration: 2000 });
-
-    // Simulate AI response delay
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(content);
-      setMessages(prev => [...prev, aiResponse]);
-      setTypingIndicator({ isTyping: false, duration: 0 });
-      setIsLoading(false);
-    }, 2000);
-  };
-
   // Generate AI response (mock implementation)
-  const generateAIResponse = (userInput: string): ChatMessage => {
+  const generateAIResponse = useCallback((userInput: string): ChatMessage => {
     const input = userInput.toLowerCase();
     let response = '';
     let suggestions: QuickAction[] = [];
@@ -181,7 +155,7 @@ export default function ChatbotPage() {
       ];
     } else {
       response = "I understand you're looking for help with campus life. I'm equipped to assist with study spaces, navigation, academic planning, wellness support, dining options, and much more. What specific area would you like help with?";
-      suggestions = quickActions.slice(0, 4);
+      suggestions = QUICK_ACTIONS.slice(0, 4);
     }
 
     return {
@@ -191,15 +165,42 @@ export default function ChatbotPage() {
       timestamp: new Date(),
       suggestions
     };
-  };
+  }, []);
+
+  // Handle sending message
+  const handleSendMessage = useCallback(async (content: string = inputValue) => {
+    if (!content.trim()) return;
+
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      type: 'user',
+      content: content.trim(),
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    // Simulate AI typing
+    setTypingIndicator({ isTyping: true, duration: 2000 });
+
+    // Simulate AI response delay
+    setTimeout(() => {
+      const aiResponse = generateAIResponse(content);
+      setMessages(prev => [...prev, aiResponse]);
+      setTypingIndicator({ isTyping: false, duration: 0 });
+      setIsLoading(false);
+    }, 2000);
+  }, [inputValue, generateAIResponse]);
 
   // Handle quick action click
-  const handleQuickAction = (action: QuickAction) => {
+  const handleQuickAction = useCallback((action: QuickAction) => {
     if (action.route) {
       // For demo, we'll send a message instead of navigating
       handleSendMessage(action.text);
     }
-  };
+  }, [handleSendMessage]);
 
   // Handle enter key press
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -380,7 +381,7 @@ export default function ChatbotPage() {
 
               {/* Quick Actions */}
               <div className="mt-3 flex flex-wrap gap-2">
-                {quickActions.map((action) => (
+                {QUICK_ACTIONS.map((action) => (
                   <button
                     key={action.id}
                     onClick={() => handleQuickAction(action)}

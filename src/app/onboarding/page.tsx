@@ -1,7 +1,7 @@
 // src/app/onboarding/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
@@ -35,7 +35,7 @@ interface OnboardingData {
 
 export default function OnboardingFlow() {
   const router = useRouter();
-  const { isDarkMode } = useDarkMode();
+  useDarkMode(); // Hook is called for its effects, but isDarkMode is not directly used.
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +59,7 @@ export default function OnboardingFlow() {
     privacyLevel: 'balanced',
   });
 
-  const updateData = (field: keyof OnboardingData, value: any) => {
+  const updateData = (field: keyof OnboardingData, value: string | boolean | string[]) => {
     setOnboardingData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -112,7 +112,7 @@ export default function OnboardingFlow() {
             </Link>
             <div className="text-center">
               <h1 className="text-2xl font-bold">Welcome to Smart Campus</h1>
-              <p className="text-purple-100">Let's personalize your experience</p>
+              <p className="text-purple-100">Let&apos;s personalize your experience</p>
             </div>
             <div className="text-right">
               <span className="text-sm text-purple-200">Step {currentStep} of {totalSteps}</span>
@@ -186,7 +186,7 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">What's your preferred learning style?</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">What&apos;s your preferred learning style?</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {['Visual', 'Auditory', 'Reading/Writing', 'Kinesthetic'].map((style) => (
                       <button
@@ -376,7 +376,7 @@ export default function OnboardingFlow() {
                         Import Schedule from University System
                       </label>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Allow Smart Campus to sync with your university's scheduling system for automatic calendar integration and class reminders.
+                        Allow Smart Campus to sync with your university&apos;s scheduling system for automatic calendar integration and class reminders.
                       </p>
                     </div>
                   </div>

@@ -57,17 +57,6 @@ interface CourseSchedule {
   type: 'lecture' | 'lab' | 'seminar' | 'tutorial';
 }
 
-interface StudySession {
-  id: string;
-  subject: string;
-  plannedDuration: number;
-  actualDuration?: number;
-  effectiveness: number;
-  location: string;
-  techniques: string[];
-  aiOptimized: boolean;
-}
-
 interface AIRecommendation {
   id: string;
   type: 'study' | 'break' | 'review' | 'schedule' | 'location';
@@ -78,12 +67,11 @@ interface AIRecommendation {
   confidence: number;
 }
 
+type ActiveTab = 'calendar' | 'assignments' | 'courses' | 'analytics';
+
 export default function AcademicPage() {
   const { isDarkMode } = useDarkMode();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
-  const [activeTab, setActiveTab] = useState<'calendar' | 'assignments' | 'courses' | 'analytics'>('calendar');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('calendar');
   const [isLoading, setIsLoading] = useState(true);
   const [showAddEventModal, setShowAddEventModal] = useState(false);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
@@ -176,7 +164,7 @@ export default function AcademicPage() {
         },
         {
           id: '3',
-          title: 'Newton\'s Laws Lab Report',
+          title: 'Newton&apos;s Laws Lab Report',
           course: 'PHYS 151',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           type: 'lab',
@@ -276,7 +264,7 @@ export default function AcademicPage() {
           id: '1',
           type: 'study',
           title: 'Optimize Study Schedule',
-          description: 'AI detected that you\'re most productive 2-4 PM. Schedule CS project work during this window.',
+          description: 'AI detected that you&apos;re most productive 2-4 PM. Schedule CS project work during this window.',
           priority: 'high',
           action: 'Auto-schedule study blocks',
           confidence: 94
@@ -498,7 +486,7 @@ export default function AcademicPage() {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as ActiveTab)}
                   className={`flex-1 px-6 py-4 font-medium transition-colors duration-200 ${
                     activeTab === tab.id
                       ? `${isDarkMode ? 'text-purple-400 border-purple-400' : 'text-purple-600 border-purple-600'} border-b-2`
@@ -519,7 +507,7 @@ export default function AcademicPage() {
               <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Today's Schedule
+                    Today&apos;s Schedule
                   </h3>
                   <button
                     onClick={() => setShowAddEventModal(true)}
@@ -783,7 +771,7 @@ export default function AcademicPage() {
                       AI Productivity Tip
                     </h4>
                     <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-                      Based on your patterns, you're most productive from 2-4 PM. Consider scheduling your CS project work during this time.
+                      Based on your patterns, you&apos;re most productive from 2-4 PM. Consider scheduling your CS project work during this time.
                     </p>
                   </div>
                 </div>
@@ -1112,7 +1100,7 @@ export default function AcademicPage() {
                 <button
                   onClick={() => {
                     setShowAddEventModal(false);
-                    alert('Event added successfully!');
+                    // A custom modal or toast notification would be better than alert() in a real app
                   }}
                   className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                 >
