@@ -908,7 +908,7 @@ export default function Dashboard() {
                 {/* Notes */}
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                    Anything you'd like to share? (Optional)
+                    Anything you&rsquo;d like to share? (Optional)
                   </label>
                   <textarea
                     value={wellnessCheckIn.notes}
