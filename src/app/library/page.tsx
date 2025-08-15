@@ -84,6 +84,12 @@ interface Citation {
   source: 'book' | 'journal' | 'website' | 'database';
 }
 
+interface CitationHelper {
+  show: boolean;
+  text: string;
+  format: 'APA' | 'MLA' | 'Chicago';
+}
+
 interface AIRecommendation {
   id: string;
   type: 'book' | 'resource' | 'space' | 'timing';
@@ -350,7 +356,7 @@ export default function LibraryPage() {
   const [libraryEvents, setLibraryEvents] = useState<LibraryEvent[]>([]);
   const [studySpaces, setStudySpaces] = useState<StudySpace[]>([]);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
-  const [citationHelper, setCitationHelper] = useState({ show: false, text: '', format: 'APA' as const });
+  const [citationHelper, setCitationHelper] = useState<CitationHelper>({ show: false, text: '', format: 'APA' });
 
   // Initialize component
   useEffect(() => {
