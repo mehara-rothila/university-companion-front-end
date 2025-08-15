@@ -402,70 +402,240 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Actions Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {[
-              { 
-                title: 'AI Assistant', 
-                url: '/chatbot', 
-                color: 'from-blue-500 to-blue-600',
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                )
-              },
-              { 
-                title: 'Study Spaces', 
-                url: '/study-spaces', 
-                color: 'from-green-500 to-green-600',
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                )
-              },
-              { 
-                title: 'Navigation', 
-                url: '/navigation', 
-                color: 'from-purple-500 to-purple-600',
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )
-              },
-              { 
-                title: 'Academic Hub', 
-                url: '/academic', 
-                color: 'from-orange-500 to-orange-600',
-                icon: (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4" />
-                  </svg>
-                )
-              }
-            ].map((action, index) => (
-              <Link 
-                key={action.title}
-                href={action.url}
-                className={`bg-gradient-to-r ${action.color} text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in`}
-                style={{ animationDelay: `${0.2 + index * 0.1}s` }}
-              >
-                <div className="flex flex-col items-center text-center">
-                  {action.icon}
-                  <span className="mt-2 text-sm font-medium">{action.title}</span>
-                </div>
-              </Link>
-            ))}
+          {/* Navigation Sections */}
+          <div className="space-y-8 mb-8">
+            {/* Primary Actions */}
+            <div>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                Quick Actions
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { 
+                    title: 'AI Assistant', 
+                    url: '/chatbot', 
+                    color: 'from-blue-500 to-blue-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Study Spaces', 
+                    url: '/study-spaces', 
+                    color: 'from-green-500 to-green-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Campus Navigation', 
+                    url: '/navigation', 
+                    color: 'from-purple-500 to-purple-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Academic Hub', 
+                    url: '/academic', 
+                    color: 'from-orange-500 to-orange-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4" />
+                      </svg>
+                    )
+                  }
+                ].map((action, index) => (
+                  <Link 
+                    key={action.title}
+                    href={action.url}
+                    className={`bg-gradient-to-r ${action.color} text-white p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in`}
+                    style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      {action.icon}
+                      <span className="mt-2 text-sm font-medium">{action.title}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Campus Services */}
+            <div>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                Campus Services
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {[
+                  { 
+                    title: 'Notifications', 
+                    url: '/notifications', 
+                    color: 'from-red-500 to-red-600',
+                    badge: '3',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-2.5-2.5L15 17zm0 0v-2.5M12 3a9 9 0 110 18 9 9 0 010-18z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Social & Events', 
+                    url: '/social', 
+                    color: 'from-pink-500 to-pink-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Dining', 
+                    url: '/dining', 
+                    color: 'from-yellow-500 to-yellow-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm0 0V6a2 2 0 00-2-2h2zM12 8V3" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Wellness', 
+                    url: '/wellness', 
+                    color: 'from-teal-500 to-teal-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Lost & Found', 
+                    url: '/lost-found', 
+                    color: 'from-indigo-500 to-indigo-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Library', 
+                    url: '/library', 
+                    color: 'from-emerald-500 to-emerald-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    )
+                  }
+                ].map((action, index) => (
+                  <Link 
+                    key={action.title}
+                    href={action.url}
+                    className={`relative bg-gradient-to-r ${action.color} text-white p-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-fade-in`}
+                    style={{ animationDelay: `${0.6 + index * 0.1}s` }}
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      {action.icon}
+                      <span className="mt-1 text-xs font-medium">{action.title}</span>
+                    </div>
+                    {action.badge && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {action.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Services */}
+            <div>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                Additional Services
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {[
+                  { 
+                    title: 'Career Services', 
+                    url: '/career', 
+                    color: 'from-violet-500 to-violet-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 8v6a2 2 0 002 2h4a2 2 0 002-2V8" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Financial Aid', 
+                    url: '/financial-aid', 
+                    color: 'from-amber-500 to-amber-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Challenges', 
+                    url: '/challenges', 
+                    color: 'from-rose-500 to-rose-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Profile', 
+                    url: '/profile', 
+                    color: 'from-gray-500 to-gray-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    title: 'Help & Support', 
+                    url: '/help', 
+                    color: 'from-cyan-500 to-cyan-600',
+                    icon: (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )
+                  }
+                ].map((action, index) => (
+                  <Link 
+                    key={action.title}
+                    href={action.url}
+                    className={`bg-gradient-to-r ${action.color} text-white p-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-fade-in`}
+                    style={{ animationDelay: `${0.9 + index * 0.1}s` }}
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      {action.icon}
+                      <span className="mt-1 text-xs font-medium">{action.title}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* AI Recommendations */}
-            <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '0.6s' }}>
+            <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.2s' }}>
               <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6 flex items-center`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -478,7 +648,7 @@ export default function Dashboard() {
                   <div 
                     key={rec.id} 
                     className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-200'} border transition-all duration-300 hover:shadow-md animate-fade-in`}
-                    style={{ animationDelay: `${0.7 + index * 0.1}s` }}
+                    style={{ animationDelay: `${1.3 + index * 0.1}s` }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -519,7 +689,7 @@ export default function Dashboard() {
             <div className="space-y-6">
               
               {/* Recent Activities */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '0.8s' }}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.4s' }}>
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -529,7 +699,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-3">
                   {recentActivities.map((activity, index) => (
-                    <div key={activity.id} className="flex items-start animate-fade-in" style={{ animationDelay: `${0.9 + index * 0.1}s` }}>
+                    <div key={activity.id} className="flex items-start animate-fade-in" style={{ animationDelay: `${1.5 + index * 0.1}s` }}>
                       <div className={`w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0 ${
                         activity.type === 'quiz' ? 'bg-purple-500' :
                         activity.type === 'study' ? 'bg-green-500' :
@@ -554,7 +724,7 @@ export default function Dashboard() {
               </div>
 
               {/* Campus Updates */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.0s' }}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.6s' }}>
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
@@ -564,7 +734,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-3">
                   {campusUpdates.map((update, index) => (
-                    <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} animate-fade-in`} style={{ animationDelay: `${1.1 + index * 0.1}s` }}>
+                    <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} animate-fade-in`} style={{ animationDelay: `${1.7 + index * 0.1}s` }}>
                       <div className="flex items-center justify-between mb-1">
                         <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
                           {update.title}
@@ -673,7 +843,7 @@ export default function Dashboard() {
                 {/* Notes */}
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                    Anything you&apos;d like to share? (Optional)
+                    Anything you'd like to share? (Optional)
                   </label>
                   <textarea
                     value={wellnessCheckIn.notes}
