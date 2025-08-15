@@ -3,27 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
-import Navigation from '@/components/Navigation'; // <-- Added import
+import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-
-// Add custom styles for animations
-const styles = `
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out forwards;
-    opacity: 0;
-  }
-`;
 
 // --- Interfaces ---
 interface WeatherData {
@@ -71,8 +52,7 @@ interface CampusUpdate {
 export default function Dashboard() {
   const { isDarkMode } = useDarkMode();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [userName] = useState('Mehara'); // This would come from user context
-  const [isLoading, setIsLoading] = useState(true);
+  const [userName] = useState('Mehara');
   const [wellnessCheckIn, setWellnessCheckIn] = useState<WellnessCheckIn>({
     mood: null,
     energy: 5,
@@ -193,9 +173,6 @@ export default function Dashboard() {
       setCurrentTime(new Date());
     }, 60000);
     
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 1500);
-    
     return () => clearInterval(timer);
   }, []);
 
@@ -280,26 +257,12 @@ export default function Dashboard() {
   };
 
   const handleWellnessSubmit = () => {
-    // Here you would typically send the data to your API
     console.log('Wellness check-in submitted:', wellnessCheckIn);
     setShowWellnessModal(false);
-    // Show success message or update UI accordingly
   };
-
-  if (isLoading) {
-    return (
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: styles }} />
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
@@ -309,7 +272,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           
           {/* Welcome Header */}
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
@@ -348,7 +311,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             
             {/* Weather & Campus Info */}
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.002 4.002 0 003 15z" />
@@ -376,7 +339,7 @@ export default function Dashboard() {
             </div>
 
             {/* AI Wellness Check-in */}
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in md:col-span-2`} style={{ animationDelay: '0.1s' }}>
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm md:col-span-2`}>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -484,8 +447,7 @@ export default function Dashboard() {
                   <Link 
                     key={action.title}
                     href={action.url}
-                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 animate-fade-in`}
-                    style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1`}
                   >
                     <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex flex-col items-center text-center space-y-3">
@@ -585,8 +547,7 @@ export default function Dashboard() {
                   <Link 
                     key={action.title}
                     href={action.url}
-                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 animate-fade-in`}
-                    style={{ animationDelay: `${0.6 + index * 0.1}s` }}
+                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5`}
                   >
                     <div className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex flex-col items-center text-center space-y-2">
@@ -678,8 +639,7 @@ export default function Dashboard() {
                   <Link 
                     key={action.title}
                     href={action.url}
-                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 animate-fade-in`}
-                    style={{ animationDelay: `${0.9 + index * 0.1}s` }}
+                    className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5`}
                   >
                     <div className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex flex-col items-center text-center space-y-2">
@@ -700,7 +660,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* AI Recommendations */}
-            <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.2s' }}>
+            <div className={`lg:col-span-2 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
               <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6 flex items-center`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -712,8 +672,7 @@ export default function Dashboard() {
                 {aiRecommendations.map((rec, index) => (
                   <div 
                     key={rec.id} 
-                    className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-200'} border transition-all duration-300 hover:shadow-md animate-fade-in`}
-                    style={{ animationDelay: `${1.3 + index * 0.1}s` }}
+                    className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-gray-50 border-gray-200'} border transition-all duration-300 hover:shadow-md`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -754,7 +713,7 @@ export default function Dashboard() {
             <div className="space-y-6">
               
               {/* Recent Activities */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.4s' }}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -764,7 +723,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-3">
                   {recentActivities.map((activity, index) => (
-                    <div key={activity.id} className="flex items-start animate-fade-in" style={{ animationDelay: `${1.5 + index * 0.1}s` }}>
+                    <div key={activity.id} className="flex items-start">
                       <div className={`w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0 ${
                         activity.type === 'quiz' ? 'bg-purple-500' :
                         activity.type === 'study' ? 'bg-green-500' :
@@ -789,7 +748,7 @@ export default function Dashboard() {
               </div>
 
               {/* Campus Updates */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`} style={{ animationDelay: '1.6s' }}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
@@ -799,7 +758,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-3">
                   {campusUpdates.map((update, index) => (
-                    <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} animate-fade-in`} style={{ animationDelay: `${1.7 + index * 0.1}s` }}>
+                    <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'}`}>
                       <div className="flex items-center justify-between mb-1">
                         <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
                           {update.title}
