@@ -41,16 +41,6 @@ interface TimeSlot {
   reservedBy?: string;
 }
 
-interface SpaceReservation {
-  id: string;
-  spaceId: string;
-  userId: string;
-  startTime: Date;
-  endTime: Date;
-  purpose: string;
-  status: 'confirmed' | 'pending' | 'cancelled';
-}
-
 interface AIRecommendation {
   id: string;
   spaceId: string;
@@ -89,7 +79,6 @@ export default function StudySpacesPage() {
   // Mock data
   const [studySpaces, setStudySpaces] = useState<StudySpace[]>([]);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
-  const [userReservations, setUserReservations] = useState<SpaceReservation[]>([]);
   const [filters, setFilters] = useState<SpaceFilter>({
     type: [],
     capacity: { min: 1, max: 50 },
