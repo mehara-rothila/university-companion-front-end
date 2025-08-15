@@ -900,7 +900,7 @@ export default function FinancialAidPage() {
                 </h3>
                 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  Applications are processed through our secure portal. You'll be redirected to complete the application with all required documents.
+                  Applications are processed through our secure portal. You&apos;ll be redirected to complete the application with all required documents.
                 </p>
 
                 <div className="space-y-3">
