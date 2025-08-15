@@ -70,7 +70,6 @@ export default function WellnessPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
-  const [currentMood, setCurrentMood] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
   // Mock data
@@ -493,7 +492,7 @@ export default function WellnessPage() {
                           
                           {entry.notes && (
                             <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} italic`}>
-                              "{entry.notes}"
+                              &ldquo;{entry.notes}&rdquo;
                             </p>
                           )}
                         </div>
@@ -670,7 +669,6 @@ export default function WellnessPage() {
                               name={question.id} 
                               value={option}
                               className="mr-3 text-green-600"
-                              onChange={(e) => question.id === '1' && setCurrentMood(e.target.value)}
                             />
                             <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                               {option} {question.id === '1' && getMoodEmoji(option.toLowerCase().replace(' ', '-'))}
@@ -750,7 +748,7 @@ export default function WellnessPage() {
                 </h2>
                 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  If you're experiencing a mental health crisis, please reach out for help immediately. You're not alone.
+                  If you&rsquo;re experiencing a mental health crisis, please reach out for help immediately. You&rsquo;re not alone.
                 </p>
 
                 <div className="space-y-3">
