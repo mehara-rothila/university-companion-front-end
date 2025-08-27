@@ -7,7 +7,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smart Campus Companion - Designathon Project",
+  title: "Smart Campus Companion - L3 Individual Project",
   description: "Your AI-powered digital assistant for campus life excellence through human-centered design and ethical AI implementation.",
 };
 

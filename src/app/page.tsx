@@ -921,7 +921,7 @@ export default function Home() {
             {/* Copyright & Bottom Row */}
             <div className="pt-12 border-t border-gray-800 text-center text-gray-400">
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <p>&copy; {new Date().getFullYear()} Smart Campus Companion - Designathon Project. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} Smart Campus Companion - L3 Individual Project. All rights reserved.</p>
                 <div className="mt-4 md:mt-0">
                   <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors duration-300 mx-3">Terms</Link>
                   <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors duration-300 mx-3">Privacy</Link>
@@ -929,7 +929,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-6 text-sm">
-                Designed for Designathon with ethical AI principles and human-centered design for student success.
+                Designed for L3 Individual Project with ethical AI principles and human-centered design for student success.
               </p>
             </div>
           </div>

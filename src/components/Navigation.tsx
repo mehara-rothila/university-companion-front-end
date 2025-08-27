@@ -42,7 +42,7 @@ const Navigation = () => {
             className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
             onClick={handleNavigation}
           >
-            Designathon
+            L3 Individual Project
             <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart Campus</span>
           </Link>
         </div>
