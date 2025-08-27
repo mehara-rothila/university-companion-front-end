@@ -18,8 +18,6 @@ interface FinancialAidOpportunity {
   requirements: string[];
   description: string;
   provider: string;
-  matchPercentage?: number;
-  isRecommended?: boolean;
   applicationStatus?: 'not-started' | 'in-progress' | 'submitted' | 'approved' | 'rejected';
   renewableYears?: number;
 }
@@ -69,17 +67,6 @@ interface FinancialProfile {
   hasFinancialNeed: boolean;
 }
 
-interface AIRecommendation {
-  id: string;
-  type: 'aid' | 'donation' | 'budget' | 'saving';
-  title: string;
-  description: string;
-  potentialSaving: number;
-  confidence: number;
-  action: string;
-  priority: 'low' | 'medium' | 'high';
-}
-
 export default function FinancialAidPage() {
   const { isDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -123,8 +110,6 @@ export default function FinancialAidPage() {
       requirements: ['Income certificate', 'Academic transcripts', 'Application form'],
       description: 'Government scholarship for deserving students based on academic merit and financial need.',
       provider: 'Mahapola Higher Education Scholarship Trust Fund',
-      matchPercentage: 88,
-      isRecommended: true,
       applicationStatus: 'not-started',
       renewableYears: 4
     },
@@ -138,8 +123,6 @@ export default function FinancialAidPage() {
       requirements: ['Academic transcripts', 'Recommendation letters'],
       description: 'University-specific merit-based scholarship for outstanding academic performance.',
       provider: 'University of Moratuwa',
-      matchPercentage: 92,
-      isRecommended: true,
       applicationStatus: 'in-progress'
     },
     {
@@ -152,7 +135,6 @@ export default function FinancialAidPage() {
       requirements: ['Income verification', 'Grama Niladhari certificate'],
       description: 'Need-based financial assistance for students from low-income families.',
       provider: 'University Welfare Committee',
-      matchPercentage: 76,
       applicationStatus: 'not-started'
     },
     {
@@ -164,8 +146,7 @@ export default function FinancialAidPage() {
       eligibility: ['Current UoM student', 'Unexpected financial crisis'],
       requirements: ['Crisis documentation', 'Faculty recommendation'],
       description: 'Immediate financial support for students facing unexpected hardships.',
-      provider: 'Student Welfare Services UoM',
-      matchPercentage: 84
+      provider: 'Student Welfare Services UoM'
     },
     {
       id: '5',
@@ -176,8 +157,7 @@ export default function FinancialAidPage() {
       eligibility: ['3rd/4th year student', 'Research interest', 'Professor recommendation'],
       requirements: ['CV submission', 'Research proposal', 'Faculty endorsement'],
       description: 'Part-time research assistance positions with academic departments.',
-      provider: 'Research & Development Office UoM',
-      matchPercentage: 71
+      provider: 'Research & Development Office UoM'
     }
   ]);
 
@@ -187,8 +167,8 @@ export default function FinancialAidPage() {
       id: '1',
       title: 'Help with Textbooks for Engineering',
       description: 'Need assistance purchasing required textbooks for engineering courses.',
-      requestedAmount: 800,
-      raisedAmount: 450,
+      requestedAmount: 120000,
+      raisedAmount: 85000,
       studentId: 'anonymous-001',
       isAnonymous: true,
       category: 'books',
@@ -206,8 +186,8 @@ export default function FinancialAidPage() {
       id: '2',
       title: 'Emergency Housing Support',
       description: 'Lost job and need help with rent to avoid homelessness.',
-      requestedAmount: 1200,
-      raisedAmount: 1200,
+      requestedAmount: 240000,
+      raisedAmount: 240000,
       studentId: 'verified-student-002',
       isAnonymous: false,
       category: 'housing',
@@ -225,8 +205,8 @@ export default function FinancialAidPage() {
       id: '3',
       title: 'Technology for Online Learning',
       description: 'Need a laptop for remote classes and research.',
-      requestedAmount: 600,
-      raisedAmount: 150,
+      requestedAmount: 90000,
+      raisedAmount: 22500,
       studentId: 'anonymous-003',
       isAnonymous: true,
       category: 'technology',
@@ -237,40 +217,6 @@ export default function FinancialAidPage() {
       story: 'My old laptop broke and I cannot afford a replacement. I need it for online classes and completing assignments.',
       supporters: 5,
       updates: []
-    }
-  ]);
-
-  // Mock AI recommendations
-  const [aiRecommendations] = useState<AIRecommendation[]>([
-    {
-      id: '1',
-      type: 'aid',
-      title: 'High-Match Scholarship Available',
-      description: 'AI identified a 95% match for Merit-Based Academic Scholarship. Deadline in 45 days.',
-      potentialSaving: 5000,
-      confidence: 95,
-      action: 'Apply now',
-      priority: 'high'
-    },
-    {
-      id: '2',
-      type: 'budget',
-      title: 'Reduce Dining Expenses',
-      description: 'Consider meal prep to save $150/month based on your spending patterns.',
-      potentialSaving: 150,
-      confidence: 82,
-      action: 'View meal planning tips',
-      priority: 'medium'
-    },
-    {
-      id: '3',
-      type: 'donation',
-      title: 'Eligible for Community Support',
-      description: 'Your profile matches criteria for peer donation assistance.',
-      potentialSaving: 400,
-      confidence: 74,
-      action: 'Create support request',
-      priority: 'medium'
     }
   ]);
 
@@ -324,7 +270,7 @@ export default function FinancialAidPage() {
 
   const tabs = [
     { id: 'dashboard', name: 'Financial Dashboard', icon: '📊' },
-    { id: 'aid-finder', name: 'Aid Finder', icon: '🔍' },
+    { id: 'aid-finder', name: 'Aid Opportunities', icon: '🔍' },
     { id: 'donations', name: 'Community Support', icon: '🤝' },
     { id: 'budget', name: 'Budget Tracker', icon: '💰' },
     { id: 'applications', name: 'My Applications', icon: '📝' }
@@ -364,7 +310,7 @@ export default function FinancialAidPage() {
                 Financial Aid & Community Support
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
-                AI-powered financial assistance platform with peer-to-peer support, eligibility matching, and smart budget tracking.
+                Comprehensive financial assistance platform with community support, eligibility tracking, and budget management tools.
               </p>
 
               {/* Quick Actions */}
@@ -413,62 +359,25 @@ export default function FinancialAidPage() {
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-                ${financialProfile.availableAid.toLocaleString()}
+                Rs. {financialProfile.availableAid.toLocaleString()}
               </div>
               <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Available Aid</div>
             </div>
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                {aidOpportunities.filter(aid => aid.isRecommended).length}
+                {aidOpportunities.length}
               </div>
-              <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>AI Matches</div>
+              <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Aid Opportunities</div>
             </div>
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                $2,150
+                Rs. 450,000
               </div>
               <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Community Raised</div>
             </div>
           </div>
-
-          {/* AI Recommendations */}
-          {aiRecommendations.length > 0 && (
-            <div className={`mb-8 ${isDarkMode ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'} rounded-2xl p-6 border animate-fade-in`}>
-              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-4 flex items-center`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                AI Financial Recommendations
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {aiRecommendations.map((rec) => (
-                  <div key={rec.id} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{rec.title}</h4>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        rec.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                        rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                        'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                      }`}>
-                        {rec.priority}
-                      </span>
-                    </div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>{rec.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-sm font-medium ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
-                        Save ${rec.potentialSaving}
-                      </span>
-                      <button className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                        {rec.action} →
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Tab Navigation */}
           <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6 animate-fade-in`}>
@@ -484,7 +393,6 @@ export default function FinancialAidPage() {
                   }`}
                 >
                   <div className="flex items-center justify-center space-x-2">
-                    <span className="text-lg">{tab.icon}</span>
                     <span className="hidden sm:inline">{tab.name}</span>
                   </div>
                 </button>
@@ -511,7 +419,7 @@ export default function FinancialAidPage() {
                         <div>
                           <p className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Total Income + Aid</p>
                           <p className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
-                            ${(financialProfile.totalIncome + financialProfile.availableAid).toLocaleString()}
+                            Rs. {(financialProfile.totalIncome + financialProfile.availableAid).toLocaleString()}
                           </p>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -523,7 +431,7 @@ export default function FinancialAidPage() {
                         <div>
                           <p className={`text-sm ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>Total Expenses</p>
                           <p className={`text-2xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
-                            ${financialProfile.totalExpenses.toLocaleString()}
+                            Rs. {financialProfile.totalExpenses.toLocaleString()}
                           </p>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -549,7 +457,7 @@ export default function FinancialAidPage() {
                               ? isDarkMode ? 'text-blue-400' : 'text-blue-600'
                               : isDarkMode ? 'text-orange-400' : 'text-orange-600'
                           }`}>
-                            ${Math.abs((financialProfile.totalIncome + financialProfile.availableAid) - financialProfile.totalExpenses).toLocaleString()}
+                            Rs. {Math.abs((financialProfile.totalIncome + financialProfile.availableAid) - financialProfile.totalExpenses).toLocaleString()}
                           </p>
                         </div>
                       </div>
@@ -575,7 +483,7 @@ export default function FinancialAidPage() {
                           </div>
                           
                           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                            ${aid.amount.toLocaleString()} • Due: {aid.deadline.toLocaleDateString()}
+                            Rs. {aid.amount.toLocaleString()} • Due: {aid.deadline.toLocaleDateString()}
                           </p>
                           
                           <div className="flex items-center justify-between">
@@ -594,11 +502,11 @@ export default function FinancialAidPage() {
               </div>
             )}
 
-            {/* Aid Finder Tab */}
+            {/* Aid Opportunities Tab */}
             {activeTab === 'aid-finder' && (
               <div className="p-8">
                 <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                  AI-Powered Aid Finder
+                  Available Aid Opportunities
                 </h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -610,16 +518,11 @@ export default function FinancialAidPage() {
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(aid.type)}`}>
                             {aid.type}
                           </span>
-                          {aid.isRecommended && (
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                              🤖 AI Match: {aid.matchPercentage}%
-                            </span>
-                          )}
                         </div>
                         
                         <div className="text-right">
                           <p className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
-                            ${aid.amount.toLocaleString()}
+                            Rs. {aid.amount.toLocaleString()}
                           </p>
                           {aid.renewableYears && (
                             <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -691,13 +594,13 @@ export default function FinancialAidPage() {
                       onClick={() => setShowDonationModal(true)}
                       className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200"
                     >
-                      💚 Donate
+                      Donate
                     </button>
                     <button 
                       onClick={() => setShowRequestModal(true)}
                       className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200"
                     >
-                      🙏 Request Help
+                      Request Help
                     </button>
                   </div>
                 </div>
@@ -716,7 +619,7 @@ export default function FinancialAidPage() {
                           </span>
                           {request.verificationLevel === 'full' && (
                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
-                              ✓ Verified
+                              Verified
                             </span>
                           )}
                         </div>
@@ -745,7 +648,7 @@ export default function FinancialAidPage() {
                             Progress
                           </span>
                           <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            ${request.raisedAmount.toLocaleString()} / ${request.requestedAmount.toLocaleString()}
+                            Rs. {request.raisedAmount.toLocaleString()} / Rs. {request.requestedAmount.toLocaleString()}
                           </span>
                         </div>
                         <div className={`w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2`}>
@@ -780,7 +683,7 @@ export default function FinancialAidPage() {
             {activeTab === 'budget' && (
               <div className="p-8">
                 <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                  Smart Budget Tracker
+                  Budget Tracker
                 </h2>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -801,17 +704,17 @@ export default function FinancialAidPage() {
                               category.remaining < 0 ? 'text-red-500' : 'text-green-500'
                             }`}>
                               {category.remaining < 0 ? 'Over by ' : 'Remaining: '}
-                              ${Math.abs(category.remaining).toLocaleString()}
+                              Rs. {Math.abs(category.remaining).toLocaleString()}
                             </span>
                           </div>
                           
                           <div className="mb-2">
                             <div className="flex items-center justify-between mb-1">
                               <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Spent: ${category.spent.toLocaleString()}
+                                Spent: Rs. {category.spent.toLocaleString()}
                               </span>
                               <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Budget: ${category.budgeted.toLocaleString()}
+                                Budget: Rs. {category.budgeted.toLocaleString()}
                               </span>
                             </div>
                             <div className={`w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2`}>
@@ -830,50 +733,108 @@ export default function FinancialAidPage() {
                     </div>
                   </div>
 
-                  {/* Spending Insights */}
+                  {/* Budget Summary */}
                   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
                     <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                      AI Spending Insights
+                      Budget Summary
                     </h3>
                     
                     <div className="space-y-4">
                       <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
                         <h4 className={`font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-2`}>
-                          💡 Spending Pattern Analysis
+                          Monthly Progress
                         </h4>
                         <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-                          You spend 23% more on dining during exam weeks. Consider meal prep to save $180/month.
+                          You are tracking your budget in 6 categories this month.
                         </p>
                       </div>
 
                       <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
                         <h4 className={`font-medium ${isDarkMode ? 'text-green-300' : 'text-green-800'} mb-2`}>
-                          ✅ Budget Achievement
+                          On Track Categories
                         </h4>
                         <p className={`text-sm ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
-                          Great job staying under budget in 4/6 categories this month!
+                          4 out of 6 categories are within budget limits.
                         </p>
                       </div>
 
                       <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
                         <h4 className={`font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-2`}>
-                          ⚠️ Budget Alert
+                          Budget Alert
                         </h4>
                         <p className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
-                          Personal spending is $200 over budget. Consider reducing discretionary purchases.
+                          Personal spending is over budget. Consider reducing discretionary purchases.
                         </p>
                       </div>
 
                       <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'}`}>
                         <h4 className={`font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-800'} mb-2`}>
-                          🎯 Savings Opportunity
+                          Savings Tip
                         </h4>
                         <p className={`text-sm ${isDarkMode ? 'text-purple-400' : 'text-purple-700'}`}>
-                          Switch to used textbooks and save an average of $420 per semester.
+                          Consider purchasing used textbooks to save on education expenses.
                         </p>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* My Applications Tab */}
+            {activeTab === 'applications' && (
+              <div className="p-8">
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
+                  My Applications
+                </h2>
+                
+                <div className="space-y-4">
+                  {aidOpportunities.map((aid) => (
+                    <div key={aid.id} className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              {aid.title}
+                            </h3>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(aid.type)}`}>
+                              {aid.type}
+                            </span>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(aid.applicationStatus || 'not-started')}`}>
+                              {aid.applicationStatus?.replace('-', ' ') || 'not started'}
+                            </span>
+                          </div>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                            {aid.description}
+                          </p>
+                          <div className="flex items-center space-x-4 text-sm">
+                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              Amount: Rs. {aid.amount.toLocaleString()}
+                            </span>
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              Deadline: {aid.deadline.toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className={`px-4 py-2 text-sm ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg transition-all duration-200`}>
+                            View Details
+                          </button>
+                          {(!aid.applicationStatus || aid.applicationStatus === 'not-started') && (
+                            <button 
+                              onClick={() => {
+                                setSelectedAid(aid);
+                                setShowApplicationModal(true);
+                              }}
+                              className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200"
+                            >
+                              Apply
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -913,19 +874,19 @@ export default function FinancialAidPage() {
                 </h3>
                 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  Applications are processed through our secure portal. You&apos;ll be redirected to complete the application with all required documents.
+                  Applications are processed through our secure portal. You will be redirected to complete the application with all required documents.
                 </p>
 
                 <div className="space-y-3">
                   <button className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    📝 Start Application
+                    Start Application
                   </button>
                   
                   <Link 
                     href="/help"
                     className={`block w-full px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200 text-center`}
                   >
-                    📞 Get Application Help
+                    Get Application Help
                   </Link>
                 </div>
               </div>
@@ -967,13 +928,13 @@ export default function FinancialAidPage() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-2">
                     <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
-                      $25
+                      Rs. 5,000
                     </button>
                     <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
-                      $50
+                      Rs. 10,000
                     </button>
                     <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
-                      $100
+                      Rs. 20,000
                     </button>
                   </div>
                   
@@ -984,7 +945,7 @@ export default function FinancialAidPage() {
                   />
                   
                   <button className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    💚 Donate Now
+                    Donate Now
                   </button>
                   
                   <label className="flex items-center text-sm">
@@ -1030,14 +991,14 @@ export default function FinancialAidPage() {
 
                 <div className="space-y-3">
                   <button className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    📝 Create Request
+                    Create Request
                   </button>
                   
                   <Link 
                     href="/help"
                     className={`block w-full px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200 text-center`}
                   >
-                    📞 Get Guidance First
+                    Get Guidance First
                   </Link>
                 </div>
               </div>

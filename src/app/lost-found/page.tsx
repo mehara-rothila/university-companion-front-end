@@ -19,9 +19,8 @@ interface LostFoundItem {
   imageUrl?: string;
   reward?: number;
   contactMethod: 'anonymous' | 'direct';
-  status: 'active' | 'matched' | 'resolved' | 'expired';
+  status: 'active' | 'resolved';
   postedBy: string;
-  matches?: string[];
   priority?: 'high' | 'medium' | 'low';
   tags: string[];
 }
@@ -39,13 +38,6 @@ interface LocationArea {
   name: string;
   zone: string;
   frequency: number;
-}
-
-interface AIMatch {
-  itemId: string;
-  confidence: number;
-  reason: string;
-  similarity: string[];
 }
 
 export default function LostFoundPage() {
@@ -91,7 +83,6 @@ export default function LostFoundPage() {
       contactMethod: 'anonymous',
       status: 'active',
       postedBy: 'Anonymous',
-      matches: ['3'],
       priority: 'medium',
       tags: ['blue', 'Jansport', 'textbooks', 'Alex']
     },
@@ -104,9 +95,8 @@ export default function LostFoundPage() {
       location: 'Student Union',
       dateReported: new Date('2024-01-13'),
       contactMethod: 'direct',
-      status: 'matched',
+      status: 'resolved',
       postedBy: 'Alex K.',
-      matches: ['2'],
       priority: 'high',
       tags: ['blue', 'Jansport', 'Alex', 'notebooks']
     },
@@ -216,24 +206,6 @@ export default function LostFoundPage() {
     return matchesType && matchesCategory && matchesLocation && matchesSearch;
   });
 
-  // Get AI matching suggestions for lost items
-  const getAIMatches = (item: LostFoundItem): AIMatch[] => {
-    if (item.type !== 'lost') return [];
-    
-    const foundItems = lostFoundItems.filter(foundItem => 
-      foundItem.type === 'found' && 
-      foundItem.category === item.category &&
-      foundItem.status === 'active'
-    );
-
-    return foundItems.map(foundItem => ({
-      itemId: foundItem.id,
-      confidence: Math.floor(Math.random() * 40) + 60, // Mock 60-100% confidence
-      reason: 'Similar category, location, and description keywords',
-      similarity: foundItem.tags.filter(tag => item.tags.includes(tag))
-    })).sort((a, b) => b.confidence - a.confidence);
-  };
-
   // Handle item posting
   const handlePostItem = () => {
     setItemPosted(true);
@@ -251,9 +223,7 @@ export default function LostFoundPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-green-500';
-      case 'matched': return 'text-blue-500';
       case 'resolved': return 'text-purple-500';
-      case 'expired': return 'text-gray-500';
       default: return 'text-gray-500';
     }
   };
@@ -270,7 +240,6 @@ export default function LostFoundPage() {
 
   const tabs = [
     { id: 'browse', name: 'Browse Items', icon: '🔍' },
-    { id: 'ai-matches', name: 'AI Matches', icon: '🤖' },
     { id: 'my-items', name: 'My Items', icon: '📦' },
     { id: 'success-stories', name: 'Success Stories', icon: '✨' }
   ];
@@ -292,10 +261,10 @@ export default function LostFoundPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                Lost & Found Marketplace
+                Lost & Found
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
-                AI-powered community platform to reunite lost items with their owners using smart matching and location-based search.
+                Community platform to help reunite lost items with their owners. Post what you&apos;ve lost or found to connect with others on campus.
               </p>
 
               {/* Quick Actions */}
@@ -341,7 +310,7 @@ export default function LostFoundPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
-                  Item posted successfully! Our AI will automatically match it with potential findings.
+                  Item posted successfully! Others can now see your listing and contact you if they have information.
                 </p>
               </div>
             </div>
@@ -354,16 +323,16 @@ export default function LostFoundPage() {
               <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Total Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">12</div>
-              <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Successful Matches</div>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{lostFoundItems.filter(item => item.type === 'lost').length}</div>
+              <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Lost Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">87%</div>
-              <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Match Accuracy</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{lostFoundItems.filter(item => item.type === 'found').length}</div>
+              <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Found Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">2.4hrs</div>
-              <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Avg. Match Time</div>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{lostFoundItems.filter(item => item.status === 'resolved').length}</div>
+              <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Items Reunited</div>
             </div>
           </div>
 
@@ -498,11 +467,6 @@ export default function LostFoundPage() {
                               {item.priority}
                             </span>
                           )}
-                          {item.matches && item.matches.length > 0 && (
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                              🤖 AI Match
-                            </span>
-                          )}
                         </div>
                         <span className={`text-xs ${getStatusColor(item.status)}`}>
                           {item.status}
@@ -599,82 +563,6 @@ export default function LostFoundPage() {
               </div>
             )}
 
-            {/* AI Matches Tab */}
-            {activeTab === 'ai-matches' && (
-              <div className="p-8">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>AI-Powered Matches</h2>
-                
-                <div className="space-y-6">
-                  {lostFoundItems.filter(item => item.type === 'lost' && item.status === 'active').map((lostItem) => {
-                    const matches = getAIMatches(lostItem);
-                    if (matches.length === 0) return null;
-
-                    return (
-                      <div key={lostItem.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                              Lost: {lostItem.title}
-                            </h3>
-                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              {lostItem.description.slice(0, 100)}...
-                            </p>
-                          </div>
-                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                            {matches.length} AI Matches
-                          </span>
-                        </div>
-
-                        <div className="space-y-3">
-                          {matches.slice(0, 2).map((match) => {
-                            const foundItem = lostFoundItems.find(item => item.id === match.itemId);
-                            if (!foundItem) return null;
-
-                            return (
-                              <div key={match.itemId} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-500' : 'border-gray-200'}`}>
-                                <div className="flex items-center justify-between mb-2">
-                                  <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-                                    Found: {foundItem.title}
-                                  </h4>
-                                  <div className="flex items-center space-x-2">
-                                    <span className={`px-2 py-1 text-xs rounded-full ${
-                                      match.confidence >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                      match.confidence >= 60 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                                      'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                                    }`}>
-                                      {match.confidence}% Match
-                                    </span>
-                                  </div>
-                                </div>
-                                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
-                                  {foundItem.description.slice(0, 120)}...
-                                </p>
-                                <div className="flex items-center justify-between">
-                                  <div className="flex flex-wrap gap-1">
-                                    {match.similarity.map(tag => (
-                                      <span key={tag} className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                        #{tag}
-                                      </span>
-                                    ))}
-                                  </div>
-                                  <button 
-                                    onClick={() => handleContact(foundItem)}
-                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
-                                  >
-                                    Contact Finder
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             {/* My Items Tab */}
             {activeTab === 'my-items' && (
               <div className="p-8">
@@ -710,8 +598,7 @@ export default function LostFoundPage() {
                             </span>
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                               item.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                              item.status === 'matched' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                              'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                              'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
                             }`}>
                               {item.status}
                             </span>
@@ -757,33 +644,29 @@ export default function LostFoundPage() {
                   {[
                     {
                       title: "Wedding Ring Reunited After 3 Days",
-                      story: "Lost my grandmother's wedding ring at the gym. AI matched it with a found post within hours. The person who found it was so kind!",
+                      story: "Lost my grandmother's wedding ring at the gym. Someone found it and posted here. We connected and I got it back the next day!",
                       user: "Emily R.",
-                      timeToMatch: "6 hours",
                       reward: "$100",
                       icon: "💍"
                     },
                     {
                       title: "Laptop Found Before Important Presentation",
-                      story: "Left my laptop in the library and panicked. The AI system matched it immediately and I got it back just in time for my thesis presentation.",
+                      story: "Left my laptop in the library and panicked. Someone posted it here and I contacted them immediately. Got it back just in time!",
                       user: "David K.",
-                      timeToMatch: "2 hours",
                       reward: "$75",
                       icon: "💻"
                     },
                     {
                       title: "Lost Keys Returned Same Day",
-                      story: "Dropped my car keys somewhere on campus. Posted it and got matched with a finder within the same day. Amazing system!",
+                      story: "Dropped my car keys somewhere on campus. Posted here and someone had already found them! Amazing community.",
                       user: "Maria S.",
-                      timeToMatch: "4 hours",
                       reward: "$25",
                       icon: "🗝️"
                     },
                     {
                       title: "Textbooks Saved My Semester",
-                      story: "Lost my bag with all my textbooks for finals. Someone found it and the AI matched us perfectly. Saved my semester!",
+                      story: "Lost my bag with all my textbooks for finals. A kind student found it and posted here. Saved my semester!",
                       user: "James L.",
-                      timeToMatch: "1 day",
                       reward: "$50",
                       icon: "📚"
                     }
@@ -804,9 +687,6 @@ export default function LostFoundPage() {
                                 — {story.user}
                               </p>
                               <div className="flex items-center space-x-4 mt-2">
-                                <span className={`text-xs ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
-                                  ⚡ Matched in {story.timeToMatch}
-                                </span>
                                 <span className={`text-xs ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
                                   💰 {story.reward} reward
                                 </span>
@@ -930,7 +810,7 @@ export default function LostFoundPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Click to upload photo</p>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Helps AI match your item more accurately</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Helps others identify your item</p>
                   </div>
                   <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
                 </div>
