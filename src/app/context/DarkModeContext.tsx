@@ -8,7 +8,7 @@ interface DarkModeContextType {
 }
 
 export const DarkModeContext = createContext<DarkModeContextType>({
-  isDarkMode: true,
+  isDarkMode: false, // Changed to false for light mode default
   toggleDarkMode: () => { console.warn("DarkModeContext: toggleDarkMode called without a Provider"); },
 });
 
@@ -19,13 +19,13 @@ interface DarkModeProviderProps {
 }
 
 export const DarkModeProvider: React.FC<DarkModeProviderProps> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Changed to false for light mode default
 
   useEffect(() => {
-    let initialDarkMode = true;
+    let initialDarkMode = false; // Changed to false for light mode default
     try {
       const savedTheme = localStorage.getItem('theme');
-      initialDarkMode = savedTheme ? savedTheme === 'dark' : true;
+      initialDarkMode = savedTheme ? savedTheme === 'dark' : false; // Changed to false for light mode default
     } catch (error) {
       console.error("Could not access localStorage for theme", error);
     }
