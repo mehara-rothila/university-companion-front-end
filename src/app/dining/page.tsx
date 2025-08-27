@@ -122,7 +122,7 @@ export default function DiningPage() {
     keto: false
   });
 
-  const [nutritionGoals, setNutritionGoals] = useState<NutritionGoal>({
+  const [nutritionGoals] = useState<NutritionGoal>({
     dailyCalories: 2000,
     proteinPercentage: 25,
     carbsPercentage: 50,

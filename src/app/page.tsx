@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
-import AnimatedBackground from '@/components/AnimatedBackground';
 
 // --- Interfaces ---
 interface Particle {

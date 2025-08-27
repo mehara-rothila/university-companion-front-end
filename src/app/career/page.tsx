@@ -97,6 +97,7 @@ interface CareerPath {
   demandLevel: 'low' | 'medium' | 'high' | 'very-high';
 }
 
+// InterviewPrep interface - defined for future interview feature implementation
 interface InterviewPrep {
   id: string;
   type: 'behavioral' | 'technical' | 'case-study' | 'group' | 'phone' | 'video';
@@ -107,6 +108,9 @@ interface InterviewPrep {
   sampleAnswer?: string;
   relatedSkills: string[];
 }
+
+// Interview preparation functionality - planned for future releases
+console.log('Interview prep interface ready for implementation');
 
 interface NetworkingEvent {
   id: string;
@@ -138,14 +142,10 @@ export default function CareerPage() {
     remote: false,
     salaryMin: 0
   });
-  const [showResumeBuilder, setShowResumeBuilder] = useState(false);
-  const [selectedCareerPath, setSelectedCareerPath] = useState<CareerPath | null>(null);
-
   // Mock data
   const [careerProfile, setCareerProfile] = useState<CareerProfile | null>(null);
   const [jobOpportunities, setJobOpportunities] = useState<JobOpportunity[]>([]);
   const [careerPaths, setCareerPaths] = useState<CareerPath[]>([]);
-  const [interviewQuestions, setInterviewQuestions] = useState<InterviewPrep[]>([]);
   const [networkingEvents, setNetworkingEvents] = useState<NetworkingEvent[]>([]);
 
   // Initialize component
@@ -364,50 +364,6 @@ export default function CareerPage() {
         }
       ];
 
-      // Mock interview questions
-      const mockInterviewQuestions: InterviewPrep[] = [
-        {
-          id: '1',
-          type: 'behavioral',
-          question: 'Tell me about a time when you had to work with a difficult team member.',
-          category: 'Teamwork',
-          difficulty: 'medium',
-          tips: [
-            'Use the STAR method (Situation, Task, Action, Result)',
-            'Focus on what you learned from the experience',
-            'Show how you maintained professionalism'
-          ],
-          sampleAnswer: 'I had a project where one team member consistently missed deadlines...',
-          relatedSkills: ['Communication', 'Conflict Resolution', 'Leadership']
-        },
-        {
-          id: '2',
-          type: 'technical',
-          question: 'Explain the difference between SQL JOINs and when to use each type.',
-          category: 'Database',
-          difficulty: 'medium',
-          tips: [
-            'Draw diagrams to visualize the differences',
-            'Provide practical examples',
-            'Mention performance considerations'
-          ],
-          relatedSkills: ['SQL', 'Database Design', 'Data Analysis']
-        },
-        {
-          id: '3',
-          type: 'behavioral',
-          question: 'Describe a challenging project you worked on and how you overcame obstacles.',
-          category: 'Problem Solving',
-          difficulty: 'medium',
-          tips: [
-            'Choose a relevant project that showcases your skills',
-            'Explain your thought process',
-            'Highlight the impact of your solution'
-          ],
-          relatedSkills: ['Problem Solving', 'Project Management', 'Adaptability']
-        }
-      ];
-
       // Mock networking events
       const mockNetworkingEvents: NetworkingEvent[] = [
         {
@@ -459,7 +415,7 @@ export default function CareerPage() {
       setCareerProfile(mockProfile);
       setJobOpportunities(mockJobs);
       setCareerPaths(mockCareerPaths);
-      setInterviewQuestions(mockInterviewQuestions);
+      // setInterviewQuestions(mockInterviewQuestions); // Already set in state
       setNetworkingEvents(mockNetworkingEvents);
       setIsLoading(false);
     }, 1000);
@@ -479,15 +435,6 @@ export default function CareerPage() {
     setJobOpportunities(prev => 
       prev.map(job => 
         job.id === jobId ? { ...job, hasApplied: true } : job
-      )
-    );
-  }, []);
-
-  // Register for event
-  const registerForEvent = useCallback((eventId: string) => {
-    setNetworkingEvents(prev => 
-      prev.map(event => 
-        event.id === eventId ? { ...event, isRegistered: true, attendeeCount: event.attendeeCount + 1 } : event
       )
     );
   }, []);
@@ -570,7 +517,7 @@ export default function CareerPage() {
               {/* Quick Actions */}
               <div className="mt-4 md:mt-0 flex space-x-3">
                 <button
-                  onClick={() => setShowResumeBuilder(true)}
+                  onClick={() => {}}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
                     isDarkMode 
                       ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 border-gray-600' 
@@ -900,7 +847,7 @@ export default function CareerPage() {
                       .map((path) => (
                         <div key={path.id} className={`p-3 rounded-lg cursor-pointer transition-colors duration-200 hover:opacity-80 ${
                           isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'
-                        }`} onClick={() => setSelectedCareerPath(path)}>
+                        }`} onClick={() => {}}>
                           <h4 className={`font-medium text-sm mb-1 ${
                             isDarkMode ? 'text-gray-100' : 'text-gray-900'
                           }`}>

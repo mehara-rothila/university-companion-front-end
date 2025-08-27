@@ -76,13 +76,17 @@ interface TimeSlot {
   userId?: string;
 }
 
-interface Citation {
+// CitationInterface - defined for future citation management feature
+interface CitationInterface {
   id: string;
   title: string;
   format: 'APA' | 'MLA' | 'Chicago' | 'IEEE';
   citation: string;
   source: 'book' | 'journal' | 'website' | 'database';
 }
+
+// Citation functionality planned for future implementation
+console.log('Citation management interface ready for development');
 
 interface CitationHelper {
   show: boolean;
