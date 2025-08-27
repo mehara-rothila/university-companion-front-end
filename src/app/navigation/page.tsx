@@ -74,9 +74,9 @@ const MOCK_TRAFFIC_ALERTS: TrafficAlert[] = [
     {
       id: '1',
       type: 'construction',
-      title: 'Library Entrance Construction',
-      description: 'Main entrance under renovation. Use north entrance.',
-      location: 'Main Library',
+      title: 'Library Road Construction',
+      description: 'Main road to library under maintenance. Use alternative route via IT Faculty.',
+      location: 'Main Library Access Road',
       severity: 'medium',
       startTime: new Date(),
       endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -85,13 +85,24 @@ const MOCK_TRAFFIC_ALERTS: TrafficAlert[] = [
     {
       id: '2',
       type: 'event',
-      title: 'Graduation Ceremony',
-      description: 'Large crowd expected. Allow extra travel time.',
-      location: 'Central Quad',
+      title: 'Convocation Ceremony',
+      description: 'Large crowd expected near Main Auditorium. Allow extra travel time.',
+      location: 'Main Auditorium Area',
       severity: 'high',
       startTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      endTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
+      endTime: new Date(Date.now() + 6 * 60 * 60 * 1000),
       affectedRoutes: ['central-campus']
+    },
+    {
+      id: '3',
+      type: 'maintenance',
+      title: 'Water Supply Maintenance',
+      description: 'Water supply maintenance in Engineering Faculty area.',
+      location: 'Engineering Faculty',
+      severity: 'low',
+      startTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      endTime: new Date(Date.now() + 28 * 60 * 60 * 1000),
+      affectedRoutes: ['engineering-area']
     }
 ];
 
@@ -121,31 +132,86 @@ export default function NavigationPage() {
       id: '1',
       name: 'Main Library',
       type: 'building',
-      coordinates: { lat: 40.7128, lng: -74.0060 },
-      address: '123 Campus Drive',
-      description: 'Central academic library with 5 floors of study spaces',
-      amenities: ['WiFi', '24/7 Access', 'Study Rooms', 'Computers', 'Printing'],
-      hours: '24/7',
-      crowdLevel: 'high',
+      coordinates: { lat: 6.7956, lng: 79.9006 }, // Actual UoM coordinates
+      address: 'University of Moratuwa, Bandaranayake Mawatha, Moratuwa',
+      description: 'Central academic library with digital resources and study spaces',
+      amenities: ['WiFi', 'Air Conditioning', 'Study Rooms', 'Computers', 'Printing'],
+      hours: '8:00 AM - 8:00 PM (Mon-Fri), 8:00 AM - 4:00 PM (Sat)',
+      crowdLevel: 'medium',
       accessibility: [
-        { type: 'wheelchair', available: true, description: 'Full wheelchair accessibility' },
-        { type: 'elevator', available: true, description: 'Elevators to all floors' },
-        { type: 'audio', available: true, description: 'Audio assistance available' }
+        { type: 'wheelchair', available: true, description: 'Wheelchair accessible entrance and elevator' }
       ]
     },
     {
       id: '2',
-      name: 'Student Center',
+      name: 'Faculty of Engineering',
       type: 'building',
-      coordinates: { lat: 40.7130, lng: -74.0055 },
-      address: '456 University Blvd',
-      description: 'Hub for student activities, dining, and services',
-      amenities: ['Food Court', 'ATM', 'Study Lounges', 'Meeting Rooms', 'WiFi'],
-      hours: '6 AM - 11 PM',
+      coordinates: { lat: 6.7950, lng: 79.9000 },
+      address: 'Faculty of Engineering Building',
+      description: 'Main engineering faculty building with lecture halls and laboratories',
+      amenities: ['Lecture Halls', 'Computer Labs', 'WiFi', 'Cafeteria'],
+      hours: '7:00 AM - 6:00 PM',
+      crowdLevel: 'high',
+      accessibility: [
+        { type: 'wheelchair', available: true, description: 'Ramp access available' },
+        { type: 'parking', available: true, description: 'Nearby parking available' }
+      ]
+    },
+    {
+      id: '3',
+      name: 'Faculty of IT',
+      type: 'building',
+      coordinates: { lat: 6.7945, lng: 79.9010 },
+      address: 'Faculty of Information Technology',
+      description: 'Modern IT faculty with advanced computer labs and research facilities',
+      amenities: ['High-spec Computer Labs', 'WiFi', 'Research Centers', 'Presentation Rooms'],
+      hours: '7:00 AM - 8:00 PM',
       crowdLevel: 'medium',
       accessibility: [
-        { type: 'wheelchair', available: true, description: 'Fully accessible' },
-        { type: 'elevator', available: true, description: 'Multiple elevators' }
+        { type: 'wheelchair', available: true, description: 'Full accessibility with elevator' },
+        { type: 'elevator', available: true, description: 'Elevator to all floors' }
+      ]
+    },
+    {
+      id: '4',
+      name: 'Student Center',
+      type: 'building',
+      coordinates: { lat: 6.7960, lng: 79.9005 },
+      address: 'Student Activities Center',
+      description: 'Hub for student activities and services',
+      amenities: ['Student Services', 'Banking', 'Photocopying', 'Meeting Rooms'],
+      hours: '8:00 AM - 5:00 PM',
+      crowdLevel: 'medium',
+      accessibility: [
+        { type: 'wheelchair', available: true, description: 'Ground floor accessible' }
+      ]
+    },
+    {
+      id: '5',
+      name: 'Main Canteen',
+      type: 'dining',
+      coordinates: { lat: 6.7955, lng: 79.9008 },
+      address: 'Near Main Library',
+      description: 'Primary dining facility serving Sri Lankan cuisine',
+      amenities: ['Rice & Curry', 'Short Eats', 'Tea', 'Student Discounts'],
+      hours: '7:00 AM - 6:00 PM',
+      crowdLevel: 'high',
+      accessibility: [
+        { type: 'wheelchair', available: false, description: 'Limited accessibility - steps at entrance' }
+      ]
+    },
+    {
+      id: '6',
+      name: 'Sports Complex',
+      type: 'recreation',
+      coordinates: { lat: 6.7940, lng: 79.9015 },
+      address: 'University Sports Grounds',
+      description: 'Athletics facilities and sports grounds',
+      amenities: ['Basketball Court', 'Track & Field', 'Swimming Pool', 'Gymnasium'],
+      hours: '6:00 AM - 9:00 PM',
+      crowdLevel: 'low',
+      accessibility: [
+        { type: 'wheelchair', available: true, description: 'Accessible courts and viewing areas' }
       ]
     },
     {

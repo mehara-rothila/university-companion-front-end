@@ -88,43 +88,57 @@ export default function AcademicPage() {
       const mockCourses: Course[] = [
         {
           id: '1',
-          name: 'Computer Science Fundamentals',
-          code: 'CS 101',
-          instructor: 'Dr. Sarah Chen',
+          name: 'Software Engineering',
+          code: 'IT 3030',
+          instructor: 'Dr. Gihan Dias',
           credits: 3,
           currentGrade: 89,
           assignments: [],
           schedule: [
-            { day: 'Monday', startTime: '10:00', endTime: '11:30', location: 'Engineering Bldg 201', type: 'lecture' },
-            { day: 'Wednesday', startTime: '10:00', endTime: '11:30', location: 'Engineering Bldg 201', type: 'lecture' },
-            { day: 'Friday', startTime: '14:00', endTime: '16:00', location: 'Computer Lab A', type: 'lab' }
+            { day: 'Monday', startTime: '10:00', endTime: '11:00', location: 'IT Faculty - Lecture Hall A', type: 'lecture' },
+            { day: 'Wednesday', startTime: '10:00', endTime: '11:00', location: 'IT Faculty - Lecture Hall A', type: 'lecture' },
+            { day: 'Friday', startTime: '14:00', endTime: '16:00', location: 'IT Faculty - Lab 1', type: 'lab' }
           ]
         },
         {
           id: '2',
-          name: 'Calculus II',
-          code: 'MATH 202',
-          instructor: 'Prof. Michael Johnson',
-          credits: 4,
-          currentGrade: 92,
+          name: 'Database Management Systems',
+          code: 'IT 3020',
+          instructor: 'Dr. Chathura Rajapakse',
+          credits: 3,
+          currentGrade: 85,
           assignments: [],
           schedule: [
-            { day: 'Tuesday', startTime: '09:00', endTime: '10:30', location: 'Math Building 105', type: 'lecture' },
-            { day: 'Thursday', startTime: '09:00', endTime: '10:30', location: 'Math Building 105', type: 'lecture' }
+            { day: 'Tuesday', startTime: '14:00', endTime: '15:00', location: 'IT Faculty - Lecture Hall B', type: 'lecture' },
+            { day: 'Thursday', startTime: '14:00', endTime: '15:00', location: 'IT Faculty - Lecture Hall B', type: 'lecture' },
+            { day: 'Friday', startTime: '10:00', endTime: '12:00', location: 'IT Faculty - Database Lab', type: 'lab' }
           ]
         },
         {
           id: '3',
-          name: 'Physics I',
-          code: 'PHYS 151',
-          instructor: 'Dr. Elena Rodriguez',
-          credits: 4,
-          currentGrade: 85,
+          name: 'Computer Networks',
+          code: 'IT 3040',
+          instructor: 'Prof. Sampath Deegalla',
+          credits: 3,
+          currentGrade: 92,
           assignments: [],
           schedule: [
-            { day: 'Monday', startTime: '14:00', endTime: '15:30', location: 'Science Center 301', type: 'lecture' },
-            { day: 'Wednesday', startTime: '14:00', endTime: '15:30', location: 'Science Center 301', type: 'lecture' },
-            { day: 'Friday', startTime: '10:00', endTime: '12:00', location: 'Physics Lab B', type: 'lab' }
+            { day: 'Monday', startTime: '08:00', endTime: '09:00', location: 'IT Faculty - Lecture Hall C', type: 'lecture' },
+            { day: 'Wednesday', startTime: '08:00', endTime: '09:00', location: 'IT Faculty - Lecture Hall C', type: 'lecture' },
+            { day: 'Thursday', startTime: '10:00', endTime: '12:00', location: 'IT Faculty - Network Lab', type: 'lab' }
+          ]
+        },
+        {
+          id: '4',
+          name: 'Human Computer Interaction',
+          code: 'IT 3050',
+          instructor: 'Dr. Dulani Meedeniya',
+          credits: 2,
+          currentGrade: 88,
+          assignments: [],
+          schedule: [
+            { day: 'Tuesday', startTime: '10:00', endTime: '11:00', location: 'IT Faculty - Lecture Hall D', type: 'lecture' },
+            { day: 'Thursday', startTime: '15:00', endTime: '17:00', location: 'IT Faculty - UX Lab', type: 'lab' }
           ]
         }
       ];
@@ -133,56 +147,67 @@ export default function AcademicPage() {
       const mockAssignments: Assignment[] = [
         {
           id: '1',
-          title: 'Data Structures Implementation',
-          course: 'CS 101',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+          title: 'Software Requirements Analysis',
+          course: 'IT 3030',
+          dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
           type: 'project',
           status: 'in-progress',
           priority: 'high',
-          estimatedHours: 12,
-          completedHours: 7,
+          estimatedHours: 8,
+          completedHours: 5,
           aiSuggestions: [
-            'Break this into smaller 2-hour focused sessions',
-            'Schedule review sessions before the lab periods',
-            'Consider working in the Computer Lab for better resources'
+            'Focus on use case diagrams during your next session',
+            'Schedule review with group members before submission',
+            'Visit Dr. Gihan Dias during office hours for clarification'
           ]
         },
         {
           id: '2',
-          title: 'Integration Techniques Quiz',
-          course: 'MATH 202',
-          dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-          type: 'quiz',
-          status: 'not-started',
+          title: 'Database Design Project',
+          course: 'IT 3020',
+          dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+          type: 'project',
+          status: 'in-progress',
           priority: 'medium',
-          estimatedHours: 3,
-          completedHours: 0,
+          estimatedHours: 12,
+          completedHours: 3,
           aiSuggestions: [
-            'Review chapters 7-9 before attempting practice problems',
-            'Schedule study time right after your Tuesday lecture'
+            'Start with ER diagram design this week',
+            'Use MySQL Workbench for implementation',
+            'Book Database Lab for hands-on testing'
           ]
         },
         {
           id: '3',
-          title: 'Newton&apos;s Laws Lab Report',
-          course: 'PHYS 151',
+          title: 'Network Protocol Analysis',
+          course: 'IT 3040',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          type: 'lab',
+          type: 'assignment',
           status: 'not-started',
-          priority: 'medium',
-          estimatedHours: 4,
-          completedHours: 0
+          priority: 'high',
+          estimatedHours: 6,
+          completedHours: 0,
+          aiSuggestions: [
+            'Use Wireshark for packet analysis',
+            'Focus on TCP/UDP protocols first',
+            'Review lecture notes from Week 8'
+          ]
         },
         {
           id: '4',
-          title: 'Algorithm Analysis Essay',
-          course: 'CS 101',
-          dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-          type: 'essay',
+          title: 'UX Design Prototype',
+          course: 'IT 3050',
+          dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          type: 'project',
           status: 'not-started',
-          priority: 'low',
-          estimatedHours: 6,
-          completedHours: 0
+          priority: 'medium',
+          estimatedHours: 10,
+          completedHours: 0,
+          aiSuggestions: [
+            'Start with user personas and journey mapping',
+            'Use Figma or Adobe XD for prototyping',
+            'Conduct user testing with classmates'
+          ]
         }
       ];
 

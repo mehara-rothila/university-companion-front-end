@@ -67,13 +67,13 @@ export default function ProfilePage() {
   const [userProfile, setUserProfile] = useState<UserProfile>({
     personalInfo: {
       name: 'Mehara Rothila',
-      email: 'mehara.rothila@university.edu',
-      studentId: 'ST2024001337',
-      university: 'Smart University',
-      major: 'Computer Science & AI Ethics',
-      academicYear: 'Junior',
-      phone: '+1 (555) 123-4567',
-      emergencyContact: '+1 (555) 987-6543'
+      email: 'ranawakaramr.22@uom.lk',
+      studentId: '225089N',
+      university: 'University of Moratuwa',
+      major: 'Information Technology (Undergraduate)',
+      academicYear: '3rd Year Undergraduate',
+      phone: '+94 78 710 2992',
+      emergencyContact: '+94 77 987 6543'
     },
     preferences: {
       studyPreferences: ['Quiet Spaces', 'Library', 'Late Night Study'],
@@ -346,11 +346,11 @@ export default function ProfilePage() {
                           : 'bg-white border-gray-300 text-gray-900'
                       } ${!isEditing ? 'opacity-60 cursor-not-allowed' : 'focus:ring-2 focus:ring-purple-500 focus:border-transparent'}`}
                     >
-                      <option value="Freshman">Freshman</option>
-                      <option value="Sophomore">Sophomore</option>
-                      <option value="Junior">Junior</option>
-                      <option value="Senior">Senior</option>
-                      <option value="Graduate">Graduate</option>
+                      <option value="Year 1">Year 1</option>
+                      <option value="Year 2">Year 2</option>
+                      <option value="Year 3">Year 3</option>
+                      <option value="Year 4">Year 4</option>
+                      <option value="Postgraduate">Postgraduate</option>
                     </select>
                   </div>
                 </div>

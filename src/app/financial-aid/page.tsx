@@ -91,80 +91,93 @@ export default function FinancialAidPage() {
 
   // Mock financial profile
   const [financialProfile] = useState<FinancialProfile>({
-    totalIncome: 15000,
-    totalExpenses: 18500,
-    availableAid: 8500,
+    totalIncome: 600000, // LKR per year
+    totalExpenses: 750000, // LKR per year
+    availableAid: 200000, // LKR
     gpa: 3.6,
     creditHours: 15,
-    familyIncome: 45000,
+    familyIncome: 1200000, // LKR per year
     isFirstGen: true,
     hasFinancialNeed: true
   });
 
   // Mock budget data
   const [budgetCategories] = useState<BudgetCategory[]>([
-    { id: '1', name: 'Tuition & Fees', budgeted: 12000, spent: 12000, remaining: 0, color: 'blue' },
-    { id: '2', name: 'Books & Supplies', budgeted: 1200, spent: 850, remaining: 350, color: 'green' },
-    { id: '3', name: 'Housing', budgeted: 8000, spent: 6500, remaining: 1500, color: 'purple' },
-    { id: '4', name: 'Food & Dining', budgeted: 3000, spent: 2800, remaining: 200, color: 'orange' },
-    { id: '5', name: 'Transportation', budgeted: 800, spent: 650, remaining: 150, color: 'teal' },
-    { id: '6', name: 'Personal', budgeted: 1000, spent: 1200, remaining: -200, color: 'red' }
+    { id: '1', name: 'University Fees', budgeted: 120000, spent: 120000, remaining: 0, color: 'blue' },
+    { id: '2', name: 'Books & Supplies', budgeted: 60000, spent: 45000, remaining: 15000, color: 'green' },
+    { id: '3', name: 'Accommodation', budgeted: 240000, spent: 200000, remaining: 40000, color: 'purple' },
+    { id: '4', name: 'Food & Meals', budgeted: 180000, spent: 165000, remaining: 15000, color: 'orange' },
+    { id: '5', name: 'Transportation', budgeted: 48000, spent: 42000, remaining: 6000, color: 'teal' },
+    { id: '6', name: 'Personal', budgeted: 60000, spent: 75000, remaining: -15000, color: 'red' }
   ]);
 
   // Mock aid opportunities
   const [aidOpportunities] = useState<FinancialAidOpportunity[]>([
     {
       id: '1',
-      title: 'Merit-Based Academic Scholarship',
+      title: 'Mahapola Higher Education Scholarship',
       type: 'scholarship',
-      amount: 5000,
-      deadline: new Date('2024-03-15'),
-      eligibility: ['GPA ≥ 3.5', 'Full-time enrollment', 'Academic merit'],
-      requirements: ['Essay submission', 'Transcript', 'Two recommendation letters'],
-      description: 'Renewable scholarship for academically outstanding students.',
-      provider: 'University Foundation',
-      matchPercentage: 95,
+      amount: 60000, // LKR per year
+      deadline: new Date('2024-03-31'),
+      eligibility: ['Sri Lankan citizen', 'GPA ≥ 3.5', 'Family income criteria'],
+      requirements: ['Income certificate', 'Academic transcripts', 'Application form'],
+      description: 'Government scholarship for deserving students based on academic merit and financial need.',
+      provider: 'Mahapola Higher Education Scholarship Trust Fund',
+      matchPercentage: 88,
       isRecommended: true,
       applicationStatus: 'not-started',
       renewableYears: 4
     },
     {
       id: '2',
-      title: 'First-Generation Student Grant',
-      type: 'grant',
-      amount: 3500,
-      deadline: new Date('2024-02-28'),
-      eligibility: ['First-generation college student', 'Financial need demonstrated'],
-      requirements: ['FAFSA completion', 'Parent education verification'],
-      description: 'Need-based grant for first-generation college students.',
-      provider: 'State Education Department',
-      matchPercentage: 88,
+      title: 'UoM Merit Scholarship',
+      type: 'scholarship',
+      amount: 50000, // LKR per semester
+      deadline: new Date('2024-04-15'),
+      eligibility: ['Current UoM student', 'GPA ≥ 3.7', 'Academic excellence'],
+      requirements: ['Academic transcripts', 'Recommendation letters'],
+      description: 'University-specific merit-based scholarship for outstanding academic performance.',
+      provider: 'University of Moratuwa',
+      matchPercentage: 92,
       isRecommended: true,
       applicationStatus: 'in-progress'
     },
     {
       id: '3',
-      title: 'Campus Work-Study Program',
-      type: 'work-study',
-      amount: 2400,
-      deadline: new Date('2024-04-01'),
-      eligibility: ['Enrolled student', 'Available 10-15 hours/week'],
-      requirements: ['Work eligibility verification', 'Schedule availability'],
-      description: 'Part-time employment opportunities on campus.',
-      provider: 'University Employment Services',
-      matchPercentage: 76
+      title: 'Bursary for Needy Students',
+      type: 'grant',
+      amount: 25000, // LKR
+      deadline: new Date('2024-05-30'),
+      eligibility: ['Demonstrated financial need', 'Good academic standing'],
+      requirements: ['Income verification', 'Grama Niladhari certificate'],
+      description: 'Need-based financial assistance for students from low-income families.',
+      provider: 'University Welfare Committee',
+      matchPercentage: 76,
+      applicationStatus: 'not-started'
     },
     {
       id: '4',
-      title: 'Emergency Financial Assistance',
+      title: 'Emergency Student Support Fund',
       type: 'emergency',
-      amount: 1000,
+      amount: 15000, // LKR
       deadline: new Date('2024-12-31'),
-      eligibility: ['Unexpected financial hardship', 'Currently enrolled'],
-      requirements: ['Documentation of emergency', 'Financial counseling'],
-      description: 'Quick assistance for students facing unexpected financial crises.',
-      provider: 'Student Support Services',
-      matchPercentage: 92
+      eligibility: ['Current UoM student', 'Unexpected financial crisis'],
+      requirements: ['Crisis documentation', 'Faculty recommendation'],
+      description: 'Immediate financial support for students facing unexpected hardships.',
+      provider: 'Student Welfare Services UoM',
+      matchPercentage: 84
+    },
+    {
+      id: '5',
+      title: 'Research Assistant Allowance',
+      type: 'work-study',
+      amount: 30000, // LKR per semester
+      deadline: new Date('2024-03-20'),
+      eligibility: ['3rd/4th year student', 'Research interest', 'Professor recommendation'],
+      requirements: ['CV submission', 'Research proposal', 'Faculty endorsement'],
+      description: 'Part-time research assistance positions with academic departments.',
+      provider: 'Research & Development Office UoM',
+      matchPercentage: 71
     }
   ]);
 
