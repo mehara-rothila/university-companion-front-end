@@ -209,65 +209,6 @@ export default function DiningPage() {
           priceRange: '$',
           features: ['Traditional breakfast', 'Local specialties'],
           walkTime: 8
-        },
-          closingTime: '20:00',
-          currentCrowd: 'low',
-          predictedCrowd: [
-            { time: '12:00', level: 'medium' },
-            { time: '13:00', level: 'high' },
-            { time: '14:00', level: 'low' }
-          ],
-          menuTypes: ['Quick Bites', 'Coffee', 'Sandwiches'],
-          specialties: ['Artisan Coffee', 'Fresh Sandwiches', 'Pastries'],
-          rating: 4.5,
-          reviewCount: 892,
-          priceRange: '$',
-          features: ['Grab & Go', 'Coffee shop', 'Study-friendly'],
-          walkTime: 8
-        },
-        {
-          id: '3',
-          name: 'Wellness Kitchen',
-          location: 'Recreation Center',
-          building: 'REC',
-          isOpen: true,
-          openingTime: '11:00',
-          closingTime: '21:00',
-          currentCrowd: 'low',
-          predictedCrowd: [
-            { time: '12:30', level: 'medium' },
-            { time: '17:00', level: 'medium' }
-          ],
-          menuTypes: ['Healthy', 'Organic', 'Plant-based'],
-          specialties: ['Smoothie Bowls', 'Quinoa Salads', 'Protein Plates'],
-          rating: 4.7,
-          reviewCount: 654,
-          priceRange: '$$$',
-          features: ['Organic ingredients', 'Customizable meals', 'Nutrition info'],
-          aiRecommended: true,
-          walkTime: 12
-        },
-        {
-          id: '4',
-          name: 'Late Night Eats',
-          location: 'Library Ground Floor',
-          building: 'LIB',
-          isOpen: false,
-          openingTime: '21:00',
-          closingTime: '02:00',
-          currentCrowd: 'low',
-          predictedCrowd: [
-            { time: '22:00', level: 'medium' },
-            { time: '23:00', level: 'high' },
-            { time: '00:00', level: 'medium' }
-          ],
-          menuTypes: ['Comfort Food', 'Snacks', 'Beverages'],
-          specialties: ['Ramen', 'Pizza slices', 'Energy drinks'],
-          rating: 3.8,
-          reviewCount: 423,
-          priceRange: '$',
-          features: ['24/7 access', 'Study fuel', 'Quick service'],
-          walkTime: 5
         }
       ];
 

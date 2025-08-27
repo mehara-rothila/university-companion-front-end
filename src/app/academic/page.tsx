@@ -182,7 +182,7 @@ export default function AcademicPage() {
           title: 'Network Protocol Analysis',
           course: 'IT 3040',
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          type: 'assignment',
+          type: 'project',
           status: 'not-started',
           priority: 'high',
           estimatedHours: 6,
