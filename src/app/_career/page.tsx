@@ -98,19 +98,7 @@ interface CareerPath {
 }
 
 // InterviewPrep interface - defined for future interview feature implementation
-interface InterviewPrep {
-  id: string;
-  type: 'behavioral' | 'technical' | 'case-study' | 'group' | 'phone' | 'video';
-  question: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  tips: string[];
-  sampleAnswer?: string;
-  relatedSkills: string[];
-}
 
-// Interview preparation functionality - planned for future releases
-console.log('Interview prep interface ready for implementation');
 
 interface NetworkingEvent {
   id: string;
