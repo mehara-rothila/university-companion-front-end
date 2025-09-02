@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Campus Companion - Frontend
 
-## Getting Started
+A Next.js web application for the Smart Campus Companion system - L3 Individual Project at University of Moratuwa.
 
-First, run the development server:
+## 🎯 Project Overview
 
+The Smart Campus Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access campus services, navigation, and personalized assistance.
+
+## ✨ Features
+
+### Core Features
+- **User Authentication** - Secure login and registration system
+- **Interactive Dashboard** - Personalized campus experience
+- **AI Assistant** - Intelligent chatbot for campus queries
+- **Campus Navigation** - Interactive maps and directions
+- **Study Spaces** - Real-time availability tracking
+- **Lost & Found** - Report and search for lost items
+- **Financial Aid Portal** - Scholarship and support applications
+- **Profile Management** - Personal information and preferences
+- **Challenges & Rewards** - Gamified campus engagement
+
+### Additional Services
+- **Library Integration** - Book search and reservation
+- **Wellness Hub** - Mental health and wellness resources
+- **Social Events** - Campus events and community features
+- **Dining Services** - Menu and meal planning
+- **Career Services** - Job opportunities and career guidance
+- **Academic Hub** - Course materials and academic support
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15.4.6
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Lucide React Icons
+- **State Management**: React Context API
+- **HTTP Client**: Axios
+- **Authentication**: JWT tokens with localStorage
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18.0 or higher
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Create environment file:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Configure environment variables in `.env.local`:
+```
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Running the Application
 
-## Learn More
+Development mode:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Build for production:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application will be available at `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── challenges/          # Challenges and rewards system
+│   ├── chatbot/            # AI assistant interface
+│   ├── context/            # React context providers
+│   ├── dashboard/          # Main dashboard page
+│   ├── financial-aid/      # Financial aid portal
+│   ├── library/            # Library services
+│   ├── login/              # User authentication
+│   ├── lost-found/         # Lost and found system
+│   ├── navigation/         # Campus navigation
+│   ├── notifications/      # Notification center
+│   ├── profile/            # User profile management
+│   ├── signup/             # User registration
+│   ├── layout.tsx          # Root layout component
+│   ├── page.tsx            # Home page
+│   └── globals.css         # Global styles
+├── components/
+│   ├── AnimatedBackground.tsx  # Dynamic background effects
+│   └── Navigation.tsx          # Main navigation component
+└── config/                 # Configuration files
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎨 Design Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Glass morphism UI** - Modern frosted glass effects
+- **Responsive Design** - Mobile-first approach
+- **Dark/Light Theme** - User preference system
+- **Animated Backgrounds** - Dynamic visual elements
+- **Gradient Accents** - Purple-blue color scheme
+- **Smooth Transitions** - Enhanced user experience
+
+## 🔌 API Integration
+
+The frontend integrates with the Spring Boot backend for:
+- User authentication and authorization
+- Data persistence and retrieval
+- Real-time updates and notifications
+
+## 🌐 Multilingual Support
+
+The application supports:
+- English (Default)
+- Sinhala (සිංහල)
+- Tamil (தමிழ்)
+
+## 📱 Responsive Features
+
+- Mobile-optimized navigation
+- Touch-friendly interface
+- Adaptive layouts for all screen sizes
+- Progressive Web App capabilities
+
+## 🔒 Security
+
+- JWT token-based authentication
+- Secure API communication
+- Protected routes and components
+- Input validation and sanitization
+
+## 🚧 Development Status
+
+### Currently Available
+- ✅ User Authentication System
+- ✅ Dashboard Interface
+- ✅ Lost & Found Portal
+- ✅ Financial Aid System
+- ✅ Profile Management
+- ✅ Challenges & Rewards
+- ✅ AI Assistant
+- ✅ Library Services
+
+### Coming Soon
+- 🔄 Study Spaces Booking
+- 🔄 Campus Navigation Maps
+- 🔄 Dining Services Integration
+- 🔄 Wellness Hub
+- 🔄 Social Events Platform
+- 🔄 Real-time Notifications
+
+## 📖 Academic Context
+
+This project is part of the L3 Individual Project at the University of Moratuwa, focusing on:
+- Human-centered design principles
+- Ethical AI implementation
+- Modern web development practices
+- User experience optimization
+- Campus digitalization solutions
+
+## 🤝 Contributing
+
+This is an academic project for university coursework. All development follows university guidelines and ethical standards.
+
+## 📄 License
+
+This project is developed for academic purposes as part of university coursework.
