@@ -3,13 +3,12 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
+// import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  // Removed unused isDarkMode variable
-  useDarkMode();
+  const isDarkMode = false;
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -75,11 +74,6 @@ const Navigation = () => {
             Wellness
           </Link>
 
-          {/* Dark Mode Toggle */}
-          <div className="flex items-center">
-            <DarkModeToggle />
-          </div>
-
           {/* Auth Links */}
           <Link 
             href="/login" 
@@ -92,11 +86,6 @@ const Navigation = () => {
 
         {/* Mobile Hamburger button area */}
         <div className="md:hidden flex items-center space-x-3">
-          {/* Dark Mode Toggle for Mobile */}
-          <div className="flex items-center justify-center">
-            <DarkModeToggle />
-          </div>
-
           {/* Hamburger Button */}
           <button 
             type="button" 
