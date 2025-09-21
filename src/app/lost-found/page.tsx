@@ -1,29 +1,14 @@
 // src/app/lost-found/page.tsx
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import lostFoundService, { LostFoundItem, LostFoundStats, LostFoundItemRequest } from '@/services/lostFoundService';
 
-// --- Interfaces ---
-interface LostFoundItem {
-  id: string;
-  type: 'lost' | 'found';
-  title: string;
-  description: string;
-  category: string;
-  location: string;
-  dateReported: Date;
-  imageUrl?: string;
-  reward?: number;
-  contactMethod: 'anonymous' | 'direct';
-  status: 'active' | 'resolved';
-  postedBy: string;
-  priority?: 'high' | 'medium' | 'low';
-  tags: string[];
-}
+// --- Local Interfaces ---
 
 interface ItemCategory {
   id: string;
@@ -52,98 +37,67 @@ export default function LostFoundPage() {
   const [selectedItem, setSelectedItem] = useState<LostFoundItem | null>(null);
   const [itemPosted, setItemPosted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Backend state
+  const [lostFoundItems, setLostFoundItems] = useState<LostFoundItem[]>([]);
+  const [stats, setStats] = useState<LostFoundStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Form state for posting new items
+  const [newItemForm, setNewItemForm] = useState<LostFoundItemRequest>({
+    type: 'LOST',
+    title: '',
+    description: '',
+    category: 'Electronics',
+    location: 'Main Library',
+    contactMethod: 'DIRECT',
+    priority: 'MEDIUM',
+    tags: []
+  });
 
-  // Sample data - in real app would come from API
-  const [lostFoundItems] = useState<LostFoundItem[]>([
-    {
-      id: '1',
-      type: 'lost',
-      title: 'Black iPhone 14 Pro',
-      description: 'Lost my black iPhone 14 Pro with a clear case. Has a small crack on the screen. Contains important work documents.',
-      category: 'Electronics',
-      location: 'Main Library',
-      dateReported: new Date('2024-01-10'),
-      imageUrl: '/api/placeholder/400/300',
-      reward: 50,
-      contactMethod: 'direct',
-      status: 'active',
-      postedBy: 'Sarah M.',
-      priority: 'high',
-      tags: ['iPhone', 'black', 'cracked', 'clear case']
-    },
-    {
-      id: '2',
-      type: 'found',
-      title: 'Blue Backpack with Textbooks',
-      description: 'Found a blue Jansport backpack in the Student Union. Contains several textbooks and notebooks with the name "Alex" written inside.',
-      category: 'Bags & Backpacks',
-      location: 'Student Union',
-      dateReported: new Date('2024-01-12'),
-      imageUrl: '/api/placeholder/400/300',
-      contactMethod: 'anonymous',
-      status: 'active',
-      postedBy: 'Anonymous',
-      priority: 'medium',
-      tags: ['blue', 'Jansport', 'textbooks', 'Alex']
-    },
-    {
-      id: '3',
-      type: 'lost',
-      title: 'My Blue Jansport Backpack',
-      description: 'Lost my blue backpack somewhere on campus. Has my name "Alex" written in my notebooks inside. Really need it back for finals!',
-      category: 'Bags & Backpacks',
-      location: 'Student Union',
-      dateReported: new Date('2024-01-13'),
-      contactMethod: 'direct',
-      status: 'resolved',
-      postedBy: 'Alex K.',
-      priority: 'high',
-      tags: ['blue', 'Jansport', 'Alex', 'notebooks']
-    },
-    {
-      id: '4',
-      type: 'found',
-      title: 'Silver Laptop Charger',
-      description: 'Found a MacBook Pro charger in Engineering Building Room 203. 60W USB-C charger in good condition.',
-      category: 'Electronics',
-      location: 'Engineering Building',
-      dateReported: new Date('2024-01-11'),
-      contactMethod: 'anonymous',
-      status: 'active',
-      postedBy: 'Anonymous',
-      priority: 'low',
-      tags: ['MacBook', 'charger', 'USB-C', '60W']
-    },
-    {
-      id: '5',
-      type: 'lost',
-      title: 'Red Water Bottle - Hydroflask',
-      description: 'Lost my red Hydroflask water bottle with stickers on it. Sentimental value - it was a gift from my sister.',
-      category: 'Personal Items',
-      location: 'Gym & Recreation',
-      dateReported: new Date('2024-01-09'),
-      reward: 20,
-      contactMethod: 'direct',
-      status: 'active',
-      postedBy: 'Jamie L.',
-      priority: 'medium',
-      tags: ['red', 'Hydroflask', 'stickers', 'water bottle']
-    },
-    {
-      id: '6',
-      type: 'found',
-      title: 'Car Keys with Honda Keychain',
-      description: 'Found car keys with a Honda keychain and several other keys. Found near the parking lot behind the dining hall.',
-      category: 'Keys & Accessories',
-      location: 'Dining Hall Parking',
-      dateReported: new Date('2024-01-14'),
-      contactMethod: 'direct',
-      status: 'active',
-      postedBy: 'Mike T.',
-      priority: 'high',
-      tags: ['Honda', 'car keys', 'keychain', 'parking']
+  // Load data on component mount
+  useEffect(() => {
+    loadItems();
+    loadStats();
+  }, []);
+
+  // Reload items when filters change
+  useEffect(() => {
+    loadItems();
+  }, [viewMode, selectedCategory, selectedLocation, searchQuery]);
+
+  const loadItems = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const filters = {
+        type: viewMode === 'all' ? undefined : viewMode.toUpperCase(),
+        category: selectedCategory === 'all' ? undefined : selectedCategory,
+        location: selectedLocation === 'all' ? undefined : selectedLocation,
+        search: searchQuery || undefined,
+        status: 'ACTIVE'
+      };
+      
+      const items = await lostFoundService.getItems(filters);
+      setLostFoundItems(items);
+    } catch (err) {
+      setError('Failed to load items. Please try again.');
+      console.error('Error loading items:', err);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const loadStats = async () => {
+    try {
+      const statsData = await lostFoundService.getStats();
+      setStats(statsData);
+    } catch (err) {
+      console.error('Error loading stats:', err);
+    }
+  };
 
   const categories: ItemCategory[] = [
     {
@@ -153,64 +107,54 @@ export default function LostFoundPage() {
       count: lostFoundItems.length,
       color: 'purple'
     },
-    {
-      id: 'Electronics',
-      name: 'Electronics',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>,
-      count: lostFoundItems.filter(item => item.category === 'Electronics').length,
+    ...(stats?.categories || []).map(category => ({
+      id: category,
+      name: category,
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>,
+      count: lostFoundItems.filter(item => item.category === category).length,
       color: 'blue'
-    },
-    {
-      id: 'Bags & Backpacks',
-      name: 'Bags & Backpacks',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 10H6L5 9z" /></svg>,
-      count: lostFoundItems.filter(item => item.category === 'Bags & Backpacks').length,
-      color: 'green'
-    },
-    {
-      id: 'Keys & Accessories',
-      name: 'Keys & Accessories',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>,
-      count: lostFoundItems.filter(item => item.category === 'Keys & Accessories').length,
-      color: 'yellow'
-    },
-    {
-      id: 'Personal Items',
-      name: 'Personal Items',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
-      count: lostFoundItems.filter(item => item.category === 'Personal Items').length,
-      color: 'pink'
-    }
+    }))
   ];
 
   const locations: LocationArea[] = [
     { id: 'all', name: 'All Locations', zone: 'Campus Wide', frequency: 100 },
-    { id: 'library', name: 'Main Library', zone: 'Academic', frequency: 25 },
-    { id: 'union', name: 'Student Union', zone: 'Social', frequency: 30 },
-    { id: 'engineering', name: 'Engineering Building', zone: 'Academic', frequency: 15 },
-    { id: 'gym', name: 'Gym & Recreation', zone: 'Recreation', frequency: 20 },
-    { id: 'dining', name: 'Dining Areas', zone: 'Food Services', frequency: 35 },
-    { id: 'parking', name: 'Parking Lots', zone: 'Transportation', frequency: 18 }
+    ...(stats?.locations || []).map(location => ({
+      id: location.toLowerCase().replace(/\s+/g, '-'),
+      name: location,
+      zone: 'Campus',
+      frequency: Math.floor(Math.random() * 50) + 10
+    }))
   ];
 
-  // Filter items based on current filters
-  const filteredItems = lostFoundItems.filter(item => {
-    const matchesType = viewMode === 'all' || item.type === viewMode;
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    const matchesLocation = selectedLocation === 'all' || item.location.toLowerCase().includes(selectedLocation.toLowerCase());
-    const matchesSearch = searchQuery === '' || 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesType && matchesCategory && matchesLocation && matchesSearch;
-  });
+  // Items are already filtered by the backend, so we just use them directly
+  const filteredItems = lostFoundItems;
 
   // Handle item posting
-  const handlePostItem = () => {
-    setItemPosted(true);
-    setShowPostModal(false);
-    setTimeout(() => setItemPosted(false), 5000);
+  const handlePostItem = async () => {
+    try {
+      setLoading(true);
+      await lostFoundService.createItem(newItemForm);
+      setItemPosted(true);
+      setShowPostModal(false);
+      setNewItemForm({
+        type: 'LOST',
+        title: '',
+        description: '',
+        category: 'Electronics',
+        location: 'Main Library',
+        contactMethod: 'DIRECT',
+        priority: 'MEDIUM',
+        tags: []
+      });
+      await loadItems();
+      await loadStats();
+      setTimeout(() => setItemPosted(false), 5000);
+    } catch (err) {
+      setError('Failed to post item. Please try again.');
+      console.error('Error posting item:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle contact
@@ -221,16 +165,17 @@ export default function LostFoundPage() {
 
   // Get status color
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'active': return 'text-green-500';
       case 'resolved': return 'text-purple-500';
+      case 'expired': return 'text-red-500';
       default: return 'text-gray-500';
     }
   };
 
   // Get priority color
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
+    switch (priority.toLowerCase()) {
       case 'high': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
       case 'medium': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
       case 'low': return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
@@ -316,22 +261,36 @@ export default function LostFoundPage() {
             </div>
           )}
 
+          {/* Error Message */}
+          {error && (
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'} animate-fade-in`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
+                  {error}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Statistics Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{lostFoundItems.length}</div>
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.totalItems || 0}</div>
               <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Total Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{lostFoundItems.filter(item => item.type === 'lost').length}</div>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats?.lostItems || 0}</div>
               <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Lost Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{lostFoundItems.filter(item => item.type === 'found').length}</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats?.foundItems || 0}</div>
               <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Found Items</div>
             </div>
             <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} animate-fade-in`}>
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{lostFoundItems.filter(item => item.status === 'resolved').length}</div>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.resolvedItems || 0}</div>
               <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Items Reunited</div>
             </div>
           </div>
@@ -371,9 +330,9 @@ export default function LostFoundPage() {
                       {/* Type Filter */}
                       <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
                         {[
-                          { id: 'all', name: 'All Items', count: lostFoundItems.length },
-                          { id: 'lost', name: 'Lost', count: lostFoundItems.filter(i => i.type === 'lost').length },
-                          { id: 'found', name: 'Found', count: lostFoundItems.filter(i => i.type === 'found').length }
+                          { id: 'all', name: 'All Items', count: stats?.totalItems || 0 },
+                          { id: 'lost', name: 'Lost', count: stats?.lostItems || 0 },
+                          { id: 'found', name: 'Found', count: stats?.foundItems || 0 }
                         ].map((type) => (
                           <button
                             key={type.id}
@@ -447,20 +406,29 @@ export default function LostFoundPage() {
                   </div>
                 </div>
 
+                {/* Loading State */}
+                {loading && (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading items...</p>
+                  </div>
+                )}
+
                 {/* Items Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredItems.map((item) => (
-                    <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200 hover:shadow-md`}>
+                {!loading && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredItems.map((item) => (
+                      <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200 hover:shadow-md`}>
                       
                       {/* Item Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-2">
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            item.type === 'lost' 
+                            item.type === 'LOST' 
                               ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' 
                               : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                           }`}>
-                            {item.type.toUpperCase()}
+                            {item.type}
                           </span>
                           {item.priority && (
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(item.priority)}`}>
@@ -500,7 +468,7 @@ export default function LostFoundPage() {
                             <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{item.location}</span>
                           </div>
                           <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {item.dateReported.toLocaleDateString()}
+                            {new Date(item.dateReported).toLocaleDateString()}
                           </span>
                         </div>
 
@@ -549,9 +517,10 @@ export default function LostFoundPage() {
                       </div>
                     </div>
                   ))}
-                </div>
+                  </div>
+                )}
 
-                {filteredItems.length === 0 && (
+                {!loading && filteredItems.length === 0 && (
                   <div className="text-center py-12">
                     <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -581,7 +550,7 @@ export default function LostFoundPage() {
 
                 {/* User's Items */}
                 <div className="space-y-4">
-                  {lostFoundItems.filter(item => item.postedBy.includes('Alex') || item.postedBy.includes('Sarah')).map((item) => (
+                  {lostFoundItems.filter(item => item.postedByUserId === 1).map((item) => (
                     <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}>
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -590,14 +559,14 @@ export default function LostFoundPage() {
                               {item.title}
                             </h3>
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              item.type === 'lost' 
+                              item.type === 'LOST' 
                                 ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' 
                                 : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                             }`}>
-                              {item.type.toUpperCase()}
+                              {item.type}
                             </span>
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              item.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                              item.status === 'ACTIVE' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                               'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
                             }`}>
                               {item.status}
@@ -611,7 +580,7 @@ export default function LostFoundPage() {
                               📍 {item.location}
                             </span>
                             <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {item.dateReported.toLocaleDateString()}
+                              {new Date(item.dateReported).toLocaleDateString()}
                             </span>
                             {item.reward && (
                               <span className={`${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
@@ -724,10 +693,24 @@ export default function LostFoundPage() {
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Item Status</label>
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="p-4 border-2 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg text-center font-medium">
+                    <button 
+                      onClick={() => setNewItemForm({...newItemForm, type: 'LOST'})}
+                      className={`p-4 border-2 rounded-lg text-center font-medium transition-all duration-200 ${
+                        newItemForm.type === 'LOST'
+                          ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
+                          : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 opacity-50'
+                      }`}
+                    >
                       📢 I Lost Something
                     </button>
-                    <button className="p-4 border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg text-center font-medium">
+                    <button 
+                      onClick={() => setNewItemForm({...newItemForm, type: 'FOUND'})}
+                      className={`p-4 border-2 rounded-lg text-center font-medium transition-all duration-200 ${
+                        newItemForm.type === 'FOUND'
+                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
+                          : 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 opacity-50'
+                      }`}
+                    >
                       🎯 I Found Something
                     </button>
                   </div>
@@ -739,6 +722,8 @@ export default function LostFoundPage() {
                     <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Item Title</label>
                     <input
                       type="text"
+                      value={newItemForm.title}
+                      onChange={(e) => setNewItemForm({...newItemForm, title: e.target.value})}
                       placeholder="e.g., Black iPhone 14 Pro"
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                         isDarkMode 
@@ -750,17 +735,20 @@ export default function LostFoundPage() {
 
                   <div>
                     <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Category</label>
-                    <select className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
-                      <option>Electronics</option>
-                      <option>Bags & Backpacks</option>
-                      <option>Keys & Accessories</option>
-                      <option>Personal Items</option>
-                      <option>Clothing</option>
-                      <option>Other</option>
+                    <select 
+                      value={newItemForm.category}
+                      onChange={(e) => setNewItemForm({...newItemForm, category: e.target.value})}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Bags & Backpacks">Bags & Backpacks</option>
+                      <option value="Keys & Accessories">Keys & Accessories</option>
+                      <option value="Personal Items">Personal Items</option>
+                      <option value="Clothing">Clothing</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                 </div>
@@ -769,6 +757,8 @@ export default function LostFoundPage() {
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Description</label>
                   <textarea
                     rows={4}
+                    value={newItemForm.description}
+                    onChange={(e) => setNewItemForm({...newItemForm, description: e.target.value})}
                     placeholder="Provide detailed description including color, brand, distinctive features..."
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                       isDarkMode 
@@ -780,18 +770,21 @@ export default function LostFoundPage() {
 
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Location</label>
-                  <select className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                    isDarkMode 
-                      ? 'bg-gray-700 border-gray-600 text-gray-100' 
-                      : 'bg-white border-gray-300 text-gray-900'
-                  } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
-                    <option>Main Library</option>
-                    <option>Student Union</option>
-                    <option>Engineering Building</option>
-                    <option>Gym & Recreation</option>
-                    <option>Dining Areas</option>
-                    <option>Parking Lots</option>
-                    <option>Other</option>
+                  <select 
+                    value={newItemForm.location}
+                    onChange={(e) => setNewItemForm({...newItemForm, location: e.target.value})}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}>
+                    <option value="Main Library">Main Library</option>
+                    <option value="Student Union">Student Union</option>
+                    <option value="Engineering Building">Engineering Building</option>
+                    <option value="Gym & Recreation">Gym & Recreation</option>
+                    <option value="Dining Areas">Dining Areas</option>
+                    <option value="Parking Lots">Parking Lots</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
@@ -822,6 +815,8 @@ export default function LostFoundPage() {
                     <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>$</span>
                     <input
                       type="number"
+                      value={newItemForm.reward || ''}
+                      onChange={(e) => setNewItemForm({...newItemForm, reward: e.target.value ? parseFloat(e.target.value) : undefined})}
                       placeholder="0"
                       min="0"
                       className={`w-24 px-4 py-3 rounded-lg border transition-all duration-200 ${
@@ -839,11 +834,25 @@ export default function LostFoundPage() {
                   <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>Contact Preferences</h4>
                   <div className="space-y-2">
                     <label className="flex items-center">
-                      <input type="radio" name="contact" value="direct" className="mr-3" defaultChecked />
+                      <input 
+                        type="radio" 
+                        name="contact" 
+                        value="DIRECT" 
+                        checked={newItemForm.contactMethod === 'DIRECT'}
+                        onChange={(e) => setNewItemForm({...newItemForm, contactMethod: e.target.value as 'DIRECT' | 'ANONYMOUS'})}
+                        className="mr-3" 
+                      />
                       <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Allow direct contact</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="radio" name="contact" value="anonymous" className="mr-3" />
+                      <input 
+                        type="radio" 
+                        name="contact" 
+                        value="ANONYMOUS" 
+                        checked={newItemForm.contactMethod === 'ANONYMOUS'}
+                        onChange={(e) => setNewItemForm({...newItemForm, contactMethod: e.target.value as 'DIRECT' | 'ANONYMOUS'})}
+                        className="mr-3" 
+                      />
                       <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Anonymous contact only</span>
                     </label>
                   </div>

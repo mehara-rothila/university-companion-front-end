@@ -1,0 +1,169 @@
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:8080/api';
+
+export interface LostFoundItem {
+  id: number;
+  type: 'LOST' | 'FOUND';
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  dateReported: string;
+  imageUrl?: string;
+  reward?: number;
+  contactMethod: 'ANONYMOUS' | 'DIRECT';
+  status: 'ACTIVE' | 'RESOLVED' | 'EXPIRED';
+  postedBy: string;
+  postedByUserId: number;
+  priority?: 'HIGH' | 'MEDIUM' | 'LOW';
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LostFoundItemRequest {
+  type: 'LOST' | 'FOUND';
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  imageUrl?: string;
+  reward?: number;
+  contactMethod: 'ANONYMOUS' | 'DIRECT';
+  priority?: 'HIGH' | 'MEDIUM' | 'LOW';
+  tags?: string[];
+}
+
+export interface LostFoundStats {
+  totalItems: number;
+  lostItems: number;
+  foundItems: number;
+  resolvedItems: number;
+  categories: string[];
+  locations: string[];
+}
+
+export interface LostFoundFilters {
+  type?: string;
+  category?: string;
+  location?: string;
+  search?: string;
+  status?: string;
+}
+
+class LostFoundService {
+  private api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Get all items with optional filters
+  async getItems(filters?: LostFoundFilters): Promise<LostFoundItem[]> {
+    try {
+      const params = new URLSearchParams();
+      
+      if (filters?.type && filters.type !== 'all') {
+        params.append('type', filters.type);
+      }
+      if (filters?.category && filters.category !== 'all') {
+        params.append('category', filters.category);
+      }
+      if (filters?.location && filters.location !== 'all') {
+        params.append('location', filters.location);
+      }
+      if (filters?.search) {
+        params.append('search', filters.search);
+      }
+      if (filters?.status) {
+        params.append('status', filters.status);
+      }
+
+      const response = await this.api.get(`/lost-found/items?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching lost-found items:', error);
+      throw error;
+    }
+  }
+
+  // Get a single item by ID
+  async getItemById(id: number): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.get(`/lost-found/items/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching lost-found item:', error);
+      throw error;
+    }
+  }
+
+  // Create a new item
+  async createItem(item: LostFoundItemRequest): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.post('/lost-found/items', item);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating lost-found item:', error);
+      throw error;
+    }
+  }
+
+  // Update an existing item
+  async updateItem(id: number, item: LostFoundItemRequest): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.put(`/lost-found/items/${id}`, item);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating lost-found item:', error);
+      throw error;
+    }
+  }
+
+  // Update item status
+  async updateItemStatus(id: number, status: string): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.put(`/lost-found/items/${id}/status?status=${status}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating item status:', error);
+      throw error;
+    }
+  }
+
+  // Delete an item
+  async deleteItem(id: number): Promise<void> {
+    try {
+      await this.api.delete(`/lost-found/items/${id}`);
+    } catch (error) {
+      console.error('Error deleting lost-found item:', error);
+      throw error;
+    }
+  }
+
+  // Get items posted by a specific user
+  async getUserItems(userId: number): Promise<LostFoundItem[]> {
+    try {
+      const response = await this.api.get(`/lost-found/items/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user items:', error);
+      throw error;
+    }
+  }
+
+  // Get statistics
+  async getStats(): Promise<LostFoundStats> {
+    try {
+      const response = await this.api.get('/lost-found/stats');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching lost-found stats:', error);
+      throw error;
+    }
+  }
+}
+
+export default new LostFoundService();
