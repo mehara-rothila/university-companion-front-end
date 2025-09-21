@@ -485,12 +485,12 @@ export default function LostFoundPage() {
 
                         {/* Tags */}
                         <div className="flex flex-wrap gap-1">
-                          {item.tags.slice(0, 3).map(tag => (
+                          {item.tags && item.tags.slice(0, 3).map(tag => (
                             <span key={tag} className={`px-2 py-1 text-xs rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
                               #{tag}
                             </span>
                           ))}
-                          {item.tags.length > 3 && (
+                          {item.tags && item.tags.length > 3 && (
                             <span className={`px-2 py-1 text-xs rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
                               +{item.tags.length - 3}
                             </span>
