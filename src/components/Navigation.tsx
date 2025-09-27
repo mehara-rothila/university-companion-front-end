@@ -4,11 +4,13 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart } from 'lucide-react';
+import { useAuth } from '@/app/context/AuthContext';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isDarkMode = false;
+  const { user, isAuthenticated, logout } = useAuth();
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -75,13 +77,30 @@ const Navigation = () => {
           </Link>
 
           {/* Auth Links */}
-          <Link 
-            href="/login" 
-            className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center" 
-            onClick={handleNavigation}
-          >
-            <LogIn className="inline h-5 w-5 mr-1" /> Login
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-700 dark:text-gray-300">
+                Hi, {user?.firstName}!
+              </span>
+              <button
+                onClick={() => {
+                  logout();
+                  handleNavigation();
+                }}
+                className="text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+              >
+                <LogOut className="inline h-5 w-5 mr-1" /> Logout
+              </button>
+            </div>
+          ) : (
+            <Link 
+              href="/login" 
+              className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center" 
+              onClick={handleNavigation}
+            >
+              <LogIn className="inline h-5 w-5 mr-1" /> Login
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Hamburger button area */}
@@ -178,20 +197,39 @@ const Navigation = () => {
 
           {/* Mobile Auth Buttons */}
           <div className="pt-3 space-y-3">
-            <Link 
-              href="/onboarding" 
-              className="mobile-nav-link flex items-center" 
-              onClick={handleNavigation}
-            >
-              <UserPlus className="inline h-5 w-5 mr-2"/> Get Started
-            </Link>
-            <Link 
-              href="/login" 
-              className="mobile-login-button w-full flex items-center justify-center" 
-              onClick={handleNavigation}
-            >
-              <LogIn className="inline h-5 w-5 mr-2" /> Sign In
-            </Link>
+            {isAuthenticated ? (
+              <div className="space-y-3">
+                <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center">
+                  Hi, {user?.firstName}!
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    handleNavigation();
+                  }}
+                  className="mobile-login-button w-full flex items-center justify-center bg-red-600 hover:bg-red-700"
+                >
+                  <LogOut className="inline h-5 w-5 mr-2" /> Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link 
+                  href="/onboarding" 
+                  className="mobile-nav-link flex items-center" 
+                  onClick={handleNavigation}
+                >
+                  <UserPlus className="inline h-5 w-5 mr-2"/> Get Started
+                </Link>
+                <Link 
+                  href="/login" 
+                  className="mobile-login-button w-full flex items-center justify-center" 
+                  onClick={handleNavigation}
+                >
+                  <LogIn className="inline h-5 w-5 mr-2" /> Sign In
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
