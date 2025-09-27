@@ -7,6 +7,7 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import ImageUpload from '@/components/ImageUpload';
 import lostFoundService, { LostFoundItem, LostFoundStats, LostFoundItemRequest } from '@/services/lostFoundService';
 
 // --- Local Interfaces ---
@@ -163,6 +164,25 @@ export default function LostFoundPage() {
   const handleContact = (item: LostFoundItem) => {
     setSelectedItem(item);
     setShowContactModal(true);
+  };
+
+  // Handle delete item
+  const handleDeleteItem = async (itemId: number) => {
+    if (!confirm('Are you sure you want to delete this item?')) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await lostFoundService.deleteItem(itemId);
+      await loadItems();
+      await loadStats();
+    } catch (err) {
+      setError('Failed to delete item. Please try again.');
+      console.error('Error deleting item:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Get status color
@@ -455,12 +475,28 @@ export default function LostFoundPage() {
                         </span>
                       </div>
 
-                      {/* Item Image Placeholder */}
+                      {/* Item Image */}
                       {item.imageUrl && (
-                        <div className="w-full h-40 bg-gray-200 dark:bg-gray-600 rounded-lg mb-4 flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                        <div className="w-full h-40 rounded-lg mb-4 overflow-hidden bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                          <img 
+                            src={`http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`} 
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Show placeholder when image fails to load
+                              e.currentTarget.style.display = 'none';
+                              const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (placeholder) placeholder.style.display = 'flex';
+                            }}
+                          />
+                          <div className="hidden items-center justify-center text-center p-4">
+                            <div>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <p className="text-xs text-gray-500">Image attached</p>
+                            </div>
+                          </div>
                         </div>
                       )}
 
@@ -607,7 +643,10 @@ export default function LostFoundPage() {
                           <button className={`px-4 py-2 text-sm ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg transition-all duration-200`}>
                             Edit
                           </button>
-                          <button className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200">
+                          <button 
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200"
+                          >
                             Remove
                           </button>
                         </div>
@@ -803,24 +842,11 @@ export default function LostFoundPage() {
                 </div>
 
                 {/* Photo Upload */}
-                <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Photo (Optional)</label>
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'border-gray-600 hover:border-purple-500 bg-gray-700/50' 
-                        : 'border-gray-300 hover:border-purple-500 bg-gray-50'
-                    }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-12 w-12 mx-auto mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Click to upload photo</p>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Helps others identify your item</p>
-                  </div>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
-                </div>
+                <ImageUpload
+                  onImageUpload={(imageUrl) => setNewItemForm({...newItemForm, imageUrl})}
+                  currentImage={newItemForm.imageUrl}
+                  onImageRemove={() => setNewItemForm({...newItemForm, imageUrl: undefined})}
+                />
 
                 {/* Reward */}
                 <div>
