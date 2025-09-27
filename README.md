@@ -1,106 +1,196 @@
 # Smart Campus Companion - Frontend
 
-A Next.js web application for the Smart Campus Companion system - L3 Individual Project at University of Moratuwa.
+A modern, responsive Next.js web application for the Smart Campus Companion system - L3 Individual Project at University of Moratuwa.
 
 ## 🎯 Project Overview
 
-The Smart Campus Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access campus services, navigation, and personalized assistance.
+The Smart Campus Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access campus services, navigation, and personalized assistance with real-time data integration and secure user management.
 
 ## ✨ Features
 
-### Core Features
-- **User Authentication** - Secure login and registration system
-- **Interactive Dashboard** - Personalized campus experience
-- **AI Assistant** - Intelligent chatbot for campus queries
-- **Campus Navigation** - Interactive maps and directions
+### 🔐 Authentication System
+- **JWT-based Authentication** - Secure login and registration
+- **Session Management** - Automatic token refresh and logout
+- **Protected Routes** - Role-based access control
+- **User Context** - Global authentication state management
+
+### 📚 Lost & Found System (Fully Implemented)
+- **Item Management** - Post lost or found items with detailed descriptions
+- **AWS S3 Image Upload** - Secure photo upload with 10MB limit
+- **Advanced Search & Filtering** - Filter by category, location, type, status
+- **Real-time Statistics** - Live item counts and success metrics
+- **User Dashboard** - Manage your posted items
+- **Contact System** - Anonymous and direct contact options
+- **Item Removal** - Delete your posted items with confirmation
+- **Success Stories** - Community achievements showcase
+
+### 🎨 User Experience Features
+- **Dark/Light Mode Toggle** - Persistent theme preference
+- **Responsive Design** - Mobile-first approach with Tailwind CSS
+- **Animated Backgrounds** - Dynamic mathematical visualizations
+- **Loading States** - Smooth transitions and user feedback
+- **Error Handling** - Graceful error management with user-friendly messages
+- **Form Validation** - Real-time input validation and feedback
+
+### 🗺️ Navigation & Campus Services
+- **Interactive Campus Maps** - Location finder and directions
+- **Library Integration** - Book search and reservation system
 - **Study Spaces** - Real-time availability tracking
-- **Lost & Found** - Report and search for lost items
+- **Campus Information** - Quick access to university services
+
+### 📱 Additional Features
+- **AI Assistant Interface** - Chatbot for campus queries
 - **Financial Aid Portal** - Scholarship and support applications
 - **Profile Management** - Personal information and preferences
 - **Challenges & Rewards** - Gamified campus engagement
-
-### Additional Services
-- **Library Integration** - Book search and reservation
-- **Wellness Hub** - Mental health and wellness resources
-- **Social Events** - Campus events and community features
-- **Dining Services** - Menu and meal planning
-- **Career Services** - Job opportunities and career guidance
-- **Academic Hub** - Course materials and academic support
+- **Notification System** - Real-time updates and alerts
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15.4.6
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Lucide React Icons
+### Core Technologies
+- **Framework**: Next.js 15.4.6 (React 19)
+- **Language**: TypeScript 5.0+
+- **Styling**: Tailwind CSS 3.4+
 - **State Management**: React Context API
-- **HTTP Client**: Axios
+- **Routing**: Next.js App Router
+
+### Development Tools
+- **HTTP Client**: Axios for API communication
 - **Authentication**: JWT tokens with localStorage
+- **Icons**: Heroicons and Lucide React
+- **Image Upload**: AWS S3 integration
+- **Form Handling**: Native React with validation
+- **Error Boundary**: React error handling
+
+### Build & Deployment
+- **Package Manager**: npm/yarn
+- **Linting**: ESLint with TypeScript
+- **Code Formatting**: Prettier (optional)
+- **Deployment**: Vercel-ready configuration
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18.0 or higher
-- npm or yarn package manager
+- **Node.js**: 18.0 or higher
+- **npm**: 8.0+ or **yarn**: 1.22+
+- **Backend API**: Running on port 8080
+- **Browser**: Modern browser with ES6 support
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
+1. **Clone the Repository**
+```bash
+git clone <repository-url>
+cd "3rd year project"
+```
+
+2. **Install Dependencies**
 ```bash
 npm install
+# or
+yarn install
 ```
 
-3. Create environment file:
-```bash
-cp .env.example .env.local
+3. **Environment Setup**
+Create `.env.local` file in the root directory:
+```env
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_APP_NAME=Smart Campus Companion
+
+# Optional: Additional configuration
+NEXT_PUBLIC_AWS_REGION=us-east-1
+NEXT_PUBLIC_MAX_FILE_SIZE=10485760
 ```
 
-4. Configure environment variables in `.env.local`:
-```
-NEXT_PUBLIC_API_URL=http://localhost:8080
-```
-
-### Running the Application
-
-Development mode:
+4. **Start Development Server**
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
-Build for production:
+5. **Access Application**
+- Frontend: `http://localhost:3000`
+- Ensure backend is running on `http://localhost:8080`
+
+### Production Build
+
 ```bash
+# Build for production
 npm run build
-npm start
-```
 
-The application will be available at `http://localhost:3000`
+# Start production server
+npm start
+
+# Or deploy to Vercel
+vercel --prod
+```
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app/
-│   ├── challenges/          # Challenges and rewards system
-│   ├── chatbot/            # AI assistant interface
-│   ├── context/            # React context providers
-│   ├── dashboard/          # Main dashboard page
-│   ├── financial-aid/      # Financial aid portal
-│   ├── library/            # Library services
-│   ├── login/              # User authentication
-│   ├── lost-found/         # Lost and found system
-│   ├── navigation/         # Campus navigation
-│   ├── notifications/      # Notification center
-│   ├── profile/            # User profile management
-│   ├── signup/             # User registration
-│   ├── layout.tsx          # Root layout component
-│   ├── page.tsx            # Home page
-│   └── globals.css         # Global styles
-├── components/
-│   ├── AnimatedBackground.tsx  # Dynamic background effects
-│   └── Navigation.tsx          # Main navigation component
-└── config/                 # Configuration files
+├── app/                          # Next.js App Router
+│   ├── context/                  # React Context Providers
+│   │   ├── AuthContext.tsx       # Authentication state management
+│   │   └── DarkModeContext.tsx   # Theme management
+│   ├── login/                    # Authentication Pages
+│   │   └── page.tsx              # Login page
+│   ├── signup/                   # User Registration
+│   │   └── page.tsx              # Signup page
+│   ├── lost-found/              # Lost & Found System (Fully Implemented)
+│   │   └── page.tsx              # Main Lost & Found interface
+│   ├── dashboard/               # User Dashboard
+│   │   └── page.tsx              # Personal dashboard
+│   ├── library/                 # Library Services
+│   │   └── page.tsx              # Library integration
+│   ├── navigation/              # Campus Navigation
+│   │   └── page.tsx              # Interactive maps
+│   ├── profile/                 # User Management
+│   │   └── page.tsx              # Profile settings
+│   ├── financial-aid/          # Financial Services
+│   │   └── page.tsx              # Aid applications
+│   ├── chatbot/                # AI Assistant
+│   │   └── page.tsx              # Chatbot interface
+│   ├── challenges/             # Gamification
+│   │   └── page.tsx              # Challenges system
+│   ├── notifications/          # Alerts & Updates
+│   │   └── page.tsx              # Notification center
+│   ├── layout.tsx              # Root layout component
+│   ├── page.tsx                # Home page
+│   ├── globals.css             # Global Tailwind styles
+│   └── providers.tsx           # Context providers wrapper
+├── components/                   # Reusable UI Components
+│   ├── Navigation.tsx           # Main navigation bar
+│   ├── AnimatedBackground.tsx   # Dynamic background component
+│   └── ImageUpload.tsx          # AWS S3 image upload component
+├── services/                    # API Service Layer
+│   └── lostFoundService.ts      # Lost & Found API calls
+└── config/                      # Configuration files
+    └── (configuration files)
 ```
+
+### Key Files Explanation
+
+#### Core Components
+- **`AuthContext.tsx`**: JWT authentication, login/logout state management
+- **`DarkModeContext.tsx`**: Theme switching with localStorage persistence
+- **`Navigation.tsx`**: Responsive navigation with user state integration
+- **`ImageUpload.tsx`**: AWS S3 file upload with validation and preview
+
+#### Service Layer
+- **`lostFoundService.ts`**: Complete CRUD operations for Lost & Found system
+  - Create, read, update, delete items
+  - Image upload integration
+  - Advanced filtering and search
+  - User-specific item management
+
+#### Page Components
+- **`lost-found/page.tsx`**: Full-featured Lost & Found system
+- **`login/page.tsx`**: Authentication with form validation
+- **`dashboard/page.tsx`**: Personalized user dashboard
+- **`profile/page.tsx`**: User settings and preferences
 
 ## 🎨 Design Features
 
@@ -113,10 +203,87 @@ src/
 
 ## 🔌 API Integration
 
-The frontend integrates with the Spring Boot backend for:
-- User authentication and authorization
-- Data persistence and retrieval
-- Real-time updates and notifications
+### Backend Communication
+The frontend integrates with the Spring Boot backend (port 8080) for:
+
+#### Authentication Endpoints
+```typescript
+POST /api/auth/login        // User login
+POST /api/auth/register     // User registration
+POST /api/auth/refresh      // Token refresh
+```
+
+#### Lost & Found Endpoints
+```typescript
+GET    /api/lost-found/items           // Get all items with filters
+GET    /api/lost-found/items/{id}      // Get specific item
+POST   /api/lost-found/items           // Create new item
+PUT    /api/lost-found/items/{id}      // Update item
+DELETE /api/lost-found/items/{id}      // Delete item
+GET    /api/lost-found/stats           // Get statistics
+GET    /api/lost-found/items/user/{id} // Get user's items
+```
+
+#### Image Upload Endpoints
+```typescript
+POST /api/upload/image              // Upload image to S3
+GET  /api/upload/image/serve?url=   // Serve image through backend proxy
+DELETE /api/upload/image?imageUrl=  // Delete image from S3
+```
+
+### Service Layer Examples
+
+#### Authentication Service Usage
+```typescript
+const { user, login, logout, isAuthenticated } = useAuth();
+
+// Login
+await login('user@email.com', 'password');
+
+// Logout
+await logout();
+```
+
+#### Lost & Found Service Usage
+```typescript
+import lostFoundService from '@/services/lostFoundService';
+
+// Create item with image
+const newItem = await lostFoundService.createItem({
+  type: 'LOST',
+  title: 'iPhone 14 Pro',
+  description: 'Black iPhone with blue case',
+  category: 'Electronics',
+  location: 'Main Library',
+  imageUrl: 'https://s3-bucket-url/image.jpg',
+  contactMethod: 'DIRECT',
+  priority: 'HIGH'
+});
+
+// Get filtered items
+const items = await lostFoundService.getItems({
+  type: 'LOST',
+  category: 'Electronics',
+  location: 'Main Library',
+  search: 'iPhone',
+  status: 'ACTIVE'
+});
+
+// Delete item
+await lostFoundService.deleteItem(itemId);
+```
+
+#### Image Upload Service Usage
+```typescript
+// Upload image
+const handleImageUpload = (file) => {
+  // ImageUpload component handles S3 upload automatically
+  // Returns S3 URL for database storage
+};
+
+// Display image
+const imageProxyUrl = `http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(s3Url)}`;
+```
 
 ## 🌐 Multilingual Support
 
@@ -141,23 +308,136 @@ The application supports:
 
 ## 🚧 Development Status
 
-### Currently Available
-- ✅ User Authentication System
-- ✅ Dashboard Interface
-- ✅ Lost & Found Portal
-- ✅ Financial Aid System
-- ✅ Profile Management
-- ✅ Challenges & Rewards
-- ✅ AI Assistant
-- ✅ Library Services
+### ✅ Fully Implemented Features
+- **User Authentication System** - Complete JWT-based auth with context management
+- **Lost & Found Portal** - Full CRUD operations with AWS S3 image upload
+- **Dashboard Interface** - Personalized user experience
+- **Theme Management** - Dark/light mode with persistence
+- **Responsive Design** - Mobile-optimized layouts
+- **Error Handling** - Comprehensive error management
+- **Form Validation** - Real-time input validation
+- **Image Upload System** - AWS S3 integration with validation
 
-### Coming Soon
-- 🔄 Study Spaces Booking
-- 🔄 Campus Navigation Maps
-- 🔄 Dining Services Integration
-- 🔄 Wellness Hub
-- 🔄 Social Events Platform
-- 🔄 Real-time Notifications
+### 🔄 Partially Implemented
+- **Library Services** - Basic interface (backend integration pending)
+- **Profile Management** - UI ready (backend integration needed)
+- **Financial Aid System** - Frontend structure complete
+- **AI Assistant Interface** - UI framework ready
+- **Campus Navigation** - Basic layout implemented
+
+### 📋 Planned Features
+- **Study Spaces Booking** - Real-time availability system
+- **Dining Services Integration** - Menu and meal planning
+- **Wellness Hub** - Mental health resources
+- **Social Events Platform** - Community engagement
+- **Real-time Notifications** - Push notification system
+- **Multi-language Support** - Sinhala and Tamil translations
+
+### 🔍 Lost & Found System Details (Production Ready)
+- ✅ **Item Creation**: Post lost/found items with images
+- ✅ **Advanced Search**: Filter by type, category, location, status
+- ✅ **Image Management**: AWS S3 upload with 10MB limit
+- ✅ **User Dashboard**: Manage personal items
+- ✅ **Item Removal**: Delete items with confirmation
+- ✅ **Statistics**: Real-time item counts and metrics
+- ✅ **Contact System**: Anonymous and direct messaging
+- ✅ **Responsive UI**: Mobile-optimized interface
+- ✅ **Error Handling**: Graceful error management
+- ✅ **Loading States**: User feedback during operations
+
+## 🧪 Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server (port 3000)
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint for code quality
+npm run type-check   # Run TypeScript compiler check
+
+# Maintenance
+npm install          # Install dependencies
+npm update          # Update dependencies
+npm audit           # Security audit
+npm audit fix       # Fix security vulnerabilities
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Port Already in Use
+```bash
+# Error: Port 3000 is already in use
+npx kill-port 3000
+# or
+lsof -ti:3000 | xargs kill -9
+npm run dev
+```
+
+#### 2. Backend Connection Issues
+```bash
+# Ensure backend is running on port 8080
+curl http://localhost:8080/api/lost-found/items
+# Expected: JSON response or authentication error
+```
+
+#### 3. Authentication Problems
+```javascript
+// Clear stored authentication data
+localStorage.removeItem('token');
+localStorage.removeItem('user');
+// Refresh page and try logging in again
+```
+
+#### 4. Image Upload Failures
+- **File too large**: Maximum 10MB allowed
+- **Invalid format**: Only image files (JPEG, PNG, GIF, WebP)
+- **S3 connection**: Check AWS credentials in backend
+- **Network issues**: Verify backend is accessible
+
+#### 5. Build Errors
+```bash
+# Clear Next.js cache
+rm -rf .next
+rm -rf node_modules
+npm install
+npm run build
+```
+
+#### 6. Environment Variables Not Loading
+```bash
+# Ensure .env.local exists in root directory
+# Restart development server after changes
+# Environment variables must start with NEXT_PUBLIC_ for client-side access
+```
+
+#### 7. Dark Mode Not Persisting
+```javascript
+// Clear localStorage if theme switching is broken
+localStorage.removeItem('darkMode');
+// Refresh page to reset theme
+```
+
+#### 8. TypeScript Errors
+```bash
+# Check TypeScript configuration
+npm run type-check
+# Fix any type errors before building
+```
+
+### Performance Optimization Tips
+
+1. **Image Optimization**: Use Next.js Image component for better performance
+2. **Code Splitting**: Leverage dynamic imports for heavy components
+3. **Caching**: Enable HTTP caching for API responses
+4. **Bundle Analysis**: Use `npm run build` to analyze bundle size
+
+### Browser Compatibility
+
+- **Minimum Requirements**: Modern browsers with ES6 support
+- **Recommended**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **Mobile**: iOS Safari 14+, Chrome Mobile 90+
 
 ## 📖 Academic Context
 
