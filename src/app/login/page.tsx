@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const { isDarkMode } = useDarkMode()
+  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,44 +24,17 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      console.log('Response status:', response.status, response.ok)
-      if (response.ok) {
-        const data = await response.json()
-        console.log('Login response data:', data)
-        console.log('About to store token:', data.accessToken)
-        localStorage.setItem('token', data.accessToken)
-        localStorage.setItem('user', JSON.stringify({
-          id: data.id,
-          username: data.username,
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          role: data.role
-        }))
-        console.log('About to redirect to dashboard')
-        router.push('/dashboard')
-        console.log('Router.push called')
-        
-        // Fallback redirect if router.push doesn't work
-        setTimeout(() => {
-          window.location.href = '/dashboard'
-        }, 100)
+      const success = await login(formData.username, formData.password)
+      
+      if (success) {
+        router.push('/dashboard');
       } else {
-        console.log('Login failed with status:', response.status)
-        setError('Invalid username or password')
+        setError('Invalid username or password');
       }
     } catch (err) {
-      setError('Connection error. Please try again.')
+      setError('Connection error. Please try again.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
