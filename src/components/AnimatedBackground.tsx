@@ -20,7 +20,6 @@ export default function AnimatedBackground({ variant = 'default' }: AnimatedBack
 
   // Use variant for potential future background variations
   const backgroundType = variant === 'dashboard' ? 'enhanced' : 'standard'
-  console.log('Background type:', backgroundType)
 
   useEffect(() => {
     setIsClient(true)
@@ -171,7 +170,6 @@ export default function AnimatedBackground({ variant = 'default' }: AnimatedBack
   const glassOrbGradients = getGlassOrbGradients()
   const borderColors = getBorderColors()
 
-  console.log('Background setup complete', { symbolColors, equationColors, borderColors });
 
   return (
     <>
