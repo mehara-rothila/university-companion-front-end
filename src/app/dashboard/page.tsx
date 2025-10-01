@@ -414,10 +414,10 @@ export default function Dashboard() {
           <div className="mb-8">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
                   {getGreeting()}, {userName}!
                 </h1>
-                <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   {currentTime.toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -428,7 +428,7 @@ export default function Dashboard() {
               </div>
               
               {/* Emergency Quick Access */}
-              <div className="mt-4 md:mt-0 flex items-center space-x-3">
+              <div className="mt-4 md:mt-0 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                 {/* Language Switcher */}
                 <div className="relative">
                   <button
@@ -448,7 +448,7 @@ export default function Dashboard() {
                   
                   {/* Language Dropdown */}
                   {showLanguageDropdown && (
-                    <div className={`absolute top-full right-0 mt-1 w-40 rounded-lg shadow-lg border z-50 ${
+                    <div className={`absolute top-full right-0 mt-1 w-40 sm:w-44 rounded-lg shadow-lg border z-50 ${
                       isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
                     }`}>
                       {languages.map((language) => (
@@ -480,7 +480,7 @@ export default function Dashboard() {
 
                 <button 
                   onClick={() => handleComingSoonClick('Emergency Services')}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18.25C13.83 15.932 18 12.813 18 8.25a6.75 6.75 0 1 0-13.5 0c0 4.563 4.17 7.682 6 10z" />
@@ -490,7 +490,7 @@ export default function Dashboard() {
                 </button>
                 <button 
                   onClick={() => handleComingSoonClick('Wellness Support')}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -568,7 +568,7 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { 
                     title: 'AI Assistant', 
@@ -678,7 +678,7 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 Campus Services
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
                   { 
                     title: 'Notifications', 
@@ -813,7 +813,7 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 {t('additionalServices')}
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   { 
                     title: t('careerServices'), 
@@ -1071,7 +1071,7 @@ export default function Dashboard() {
         {/* Coming Soon Modal */}
         {showComingSoonModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto`}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
                   {t('comingSoonModal.title')}
