@@ -355,3 +355,71 @@ body {
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
 }
+
+/* =========================== MOBILE RESPONSIVENESS =========================== */
+
+/* Ensure proper touch targets for mobile */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve mobile text readability */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Better mobile spacing */
+  .mobile-spacing {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Mobile-friendly card spacing */
+  .mobile-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* =========================== GLASS EFFECTS =========================== */
+
+/* Glass effect cards */
+.glass-premium-card {
+  @apply backdrop-blur-lg border border-white/20 shadow-2xl;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.dark .glass-premium-card {
+  @apply border-gray-700/50;
+  background: rgba(15, 15, 15, 0.8);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Glass input styling */
+.glass-input {
+  @apply bg-white/20 dark:bg-gray-800/40 border border-white/30 dark:border-gray-600/50 backdrop-blur-sm;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+  @apply bg-white/30 dark:bg-gray-800/60 border-purple-400/50;
+}
+
+/* Glass fade in animation */
+.animate-glass-fade-in {
+  animation: glassSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes glassSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
