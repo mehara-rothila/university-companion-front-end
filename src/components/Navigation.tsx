@@ -23,6 +23,17 @@ const Navigation = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && !(event.target as Element).closest('header')) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
   function handleToggle() { 
     setIsOpen(!isOpen); 
   }
@@ -40,10 +51,11 @@ const Navigation = () => {
         <div className="flex items-center">
           <Link 
             href="/" 
-            className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
+            className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
             onClick={handleNavigation}
           >
-            L3 Individual Project
+            <span className="hidden sm:block">L3 Individual Project</span>
+            <span className="sm:hidden">L3 Project</span>
             <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart Campus</span>
           </Link>
         </div>
