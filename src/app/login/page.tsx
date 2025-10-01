@@ -50,10 +50,10 @@ export default function LoginPage() {
       <AnimatedBackground />
       
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="glass-premium-card rounded-3xl p-8 w-full max-w-md animate-glass-fade-in">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
-            <p className="text-gray-600 dark:text-gray-300">Sign in to your Smart Campus account</p>
+        <div className="glass-premium-card rounded-3xl p-6 sm:p-8 w-full max-w-md animate-glass-fade-in">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Sign in to your Smart Campus account</p>
           </div>
 
           {error && (
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/signup" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
                 Sign up
               </Link>
