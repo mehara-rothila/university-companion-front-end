@@ -192,9 +192,9 @@ export default function AdminPanel() {
       resetForm();
       loadUsers();
       loadStats();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to save user:', error);
-      setError(error.response?.data || 'Failed to save user');
+      setError((error as any)?.response?.data || 'Failed to save user');
     }
   };
 
@@ -299,7 +299,7 @@ export default function AdminPanel() {
       loadStats();
       loadUsers();
     }
-  }, [currentPage, searchTerm, roleFilter, user]);
+  }, [currentPage, searchTerm, roleFilter, user, loadStats, loadUsers]);
 
   // Clear messages after 5 seconds
   useEffect(() => {
@@ -426,7 +426,7 @@ export default function AdminPanel() {
                 color: 'from-amber-500/20 to-amber-600/20',
                 borderColor: 'border-amber-400/30'
               }
-            ].map((stat, index) => (
+            ].map((stat) => (
               <div
                 key={stat.title}
                 className={`glass-card bg-gradient-to-br ${stat.color} backdrop-blur-lg border ${stat.borderColor} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1`}

@@ -177,4 +177,5 @@ class LostFoundService {
   }
 }
 
-export default new LostFoundService();
+const lostFoundService = new LostFoundService();
+export default lostFoundService;

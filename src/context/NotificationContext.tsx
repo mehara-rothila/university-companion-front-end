@@ -12,7 +12,7 @@ interface Notification {
 interface NotificationContextType {
   notifications: Notification[];
   isConnected: boolean;
-  sendMessage: (destination: string, message: any) => void;
+  sendMessage: (destination: string, message: unknown) => void;
   clearNotifications: () => void;
 }
 

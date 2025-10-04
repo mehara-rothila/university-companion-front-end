@@ -60,7 +60,7 @@ export const useWebSocket = (userId?: string) => {
     };
   }, [socket, userId]);
 
-  const sendMessage = useCallback((destination: string, message: any) => {
+  const sendMessage = useCallback((destination: string, message: unknown) => {
     if (socket && isConnected) {
       socket.emit(destination, message);
     }
