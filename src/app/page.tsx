@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import ScrollProgress from '@/components/ScrollProgress';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { 
   Brain, 
@@ -62,13 +64,23 @@ export default function Home() {
   }, [features.length]);
 
   return (
-    <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-      <AnimatedBackground />
-      <Navigation />
+    <>
+      {/* Skip to main content link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-purple-600 text-white px-4 py-2 rounded-md z-[100] transition-all duration-200"
+      >
+        Skip to main content
+      </a>
       
-      <div className="relative z-10 pt-16">
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <ScrollProgress />
+        <AnimatedBackground />
+        <Navigation />
+        
+        <main id="main-content" className="relative z-10">
         {/* Hero Section */}
-        <section className="relative">
+        <section className="relative pt-20" aria-label="Hero section with main call-to-action">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
             <div className="text-center">
               {/* Logo/Icon */}
@@ -100,14 +112,14 @@ export default function Home() {
                   <>
                     <Link 
                       href="/login" 
-                      className="group flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="group flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 focus:from-purple-700 focus:to-blue-700 text-white rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-xl transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-500/50"
                     >
                       Get Started
-                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 group-focus:translate-x-1 transition-transform" />
                     </Link>
                     <Link 
                       href="/signup" 
-                      className={`px-8 py-4 ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-700/50 text-gray-200 border-gray-600' : 'bg-white/50 hover:bg-white/70 text-gray-700 border-gray-300'} border backdrop-blur-lg rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105`}
+                      className={`px-8 py-4 ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-700/50 focus:bg-gray-700/50 text-gray-200 border-gray-600' : 'bg-white/50 hover:bg-white/70 focus:bg-white/70 text-gray-700 border-gray-300'} border backdrop-blur-lg rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-xl transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-500/50`}
                     >
                       Create Account
                     </Link>
@@ -159,7 +171,7 @@ export default function Home() {
         </section>
 
         {/* Quick Features Grid */}
-        <section className="py-20">
+        <section className="py-20" aria-label="Key features and services overview">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
@@ -237,7 +249,7 @@ export default function Home() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20">
+        <section className="py-20" aria-label="Platform statistics and achievements">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className={`glass-card backdrop-blur-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} rounded-3xl p-12 shadow-2xl`}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
@@ -264,7 +276,7 @@ export default function Home() {
         </section>
 
         {/* Footer CTA */}
-        <section className="py-20">
+        <section className="py-20" aria-label="Final call-to-action to join the platform">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className={`glass-card bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-lg border ${isDarkMode ? 'border-purple-400/30' : 'border-purple-400/40'} rounded-3xl p-12 shadow-2xl`}>
               <Sparkles className={`h-16 w-16 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mx-auto mb-6`} />
@@ -286,7 +298,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+        
+        <Footer />
+        </main>
       </div>
-    </main>
+    </>
   );
 }

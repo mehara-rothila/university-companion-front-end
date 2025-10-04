@@ -8,9 +8,23 @@ import NotificationToast from "../components/NotificationToast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smart Campus Companion - L3 Individual Project",
-  description: "Your AI-powered digital assistant for campus life excellence through human-centered design and ethical AI implementation.",
+  title: "Athena - Smart Campus Companion | AI-Powered University Assistant",
+  description: "Transform your university experience with Athena, your intelligent campus companion. Get AI-powered assistance, smart navigation, study spaces, and seamless campus integration designed for academic excellence.",
+  keywords: ["campus companion", "university assistant", "AI", "student life", "campus navigation", "study spaces", "lost and found", "academic support"],
+  authors: [{ name: "University of Moratuwa L3 Project" }],
   viewport: "width=device-width, initial-scale=1",
+  robots: "index, follow",
+  openGraph: {
+    title: "Athena - Smart Campus Companion",
+    description: "Your intelligent campus companion for enhanced university life",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Athena - Smart Campus Companion",
+    description: "Transform your university experience with AI-powered campus assistance",
+  },
 };
 
 export default function RootLayout({
