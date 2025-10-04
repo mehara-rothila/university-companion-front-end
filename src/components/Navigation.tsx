@@ -54,8 +54,8 @@ const Navigation = () => {
             className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
             onClick={handleNavigation}
           >
-            <span className="hidden sm:block">L3 Individual Project</span>
-            <span className="sm:hidden">L3 Project</span>
+            <span className="hidden sm:block">Athena</span>
+            <span className="sm:hidden">Athena</span>
             <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart Campus</span>
           </Link>
         </div>
