@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +15,7 @@ const Navigation = () => {
   // Effect to close mobile menu on resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) { 
+      if (window.innerWidth >= 1024) { 
         setIsOpen(false); 
       }
     };
@@ -61,32 +61,40 @@ const Navigation = () => {
         </div>
 
         {/* Desktop menu */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden lg:flex items-center space-x-4">
           {/* Smart Campus Navigation Links */}
-          <Link href="/" className="nav-link" onClick={handleNavigation}>
+          <Link href="/" className="nav-link text-sm" onClick={handleNavigation}>
             <Home className="inline h-4 w-4 mr-1" />
             Home
           </Link>
-          <Link href="/dashboard" className="nav-link" onClick={handleNavigation}>
+          <Link href="/dashboard" className="nav-link text-sm" onClick={handleNavigation}>
             <User className="inline h-4 w-4 mr-1" />
             Dashboard
           </Link>
-          <Link href="/chatbot" className="nav-link" onClick={handleNavigation}>
+          <Link href="/chatbot" className="nav-link text-sm" onClick={handleNavigation}>
             <Bot className="inline h-4 w-4 mr-1" />
             AI Assistant
           </Link>
-          <Link href="/navigation" className="nav-link" onClick={handleNavigation}>
+          <Link href="/navigation" className="nav-link text-sm" onClick={handleNavigation}>
             <MapPin className="inline h-4 w-4 mr-1" />
             Navigation
           </Link>
-          <Link href="/study-spaces" className="nav-link" onClick={handleNavigation}>
+          <Link href="/study-spaces" className="nav-link text-sm" onClick={handleNavigation}>
             <BookOpen className="inline h-4 w-4 mr-1" />
-            Study Spaces
+            Study
           </Link>
-          <Link href="/wellness" className="nav-link" onClick={handleNavigation}>
+          <Link href="/wellness" className="nav-link text-sm" onClick={handleNavigation}>
             <Heart className="inline h-4 w-4 mr-1" />
             Wellness
           </Link>
+
+          {/* Admin Panel Link - Only show for admin users */}
+          {isAuthenticated && user?.role === 'ADMIN' && (
+            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-md" onClick={handleNavigation}>
+              <Settings className="inline h-4 w-4 mr-1" />
+              Admin
+            </Link>
+          )}
 
           {/* Auth Links */}
           {isAuthenticated ? (
@@ -116,7 +124,7 @@ const Navigation = () => {
         </nav>
 
         {/* Mobile Hamburger button area */}
-        <div className="md:hidden flex items-center space-x-3">
+        <div className="lg:hidden flex items-center space-x-3">
           {/* Hamburger Button */}
           <button 
             type="button" 
@@ -137,7 +145,7 @@ const Navigation = () => {
 
       {/* Mobile menu flyout */}
       <div
-        className={`md:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${
+        className={`lg:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${
           isOpen 
             ? 'opacity-100 translate-y-0 max-h-[1000px]' 
             : 'opacity-0 -translate-y-4 pointer-events-none max-h-0'
@@ -206,6 +214,17 @@ const Navigation = () => {
           >
             <HelpCircle className="inline h-5 w-5 mr-2"/> Help & Support
           </Link>
+
+          {/* Mobile Admin Panel Link - Only show for admin users */}
+          {isAuthenticated && user?.role === 'ADMIN' && (
+            <Link 
+              href="/admin" 
+              className="mobile-nav-link flex items-center" 
+              onClick={handleNavigation}
+            >
+              <Settings className="inline h-5 w-5 mr-2"/> Admin Panel
+            </Link>
+          )}
 
           {/* Mobile Auth Buttons */}
           <div className="pt-3 space-y-3">
