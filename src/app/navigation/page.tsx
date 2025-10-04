@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
+import { useDarkMode } from '@/app/context/DarkModeContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart } from 'lucide-react';
 
 const Navigation = () => {
@@ -77,7 +77,7 @@ const Navigation = () => {
 
           {/* Dark Mode Toggle */}
           <div className="flex items-center">
-            <DarkModeToggle />
+            {/* Dark mode toggle would go here */}
           </div>
 
           {/* Auth Links */}
@@ -94,7 +94,7 @@ const Navigation = () => {
         <div className="md:hidden flex items-center space-x-3">
           {/* Dark Mode Toggle for Mobile */}
           <div className="flex items-center justify-center">
-            <DarkModeToggle />
+            {/* Dark mode toggle would go here */}
           </div>
 
           {/* Hamburger Button */}
