@@ -78,7 +78,7 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
   return (
     <div className="space-y-4">
       <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-        Item Image (Optional)
+        Supporting Documents (Optional)
       </label>
       
       {preview ? (
@@ -86,7 +86,7 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
           <img 
             src={preview} 
             alt="Preview" 
-            className="w-full max-w-md h-48 object-cover rounded-lg border-2 border-dashed border-gray-300"
+            className="w-full h-32 object-cover rounded-lg border-2 border-dashed border-gray-300"
           />
           <button
             onClick={handleRemoveImage}
@@ -101,7 +101,7 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
       ) : (
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className={`w-full max-w-md h-48 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${
+          className={`w-full h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${
             isDarkMode 
               ? 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700' 
               : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
