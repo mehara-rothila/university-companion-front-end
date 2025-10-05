@@ -13,7 +13,8 @@ export const useWebSocket = (userId?: string) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8080/ws', {
+    const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8080/ws';
+    const newSocket = io(WS_URL, {
       transports: ['websocket', 'polling']
     });
 

@@ -1705,7 +1705,7 @@ export default function FinancialAidPage() {
                   <div>
                     <h4 className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Supporting Documents</h4>
                     <img 
-                      src={`http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(selectedApplication.supportingDocuments)}`} 
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedApplication.supportingDocuments)}`} 
                       alt="Supporting Document"
                       className="w-full max-w-md h-48 object-cover rounded-lg border"
                     />

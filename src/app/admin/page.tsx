@@ -88,7 +88,8 @@ export default function AdminPanel() {
   });
 
   // API base URL
-  const API_BASE = 'http://localhost:8080/api';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const API_BASE = `${API_BASE_URL}/api`;
 
   // Helper function to get auth headers
   const getAuthHeaders = () => ({

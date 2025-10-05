@@ -55,7 +55,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/signin', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const response = await axios.post(`${API_URL}/api/auth/signin`, {
         username,
         password
       });

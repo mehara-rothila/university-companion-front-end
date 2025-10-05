@@ -471,7 +471,7 @@ export default function AdminFinancialAidPage() {
                       <div>
                         <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>Supporting Documents</label>
                         <img 
-                          src={`http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(selectedApplication.supportingDocuments)}`} 
+                          src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedApplication.supportingDocuments)}`} 
                           alt="Supporting Document"
                           className="w-full max-w-md h-48 object-cover rounded-lg border"
                         />

@@ -493,7 +493,7 @@ export default function LostFoundPage() {
                       {item.imageUrl && (
                         <div className="w-full h-40 rounded-lg mb-4 overflow-hidden bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                           <img 
-                            src={`http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`} 
+                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`} 
                             alt={item.title}
                             className="w-full h-full object-cover"
                             onError={(e) => {

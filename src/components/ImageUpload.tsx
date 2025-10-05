@@ -41,10 +41,11 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
     // Upload to S3
     setUploading(true);
     try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:8080/api/upload/image', {
+      const response = await fetch(`${API_URL}/api/upload/image`, {
         method: 'POST',
         body: formData,
       });
