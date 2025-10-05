@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
@@ -48,6 +49,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showRoleFilterDropdown, setShowRoleFilterDropdown] = useState(false);
+  const [showUserRoleDropdown, setShowUserRoleDropdown] = useState(false);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -367,17 +370,23 @@ export default function AdminPanel() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           
           {/* Header */}
-          <div className="mb-8">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-              Admin Panel
-            </h1>
-            <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Manage users and system settings
-            </p>
+          <div className="mb-8 animate-fade-in">
+            <div className="text-center">
+              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Admin Dashboard
+              </h1>
+              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
+                Comprehensive administrative control panel for managing users, financial aid applications, and system-wide settings.
+              </p>
+            </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
             {[
               { 
                 title: 'Total Users', 
@@ -448,8 +457,201 @@ export default function AdminPanel() {
             ))}
           </div>
 
+          {/* Admin Navigation Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fade-in">
+            {/* User Management */}
+            <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-700/30' : 'bg-gradient-to-br from-blue-50/90 to-blue-100/90 border-blue-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-blue-800/50' : 'bg-blue-100'} flex-shrink-0`}>
+                  <svg className={`w-8 h-8 ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                  </svg>
+                </div>
+                <div className="text-right">
+                  <span className={`text-2xl font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} block`}>
+                    {stats?.totalUsers || 0}
+                  </span>
+                  <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`}>
+                    Total Users
+                  </span>
+                </div>
+              </div>
+              <div className="flex-grow">
+                <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                  User Management
+                </h3>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                  Manage student, faculty, and admin accounts with comprehensive user control features
+                </p>
+              </div>
+              <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} flex items-center justify-end`}>
+                  Manage Users
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            {/* Financial Aid Management */}
+            <Link href="/admin/financial-aid">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-green-900/20 to-green-800/20 border-green-700/30' : 'bg-gradient-to-br from-green-50/90 to-green-100/90 border-green-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-green-800/50' : 'bg-green-100'} flex-shrink-0`}>
+                    <svg className={`w-8 h-8 ${isDarkMode ? 'text-green-300' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-green-300' : 'text-green-600'} bg-gradient-to-r ${isDarkMode ? 'from-green-400 to-green-300' : 'from-green-600 to-green-500'} bg-clip-text text-transparent block`}>
+                      ACTIVE
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-500'}`}>
+                      Available
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Financial Aid
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and manage financial aid applications, track funding status, and process approvals
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-green-300' : 'text-green-600'} flex items-center justify-end`}>
+                    Manage Applications
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* System Settings */}
+            <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border-purple-700/30' : 'bg-gradient-to-br from-purple-50/90 to-purple-100/90 border-purple-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer opacity-60 h-full flex flex-col`}>
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-purple-800/50' : 'bg-purple-100'} flex-shrink-0`}>
+                  <svg className={`w-8 h-8 ${isDarkMode ? 'text-purple-300' : 'text-purple-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div className="text-right">
+                  <span className={`text-sm font-semibold ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} bg-gradient-to-r ${isDarkMode ? 'from-purple-400 to-purple-300' : 'from-purple-600 to-purple-500'} bg-clip-text text-transparent block`}>
+                    SOON
+                  </span>
+                  <span className={`text-xs ${isDarkMode ? 'text-purple-400' : 'text-purple-500'}`}>
+                    Coming
+                  </span>
+                </div>
+              </div>
+              <div className="flex-grow">
+                <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                  System Settings
+                </h3>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                  Configure system-wide settings, manage preferences, and control platform features
+                </p>
+              </div>
+              <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} flex items-center justify-end opacity-60`}>
+                  Coming Soon
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm mb-8 animate-fade-in`}>
+            <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <button
+                onClick={() => openUserModal()}
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20' 
+                    : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
+                }`}
+              >
+                <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} mb-2`}>
+                  <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                </div>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Add New User
+                </span>
+              </button>
+
+              <Link href="/admin/financial-aid">
+                <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer ${
+                  isDarkMode 
+                    ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20' 
+                    : 'border-gray-300 hover:border-green-400 bg-gray-50 hover:bg-green-50'
+                }`}>
+                  <div className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} mb-2`}>
+                    <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Review Applications
+                  </span>
+                </div>
+              </Link>
+
+              <button
+                onClick={() => {
+                  loadStats();
+                  loadUsers();
+                }}
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20' 
+                    : 'border-gray-300 hover:border-purple-400 bg-gray-50 hover:bg-purple-50'
+                }`}
+              >
+                <div className={`${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mb-2`}>
+                  <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </div>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Refresh Data
+                </span>
+              </button>
+
+              <button
+                disabled
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed ${
+                  isDarkMode 
+                    ? 'border-gray-600 bg-gray-700/30' 
+                    : 'border-gray-300 bg-gray-50'
+                }`}
+              >
+                <div className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mb-2`}>
+                  <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  Analytics (Soon)
+                </span>
+              </button>
+            </div>
+          </div>
+
           {/* User Management Section */}
-          <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+          <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 lg:mb-0`}>
                 User Management
@@ -476,16 +678,53 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Role Filter */}
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className={`glass-input px-4 py-2 rounded-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
-                >
-                  <option value="">All Roles</option>
-                  <option value="STUDENT">Students</option>
-                  <option value="FACULTY">Faculty</option>
-                  <option value="ADMIN">Admins</option>
-                </select>
+                <div className="relative dropdown-container">
+                  <button
+                    type="button"
+                    onClick={() => setShowRoleFilterDropdown(!showRoleFilterDropdown)}
+                    className={`glass-input px-4 py-2 rounded-lg transition-all duration-200 text-left min-w-[120px] ${
+                      isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                  >
+                    {roleFilter === '' ? 'All Roles' : 
+                     roleFilter === 'STUDENT' ? 'Students' :
+                     roleFilter === 'FACULTY' ? 'Faculty' : 'Admins'}
+                    <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </button>
+                  
+                  {showRoleFilterDropdown && (
+                    <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600' 
+                        : 'bg-white border-gray-300'
+                    }`}>
+                      {[
+                        { value: '', label: 'All Roles' },
+                        { value: 'STUDENT', label: 'Students' },
+                        { value: 'FACULTY', label: 'Faculty' },
+                        { value: 'ADMIN', label: 'Admins' }
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setRoleFilter(option.value);
+                            setShowRoleFilterDropdown(false);
+                          }}
+                          className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${
+                            isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Add User Button */}
                 <button
@@ -784,19 +1023,53 @@ export default function AdminPanel() {
 
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>User Role</label>
-                  <select
-                    value={userForm.role}
-                    onChange={(e) => setUserForm(prev => ({ ...prev, role: e.target.value as 'STUDENT' | 'FACULTY' | 'ADMIN' }))}
-                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
-                        : 'bg-white border-gray-300 text-gray-900'
-                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
-                  >
-                    <option value="STUDENT">Student</option>
-                    <option value="FACULTY">Faculty Member</option>
-                    <option value="ADMIN">Administrator</option>
-                  </select>
+                  <div className="relative dropdown-container">
+                    <button
+                      type="button"
+                      onClick={() => setShowUserRoleDropdown(!showUserRoleDropdown)}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 text-left ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                          : 'bg-white border-gray-300 text-gray-900'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    >
+                      {userForm.role === 'STUDENT' ? 'Student' :
+                       userForm.role === 'FACULTY' ? 'Faculty Member' : 'Administrator'}
+                      <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </button>
+                    
+                    {showUserRoleDropdown && (
+                      <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600' 
+                          : 'bg-white border-gray-300'
+                      }`}>
+                        {[
+                          { value: 'STUDENT', label: 'Student' },
+                          { value: 'FACULTY', label: 'Faculty Member' },
+                          { value: 'ADMIN', label: 'Administrator' }
+                        ].map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => {
+                              setUserForm(prev => ({ ...prev, role: option.value as 'STUDENT' | 'FACULTY' | 'ADMIN' }));
+                              setShowUserRoleDropdown(false);
+                            }}
+                            className={`w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${
+                              isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                            }`}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Student Information */}
