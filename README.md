@@ -103,9 +103,14 @@ yarn install
 3. **Environment Setup**
 Create `.env.local` file in the root directory:
 ```env
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+# API Configuration (Development)
+NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_WS_URL=http://localhost:8080/ws
 NEXT_PUBLIC_APP_NAME=Smart Campus Companion
+
+# API Configuration (Production - commented out for local dev)
+# NEXT_PUBLIC_API_URL=https://l3project-398c7c93d2bb.herokuapp.com
+# NEXT_PUBLIC_WS_URL=https://l3project-398c7c93d2bb.herokuapp.com/ws
 
 # Optional: Additional configuration
 NEXT_PUBLIC_AWS_REGION=us-east-1
@@ -131,10 +136,45 @@ npm run build
 
 # Start production server
 npm start
-
-# Or deploy to Vercel
-vercel --prod
 ```
+
+## 🌐 Production Deployment
+
+### Live Application
+- **Frontend**: https://athena.mehara.io (Deployed on Netlify)
+- **Backend API**: https://l3project-398c7c93d2bb.herokuapp.com (Deployed on Heroku)
+
+### Netlify Deployment
+
+1. **Environment Variables** (Set in Netlify Dashboard)
+```env
+NEXT_PUBLIC_API_URL=https://l3project-398c7c93d2bb.herokuapp.com
+NEXT_PUBLIC_WS_URL=https://l3project-398c7c93d2bb.herokuapp.com/ws
+```
+
+2. **Build Settings**
+   - Build Command: `npm run build`
+   - Publish Directory: `.next`
+   - Node Version: 18.x or higher
+
+3. **Deploy Process**
+```bash
+# Automatic deployment on git push to main branch
+git add .
+git commit -m "Update frontend"
+git push origin main
+# Netlify automatically builds and deploys
+```
+
+### Production Features
+- ✅ **HTTPS/SSL** enabled on both frontend and backend
+- ✅ **Custom Domain** configured (athena.mehara.io)
+- ✅ **CORS** properly configured for cross-origin requests
+- ✅ **Environment Variables** managed securely
+- ✅ **Continuous Deployment** from GitHub repository
+- ✅ **PostgreSQL Database** (Heroku Postgres Essential-0)
+- ✅ **AWS S3** integration for image storage
+- ✅ **JWT Authentication** for secure user sessions
 
 ## 📁 Project Structure
 
