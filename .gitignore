@@ -33,6 +33,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# deployment guides with sensitive data
+PRODUCTION_DEPLOYMENT_COMPLETE_GUIDE.md
+DEPLOYMENT_FIX.md
+URGENT_CORS_FIX.md
+HEROKU_FIX_COMPLETE.md
+
 # vercel
 .vercel
 
