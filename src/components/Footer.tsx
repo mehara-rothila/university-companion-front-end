@@ -182,13 +182,6 @@ export default function Footer() {
             <span className="text-sm font-medium">Back to Top</span>
           </button>
         </div>
-
-        {/* University Branding */}
-        <div className={`mt-8 pt-6 border-t ${isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'} text-center`}>
-          <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-            Built with ❤️ for the University of Moratuwa academic community
-          </p>
-        </div>
       </div>
     </footer>
   );
