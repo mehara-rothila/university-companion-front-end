@@ -1,16 +1,26 @@
 'use client';
 
 import { DarkModeProvider } from './context/DarkModeContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from '../context/NotificationContext';
+
+function NotificationProviderWrapper({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  
+  return (
+    <NotificationProvider userId={user?.id?.toString()}>
+      {children}
+    </NotificationProvider>
+  );
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <DarkModeProvider>
-        <NotificationProvider>
+        <NotificationProviderWrapper>
           {children}
-        </NotificationProvider>
+        </NotificationProviderWrapper>
       </DarkModeProvider>
     </AuthProvider>
   );
