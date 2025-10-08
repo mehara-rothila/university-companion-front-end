@@ -4,29 +4,27 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import axios from 'axios';
 
 // --- Interfaces ---
 interface Notification {
-  id: string;
-  type: 'academic' | 'social' | 'system' | 'wellness' | 'emergency' | 'dining' | 'transportation';
+  id: number;
   title: string;
   message: string;
-  timestamp: Date;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  isRead: boolean;
-  isArchived: boolean;
-  actionRequired: boolean;
-  actionText?: string;
-  actionUrl?: string;
-  source: string;
-  metadata?: {
-    course?: string;
-    location?: string;
-    deadline?: Date;
-    eventId?: string;
-  };
+  type: 'GENERAL' | 'ACADEMIC' | 'FINANCIAL_AID' | 'LOST_FOUND' | 'WELLNESS' | 'DINING' | 'LIBRARY' | 'SOCIAL' | 'SYSTEM';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  target: 'ALL_STUDENTS' | 'SPECIFIC_USERS' | 'ADMIN_ONLY';
+  targetUserIds?: number[];
+  createdAt: string;
+  expiresAt?: string;
+  isActive: boolean;
+  createdByName: string;
+  createdById: number;
+  isRead?: boolean;
+  isArchived?: boolean;
 }
 
 interface NotificationSettings {
@@ -86,140 +84,20 @@ interface NotificationFilter {
 }
 
 // --- Constants ---
-// Moved outside component to prevent re-creation on render
-const MOCK_NOTIFICATIONS: Notification[] = [
-    {
-      id: '1',
-      type: 'emergency',
-      title: 'Campus Weather Alert',
-      message: 'Severe thunderstorm warning issued for campus area. Seek indoor shelter immediately.',
-      timestamp: new Date(Date.now() - 30 * 60 * 1000),
-      priority: 'urgent',
-      isRead: false,
-      isArchived: false,
-      actionRequired: true,
-      actionText: 'View Safety Guidelines',
-      actionUrl: '/safety',
-      source: 'Campus Safety'
-    },
-    {
-      id: '2',
-      type: 'academic',
-      title: 'Assignment Due Tomorrow',
-      message: 'Data Structures Implementation project is due tomorrow at 11:59 PM.',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      priority: 'high',
-      isRead: false,
-      isArchived: false,
-      actionRequired: true,
-      actionText: 'View Assignment',
-      actionUrl: '/academic',
-      source: 'CS 101',
-      metadata: {
-        course: 'CS 101',
-        deadline: new Date(Date.now() + 22 * 60 * 60 * 1000)
-      }
-    },
-    {
-      id: '3',
-      type: 'wellness',
-      title: 'Daily Check-in Reminder',
-      message: 'Don\'t forget to complete your daily wellness check-in! Your mental health matters.',
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-      priority: 'medium',
-      isRead: true,
-      isArchived: false,
-      actionRequired: true,
-      actionText: 'Complete Check-in',
-      actionUrl: '/wellness',
-      source: 'Wellness Center'
-    },
-    {
-      id: '4',
-      type: 'social',
-      title: 'New Event: Tech Talk Tomorrow',
-      message: 'Join us for "AI in Healthcare" presentation by Dr. Sarah Chen tomorrow at 2 PM in Student Union.',
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-      priority: 'medium',
-      isRead: false,
-      isArchived: false,
-      actionRequired: false,
-      actionText: 'RSVP Now',
-      actionUrl: '/social',
-      source: 'Tech Club',
-      metadata: {
-        location: 'Student Union',
-        eventId: 'tech-talk-123'
-      }
-    },
-    {
-      id: '5',
-      type: 'dining',
-      title: 'New Menu Items Available',
-      message: 'Check out our new healthy options in North Dining Hall, including vegan bowls and fresh salads!',
-      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-      priority: 'low',
-      isRead: true,
-      isArchived: false,
-      actionRequired: false,
-      actionText: 'View Menu',
-      actionUrl: '/dining',
-      source: 'Dining Services',
-      metadata: {
-        location: 'North Dining Hall'
-      }
-    },
-    {
-      id: '6',
-      type: 'transportation',
-      title: 'Shuttle Service Update',
-      message: 'Campus shuttle will have extended hours during finals week (24/7 service).',
-      timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
-      priority: 'medium',
-      isRead: true,
-      isArchived: false,
-      actionRequired: false,
-      source: 'Transportation Services'
-    },
-    {
-      id: '7',
-      type: 'academic',
-      title: 'Grade Posted: Physics Quiz',
-      message: 'Your grade for Physics I Quiz #3 has been posted. Score: 92/100. Great job!',
-      timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000),
-      priority: 'medium',
-      isRead: false,
-      isArchived: false,
-      actionRequired: false,
-      actionText: 'View Details',
-      actionUrl: '/academic',
-      source: 'PHYS 151',
-      metadata: {
-        course: 'PHYS 151'
-      }
-    },
-    {
-      id: '8',
-      type: 'system',
-      title: 'App Update Available',
-      message: 'Smart Campus Companion v2.1 is now available with improved AI recommendations.',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      priority: 'low',
-      isRead: true,
-      isArchived: false,
-      actionRequired: false,
-      actionText: 'Update Now',
-      source: 'System'
-    }
-];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_BASE = `${API_BASE_URL}/api`;
 
 export default function NotificationsPage() {
   const { isDarkMode } = useDarkMode();
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'archived' | 'settings'>('all');
   const [showSettings, setShowSettings] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   
   const [filters, setFilters] = useState<NotificationFilter>({
     type: 'all',
@@ -277,14 +155,47 @@ export default function NotificationsPage() {
     }
   });
 
+  // API Functions
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return {
+      'Authorization': token ? `Bearer ${token}` : '',
+      'Content-Type': 'application/json'
+    };
+  };
+
+  const loadNotifications = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${API_BASE}/notifications/student/my?page=${currentPage}&size=10`, {
+        headers: getAuthHeaders()
+      });
+      
+      const notificationData = response.data.content || [];
+      const notificationsWithReadStatus = notificationData.map((notification: Notification) => ({
+        ...notification,
+        isRead: false, // Default to unread for new notifications
+        isArchived: false
+      }));
+      
+      setNotifications(notificationsWithReadStatus);
+      setTotalPages(response.data.totalPages || 0);
+      setError(null);
+    } catch (error) {
+      console.error('Failed to load notifications:', error);
+      setError('Failed to load notifications');
+      setNotifications([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Initialize component
   useEffect(() => {
-    setTimeout(() => {
-      setNotifications(MOCK_NOTIFICATIONS);
-      setFilteredNotifications(MOCK_NOTIFICATIONS);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    if (user) {
+      loadNotifications();
+    }
+  }, [user, currentPage]);
 
   // Filter notifications based on active tab and filters
   useEffect(() => {
@@ -349,20 +260,24 @@ export default function NotificationsPage() {
   // Get notification type icon
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'academic':
+      case 'ACADEMIC':
         return '📚';
-      case 'social':
+      case 'SOCIAL':
         return '👥';
-      case 'system':
+      case 'SYSTEM':
         return '⚙️';
-      case 'wellness':
+      case 'WELLNESS':
         return '💚';
-      case 'emergency':
-        return '🚨';
-      case 'dining':
+      case 'GENERAL':
+        return '📱';
+      case 'DINING':
         return '🍽️';
-      case 'transportation':
-        return '🚌';
+      case 'LIBRARY':
+        return '📖';
+      case 'FINANCIAL_AID':
+        return '💰';
+      case 'LOST_FOUND':
+        return '🔍';
       default:
         return '📱';
     }
@@ -371,13 +286,13 @@ export default function NotificationsPage() {
   // Get priority color
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent':
+      case 'URGENT':
         return 'text-red-500 bg-red-100 dark:bg-red-900/30';
-      case 'high':
+      case 'HIGH':
         return 'text-orange-500 bg-orange-100 dark:bg-orange-900/30';
-      case 'medium':
+      case 'MEDIUM':
         return 'text-yellow-500 bg-yellow-100 dark:bg-yellow-900/30';
-      case 'low':
+      case 'LOW':
         return 'text-green-500 bg-green-100 dark:bg-green-900/30';
       default:
         return 'text-gray-500 bg-gray-100 dark:bg-gray-700';
@@ -385,14 +300,14 @@ export default function NotificationsPage() {
   };
 
   // Mark notification as read
-  const markAsRead = (id: string) => {
+  const markAsRead = (id: number) => {
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, isRead: true } : n)
     );
   };
 
   // Archive notification
-  const archiveNotification = (id: string) => {
+  const archiveNotification = (id: number) => {
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, isArchived: true } : n)
     );
@@ -409,8 +324,9 @@ export default function NotificationsPage() {
   const unreadCount = notifications.filter(n => !n.isRead && !n.isArchived).length;
 
   // Get time ago string
-  const getTimeAgo = (timestamp: Date) => {
-    const diff = new Date().getTime() - timestamp.getTime();
+  const getTimeAgo = (timestamp: string) => {
+    const notificationDate = new Date(timestamp);
+    const diff = new Date().getTime() - notificationDate.getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
@@ -435,12 +351,32 @@ export default function NotificationsPage() {
     );
   }
 
+  if (!user) {
+    return (
+      <>
+        <Navigation />
+        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+          <div className="text-center">
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Please log in to view notifications.</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
         <AnimatedBackground variant="dashboard" />
+
+        {/* Error Message */}
+        {error && (
+          <div className="fixed top-20 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+            {error}
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
@@ -662,7 +598,11 @@ export default function NotificationsPage() {
                                   quietHours: { ...prev.schedule.quietHours, start: e.target.value }
                                 }
                               }))}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                              className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                                isDarkMode 
+                                  ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                                  : 'bg-white border-gray-300 text-gray-900'
+                              } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                             />
                           </div>
                           <div>
@@ -679,7 +619,11 @@ export default function NotificationsPage() {
                                   quietHours: { ...prev.schedule.quietHours, end: e.target.value }
                                 }
                               }))}
-                              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                              className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                                isDarkMode 
+                                  ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                                  : 'bg-white border-gray-300 text-gray-900'
+                              } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                             />
                           </div>
                         </div>
@@ -728,16 +672,22 @@ export default function NotificationsPage() {
                   <select
                     value={filters.type}
                     onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     <option value="all">All Types</option>
-                    <option value="academic">Academic</option>
-                    <option value="social">Social</option>
-                    <option value="wellness">Wellness</option>
-                    <option value="system">System</option>
-                    <option value="emergency">Emergency</option>
-                    <option value="dining">Dining</option>
-                    <option value="transportation">Transportation</option>
+                    <option value="GENERAL">General</option>
+                    <option value="ACADEMIC">Academic</option>
+                    <option value="SOCIAL">Social</option>
+                    <option value="WELLNESS">Wellness</option>
+                    <option value="SYSTEM">System</option>
+                    <option value="FINANCIAL_AID">Financial Aid</option>
+                    <option value="DINING">Dining</option>
+                    <option value="LIBRARY">Library</option>
+                    <option value="LOST_FOUND">Lost & Found</option>
                   </select>
                 </div>
 
@@ -748,13 +698,17 @@ export default function NotificationsPage() {
                   <select
                     value={filters.priority}
                     onChange={(e) => setFilters(prev => ({ ...prev, priority: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     <option value="all">All Priorities</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
+                    <option value="URGENT">Urgent</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
                   </select>
                 </div>
 
@@ -765,7 +719,11 @@ export default function NotificationsPage() {
                   <select
                     value={filters.timeframe}
                     onChange={(e) => setFilters(prev => ({ ...prev, timeframe: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     <option value="all">All Time</option>
                     <option value="today">Today</option>
@@ -781,7 +739,11 @@ export default function NotificationsPage() {
                   <select
                     value={filters.readStatus}
                     onChange={(e) => setFilters(prev => ({ ...prev, readStatus: e.target.value }))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     <option value="all">All</option>
                     <option value="read">Read</option>
@@ -819,7 +781,7 @@ export default function NotificationsPage() {
                                 {notification.title}
                               </h3>
                               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-                                {notification.source} • {getTimeAgo(notification.timestamp)}
+                                {notification.createdByName} • {getTimeAgo(notification.createdAt)}
                               </p>
                             </div>
                             
@@ -837,32 +799,19 @@ export default function NotificationsPage() {
                             {notification.message}
                           </p>
                           
-                          {/* Metadata */}
-                          {notification.metadata && (
-                            <div className={`mb-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                              {notification.metadata.course && (
-                                <span className="mr-4">📚 {notification.metadata.course}</span>
-                              )}
-                              {notification.metadata.location && (
-                                <span className="mr-4">📍 {notification.metadata.location}</span>
-                              )}
-                              {notification.metadata.deadline && (
-                                <span className="mr-4">⏰ Due: {notification.metadata.deadline.toLocaleDateString()}</span>
-                              )}
-                            </div>
-                          )}
+                          {/* Additional Info */}
+                          <div className={`mb-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <span className="mr-4">📅 {new Date(notification.createdAt).toLocaleDateString()}</span>
+                            {notification.expiresAt && (
+                              <span className="mr-4">⏰ Expires: {new Date(notification.expiresAt).toLocaleDateString()}</span>
+                            )}
+                            <span className={`px-2 py-1 rounded text-xs ${notification.target === 'ALL_STUDENTS' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'}`}>
+                              {notification.target === 'ALL_STUDENTS' ? 'All Students' : 'Targeted'}
+                            </span>
+                          </div>
                           
                           {/* Actions */}
                           <div className="flex items-center space-x-3">
-                            {notification.actionText && notification.actionUrl && (
-                              <Link
-                                href={notification.actionUrl}
-                                className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-200"
-                              >
-                                {notification.actionText} →
-                              </Link>
-                            )}
-                            
                             {!notification.isRead && (
                               <button
                                 onClick={() => markAsRead(notification.id)}
@@ -897,6 +846,29 @@ export default function NotificationsPage() {
                   </p>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {activeTab !== 'settings' && totalPages > 1 && (
+            <div className="flex items-center justify-center mt-8 gap-2">
+              <button
+                disabled={currentPage === 0}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Previous
+              </button>
+              <span className={`px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                Page {currentPage + 1} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage >= totalPages - 1}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
