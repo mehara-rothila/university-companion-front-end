@@ -459,7 +459,7 @@ export default function AdminPanel() {
           </div>
 
           {/* Admin Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
             {/* User Management */}
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-700/30' : 'bg-gradient-to-br from-blue-50/90 to-blue-100/90 border-blue-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
@@ -524,6 +524,44 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-green-300' : 'text-green-600'} flex items-center justify-end`}>
                     Manage Applications
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Notification Management */}
+            <Link href="/admin/notifications">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-amber-900/20 to-amber-800/20 border-amber-700/30' : 'bg-gradient-to-br from-amber-50/90 to-amber-100/90 border-amber-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-amber-800/50' : 'bg-amber-100'} flex-shrink-0`}>
+                    <svg className={`w-8 h-8 ${isDarkMode ? 'text-amber-300' : 'text-amber-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-13a3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6l-5-5-5 5h5v13a3 3 0 006 0V6h5z" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} bg-gradient-to-r ${isDarkMode ? 'from-amber-400 to-amber-300' : 'from-amber-600 to-amber-500'} bg-clip-text text-transparent block`}>
+                      NEW
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`}>
+                      Available
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Notifications
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Create and manage notifications for all students or specific users
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} flex items-center justify-end`}>
+                    Manage Notifications
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
