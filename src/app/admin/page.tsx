@@ -7,6 +7,17 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
+import { 
+  Users, 
+  GraduationCap, 
+  Building, 
+  Shield, 
+  DollarSign, 
+  Bell, 
+  Settings, 
+  ChevronRight,
+  Clock
+} from 'lucide-react';
 
 // Types
 interface User {
@@ -464,9 +475,7 @@ export default function AdminPanel() {
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-700/30' : 'bg-gradient-to-br from-blue-50/90 to-blue-100/90 border-blue-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-blue-800/50' : 'bg-blue-100'} flex-shrink-0`}>
-                  <svg className={`w-8 h-8 ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                  </svg>
+                  <Users className={`w-8 h-8 ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`} />
                 </div>
                 <div className="text-right">
                   <span className={`text-2xl font-bold ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} block`}>
@@ -488,9 +497,7 @@ export default function AdminPanel() {
               <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} flex items-center justify-end`}>
                   Manage Users
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </span>
               </div>
             </div>
@@ -500,9 +507,7 @@ export default function AdminPanel() {
               <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-green-900/20 to-green-800/20 border-green-700/30' : 'bg-gradient-to-br from-green-50/90 to-green-100/90 border-green-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
                 <div className="flex items-start justify-between mb-4">
                   <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-green-800/50' : 'bg-green-100'} flex-shrink-0`}>
-                    <svg className={`w-8 h-8 ${isDarkMode ? 'text-green-300' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <DollarSign className={`w-8 h-8 ${isDarkMode ? 'text-green-300' : 'text-green-600'}`} />
                   </div>
                   <div className="text-right">
                     <span className={`text-sm font-semibold ${isDarkMode ? 'text-green-300' : 'text-green-600'} bg-gradient-to-r ${isDarkMode ? 'from-green-400 to-green-300' : 'from-green-600 to-green-500'} bg-clip-text text-transparent block`}>
@@ -524,9 +529,7 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-green-300' : 'text-green-600'} flex items-center justify-end`}>
                     Manage Applications
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
               </div>
@@ -537,10 +540,7 @@ export default function AdminPanel() {
               <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-amber-900/20 to-amber-800/20 border-amber-700/30' : 'bg-gradient-to-br from-amber-50/90 to-amber-100/90 border-amber-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
                 <div className="flex items-start justify-between mb-4">
                   <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-amber-800/50' : 'bg-amber-100'} flex-shrink-0`}>
-                    <svg className={`w-8 h-8 ${isDarkMode ? 'text-amber-300' : 'text-amber-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-13a3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6l-5-5-5 5h5v13a3 3 0 006 0V6h5z" />
-                    </svg>
+                    <Bell className={`w-8 h-8 ${isDarkMode ? 'text-amber-300' : 'text-amber-600'}`} />
                   </div>
                   <div className="text-right">
                     <span className={`text-sm font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} bg-gradient-to-r ${isDarkMode ? 'from-amber-400 to-amber-300' : 'from-amber-600 to-amber-500'} bg-clip-text text-transparent block`}>
@@ -562,9 +562,7 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} flex items-center justify-end`}>
                     Manage Notifications
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
               </div>
@@ -574,10 +572,7 @@ export default function AdminPanel() {
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border-purple-700/30' : 'bg-gradient-to-br from-purple-50/90 to-purple-100/90 border-purple-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer opacity-60 h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-purple-800/50' : 'bg-purple-100'} flex-shrink-0`}>
-                  <svg className={`w-8 h-8 ${isDarkMode ? 'text-purple-300' : 'text-purple-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <Settings className={`w-8 h-8 ${isDarkMode ? 'text-purple-300' : 'text-purple-600'}`} />
                 </div>
                 <div className="text-right">
                   <span className={`text-sm font-semibold ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} bg-gradient-to-r ${isDarkMode ? 'from-purple-400 to-purple-300' : 'from-purple-600 to-purple-500'} bg-clip-text text-transparent block`}>
@@ -599,9 +594,7 @@ export default function AdminPanel() {
               <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} flex items-center justify-end opacity-60`}>
                   Coming Soon
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Clock className="w-4 h-4 ml-1" />
                 </span>
               </div>
             </div>
@@ -615,7 +608,7 @@ export default function AdminPanel() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => openUserModal()}
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 ${
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
                   isDarkMode 
                     ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20' 
                     : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
@@ -626,13 +619,13 @@ export default function AdminPanel() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                   </svg>
                 </div>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
                   Add New User
                 </span>
               </button>
 
               <Link href="/admin/financial-aid">
-                <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer ${
+                <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center text-center ${
                   isDarkMode 
                     ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20' 
                     : 'border-gray-300 hover:border-green-400 bg-gray-50 hover:bg-green-50'
@@ -642,7 +635,7 @@ export default function AdminPanel() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
-                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
                     Review Applications
                   </span>
                 </div>
@@ -653,7 +646,7 @@ export default function AdminPanel() {
                   loadStats();
                   loadUsers();
                 }}
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 ${
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
                   isDarkMode 
                     ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20' 
                     : 'border-gray-300 hover:border-purple-400 bg-gray-50 hover:bg-purple-50'
@@ -664,14 +657,14 @@ export default function AdminPanel() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
                   Refresh Data
                 </span>
               </button>
 
               <button
                 disabled
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed ${
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed flex flex-col items-center text-center ${
                   isDarkMode 
                     ? 'border-gray-600 bg-gray-700/30' 
                     : 'border-gray-300 bg-gray-50'
@@ -682,7 +675,7 @@ export default function AdminPanel() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
-                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-center`}>
                   Analytics (Soon)
                 </span>
               </button>
