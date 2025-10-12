@@ -5,7 +5,8 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard } from '@/services/financialAidService';
+import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard, AdminFinancialAidRequest } from '@/services/financialAidService';
+import { User } from '@/app/context/AuthContext';
 
 export default function AdminFinancialAidPage() {
   const { isDarkMode } = useDarkMode();
@@ -15,10 +16,12 @@ export default function AdminFinancialAidPage() {
   const [pendingApplications, setPendingApplications] = useState<FinancialAidApplication[]>([]);
   const [selectedApplication, setSelectedApplication] = useState<FinancialAidApplication | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [createSubmitted, setCreateSubmitted] = useState(false);
 
   // Review form state
   const [reviewForm, setReviewForm] = useState<AdminReviewRequest>({
@@ -27,11 +30,31 @@ export default function AdminFinancialAidPage() {
     isDonationEligible: false
   });
 
+  // Create application state
+  const [users, setUsers] = useState<User[]>([]);
+  const [createForm, setCreateForm] = useState<AdminFinancialAidRequest>({
+    applicantUserId: 0,
+    title: '',
+    description: '',
+    aidType: 'SCHOLARSHIP',
+    category: '',
+    requestedAmount: 0,
+    priority: 'MEDIUM',
+    urgency: 'MEDIUM',
+    isAnonymous: false,
+    supportingDocuments: '',
+    personalStory: '',
+    applicationDeadline: '',
+    isDonationEligible: false,
+    adminNotes: ''
+  });
+
   useEffect(() => {
     if (isAuthenticated) {
       loadDashboard();
       loadApplications();
       loadPendingApplications();
+      loadUsers();
     }
   }, [isAuthenticated]);
 
@@ -67,6 +90,29 @@ export default function AdminFinancialAidPage() {
     }
   };
 
+  const loadUsers = async () => {
+    try {
+      // We'll use a mock API call for users - in real implementation this would come from a user service
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/admin/users`, {
+        headers: {
+          'Authorization': `Bearer fake-jwt-token`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data.users || []);
+      }
+    } catch (err) {
+      console.error('Error loading users:', err);
+      // Mock users for demo
+      setUsers([
+        { id: 1, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', username: 'johndoe' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com', username: 'janesmith' },
+      ]);
+    }
+  };
+
   const handleReviewApplication = (application: FinancialAidApplication) => {
     setSelectedApplication(application);
     setReviewForm({
@@ -95,6 +141,42 @@ export default function AdminFinancialAidPage() {
     } catch (err) {
       setError('Failed to submit review. Please try again.');
       console.error('Error submitting review:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateApplication = async () => {
+    try {
+      setLoading(true);
+      await financialAidService.createApplicationForUser(createForm);
+      setCreateSubmitted(true);
+      setShowCreateModal(false);
+      // Reset form
+      setCreateForm({
+        applicantUserId: 0,
+        title: '',
+        description: '',
+        aidType: 'SCHOLARSHIP',
+        category: '',
+        requestedAmount: 0,
+        priority: 'MEDIUM',
+        urgency: 'MEDIUM',
+        isAnonymous: false,
+        supportingDocuments: '',
+        personalStory: '',
+        applicationDeadline: '',
+        isDonationEligible: false,
+        adminNotes: ''
+      });
+      // Reload data
+      await loadApplications();
+      await loadPendingApplications();
+      await loadDashboard();
+      setTimeout(() => setCreateSubmitted(false), 5000);
+    } catch (err) {
+      setError('Failed to create application. Please try again.');
+      console.error('Error creating application:', err);
     } finally {
       setLoading(false);
     }
@@ -158,13 +240,22 @@ export default function AdminFinancialAidPage() {
                 </svg>
                 Financial Aid Administration
               </h1>
-              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto`}>
+              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
                 Review and manage financial aid applications from students.
               </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center mx-auto"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Create Application
+              </button>
             </div>
           </div>
 
-          {/* Success Message */}
+          {/* Success Messages */}
           {reviewSubmitted && (
             <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
               <div className="flex items-center">
@@ -173,6 +264,19 @@ export default function AdminFinancialAidPage() {
                 </svg>
                 <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
                   Application review submitted successfully!
+                </p>
+              </div>
+            </div>
+          )}
+
+          {createSubmitted && (
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
+                  Financial aid application created successfully!
                 </p>
               </div>
             </div>
@@ -237,7 +341,7 @@ export default function AdminFinancialAidPage() {
           </div>
 
           {/* Tab Content */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
+          <div className={`${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-white/95 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-md animate-fade-in relative z-10`}>
 
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && (
@@ -400,6 +504,7 @@ export default function AdminFinancialAidPage() {
                 </div>
               </div>
             )}
+
           </div>
         </div>
 
@@ -588,6 +693,288 @@ export default function AdminFinancialAidPage() {
                   className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:cursor-not-allowed"
                 >
                   {loading ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Create Application Modal */}
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto`}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  Create Financial Aid Application
+                </h2>
+                <button 
+                  onClick={() => setShowCreateModal(false)}
+                  className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column */}
+                  <div className="space-y-4">
+                    {/* Applicant Selection */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Select Applicant *
+                      </label>
+                      <select
+                        value={createForm.applicantUserId}
+                        onChange={(e) => setCreateForm({...createForm, applicantUserId: Number(e.target.value)})}
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      >
+                        <option value={0}>Select a user...</option>
+                        {users.map(user => (
+                          <option key={user.id} value={user.id}>
+                            {user.firstName} {user.lastName} ({user.email})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Application Title *
+                      </label>
+                      <input
+                        type="text"
+                        value={createForm.title}
+                        onChange={(e) => setCreateForm({...createForm, title: e.target.value})}
+                        placeholder="Enter application title"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      />
+                    </div>
+
+                    {/* Aid Type */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Aid Type *
+                      </label>
+                      <select
+                        value={createForm.aidType}
+                        onChange={(e) => setCreateForm({...createForm, aidType: e.target.value as any})}
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                            : 'bg-white border-gray-300 text-gray-900'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      >
+                        <option value="SCHOLARSHIP">Scholarship</option>
+                        <option value="GRANT">Grant</option>
+                        <option value="EMERGENCY_FUND">Emergency Fund</option>
+                        <option value="LOAN">Loan</option>
+                        <option value="WORK_STUDY">Work Study</option>
+                        <option value="CUSTOM">Custom</option>
+                      </select>
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Category *
+                      </label>
+                      <input
+                        type="text"
+                        value={createForm.category}
+                        onChange={(e) => setCreateForm({...createForm, category: e.target.value})}
+                        placeholder="e.g., Medical, Academic, Family Emergency"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      />
+                    </div>
+
+                    {/* Requested Amount */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Requested Amount (Rs.) *
+                      </label>
+                      <input
+                        type="number"
+                        value={createForm.requestedAmount}
+                        onChange={(e) => setCreateForm({...createForm, requestedAmount: Number(e.target.value)})}
+                        placeholder="0"
+                        min="1"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      />
+                    </div>
+
+                    {/* Priority & Urgency */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                          Priority
+                        </label>
+                        <select
+                          value={createForm.priority}
+                          onChange={(e) => setCreateForm({...createForm, priority: e.target.value as any})}
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                            isDarkMode 
+                              ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                              : 'bg-white border-gray-300 text-gray-900'
+                          } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        >
+                          <option value="LOW">Low</option>
+                          <option value="MEDIUM">Medium</option>
+                          <option value="HIGH">High</option>
+                          <option value="CRITICAL">Critical</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                          Urgency
+                        </label>
+                        <select
+                          value={createForm.urgency}
+                          onChange={(e) => setCreateForm({...createForm, urgency: e.target.value as any})}
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                            isDarkMode 
+                              ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                              : 'bg-white border-gray-300 text-gray-900'
+                          } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        >
+                          <option value="LOW">Low</option>
+                          <option value="MEDIUM">Medium</option>
+                          <option value="HIGH">High</option>
+                          <option value="CRITICAL">Critical</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-4">
+                    {/* Description */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Description *
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={createForm.description}
+                        onChange={(e) => setCreateForm({...createForm, description: e.target.value})}
+                        placeholder="Describe the financial assistance needed"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                        required
+                      />
+                    </div>
+
+                    {/* Personal Story */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Personal Story
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={createForm.personalStory}
+                        onChange={(e) => setCreateForm({...createForm, personalStory: e.target.value})}
+                        placeholder="Additional context or personal circumstances"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                    </div>
+
+                    {/* Admin Notes */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Admin Notes
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={createForm.adminNotes}
+                        onChange={(e) => setCreateForm({...createForm, adminNotes: e.target.value})}
+                        placeholder="Internal notes about this application"
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      />
+                    </div>
+
+                    {/* Checkboxes */}
+                    <div className="space-y-3">
+                      <label className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          checked={createForm.isAnonymous}
+                          onChange={(e) => setCreateForm({...createForm, isAnonymous: e.target.checked})}
+                          className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                        />
+                        <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          Make this application anonymous
+                        </span>
+                      </label>
+
+                      <label className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          checked={createForm.isDonationEligible}
+                          onChange={(e) => setCreateForm({...createForm, isDonationEligible: e.target.checked})}
+                          className="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                        />
+                        <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          Allow community donations for this application
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 mt-6">
+                <button 
+                  onClick={() => setShowCreateModal(false)}
+                  className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleCreateApplication}
+                  disabled={loading || !createForm.applicantUserId || !createForm.title || !createForm.description || !createForm.category || !createForm.requestedAmount}
+                  className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Creating...' : 'Create Application'}
                 </button>
               </div>
             </div>
