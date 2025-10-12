@@ -107,8 +107,8 @@ export default function AdminFinancialAidPage() {
       console.error('Error loading users:', err);
       // Mock users for demo
       setUsers([
-        { id: 1, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', username: 'johndoe' },
-        { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com', username: 'janesmith' },
+        { id: 1, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', username: 'johndoe', role: 'STUDENT' },
+        { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com', username: 'janesmith', role: 'STUDENT' },
       ]);
     }
   };
@@ -116,7 +116,9 @@ export default function AdminFinancialAidPage() {
   const handleReviewApplication = (application: FinancialAidApplication) => {
     setSelectedApplication(application);
     setReviewForm({
-      status: application.status,
+      status: application.status === 'DRAFT' || application.status === 'FUNDED' || application.status === 'EXPIRED' 
+        ? 'PENDING' 
+        : application.status,
       approvedAmount: application.approvedAmount,
       adminNotes: application.adminNotes || '',
       rejectionReason: application.rejectionReason || '',
