@@ -61,6 +61,23 @@ export interface AdminReviewRequest {
   isDonationEligible?: boolean;
 }
 
+export interface AdminFinancialAidRequest {
+  applicantUserId: number;
+  title: string;
+  description: string;
+  aidType: 'SCHOLARSHIP' | 'GRANT' | 'EMERGENCY_FUND' | 'LOAN' | 'WORK_STUDY' | 'CUSTOM';
+  category: string;
+  requestedAmount: number;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  urgency?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  isAnonymous?: boolean;
+  supportingDocuments?: string;
+  personalStory?: string;
+  applicationDeadline?: string;
+  isDonationEligible?: boolean;
+  adminNotes?: string;
+}
+
 export interface FinancialAidStats {
   totalApplications: number;
   pendingApplications: number;
@@ -296,6 +313,16 @@ class FinancialAidService {
       return response.data;
     } catch (error) {
       console.error('Error fetching applications by category:', error);
+      throw error;
+    }
+  }
+
+  async createApplicationForUser(application: AdminFinancialAidRequest): Promise<FinancialAidApplication> {
+    try {
+      const response = await this.api.post('/admin/financial-aid/applications/create', application);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating application for user:', error);
       throw error;
     }
   }
