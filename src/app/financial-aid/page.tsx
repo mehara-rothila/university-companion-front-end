@@ -117,149 +117,26 @@ export default function FinancialAidPage() {
     message: ''
   });
 
-  // Mock financial profile
-  const [financialProfile] = useState<FinancialProfile>({
-    totalIncome: 600000, // LKR per year
-    totalExpenses: 750000, // LKR per year
-    availableAid: 200000, // LKR
-    gpa: 3.6,
-    creditHours: 15,
-    familyIncome: 1200000, // LKR per year
-    isFirstGen: true,
-    hasFinancialNeed: true
+  // Financial profile - will be loaded from backend or calculated
+  const [financialProfile, setFinancialProfile] = useState<FinancialProfile>({
+    totalIncome: 0,
+    totalExpenses: 0,
+    availableAid: 0,
+    gpa: 0,
+    creditHours: 0,
+    familyIncome: 0,
+    isFirstGen: false,
+    hasFinancialNeed: false
   });
 
-  // Mock budget data
-  const [budgetCategories] = useState<BudgetCategory[]>([
-    { id: '1', name: 'University Fees', budgeted: 120000, spent: 120000, remaining: 0, color: 'blue' },
-    { id: '2', name: 'Books & Supplies', budgeted: 60000, spent: 45000, remaining: 15000, color: 'green' },
-    { id: '3', name: 'Accommodation', budgeted: 240000, spent: 200000, remaining: 40000, color: 'purple' },
-    { id: '4', name: 'Food & Meals', budgeted: 180000, spent: 165000, remaining: 15000, color: 'orange' },
-    { id: '5', name: 'Transportation', budgeted: 48000, spent: 42000, remaining: 6000, color: 'teal' },
-    { id: '6', name: 'Personal', budgeted: 60000, spent: 75000, remaining: -15000, color: 'red' }
-  ]);
+  // Budget data - will be loaded from backend or user input
+  const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
 
-  // Mock aid opportunities
-  const [aidOpportunities] = useState<FinancialAidOpportunity[]>([
-    {
-      id: '1',
-      title: 'Mahapola Higher Education Scholarship',
-      type: 'scholarship',
-      amount: 60000, // LKR per year
-      deadline: new Date('2024-03-31'),
-      eligibility: ['Sri Lankan citizen', 'GPA ≥ 3.5', 'Family income criteria'],
-      requirements: ['Income certificate', 'Academic transcripts', 'Application form'],
-      description: 'Government scholarship for deserving students based on academic merit and financial need.',
-      provider: 'Mahapola Higher Education Scholarship Trust Fund',
-      applicationStatus: 'not-started',
-      renewableYears: 4
-    },
-    {
-      id: '2',
-      title: 'UoM Merit Scholarship',
-      type: 'scholarship',
-      amount: 50000, // LKR per semester
-      deadline: new Date('2024-04-15'),
-      eligibility: ['Current UoM student', 'GPA ≥ 3.7', 'Academic excellence'],
-      requirements: ['Academic transcripts', 'Recommendation letters'],
-      description: 'University-specific merit-based scholarship for outstanding academic performance.',
-      provider: 'University of Moratuwa',
-      applicationStatus: 'in-progress'
-    },
-    {
-      id: '3',
-      title: 'Bursary for Needy Students',
-      type: 'grant',
-      amount: 25000, // LKR
-      deadline: new Date('2024-05-30'),
-      eligibility: ['Demonstrated financial need', 'Good academic standing'],
-      requirements: ['Income verification', 'Grama Niladhari certificate'],
-      description: 'Need-based financial assistance for students from low-income families.',
-      provider: 'University Welfare Committee',
-      applicationStatus: 'not-started'
-    },
-    {
-      id: '4',
-      title: 'Emergency Student Support Fund',
-      type: 'emergency',
-      amount: 15000, // LKR
-      deadline: new Date('2024-12-31'),
-      eligibility: ['Current UoM student', 'Unexpected financial crisis'],
-      requirements: ['Crisis documentation', 'Faculty recommendation'],
-      description: 'Immediate financial support for students facing unexpected hardships.',
-      provider: 'Student Welfare Services UoM'
-    },
-    {
-      id: '5',
-      title: 'Research Assistant Allowance',
-      type: 'work-study',
-      amount: 30000, // LKR per semester
-      deadline: new Date('2024-03-20'),
-      eligibility: ['3rd/4th year student', 'Research interest', 'Professor recommendation'],
-      requirements: ['CV submission', 'Research proposal', 'Faculty endorsement'],
-      description: 'Part-time research assistance positions with academic departments.',
-      provider: 'Research & Development Office UoM'
-    }
-  ]);
+  // Aid opportunities - will be loaded from backend
+  const [aidOpportunities, setAidOpportunities] = useState<FinancialAidOpportunity[]>([]);
 
-  // Mock donation requests
-  const [donationRequests] = useState<DonationRequest[]>([
-    {
-      id: '1',
-      title: 'Help with Textbooks for Engineering',
-      description: 'Need assistance purchasing required textbooks for engineering courses.',
-      requestedAmount: 120000,
-      raisedAmount: 85000,
-      studentId: 'anonymous-001',
-      isAnonymous: true,
-      category: 'books',
-      urgency: 'medium',
-      deadline: new Date('2024-02-15'),
-      status: 'active',
-      verificationLevel: 'full',
-      story: 'I am a sophomore engineering student struggling to afford textbooks for this semester. I work part-time but the cost of books is overwhelming.',
-      supporters: 12,
-      updates: [
-        { id: '1', date: new Date('2024-01-10'), message: 'Thank you to everyone who has contributed so far!', amount: 200 }
-      ]
-    },
-    {
-      id: '2',
-      title: 'Emergency Housing Support',
-      description: 'Lost job and need help with rent to avoid homelessness.',
-      requestedAmount: 240000,
-      raisedAmount: 240000,
-      studentId: 'verified-student-002',
-      isAnonymous: false,
-      category: 'housing',
-      urgency: 'critical',
-      deadline: new Date('2024-01-20'),
-      status: 'funded',
-      verificationLevel: 'full',
-      story: 'Recently lost my part-time job due to budget cuts. I am at risk of losing my housing and need emergency assistance.',
-      supporters: 28,
-      updates: [
-        { id: '1', date: new Date('2024-01-15'), message: 'Goal reached! Thank you all so much!', amount: 1200 }
-      ]
-    },
-    {
-      id: '3',
-      title: 'Technology for Online Learning',
-      description: 'Need a laptop for remote classes and research.',
-      requestedAmount: 90000,
-      raisedAmount: 22500,
-      studentId: 'anonymous-003',
-      isAnonymous: true,
-      category: 'technology',
-      urgency: 'high',
-      deadline: new Date('2024-02-28'),
-      status: 'active',
-      verificationLevel: 'basic',
-      story: 'My old laptop broke and I cannot afford a replacement. I need it for online classes and completing assignments.',
-      supporters: 5,
-      updates: []
-    }
-  ]);
+  // Donation requests - now using real data from donationEligibleApps
+  const [donationRequests] = useState<DonationRequest[]>([]);
 
   // Load data on component mount
   useEffect(() => {
