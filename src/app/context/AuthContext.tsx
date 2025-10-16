@@ -53,23 +53,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [token]);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (usernameOrEmail: string, password: string): Promise<boolean> => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${API_URL}/api/auth/signin`, {
-        username,
+        usernameOrEmail,
         password
       });
 
       const { accessToken, ...userData } = response.data;
-      
+
       setToken(accessToken);
       setUser(userData);
-      
+
       // Store in localStorage
       localStorage.setItem('token', accessToken);
       localStorage.setItem('user', JSON.stringify(userData));
-      
+
       return true;
     } catch (error) {
       console.error('Login failed:', error);
