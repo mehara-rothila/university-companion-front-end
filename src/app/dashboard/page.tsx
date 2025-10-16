@@ -5,14 +5,10 @@ import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import WeatherCard from '@/components/WeatherCard';
+import { Bell } from 'lucide-react';
 
 // --- Interfaces ---
-interface WeatherData {
-  temperature: number;
-  condition: string;
-  humidity: number;
-  windSpeed: number;
-}
 
 
 
@@ -46,13 +42,6 @@ export default function Dashboard() {
   const [comingSoonFeature, setComingSoonFeature] = useState('');
 
   // Mock data - in real app, this would come from APIs
-  const [weatherData] = useState<WeatherData>({
-    temperature: 24,
-    condition: 'Partly Cloudy',
-    humidity: 65,
-    windSpeed: 12
-  });
-
   const [recentActivities] = useState<ActivityItem[]>([
     {
       id: '1',
@@ -112,8 +101,8 @@ export default function Dashboard() {
     }
   ]);
 
-  // Active features list - Now includes AI Assistant and Library
-  const activeFeatures = ['lost-found', 'financial-aid', 'profile', 'challenges', 'chatbot', 'library'];
+  // Active features list - Now includes AI Assistant, Library, Weather, and Notifications
+  const activeFeatures = ['lost-found', 'financial-aid', 'profile', 'challenges', 'chatbot', 'library', 'notifications', 'weather'];
 
   // Language options with native names
   const languages = [
@@ -504,33 +493,8 @@ export default function Dashboard() {
           {/* Top Row - Weather, Wellness Check-in */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             
-            {/* Weather & Campus Info */}
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
-              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.002 4.002 0 003 15z" />
-                </svg>
-                {t('campusWeather')}
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    {weatherData.temperature}°C
-                  </span>
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {weatherData.condition}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    <span>{t('humidity')}: {weatherData.humidity}%</span>
-                  </div>
-                  <div className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    <span>{t('wind')}: {weatherData.windSpeed} km/h</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Weather Card Component */}
+            <WeatherCard />
 
             {/* Wellness Check-in */}
             <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm md:col-span-2`}>
@@ -584,19 +548,19 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: 'Study Spaces', 
-                    url: '/study-spaces', 
-                    color: 'from-emerald-500/20 to-emerald-600/20',
-                    borderColor: 'border-emerald-400/30',
-                    iconColor: 'text-emerald-400',
-                    isActive: false,
+                    title: 'Weather', 
+                    url: '/weather', 
+                    color: 'from-sky-500/20 to-sky-600/20',
+                    borderColor: 'border-sky-400/30',
+                    iconColor: 'text-sky-400',
+                    isActive: true,
                     icon: (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
                       </svg>
                     )
                   },
-                  { 
+                  {
                     title: 'Campus Navigation', 
                     url: '/navigation', 
                     color: 'from-purple-500/20 to-purple-600/20',
@@ -680,18 +644,14 @@ export default function Dashboard() {
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                  { 
-                    title: 'Notifications', 
-                    url: '/notifications', 
+                  {
+                    title: 'Notifications',
+                    url: '/notifications',
                     color: 'from-red-500/20 to-red-600/20',
                     borderColor: 'border-red-400/30',
                     iconColor: 'text-red-400',
-                    isActive: false,
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                      </svg>
-                    )
+                    isActive: true,
+                    icon: <Bell className="h-6 w-6" strokeWidth={1.5} />
                   },
                   { 
                     title: 'Social & Events', 
@@ -706,20 +666,7 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: 'Dining', 
-                    url: '/dining', 
-                    color: 'from-amber-500/20 to-amber-600/20',
-                    borderColor: 'border-amber-400/30',
-                    iconColor: 'text-amber-400',
-                    isActive: false,
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.87c1.355 0 2.697.055 4.024.165C17.155 8.51 18 9.473 18 10.608v2.513m-3-4.87v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m15-3.38a48.474 48.474 0 00-6-.37c-2.032 0-4.034.125-6 .37m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.17c0 .62-.504 1.124-1.125 1.124H4.125A1.125 1.125 0 013 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 016 13.12M12.265 3.11a.375.375 0 11-.53 0L12 2.845l.265.265zm-3 0a.375.375 0 11-.53 0L9 2.845l.265.265zm6 0a.375.375 0 11-.53 0L15 2.845l.265.265z" />
-                      </svg>
-                    )
-                  },
-                  { 
+                  {
                     title: 'Wellness', 
                     url: '/wellness', 
                     color: 'from-teal-500/20 to-teal-600/20',
