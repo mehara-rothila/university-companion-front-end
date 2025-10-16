@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -86,6 +86,10 @@ const Navigation = () => {
           <Link href="/wellness" className="nav-link text-sm" onClick={handleNavigation}>
             <Heart className="inline h-4 w-4 mr-1" />
             Wellness
+          </Link>
+          <Link href="/weather" className="nav-link text-sm" onClick={handleNavigation}>
+            <Cloud className="inline h-4 w-4 mr-1" />
+            Weather
           </Link>
 
           {/* Admin Panel Link - Only show for admin users */}
@@ -207,6 +211,13 @@ const Navigation = () => {
             onClick={handleNavigation}
           >
             <Heart className="inline h-5 w-5 mr-2"/> Health & Wellness
+          </Link>
+          <Link 
+            href="/weather" 
+            className="mobile-nav-link flex items-center" 
+            onClick={handleNavigation}
+          >
+            <Cloud className="inline h-5 w-5 mr-2"/> Weather
           </Link>
           <Link 
             href="/help" 
