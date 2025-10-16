@@ -8,6 +8,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
+import { Bell } from 'lucide-react';
 
 // --- Interfaces ---
 interface Notification {
@@ -233,7 +234,7 @@ export default function NotificationsPage() {
     // Filter by timeframe
     if (filters.timeframe !== 'all') {
       const cutoff = new Date();
-      
+
       switch (filters.timeframe) {
         case 'today':
           cutoff.setHours(0, 0, 0, 0);
@@ -245,14 +246,14 @@ export default function NotificationsPage() {
           cutoff.setMonth(cutoff.getMonth() - 1);
           break;
       }
-      
+
       if (filters.timeframe !== 'all') {
-        filtered = filtered.filter(n => n.timestamp >= cutoff);
+        filtered = filtered.filter(n => new Date(n.createdAt) >= cutoff);
       }
     }
 
-    // Sort by timestamp (newest first)
-    filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    // Sort by createdAt (newest first)
+    filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     
     setFilteredNotifications(filtered);
   }, [notifications, activeTab, filters]);
@@ -386,9 +387,7 @@ export default function NotificationsPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-12" />
-                  </svg>
+                  <Bell className="h-8 w-8 mr-3 text-purple-500" />
                   Notifications
                   {unreadCount > 0 && (
                     <span className="ml-3 px-2 py-1 text-sm font-medium bg-red-500 text-white rounded-full">
