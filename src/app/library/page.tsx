@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
@@ -63,18 +64,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 const DIGITAL_BOOK_PLACEHOLDER = 'Describe the content, what topics it covers, why it is useful...';
 const PHYSICAL_BOOK_PLACEHOLDER = 'Describe the book condition, course usage, any notes, etc.';
 
-// Mock current user - replace with actual auth
-const CURRENT_USER = {
-  id: 1,
-  name: 'Mehara Rothila',
-  email: 'ranawakaramr.22@uom.lk',
-  phone: '+94 78 710 2992',
-  preferredPickupLocation: 'Engineering Building Lobby',
-  rating: 4.8
-};
-
 export default function LibraryPage() {
   const { isDarkMode } = useDarkMode();
+  const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('browse');
   const [bookTypeFilter, setBookTypeFilter] = useState<BookTypeFilter>('ALL');
   const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +88,7 @@ export default function LibraryPage() {
     category: 'TEXTBOOK' | 'REFERENCE' | 'PROGRAMMING' | 'ENGINEERING' | 'OTHER';
     lendingType: 'FREE' | 'SELL' | 'TRADE';
     price: number;
+    phoneNumber: string;
     photoUrl: string;
     pdfUrl: string;
     fileSize: number;
@@ -109,6 +102,7 @@ export default function LibraryPage() {
     category: 'PROGRAMMING',
     lendingType: 'FREE',
     price: 0,
+    phoneNumber: '',
     photoUrl: '',
     pdfUrl: '',
     fileSize: 0
@@ -124,6 +118,7 @@ export default function LibraryPage() {
 
   // Fetch books
   const fetchBooks = async () => {
+    if (!user) return;
     try {
       const response = await fetch(`${API_URL}/api/books`);
       if (response.ok) {
@@ -136,7 +131,7 @@ export default function LibraryPage() {
         });
         setBooks(data);
         // Filter my books
-        const myBooksData = data.filter((book: Book) => book.ownerId === CURRENT_USER.id);
+        const myBooksData = data.filter((book: Book) => book.ownerId === user.id);
         setMyBooks(myBooksData);
       }
     } catch (error) {
@@ -146,8 +141,9 @@ export default function LibraryPage() {
 
   // Fetch user requests
   const fetchRequests = async () => {
+    if (!user) return;
     try {
-      const response = await fetch(`${API_URL}/api/books/requests/user/${CURRENT_USER.id}`);
+      const response = await fetch(`${API_URL}/api/books/requests/user/${user.id}`);
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
@@ -165,12 +161,12 @@ export default function LibraryPage() {
       setIsLoading(false);
     };
     loadData();
-  }, []);
+  }, [user]);
 
   // Filter books
   const filteredBooks = books.filter(book => {
     // Exclude user's own books
-    if (book.ownerId === CURRENT_USER.id) return false;
+    if (user && book.ownerId === user.id) return false;
 
     // Book type filter
     if (bookTypeFilter !== 'ALL' && book.bookType !== bookTypeFilter) return false;
@@ -246,14 +242,14 @@ export default function LibraryPage() {
     setBookRequest({
       message: `Hi! I'm interested in ${requestType === 'download' ? 'downloading' : 'your book'} "${book.title}". `,
       pickupLocation: book.preferredPickupLocation || 'Library Main Entrance',
-      contact: CURRENT_USER.email,
+      contact: user?.email || '',
       offerPrice: book.price || 0
     });
-  }, []);
+  }, [user]);
 
   // Submit book request
   const submitBookRequest = async () => {
-    if (!showRequestModal.book) return;
+    if (!showRequestModal.book || !user) return;
 
     const book = showRequestModal.book;
     const requestType = book.bookType === 'DIGITAL' ? 'DOWNLOAD' :
@@ -261,9 +257,9 @@ export default function LibraryPage() {
 
     const requestData = {
       bookId: book.id,
-      requesterId: CURRENT_USER.id,
-      requesterName: CURRENT_USER.name,
-      requesterEmail: CURRENT_USER.email,
+      requesterId: user.id,
+      requesterName: `${user.firstName} ${user.lastName}`,
+      requesterEmail: user.email,
       requesterContact: bookRequest.contact,
       message: bookRequest.message,
       pickupLocation: bookRequest.pickupLocation,
@@ -309,6 +305,11 @@ export default function LibraryPage() {
 
   // Upload new book
   const handleBookUpload = async () => {
+    if (!user) {
+      alert('You must be logged in to upload books');
+      return;
+    }
+
     if (!newBook.title || !newBook.author || !newBook.description) {
       alert('Please fill in all required fields');
       return;
@@ -326,12 +327,12 @@ export default function LibraryPage() {
 
     const bookData = {
       ...newBook,
-      ownerId: CURRENT_USER.id,
-      ownerName: CURRENT_USER.name,
-      ownerEmail: CURRENT_USER.email,
-      ownerPhone: CURRENT_USER.phone,
-      ownerRating: CURRENT_USER.rating,
-      preferredPickupLocation: newBook.bookType === 'PHYSICAL' ? CURRENT_USER.preferredPickupLocation : null,
+      ownerId: user.id,
+      ownerName: `${user.firstName} ${user.lastName}`,
+      ownerEmail: user.email,
+      ownerPhone: newBook.phoneNumber || null,
+      ownerRating: 4.5, // Default rating or fetch from backend
+      preferredPickupLocation: newBook.bookType === 'PHYSICAL' ? 'Engineering Building Lobby' : null,
       availableForLending: true,
       totalRequests: 0,
       downloadCount: 0
@@ -356,6 +357,7 @@ export default function LibraryPage() {
           category: 'PROGRAMMING',
           lendingType: 'FREE',
           price: 0,
+          phoneNumber: '',
           photoUrl: '',
           pdfUrl: '',
           fileSize: 0
@@ -458,23 +460,25 @@ export default function LibraryPage() {
           </div>
 
           {/* User Profile Summary */}
-          <div className={`mb-8 ${isDarkMode ? 'bg-purple-900/20 border-purple-800' : 'bg-purple-50 border-purple-200'} rounded-2xl p-6 border animate-fade-in`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                  {CURRENT_USER.name.split(' ').map(n => n[0]).join('')}
-                </div>
-                <div>
-                  <h3 className={`font-semibold ${isDarkMode ? 'text-purple-300' : 'text-purple-800'}`}>
-                    Welcome back, {CURRENT_USER.name}!
-                  </h3>
-                  <p className={`text-sm ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                    Rating: {CURRENT_USER.rating}⭐ • {myBooks.length} books shared
-                  </p>
+          {user && (
+            <div className={`mb-8 ${isDarkMode ? 'bg-purple-900/20 border-purple-800' : 'bg-purple-50 border-purple-200'} rounded-2xl p-6 border animate-fade-in`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {`${user.firstName[0]}${user.lastName[0]}`}
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold ${isDarkMode ? 'text-purple-300' : 'text-purple-800'}`}>
+                      Welcome back, {user.firstName} {user.lastName}!
+                    </h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                      {myBooks.length} books shared
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Tab Navigation */}
           <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
@@ -1011,6 +1015,20 @@ export default function LibraryPage() {
                   />
                 </div>
 
+                {/* Phone Number (Optional) */}
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                    Mobile Number (Optional)
+                  </label>
+                  <input
+                    type="tel"
+                    value={newBook.phoneNumber}
+                    onChange={(e) => setNewBook({ ...newBook, phoneNumber: e.target.value })}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                    placeholder="e.g., +94 77 123 4567"
+                  />
+                </div>
+
                 {/* Physical Book Options */}
                 {newBook.bookType === 'PHYSICAL' && (
                   <>
@@ -1097,6 +1115,7 @@ export default function LibraryPage() {
                         category: 'PROGRAMMING',
                         lendingType: 'FREE',
                         price: 0,
+                        phoneNumber: '',
                         photoUrl: '',
                         pdfUrl: '',
                         fileSize: 0
