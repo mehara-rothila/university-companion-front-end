@@ -139,7 +139,7 @@ export default function DataPrivacyPage() {
     {
       id: '4',
       name: 'Location & Navigation',
-      description: 'Campus location data, navigation history, and check-ins',
+      description: 'University location data, navigation history, and check-ins',
       dataTypes: ['GPS Coordinates', 'Navigation Routes', 'Check-in Locations', 'Movement Patterns'],
       purpose: 'Navigation assistance and location-based services',
       retention: '90 days',
@@ -217,7 +217,7 @@ export default function DataPrivacyPage() {
       id: '5',
       category: 'Communication',
       name: 'Marketing Communications',
-      description: 'Receive emails about new features and campus events',
+      description: 'Receive emails about new features and university events',
       type: 'toggle',
       value: false,
       isEnabled: true
@@ -238,7 +238,7 @@ export default function DataPrivacyPage() {
       description: 'Control who can see your profile information',
       type: 'select',
       value: 'friends',
-      options: ['private', 'friends', 'campus', 'public'],
+      options: ['private', 'friends', 'university', 'public'],
       isEnabled: true
     },
     {
@@ -306,7 +306,7 @@ export default function DataPrivacyPage() {
     {
       id: '3',
       name: 'Microsoft Teams',
-      description: 'Integration with campus Teams for academic collaboration',
+      description: 'Integration with university Teams for academic collaboration',
       permissions: [
         { id: '7', name: 'Profile Access', description: 'Read your basic profile information', isGranted: true, isRequired: true, riskLevel: 'low' },
         { id: '8', name: 'Team Membership', description: 'See your team memberships and roles', isGranted: true, isRequired: true, riskLevel: 'low' },
