@@ -1,4 +1,4 @@
-# Smart Campus Companion - Project Specification
+# Smart University Companion - Project Specification
 
 ## 📊 PAGE SUMMARY
 
@@ -9,7 +9,7 @@
 - PAGE 2: Onboarding Flow  
 - PAGE 3: Dashboard/Home Page
 - PAGE 4: AI Chatbot Interface
-- PAGE 5: Campus Navigation
+- PAGE 5: University Navigation
 - PAGE 6: Study Space Finder
 - PAGE 7: Academic Hub (Enhanced with Smart Calendar)
 - PAGE 8: Notifications Center
@@ -24,7 +24,7 @@
 - PAGE 17: Lost & Found Marketplace
 - PAGE 18: Library Resource Finder
 - PAGE 19: Financial Aid & Donations
-- PAGE 20: Campus Challenges & Competitions
+- PAGE 20: University Challenges & Competitions
 
 ### Technical Pages (2 pages):
 - PAGE 13: AI Ethics & Transparency Dashboard
@@ -43,10 +43,10 @@
 - PAGE 6 (Study Space) ↔ PAGE 7 (Academic Hub) ↔ PAGE 18 (Library)
 
 **🗺️ Navigation & Location Cluster**:
-- PAGE 5 (Campus Navigation) ↔ All location-based pages (6, 9, 10, 15, 17, 18)
+- PAGE 5 (University Navigation) ↔ All location-based pages (6, 9, 10, 15, 17, 18)
 
 **👥 Social & Community Cluster**:
-- PAGE 9 (Social & Activities) ↔ PAGE 20 (Campus Challenges) ↔ PAGE 15 (Health & Wellness)
+- PAGE 9 (Social & Activities) ↔ PAGE 20 (University Challenges) ↔ PAGE 15 (Health & Wellness)
 
 **💰 Financial & Career Cluster**:
 - PAGE 16 (Career Services) ↔ PAGE 7 (Academic Hub) ↔ PAGE 19 (Financial Aid)
@@ -59,14 +59,14 @@
 
 ### **Entry/Exit Points**:
 - **Entry**: PAGE 1 (Landing) → PAGE 2 (Onboarding) → PAGE 3 (Dashboard)
-- **Emergency Exits**: Health services, Campus security, External systems
+- **Emergency Exits**: Health services, University security, External systems
 
 ### **Isolated Pages Check**: ✅ **NO ISOLATED PAGES**
 All 20 pages are properly connected through logical navigation paths.
 
 ---
 
-A mobile/web-based AI-powered digital assistant designed to help students efficiently navigate, engage with, and thrive in campus life through human-centered design and ethical AI implementation.
+A mobile/web-based AI-powered digital assistant designed to help students efficiently navigate, engage with, and thrive in university life through human-centered design and ethical AI implementation.
 
 ## 🤖 AI Features Selection
 
@@ -88,7 +88,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
    - Personalized academic recommendations
    - Intelligent calendar conflict resolution
 
-4. **Smart Campus Navigation**
+4. **Smart University Navigation**
    - AI-powered route optimization
    - Real-time crowd density analysis
    - Contextual location suggestions
@@ -148,7 +148,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 **Purpose**: User preference collection and AI training setup
 **Functionality**:
 - Personal preferences survey
-- Campus information input
+- University information input
 - Schedule import/setup
 - Notification preferences
 - AI feature explanations
@@ -166,7 +166,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Quick access to main features
 - AI-generated suggestions and recommendations
 - Recent activity summary
-- Weather and campus updates
+- Weather and university updates
 - Daily AI mental health check-in prompts
 - Wellness mood tracking integration
 - Emergency quick-access buttons
@@ -202,10 +202,10 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - **Navigate FROM**: PAGE 3 (Dashboard), All pages (chatbot icon), PAGE 12 (Help & Support)
 - **Navigate TO**: Any relevant page based on user query (5-11, 15-20)
 
-### PAGE 5: Campus Navigation
-**Purpose**: Interactive campus map and navigation
+### PAGE 5: University Navigation
+**Purpose**: Interactive university map and navigation
 **Functionality**:
-- Interactive campus map
+- Interactive university map
 - Real-time location tracking
 - Step-by-step directions
 - Points of interest markers
@@ -238,7 +238,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Optimal timing suggestions
 
 **Navigation Connections**:
-- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (Campus Navigation), PAGE 7 (Academic Hub), PAGE 18 (Library)
+- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (University Navigation), PAGE 7 (Academic Hub), PAGE 18 (Library)
 - **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - directions to space), PAGE 7 (Academic Hub), PAGE 18 (Library spaces)
 
 ### PAGE 7: Academic Hub (Enhanced with Smart Calendar)
@@ -285,7 +285,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - **Navigate TO**: Relevant pages based on notification type (7, 9, 10, 15-20), PAGE 11 (Settings)
 
 ### PAGE 9: Social & Activities
-**Purpose**: Campus community and event discovery
+**Purpose**: University community and event discovery
 **Functionality**:
 - Event discovery feed
 - Club and organization directory
@@ -300,11 +300,11 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Compatibility matching
 
 **Navigation Connections**:
-- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 7 (Academic Hub - study groups), PAGE 20 (Campus Challenges)
-- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - event locations), PAGE 7 (Academic Hub), PAGE 20 (Campus Challenges)
+- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 7 (Academic Hub - study groups), PAGE 20 (University Challenges)
+- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - event locations), PAGE 7 (Academic Hub), PAGE 20 (University Challenges)
 
 ### PAGE 10: Dining & Meal Planning
-**Purpose**: Campus dining optimization and meal planning
+**Purpose**: University dining optimization and meal planning
 **Functionality**:
 - Cafeteria hours and menus
 - Nutritional information
@@ -319,7 +319,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Dietary learning algorithms
 
 **Navigation Connections**:
-- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (Campus Navigation), PAGE 15 (Health & Wellness)
+- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (University Navigation), PAGE 15 (Health & Wellness)
 - **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - dining hall directions), PAGE 15 (Health & Wellness - nutrition)
 
 ### PAGE 11: Profile & Settings
@@ -372,7 +372,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Crisis intervention and emergency contacts
 - Wellness challenges and goal setting
 - Anonymous peer support matching
-- Integration with campus health services
+- Integration with university health services
 
 **AI Integration**:
 - Mood pattern recognition and analysis
@@ -383,8 +383,8 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Wellness content personalization
 
 **Navigation Connections**:
-- **Navigate FROM**: PAGE 3 (Dashboard - wellness check-ins), PAGE 4 (Chatbot), PAGE 10 (Dining - nutrition), PAGE 20 (Campus Challenges - wellness challenges)
-- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - health center location), PAGE 10 (Dining - nutrition advice), PAGE 20 (Campus Challenges), Emergency Services (external)
+- **Navigate FROM**: PAGE 3 (Dashboard - wellness check-ins), PAGE 4 (Chatbot), PAGE 10 (Dining - nutrition), PAGE 20 (University Challenges - wellness challenges)
+- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - health center location), PAGE 10 (Dining - nutrition advice), PAGE 20 (University Challenges), Emergency Services (external)
 
 ### PAGE 16: Career Services Hub
 **Purpose**: AI-powered career guidance and professional development
@@ -420,7 +420,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Anonymous messaging between users
 - Item category classification
 - Time-based automated alerts
-- Integration with campus security
+- Integration with university security
 
 **AI Integration**:
 - Image recognition for item matching
@@ -431,8 +431,8 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - Optimal posting time recommendations
 
 **Navigation Connections**:
-- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (Campus Navigation - location context), PAGE 8 (Notifications - alerts)
-- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - item location), PAGE 8 (Notifications), Campus Security (external)
+- **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 5 (University Navigation - location context), PAGE 8 (Notifications - alerts)
+- **Navigate TO**: PAGE 3 (Dashboard), PAGE 5 (Navigation - item location), PAGE 8 (Notifications), University Security (external)
 
 ### PAGE 18: Library Resource Finder
 **Purpose**: Intelligent library navigation and resource discovery
@@ -482,13 +482,13 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 - **Navigate FROM**: PAGE 3 (Dashboard), PAGE 4 (Chatbot), PAGE 8 (Notifications - aid alerts), PAGE 11 (Profile - financial settings)
 - **Navigate TO**: PAGE 3 (Dashboard), PAGE 8 (Notifications), PAGE 11 (Profile), PAGE 14 (Data Privacy - donation anonymity), External financial services
 
-### PAGE 20: Campus Challenges & Competitions
-**Purpose**: Gamified campus engagement with competitive elements
+### PAGE 20: University Challenges & Competitions
+**Purpose**: Gamified university engagement with competitive elements
 **Functionality**:
-- Campus-wide challenges and competitions
+- University-wide challenges and competitions
 - Leaderboards and achievement tracking
 - Team formation for group challenges
-- Reward system with real campus benefits
+- Reward system with real university benefits
 - Environmental and social impact challenges
 - Academic and wellness competitions
 - Event creation and management
@@ -547,7 +547,7 @@ A mobile/web-based AI-powered digital assistant designed to help students effici
 3. **Getting Academic Help**
    - Chatbot → Academic Query → AI Analysis → Resource Suggestions → Action
 
-4. **Campus Navigation**
+4. **University Navigation**
    - Current Location → Destination Input → AI Route Planning → Navigation → Arrival
 
 5. **Daily Planning with Smart Calendar**
