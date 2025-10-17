@@ -43,13 +43,13 @@ const Navigation = () => {
             onClick={handleNavigation}
           >
             L3 Individual Project
-            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart Campus</span>
+            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart University</span>
           </Link>
         </div>
 
         {/* Desktop menu */}
         <nav className="hidden md:flex items-center space-x-6">
-          {/* Smart Campus Navigation Links - Only existing routes */}
+          {/* Smart University Navigation Links - Only existing routes */}
           <Link href="/dashboard" className="nav-link" onClick={handleNavigation}>
             <Home className="inline h-4 w-4 mr-1" />
             Home
@@ -129,7 +129,7 @@ const Navigation = () => {
         aria-hidden={!isOpen}
       >
         <div className="p-5 space-y-3 border-t border-gray-100 dark:border-gray-700">
-          {/* Mobile Smart Campus Navigation Links - Only existing routes */}
+          {/* Mobile Smart University Navigation Links - Only existing routes */}
           <Link 
             href="/dashboard" 
             className="mobile-nav-link flex items-center" 
@@ -149,7 +149,7 @@ const Navigation = () => {
             className="mobile-nav-link flex items-center" 
             onClick={handleNavigation}
           >
-            <MapPin className="inline h-5 w-5 mr-2"/> Campus Navigation
+            <MapPin className="inline h-5 w-5 mr-2"/> University Navigation
           </Link>
           <Link 
             href="/library" 
