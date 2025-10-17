@@ -1,10 +1,10 @@
-# Smart Campus Companion - Frontend
+# Smart University Companion - Frontend
 
-A modern, responsive Next.js web application for the Smart Campus Companion system - L3 Individual Project at University of Moratuwa.
+A modern, responsive Next.js web application for the Smart University Companion system - L3 Individual Project at University of Moratuwa.
 
 ## 🎯 Project Overview
 
-The Smart Campus Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access campus services, navigation, and personalized assistance with real-time data integration and secure user management.
+The Smart University Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access university services, navigation, and personalized assistance with real-time data integration and secure user management.
 
 ## ✨ Features
 
@@ -32,11 +32,11 @@ The Smart Campus Companion is an AI-powered digital assistant designed to enhanc
 - **Error Handling** - Graceful error management with user-friendly messages
 - **Form Validation** - Real-time input validation and feedback
 
-### 🗺️ Navigation & Campus Services
-- **Interactive Campus Maps** - Location finder and directions
+### 🗺️ Navigation & University Services
+- **Interactive University Maps** - Location finder and directions
 - **Library Integration** - Book search and reservation system
 - **Study Spaces** - Real-time availability tracking
-- **Campus Information** - Quick access to university services
+- **University Information** - Quick access to university services
 
 ### 🛡️ Admin Panel (Fully Implemented)
 - **User Management** - Complete CRUD operations for users
@@ -66,9 +66,9 @@ The Smart Campus Companion is an AI-powered digital assistant designed to enhanc
 - **Multiple Types** - System, financial aid, lost & found, academic alerts
 
 ### 📱 Additional Features
-- **AI Assistant Interface** - Chatbot for campus queries
+- **AI Assistant Interface** - Chatbot for university queries
 - **Profile Management** - Personal information and preferences
-- **Challenges & Rewards** - Gamified campus engagement
+- **Challenges & Rewards** - Gamified university engagement
 - **Study Spaces** - Real-time availability tracking
 - **Wellness Hub** - Mental health and wellness resources
 
@@ -125,7 +125,7 @@ Create `.env.local` file in the root directory:
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:8080
 NEXT_PUBLIC_WS_URL=http://localhost:8080/ws
-NEXT_PUBLIC_APP_NAME=Smart Campus Companion
+NEXT_PUBLIC_APP_NAME=Smart University Companion
 
 # Optional: Additional configuration
 NEXT_PUBLIC_AWS_REGION=us-east-1
@@ -206,7 +206,7 @@ src/
 │   │   └── page.tsx              # Personal dashboard
 │   ├── library/                 # Library Services
 │   │   └── page.tsx              # Library integration
-│   ├── navigation/              # Campus Navigation
+│   ├── navigation/              # University Navigation
 │   │   └── page.tsx              # Interactive maps
 │   ├── profile/                 # User Management
 │   │   └── page.tsx              # Profile settings
@@ -271,7 +271,7 @@ src/
 - **`chatbot/page.tsx`**: AI assistant interface
 - **`challenges/page.tsx`**: Gamification and challenges
 - **`library/page.tsx`**: Library services integration
-- **`navigation/page.tsx`**: Campus navigation and maps
+- **`navigation/page.tsx`**: University navigation and maps
 - **`study-spaces/page.tsx`**: Study space availability
 - **`wellness/page.tsx`**: Wellness and mental health resources
 
@@ -453,7 +453,7 @@ The application supports:
 - **Library Services** - Basic interface (backend integration pending)
 - **Profile Management** - UI ready (backend integration needed)
 - **AI Assistant Interface** - UI framework ready
-- **Campus Navigation** - Basic layout implemented
+- **University Navigation** - Basic layout implemented
 - **Study Spaces** - UI structure ready
 - **Wellness Hub** - Basic interface implemented
 
@@ -580,7 +580,7 @@ This project is part of the L3 Individual Project at the University of Moratuwa,
 - Ethical AI implementation
 - Modern web development practices
 - User experience optimization
-- Campus digitalization solutions
+- University digitalization solutions
 
 ## 🤝 Contributing
 
