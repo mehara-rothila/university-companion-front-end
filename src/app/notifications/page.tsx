@@ -57,7 +57,7 @@ interface NotificationSettings {
   };
   emergency: {
     enabled: boolean;
-    campusAlerts: boolean;
+    universityAlerts: boolean;
     weatherWarnings: boolean;
     safetyUpdates: boolean;
   };
@@ -136,7 +136,7 @@ export default function NotificationsPage() {
     },
     emergency: {
       enabled: true,
-      campusAlerts: true,
+      universityAlerts: true,
       weatherWarnings: true,
       safetyUpdates: true
     },
