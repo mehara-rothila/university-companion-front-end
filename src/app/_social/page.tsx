@@ -181,12 +181,12 @@ const MOCK_EVENTS: Event[] = [
     {
       id: '6',
       title: 'Mozilla Open Source Workshop',
-      description: 'Learn about open source contribution and web technologies with Mozilla Campus Club.',
+      description: 'Learn about open source contribution and web technologies with Mozilla University Club.',
       type: 'workshop',
       date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
       endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000),
       location: 'IT Faculty Computer Lab',
-      organizer: 'Mozilla Campus Club UoM',
+      organizer: 'Mozilla University Club UoM',
       capacity: 30,
       attendees: 22,
       isRegistered: true,
@@ -230,7 +230,7 @@ const MOCK_CLUBS: Club[] = [
     },
     {
       id: '3',
-      name: 'Mozilla Campus Club UoM',
+      name: 'Mozilla University Club UoM',
       description: 'Open source community focusing on web technologies and Mozilla projects.',
       category: 'academic',
       members: 120,
@@ -319,15 +319,15 @@ const MOCK_SOCIAL_POSTS: SocialPost[] = [
       id: '3',
       author: 'Maya Patel',
       authorRole: 'student',
-      content: 'Just captured this amazing sunset from the library roof! 📸 Photography Society meeting this Friday - newcomers welcome! Let\'s explore campus through our lenses.',
+      content: 'Just captured this amazing sunset from the library roof! 📸 Photography Society meeting this Friday - newcomers welcome! Let\'s explore university through our lenses.',
       timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
       type: 'achievement',
       likes: 31,
       comments: 12,
       isLiked: false,
-      tags: ['Photography', 'Campus Life', 'Art'],
+      tags: ['Photography', 'University Life', 'Art'],
       attachments: [
-        { type: 'image', url: '/sunset.jpg', name: 'Campus Sunset' }
+        { type: 'image', url: '/sunset.jpg', name: 'University Sunset' }
       ]
     },
     {
@@ -393,7 +393,7 @@ export default function SocialPage() {
           id: '2',
           type: 'club',
           title: 'Photography Society Recommendation',
-          description: 'Students with your interests often enjoy creative outlets. Photography Society has weekly campus walks.',
+          description: 'Students with your interests often enjoy creative outlets. Photography Society has weekly university walks.',
           confidence: 78,
           reason: 'Creative students with tech backgrounds often enjoy photography',
           actionText: 'Learn More About Club',
@@ -610,7 +610,7 @@ export default function SocialPage() {
               {[
                 { id: 'events', label: 'Events', icon: '📅', count: events.length },
                 { id: 'clubs', label: 'Clubs & Organizations', icon: '🏛️', count: clubs.length },
-                { id: 'feed', label: 'Campus Feed', icon: '📰', count: socialPosts.length },
+                { id: 'feed', label: 'University Feed', icon: '📰', count: socialPosts.length },
                 { id: 'discover', label: 'Discover', icon: '🔍', count: null }
               ].map((tab) => (
                 <button
