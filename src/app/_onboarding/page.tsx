@@ -15,8 +15,8 @@ interface OnboardingData {
   studyPreferences: string[];
   learningStyle: string;
   
-  // Step 2: Campus Information
-  campus: string;
+  // Step 2: University Information
+  university: string;
   dormitory: string;
   favoriteSpots: string[];
   accessibilityNeeds: string[];
@@ -46,7 +46,7 @@ export default function OnboardingFlow() {
     university: '',
     studyPreferences: [],
     learningStyle: '',
-    campus: '',
+    university: '',
     dormitory: '',
     favoriteSpots: [],
     accessibilityNeeds: [],
@@ -111,7 +111,7 @@ export default function OnboardingFlow() {
               </svg>
             </Link>
             <div className="text-center">
-              <h1 className="text-2xl font-bold">Welcome to Smart Campus</h1>
+              <h1 className="text-2xl font-bold">Welcome to Smart University</h1>
               <p className="text-purple-100">Let&apos;s personalize your experience</p>
             </div>
             <div className="text-right">
@@ -146,7 +146,7 @@ export default function OnboardingFlow() {
                   </svg>
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Tell us about yourself</h2>
-                <p className="text-gray-600 dark:text-gray-400">Help us personalize your Smart Campus experience</p>
+                <p className="text-gray-600 dark:text-gray-400">Help us personalize your Smart University experience</p>
               </div>
 
               <div className="space-y-6">
@@ -226,7 +226,7 @@ export default function OnboardingFlow() {
             </div>
           )}
 
-          {/* Step 2: Campus Information */}
+          {/* Step 2: University Information */}
           {currentStep === 2 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fadeIn">
               <div className="text-center mb-8">
@@ -235,20 +235,20 @@ export default function OnboardingFlow() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Campus Information</h2>
-                <p className="text-gray-600 dark:text-gray-400">Help us understand your campus environment</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">University Information</h2>
+                <p className="text-gray-600 dark:text-gray-400">Help us understand your university environment</p>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Campus/Location</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">University/Location</label>
                     <input
                       type="text"
-                      value={onboardingData.campus}
-                      onChange={(e) => updateData('campus', e.target.value)}
+                      value={onboardingData.university}
+                      onChange={(e) => updateData('university', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                      placeholder="Main Campus, North Campus, etc."
+                      placeholder="Main University, North University, etc."
                     />
                   </div>
                   
@@ -265,7 +265,7 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Favorite Campus Spots (Select all that apply)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Favorite University Spots (Select all that apply)</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {['Library', 'Student Union', 'Gym/Recreation', 'Dining Hall', 'Computer Labs', 'Study Lounges', 'Outdoor Spaces', 'Coffee Shops', 'Academic Buildings'].map((spot) => (
                       <button
@@ -376,7 +376,7 @@ export default function OnboardingFlow() {
                         Import Schedule from University System
                       </label>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Allow Smart Campus to sync with your university&apos;s scheduling system for automatic calendar integration and class reminders.
+                        Allow Smart University to sync with your university&apos;s scheduling system for automatic calendar integration and class reminders.
                       </p>
                     </div>
                   </div>
@@ -403,12 +403,12 @@ export default function OnboardingFlow() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Enable AI Features (Select all that apply)</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language campus assistance' },
+                      { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language university assistance' },
                       { key: 'studySpaces', name: 'Smart Study Space Finder', desc: 'ML-powered availability predictions' },
                       { key: 'navigation', name: 'Intelligent Navigation', desc: 'Route optimization and crowd analysis' },
                       { key: 'academic', name: 'Academic Assistant', desc: 'Smart calendar and schedule optimization' },
                       { key: 'wellness', name: 'Wellness Check-ins', desc: 'Mood tracking and mental health support' },
-                      { key: 'recommendations', name: 'Personalized Recommendations', desc: 'Campus activities and resources' },
+                      { key: 'recommendations', name: 'Personalized Recommendations', desc: 'University activities and resources' },
                     ].map((feature) => (
                       <div
                         key={feature.key}
@@ -444,7 +444,7 @@ export default function OnboardingFlow() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Notification Preferences</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {['Study Reminders', 'Class Notifications', 'Wellness Check-ins', 'Campus Events', 'AI Recommendations', 'Emergency Alerts'].map((pref) => (
+                    {['Study Reminders', 'Class Notifications', 'Wellness Check-ins', 'University Events', 'AI Recommendations', 'Emergency Alerts'].map((pref) => (
                       <button
                         key={pref}
                         onClick={() => toggleArrayItem('notificationPreferences', pref)}
