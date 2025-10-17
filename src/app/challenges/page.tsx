@@ -100,7 +100,7 @@ interface AIRecommendation {
   relatedItem: string;
 }
 
-export default function CampusChallengesPage() {
+export default function UniversityChallengesPage() {
   const { isDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState('explore');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -124,8 +124,8 @@ export default function CampusChallengesPage() {
   const [challenges] = useState<Challenge[]>([
     {
       id: '1',
-      title: 'Campus Sustainability Challenge',
-      description: 'Reduce campus carbon footprint through innovative solutions and behavioral changes.',
+      title: 'University Sustainability Challenge',
+      description: 'Reduce university carbon footprint through innovative solutions and behavioral changes.',
       type: 'environmental',
       difficulty: 'intermediate',
       duration: 30,
@@ -212,15 +212,15 @@ export default function CampusChallengesPage() {
         { id: '8', type: 'badge', title: 'Wellness Champion', description: 'Health and fitness achievement', value: 0, condition: 'consistency' }
       ],
       requirements: ['Health commitment', 'Daily check-ins'],
-      createdBy: 'Campus Recreation',
+      createdBy: 'University Recreation',
       tags: ['wellness', 'fitness', 'mental health', 'habits'],
       aiRecommended: true,
       matchScore: 76
     },
     {
       id: '5',
-      title: 'Creative Campus Art Project',
-      description: 'Collaborate to create public art installations around campus.',
+      title: 'Creative University Art Project',
+      description: 'Collaborate to create public art installations around university.',
       type: 'creative',
       difficulty: 'intermediate',
       duration: 45,
@@ -232,12 +232,12 @@ export default function CampusChallengesPage() {
       isTeamChallenge: true,
       teamSize: 6,
       rewards: [
-        { id: '9', type: 'recognition', title: 'Art Exhibition', description: 'Featured in campus gallery', value: 0, condition: 'completion' },
+        { id: '9', type: 'recognition', title: 'Art Exhibition', description: 'Featured in university gallery', value: 0, condition: 'completion' },
         { id: '10', type: 'points', title: 'Creative Points', description: 'Creativity leaderboard points', value: 300, condition: 'participation' }
       ],
       requirements: ['Artistic interest', 'Collaboration skills'],
       createdBy: 'Art Department',
-      tags: ['art', 'creativity', 'collaboration', 'campus']
+      tags: ['art', 'creativity', 'collaboration', 'university']
     }
   ]);
 
@@ -283,7 +283,7 @@ export default function CampusChallengesPage() {
     {
       id: '1',
       title: 'First Challenge',
-      description: 'Completed your first campus challenge',
+      description: 'Completed your first university challenge',
       icon: '🎯',
       type: 'challenge',
       rarity: 'common',
@@ -459,7 +459,7 @@ export default function CampusChallengesPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading campus challenges...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading university challenges...</p>
           </div>
         </main>
       </>
@@ -483,10 +483,10 @@ export default function CampusChallengesPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Campus Challenges & Competitions
+                University Challenges & Competitions
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
-                Gamified campus engagement platform with AI-powered team matching, leaderboards, and real rewards for academic and personal growth.
+                Gamified university engagement platform with AI-powered team matching, leaderboards, and real rewards for academic and personal growth.
               </p>
 
               {/* Quick Actions */}
@@ -1165,7 +1165,7 @@ export default function CampusChallengesPage() {
                 </h3>
                 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  Design your own campus challenge and engage the community! Our AI will help optimize difficulty and rewards.
+                  Design your own university challenge and engage the community! Our AI will help optimize difficulty and rewards.
                 </p>
 
                 <div className="space-y-3">
