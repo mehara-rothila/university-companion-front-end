@@ -318,7 +318,7 @@ export default function DiningPage() {
           id: '5',
           name: 'Artisan Coffee',
           category: 'beverages',
-          diningHall: 'North Campus Café',
+          diningHall: 'North University Café',
           price: 4.50,
           description: 'Freshly roasted single-origin coffee beans, available hot or iced',
           ingredients: ['Coffee beans', 'Water'],
@@ -549,7 +549,7 @@ export default function DiningPage() {
                 },
                 {
                   title: 'Budget Optimization',
-                  description: 'Switch to North Campus Café today to stay within your weekly dining budget.',
+                  description: 'Switch to North University Café today to stay within your weekly dining budget.',
                   action: 'View Budget Tracker'
                 }
               ].map((rec, index) => (

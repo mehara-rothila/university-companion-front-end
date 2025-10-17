@@ -183,7 +183,7 @@ export default function AIEthicsPage() {
       biasType: 'Geographic Bias',
       severity: 'medium',
       description: 'Algorithm showed preference for library locations over other study spaces for students from certain dormitories',
-      affectedGroups: ['East Campus Residents', 'Off-Campus Students'],
+      affectedGroups: ['East University Residents', 'Off-University Students'],
       mitigationSteps: [
         'Updated distance weighting algorithm',
         'Added transportation time factors',
@@ -336,7 +336,7 @@ export default function AIEthicsPage() {
     {
       id: '2',
       dataType: 'Location Data',
-      purpose: 'Campus navigation and space recommendations',
+      purpose: 'University navigation and space recommendations',
       algorithms: ['Navigation Assistant', 'Study Space Finder'],
       retentionPeriod: '90 days',
       sharingStatus: 'not-shared',
@@ -392,7 +392,7 @@ export default function AIEthicsPage() {
     {
       id: '4',
       feature: 'Behavioral Pattern Research',
-      description: 'Anonymous data contribution to campus wellness research',
+      description: 'Anonymous data contribution to university wellness research',
       impact: 'Your anonymized data will not contribute to research insights',
       isOptedOut: true,
       canOptOut: true,

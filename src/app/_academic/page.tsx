@@ -269,7 +269,7 @@ export default function AcademicPage() {
           type: 'break',
           startTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000),
           endTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 3.5 * 60 * 60 * 1000),
-          location: 'Campus Green',
+          location: 'University Green',
           description: 'AI suggests a mindful walk to boost productivity',
           priority: 'medium',
           status: 'scheduled',
