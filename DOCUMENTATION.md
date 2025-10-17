@@ -1,6 +1,6 @@
-# Smart Campus Companion - Project Documentation
+# Smart University Companion - Project Documentation
 
-![Smart Campus Companion](https://img.shields.io/badge/Smart%20Campus-Companion-purple) ![Next.js](https://img.shields.io/badge/Next.js-15.4.6-black) ![React](https://img.shields.io/badge/React-19.1.0-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.0-teal)
+![Smart University Companion](https://img.shields.io/badge/Smart%20University-Companion-purple) ![Next.js](https://img.shields.io/badge/Next.js-15.4.6-black) ![React](https://img.shields.io/badge/React-19.1.0-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.0-teal)
 
 ## 📋 Table of Contents
 
@@ -22,7 +22,7 @@
 
 ## 🎯 Overview
 
-Smart Campus Companion is an AI-powered digital assistant designed to help students efficiently navigate, engage with, and thrive in campus life through human-centered design and ethical AI implementation. This comprehensive platform integrates intelligent features for academic support, wellness tracking, campus navigation, and social engagement.
+Smart University Companion is an AI-powered digital assistant designed to help students efficiently navigate, engage with, and thrive in university life through human-centered design and ethical AI implementation. This comprehensive platform integrates intelligent features for academic support, wellness tracking, university navigation, and social engagement.
 
 ### Project Vision
 - **Human-Centered Design**: Technology that adapts to users, not the other way around
@@ -31,8 +31,8 @@ Smart Campus Companion is an AI-powered digital assistant designed to help stude
 - **Student Success**: Comprehensive support for academic and personal development
 
 ### Target Audience
-- University students seeking streamlined campus experience
-- Campus administrators looking for student engagement insights
+- University students seeking streamlined university experience
+- University administrators looking for student engagement insights
 - Educational institutions implementing AI-assisted student services
 
 ## ✨ Key Features
@@ -40,7 +40,7 @@ Smart Campus Companion is an AI-powered digital assistant designed to help stude
 ### 🤖 AI-Powered Core Features
 
 1. **Natural Language Chatbot Interface**
-   - 24/7 intelligent campus assistance
+   - 24/7 intelligent university assistance
    - Context-aware conversation handling
    - Multi-topic query support
    - Integration with all app features
@@ -51,7 +51,7 @@ Smart Campus Companion is an AI-powered digital assistant designed to help stude
    - Usage pattern analysis
    - Optimal timing suggestions
 
-3. **Smart Campus Navigation**
+3. **Smart University Navigation**
    - AI-powered route optimization
    - Real-time crowd density analysis
    - Accessibility route options
@@ -83,12 +83,12 @@ Smart Campus Companion is an AI-powered digital assistant designed to help stude
 - **Crisis Intervention**: Emergency contacts and support protocols
 - **Anonymous Peer Support**: Secure matching for peer assistance
 
-### 🗺️ Campus Life Features
+### 🗺️ University Life Features
 
 - **Social & Activities**: Event discovery, club recommendations
 - **Dining & Meal Planning**: Menu tracking, nutritional optimization
 - **Lost & Found Marketplace**: AI-powered item matching
-- **Campus Challenges**: Gamified engagement and competitions
+- **University Challenges**: Gamified engagement and competitions
 - **Financial Aid & Donations**: Peer-to-peer assistance platform
 
 ## 🛠️ Technology Stack
@@ -115,7 +115,7 @@ Smart Campus Companion is an AI-powered digital assistant designed to help stude
 
 ### Icons & Graphics
 - **Lucide React 0.539.0**: Consistent icon system
-- **Custom SVG Icons**: Campus-specific iconography
+- **Custom SVG Icons**: University-specific iconography
 
 ## 📁 Project Structure
 
@@ -132,7 +132,7 @@ devthon-learning-platform/
 │   │   ├── academic/                # Academic hub page
 │   │   ├── ai-ethics/               # AI Ethics & Transparency Dashboard
 │   │   ├── career/                  # Career Services Hub
-│   │   ├── challenges/              # Campus Challenges & Competitions
+│   │   ├── challenges/              # University Challenges & Competitions
 │   │   ├── chatbot/                 # AI Chatbot Interface
 │   │   ├── context/                 # React Context providers
 │   │   │   └── DarkModeContext.tsx  # Dark mode state management
@@ -142,7 +142,7 @@ devthon-learning-platform/
 │   │   ├── help/                    # Help & Support center
 │   │   ├── library/                 # Library Resource Finder
 │   │   ├── lost-found/              # Lost & Found Marketplace
-│   │   ├── navigation/              # Campus Navigation
+│   │   ├── navigation/              # University Navigation
 │   │   ├── notifications/           # Notifications Center
 │   │   ├── onboarding/              # User onboarding flow
 │   │   ├── privacy/                 # Data Privacy Center
@@ -165,7 +165,7 @@ devthon-learning-platform/
 ├── postcss.config.js               # PostCSS configuration
 ├── postcss.config.mjs              # PostCSS module configuration
 ├── README.md                       # Basic project information
-├── smart_campus_companion_spec.md  # Detailed project specification
+├── smart_university_companion_spec.md  # Detailed project specification
 ├── tailwind.config.js              # TailwindCSS configuration
 └── tsconfig.json                   # TypeScript configuration
 ```
@@ -234,12 +234,12 @@ npm run start
 2. **Onboarding Flow** (`/onboarding`) - User preference collection and AI setup
 3. **Dashboard/Home Page** (`/dashboard`) - Personalized overview and central hub
 4. **AI Chatbot Interface** (`/chatbot`) - Natural language interaction hub
-5. **Campus Navigation** (`/navigation`) - Interactive campus map and directions
+5. **University Navigation** (`/navigation`) - Interactive university map and directions
 6. **Study Space Finder** (`/study-spaces`) - Real-time availability and booking
 7. **Academic Hub** (`/academic`) - Enhanced with Smart Calendar
 8. **Notifications Center** (`/notifications`) - Centralized notification management
-9. **Social & Activities** (`/social`) - Campus community and event discovery
-10. **Dining & Meal Planning** (`/dining`) - Campus dining optimization
+9. **Social & Activities** (`/social`) - University community and event discovery
+10. **Dining & Meal Planning** (`/dining`) - University dining optimization
 11. **Profile & Settings** (`/profile`) - User account management
 12. **Help & Support** (`/help`) - User assistance and troubleshooting
 
@@ -249,7 +249,7 @@ npm run start
 15. **Lost & Found Marketplace** (`/lost-found`) - Community-driven recovery system
 16. **Library Resource Finder** (`/library`) - Intelligent library navigation
 17. **Financial Aid & Donations** (`/financial-aid`) - Peer-to-peer assistance platform
-18. **Campus Challenges & Competitions** (`/challenges`) - Gamified engagement
+18. **University Challenges & Competitions** (`/challenges`) - Gamified engagement
 
 #### Technical Pages (2 pages)
 19. **AI Ethics & Transparency Dashboard** (`/ai-ethics`) - AI decision explanations
@@ -310,13 +310,13 @@ npm run start
 ### Daily Usage Patterns
 1. **Morning Check-in**: Wellness assessment and daily planning
 2. **Academic Support**: Schedule optimization and study space booking
-3. **Campus Navigation**: Real-time directions and crowd avoidance
+3. **University Navigation**: Real-time directions and crowd avoidance
 4. **Social Discovery**: Event recommendations and peer connections
 5. **Evening Reflection**: Progress tracking and wellness monitoring
 
 ### Emergency Scenarios
 - **Crisis Intervention**: Immediate access to mental health resources
-- **Campus Security**: Quick contact with safety services
+- **University Security**: Quick contact with safety services
 - **Medical Emergency**: Healthcare service integration
 
 ## ⚖️ Ethical AI Implementation
@@ -391,10 +391,10 @@ POST /api/ai/wellness/check-in
 GET /api/ai/wellness/insights
 ```
 
-### Campus Data Endpoints
+### University Data Endpoints
 ```typescript
 // Navigation services
-GET /api/campus/map
+GET /api/university/map
 POST /api/navigation/route
 GET /api/navigation/live-data
 
@@ -469,12 +469,12 @@ This project is developed for the L3 Individual Project and is intended for educ
 ## 📞 Support
 
 For questions, issues, or contributions:
-- **Email**: support@smartcampus.edu
+- **Email**: support@smartuniversity.edu
 - **GitHub Issues**: Create an issue in this repository
-- **Documentation**: Refer to the detailed specification in `smart_campus_companion_spec.md`
+- **Documentation**: Refer to the detailed specification in `smart_university_companion_spec.md`
 
 ---
 
 **Built with ❤️ for L3 Individual Project 2025**
 
-*Smart Campus Companion - Empowering students through ethical AI and human-centered design*
+*Smart University Companion - Empowering students through ethical AI and human-centered design*
