@@ -62,8 +62,8 @@ const QUICK_ACTIONS: QuickAction[] = [
     },
     {
       id: '2',
-      text: 'Campus navigation',
-      action: 'campus_navigation',
+      text: 'University navigation',
+      action: 'university_navigation',
       route: '/navigation',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -125,7 +125,7 @@ export default function ChatbotPage() {
     const welcomeMessage: ChatMessage = {
       id: '1',
       type: 'ai',
-      content: "Hi! I&apos;m your Smart Campus AI assistant. I can help you with study spaces, navigation, academic planning, wellness support, and much more. You can also upload PDFs for analysis or videos for transcription. How can I assist you today?",
+      content: "Hi! I&apos;m your Smart University AI assistant. I can help you with study spaces, navigation, academic planning, wellness support, and much more. You can also upload PDFs for analysis or videos for transcription. How can I assist you today?",
       timestamp: new Date(),
       suggestions: QUICK_ACTIONS.slice(0, 3)
     };
@@ -157,7 +157,7 @@ export default function ChatbotPage() {
   const transcribeVideo = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-  resolve(`Video transcription for ${file.name}:\n\n[00:00] Hello and welcome to this video\n[00:15] Today we&apos;ll be discussing campus resources\n[00:30] First, let&apos;s talk about the library services\n[01:00] The study spaces are available 24/7\n[01:30] Don&apos;t forget to check out the wellness center\n\nNote: This is a simulated transcription. In production, this would use services like OpenAI Whisper, Google Speech-to-Text, or Azure Speech Services.`);
+  resolve(`Video transcription for ${file.name}:\n\n[00:00] Hello and welcome to this video\n[00:15] Today we&apos;ll be discussing university resources\n[00:30] First, let&apos;s talk about the library services\n[01:00] The study spaces are available 24/7\n[01:30] Don&apos;t forget to check out the wellness center\n\nNote: This is a simulated transcription. In production, this would use services like OpenAI Whisper, Google Speech-to-Text, or Azure Speech Services.`);
       }, 5000 + Math.random() * 5000);
     });
   };
@@ -303,9 +303,9 @@ export default function ChatbotPage() {
         { id: 'study-3', text: 'View library hours', action: 'library_hours', route: '/library' }
       ];
     } else if (input.includes('navigation') || input.includes('direction') || input.includes('where')) {
-      response = "I&apos;d be happy to help you navigate campus! I can provide optimal routes considering current foot traffic, accessibility needs, and construction updates. Where would you like to go?";
+      response = "I&apos;d be happy to help you navigate university! I can provide optimal routes considering current foot traffic, accessibility needs, and construction updates. Where would you like to go?";
       suggestions = [
-        { id: 'nav-1', text: 'Open campus map', action: 'open_map', route: '/navigation' },
+        { id: 'nav-1', text: 'Open university map', action: 'open_map', route: '/navigation' },
         { id: 'nav-2', text: 'Find parking', action: 'find_parking', route: '/navigation' },
         { id: 'nav-3', text: 'Accessibility routes', action: 'accessibility', route: '/navigation' }
       ];
@@ -317,7 +317,7 @@ export default function ChatbotPage() {
         { id: 'academic-3', text: 'Check assignments', action: 'check_assignments', route: '/academic' }
       ];
     } else if (input.includes('wellness') || input.includes('stress') || input.includes('health')) {
-      response = "I notice you&apos;re asking about wellness - that&apos;s great self-care! I can help you track your mood, find stress management resources, or connect you with campus wellness services. How are you feeling today?";
+      response = "I notice you&apos;re asking about wellness - that&apos;s great self-care! I can help you track your mood, find stress management resources, or connect you with university wellness services. How are you feeling today?";
       suggestions = [
         { id: 'wellness-1', text: 'Daily check-in', action: 'daily_checkin', route: '/wellness' },
         { id: 'wellness-2', text: 'Stress resources', action: 'stress_help', route: '/wellness' },
@@ -331,7 +331,7 @@ export default function ChatbotPage() {
         { id: 'dining-3', text: 'Dietary options', action: 'dietary', route: '/dining' }
       ];
     } else {
-      response = "I understand you&apos;re looking for help with campus life. I&apos;m equipped to assist with study spaces, navigation, academic planning, wellness support, dining options, file analysis, and much more. What specific area would you like help with?";
+      response = "I understand you&apos;re looking for help with university life. I&apos;m equipped to assist with study spaces, navigation, academic planning, wellness support, dining options, file analysis, and much more. What specific area would you like help with?";
       suggestions = QUICK_ACTIONS.slice(0, 4);
     }
 
@@ -539,10 +539,10 @@ export default function ChatbotPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    AI Campus Assistant
+                    AI University Assistant
                   </h1>
                   <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Your intelligent companion for campus life
+                    Your intelligent companion for university life
                   </p>
                 </div>
 
@@ -755,7 +755,7 @@ export default function ChatbotPage() {
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything about campus life..."
+                      placeholder="Ask me anything about university life..."
                       disabled={isLoading}
                       className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
                         isDarkMode 
