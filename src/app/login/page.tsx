@@ -53,7 +53,7 @@ export default function LoginPage() {
         <div className="glass-premium-card rounded-3xl p-6 sm:p-8 w-full max-w-md animate-glass-fade-in">
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Sign in to your Smart Campus account</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Sign in to your Smart University account</p>
           </div>
 
           {error && (
