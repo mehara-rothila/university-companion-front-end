@@ -50,7 +50,7 @@ export default function HelpSupportPage() {
     {
       id: '1',
       category: 'Getting Started',
-      question: 'How do I set up my Smart Campus account?',
+      question: 'How do I set up my Smart University account?',
       answer: 'After downloading the app, click "Get Started" on the welcome screen. You&apos;ll go through a 4-step onboarding process where you can set your preferences, connect your academic schedule, and customize AI features. The process takes about 5 minutes.',
       helpful: 47,
       tags: ['onboarding', 'setup', 'account']
@@ -59,7 +59,7 @@ export default function HelpSupportPage() {
       id: '2',
       category: 'AI Features',
       question: 'How does the AI chatbot understand my questions?',
-      answer: 'Our AI chatbot uses advanced Natural Language Processing (NLP) to understand your questions in everyday language. It&apos;s trained specifically on campus-related topics and can help with study spaces, navigation, academic planning, and wellness support. The more you use it, the better it becomes at understanding your specific needs.',
+      answer: 'Our AI chatbot uses advanced Natural Language Processing (NLP) to understand your questions in everyday language. It&apos;s trained specifically on university-related topics and can help with study spaces, navigation, academic planning, and wellness support. The more you use it, the better it becomes at understanding your specific needs.',
       helpful: 52,
       tags: ['ai', 'chatbot', 'nlp']
     },
@@ -67,14 +67,14 @@ export default function HelpSupportPage() {
       id: '3',
       category: 'Study Spaces',
       question: 'How accurate are the study space availability predictions?',
-      answer: 'Our AI analyzes historical usage patterns, current bookings, and real-time data to predict availability with 85-90% accuracy. Predictions are updated every 15 minutes and become more accurate over time as the system learns campus patterns.',
+      answer: 'Our AI analyzes historical usage patterns, current bookings, and real-time data to predict availability with 85-90% accuracy. Predictions are updated every 15 minutes and become more accurate over time as the system learns university patterns.',
       helpful: 38,
       tags: ['study-spaces', 'predictions', 'accuracy']
     },
     {
       id: '4',
       category: 'Privacy & Security',
-      question: 'What data does Smart Campus collect about me?',
+      question: 'What data does Smart University collect about me?',
       answer: 'We collect only what&apos;s necessary to provide personalized services: your preferences, usage patterns, and academic schedule (if you choose to share it). All data is encrypted, stored securely, and you have full control over what&apos;s shared. Visit our Privacy Center for complete details.',
       helpful: 41,
       tags: ['privacy', 'data', 'security']
@@ -82,8 +82,8 @@ export default function HelpSupportPage() {
     {
       id: '5',
       category: 'Navigation',
-      question: 'Why isn&apos;t campus navigation working for me?',
-      answer: 'Navigation requires location permissions. Check that you&apos;ve enabled location services for the Smart Campus app in your device settings. If issues persist, try refreshing the app or ensuring you have a stable internet connection.',
+      question: 'Why isn&apos;t university navigation working for me?',
+      answer: 'Navigation requires location permissions. Check that you&apos;ve enabled location services for the Smart University app in your device settings. If issues persist, try refreshing the app or ensuring you have a stable internet connection.',
       helpful: 29,
       tags: ['navigation', 'location', 'troubleshooting']
     },
@@ -99,7 +99,7 @@ export default function HelpSupportPage() {
       id: '7',
       category: 'AI Features',
       question: 'Can I turn off specific AI features?',
-      answer: 'Yes! Go to Profile & Settings > AI Features to enable or disable any AI functionality. You can use Smart Campus with minimal AI features if you prefer, though some advanced features like personalized recommendations won&apos;t be available.',
+      answer: 'Yes! Go to Profile & Settings > AI Features to enable or disable any AI functionality. You can use Smart University with minimal AI features if you prefer, though some advanced features like personalized recommendations won&apos;t be available.',
       helpful: 33,
       tags: ['ai', 'settings', 'control']
     },
@@ -117,7 +117,7 @@ export default function HelpSupportPage() {
   const [tutorials] = useState<TutorialItem[]>([
     {
       id: '1',
-      title: 'Getting Started with Smart Campus',
+      title: 'Getting Started with Smart University',
       description: 'Complete walkthrough of setting up your account and basic features',
       duration: '8 minutes',
       difficulty: 'beginner',
@@ -133,7 +133,7 @@ export default function HelpSupportPage() {
     {
       id: '2',
       title: 'Mastering the AI Chatbot',
-      description: 'Learn how to get the most out of your AI campus assistant',
+      description: 'Learn how to get the most out of your AI university assistant',
       duration: '12 minutes',
       difficulty: 'intermediate',
       category: 'AI Features',
@@ -196,7 +196,7 @@ export default function HelpSupportPage() {
       title: 'Email Support',
       description: 'Send detailed questions and get comprehensive answers',
       availability: 'Response within 24 hours',
-      contact: 'support@smartcampus.edu',
+      contact: 'support@smartuniversity.edu',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -208,7 +208,7 @@ export default function HelpSupportPage() {
       title: 'Phone Support',
       description: 'Speak directly with our technical support team',
       availability: 'Monday - Friday, 9 AM - 6 PM',
-      contact: '+1 (555) CAMPUS-1',
+      contact: '+1 (555) UNIVERSITY-1',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -217,7 +217,7 @@ export default function HelpSupportPage() {
     },
     {
       type: 'office',
-      title: 'Campus IT Office',
+      title: 'University IT Office',
       description: 'Visit us in person for hands-on assistance',
       availability: 'Monday - Friday, 8 AM - 5 PM',
       contact: 'Student Center, Room 205',
@@ -277,7 +277,7 @@ export default function HelpSupportPage() {
                 Help & Support Center
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto`}>
-                Get help with Smart Campus features, troubleshoot issues, and learn how to make the most of your AI-powered campus assistant.
+                Get help with Smart University features, troubleshoot issues, and learn how to make the most of your AI-powered university assistant.
               </p>
             </div>
 
@@ -548,7 +548,7 @@ export default function HelpSupportPage() {
                     <div>
                       <h3 className={`font-semibold ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-1`}>Emergency Support</h3>
                       <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
-                        For urgent technical issues affecting campus safety or security, call Campus Emergency: <strong>911</strong> or Campus Security: <strong>(555) 123-4567</strong>
+                        For urgent technical issues affecting university safety or security, call University Emergency: <strong>911</strong> or University Security: <strong>(555) 123-4567</strong>
                       </p>
                     </div>
                   </div>
