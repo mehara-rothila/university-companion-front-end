@@ -21,7 +21,7 @@ interface ActivityItem {
   completed?: boolean;
 }
 
-interface CampusUpdate {
+interface UniversityUpdate {
   id: string;
   title: string;
   description: string;
@@ -77,7 +77,7 @@ export default function Dashboard() {
     }
   ]);
 
-  const [campusUpdates] = useState<CampusUpdate[]>([
+  const [universityUpdates] = useState<UniversityUpdate[]>([
     {
       id: '1',
       title: 'platformLaunch',
@@ -121,19 +121,19 @@ export default function Dashboard() {
       },
       emergency: 'Emergency',
       wellnessSupport: 'Wellness Support',
-      campusWeather: 'Campus Weather',
+      universityWeather: 'University Weather',
       humidity: 'Humidity',
       wind: 'Wind',
       dailyWellnessCheckin: 'Daily Wellness Check-in',
       comingSoon: 'Coming Soon',
-      wellnessTrackingDesc: 'Wellness tracking and mood monitoring will be available soon to help personalize your campus experience.',
+      wellnessTrackingDesc: 'Wellness tracking and mood monitoring will be available soon to help personalize your university experience.',
       quickActions: 'Quick Actions',
       aiAssistant: 'AI Assistant',
       studySpaces: 'Study Spaces',
-      campusNavigation: 'Campus Navigation',
+      universityNavigation: 'University Navigation',
       academicHub: 'Academic Hub',
       available: 'Available',
-      campusServices: 'Campus Services',
+      universityServices: 'University Services',
       notifications: 'Notifications',
       socialEvents: 'Social & Events',
       dining: 'Dining',
@@ -159,14 +159,14 @@ export default function Dashboard() {
       phase1: 'Coming Soon - Phase 1',
       smartFeaturesDesc: 'Smart features launching in the next few weeks.',
       phase2: 'Coming Soon - Phase 2',
-      enhancedServicesDesc: 'Enhanced campus services and community features.',
+      enhancedServicesDesc: 'Enhanced university services and community features.',
       diningServices: 'Dining Services',
       wellnessHub: 'Wellness Hub',
       socialEventsShort: 'Social & Events',
       libraryIntegration: 'Library Integration',
       platformUpdates: 'Platform Updates',
       developmentNews: 'Development News',
-      welcomeUom: 'Welcome to UoM Smart Campus',
+      welcomeUom: 'Welcome to UoM Smart University',
       exploreFeatures: 'Explore the available features and stay tuned for more',
       lostFoundAvailable: 'Lost & Found Available',
       lostFoundDesc: 'You can now report and search for lost items',
@@ -175,13 +175,13 @@ export default function Dashboard() {
       profileReady: 'Profile Management Ready',
       profileDesc: 'Update your personal information and preferences',
       platformLaunch: 'Platform Launch',
-      platformLaunchDesc: 'UoM Smart Campus platform is now live with initial features',
-      moreFeaturesDesc: 'AI Assistant, Study Spaces, and Campus Navigation launching soon',
+      platformLaunchDesc: 'UoM Smart University platform is now live with initial features',
+      moreFeaturesDesc: 'AI Assistant, Study Spaces, and University Navigation launching soon',
       systemUpdates: 'System Updates',
       systemUpdatesDesc: 'Regular updates will bring new features and improvements',
       comingSoonModal: {
         title: 'Coming Soon',
-        description: 'This feature is currently under development and will be available soon. We are working hard to bring you the best campus experience possible.',
+        description: 'This feature is currently under development and will be available soon. We are working hard to bring you the best university experience possible.',
         currentlyAvailable: 'Currently Available:',
         gotIt: 'Got it, thanks!'
       }
@@ -194,7 +194,7 @@ export default function Dashboard() {
       },
       emergency: 'හදිසි',
       wellnessSupport: 'සෞඛ්‍ය සහාය',
-      campusWeather: 'කැම්පස් කාලගුණය',
+      universityWeather: 'කැම්පස් කාලගුණය',
       humidity: 'ආර්ද්‍රතාව',
       wind: 'සුළං',
       dailyWellnessCheckin: 'දෛනික සෞඛ්‍ය පරීක්ෂාව',
@@ -203,10 +203,10 @@ export default function Dashboard() {
       quickActions: 'ඉක්මන් ක්‍රියා',
       aiAssistant: 'AI සහායක',
       studySpaces: 'අධ්‍යයන ස්ථාන',
-      campusNavigation: 'කැම්පස් මඟ පෙන්වීම',
+      universityNavigation: 'කැම්පස් මඟ පෙන්වීම',
       academicHub: 'ශාස්ත්‍රීය මධ්‍යස්ථානය',
       available: 'ලබා ගත හැක',
-      campusServices: 'කැම්පස් සේවා',
+      universityServices: 'කැම්පස් සේවා',
       notifications: 'දැනුම්දීම්',
       socialEvents: 'සමාජීය සහ උත්සව',
       dining: 'ආහාර ගැනීම',
@@ -267,7 +267,7 @@ export default function Dashboard() {
       },
       emergency: 'அவசரம்',
       wellnessSupport: 'நலவாழ்வு ஆதரவு',
-      campusWeather: 'வளாக வானிலை',
+      universityWeather: 'வளாக வானிலை',
       humidity: 'ஈரப்பதம்',
       wind: 'காற்று',
       dailyWellnessCheckin: 'தினசரி நலவாழ்வு சரிபார்ப்பு',
@@ -276,10 +276,10 @@ export default function Dashboard() {
       quickActions: 'விரைவு செயல்கள்',
       aiAssistant: 'AI உதவியாளர்',
       studySpaces: 'படிப்பு இடங்கள்',
-      campusNavigation: 'வளாக வழிகாட்டல்',
+      universityNavigation: 'வளாக வழிகாட்டல்',
       academicHub: 'கல்வி மையம்',
       available: 'கிடைக்கும்',
-      campusServices: 'வளாக சேவைகள்',
+      universityServices: 'வளாக சேவைகள்',
       notifications: 'அறிவிப்புகள்',
       socialEvents: 'சமூக மற்றும் நிகழ்வுகள்',
       dining: 'உணவு',
@@ -561,7 +561,7 @@ export default function Dashboard() {
                     )
                   },
                   {
-                    title: 'Campus Navigation', 
+                    title: 'University Navigation', 
                     url: '/navigation', 
                     color: 'from-purple-500/20 to-purple-600/20',
                     borderColor: 'border-purple-400/30',
@@ -637,10 +637,10 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Campus Services */}
+            {/* University Services */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                Campus Services
+                University Services
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
@@ -917,7 +917,7 @@ export default function Dashboard() {
                     {t('smartFeaturesDesc')}
                   </p>
                   <div className="text-xs text-amber-600 dark:text-amber-400">
-                    🤖 {t('aiAssistant')} • 📚 {t('studySpaces')} • 🗺️ {t('campusNavigation')}
+                    🤖 {t('aiAssistant')} • 📚 {t('studySpaces')} • 🗺️ {t('universityNavigation')}
                   </div>
                 </div>
 
@@ -976,7 +976,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Campus Updates */}
+              {/* University Updates */}
               <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -986,7 +986,7 @@ export default function Dashboard() {
                 </h3>
                 
                 <div className="space-y-3">
-                  {campusUpdates.map((update) => (
+                  {universityUpdates.map((update) => (
                     <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'}`}>
                       <div className="flex items-center justify-between mb-1">
                         <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
