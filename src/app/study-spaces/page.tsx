@@ -176,7 +176,7 @@ export default function StudySpacesPage() {
           id: '4',
           name: 'Garden Study Pavilion',
           type: 'outdoor',
-          building: 'Campus Green',
+          building: 'University Green',
           floor: 0,
           room: 'Outdoor',
           capacity: 16,
@@ -191,7 +191,7 @@ export default function StudySpacesPage() {
           reservable: false,
           aiScore: 76,
           accessibilityFeatures: ['Wheelchair accessible paths'],
-          nearbyAmenities: ['Campus cafe', 'Restrooms', 'Bike racks']
+          nearbyAmenities: ['University cafe', 'Restrooms', 'Bike racks']
         },
         {
           id: '5',

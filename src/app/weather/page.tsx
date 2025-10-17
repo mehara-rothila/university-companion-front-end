@@ -122,7 +122,7 @@ export default function WeatherPage() {
           {/* Page Header */}
           <div className="mb-8">
             <h1 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-              Campus Weather
+              University Weather
             </h1>
             <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               University of Moratuwa Weather Forecast

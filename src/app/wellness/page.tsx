@@ -765,7 +765,7 @@ export default function WellnessPage() {
                   </button>
                   
                   <button className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    🏥 Campus Health Center
+                    🏥 University Health Center
                   </button>
                 </div>
 
