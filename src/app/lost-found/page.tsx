@@ -134,11 +134,11 @@ export default function LostFoundPage() {
   ];
 
   const locations: LocationArea[] = [
-    { id: 'all', name: 'All Locations', zone: 'Campus Wide', frequency: 100 },
+    { id: 'all', name: 'All Locations', zone: 'University Wide', frequency: 100 },
     ...(stats?.locations || []).map(location => ({
       id: location.toLowerCase().replace(/\s+/g, '-'),
       name: location,
-      zone: 'Campus',
+      zone: 'University',
       frequency: Math.floor(Math.random() * 50) + 10
     }))
   ];
@@ -245,7 +245,7 @@ export default function LostFoundPage() {
                 Lost & Found
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
-                Community platform to help reunite lost items with their owners. Post what you&apos;ve lost or found to connect with others on campus.
+                Community platform to help reunite lost items with their owners. Post what you&apos;ve lost or found to connect with others on university.
               </p>
 
               {/* Quick Actions */}
@@ -279,7 +279,7 @@ export default function LostFoundPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  Campus Map
+                  University Map
                 </Link>
 
                 <Link 
@@ -694,7 +694,7 @@ export default function LostFoundPage() {
                     },
                     {
                       title: "Lost Keys Returned Same Day",
-                      story: "Dropped my car keys somewhere on campus. Posted here and someone had already found them! Amazing community.",
+                      story: "Dropped my car keys somewhere on university. Posted here and someone had already found them! Amazing community.",
                       user: "Maria S.",
                       reward: "$25",
                       icon: "🗝️"
