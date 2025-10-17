@@ -398,104 +398,129 @@ export default function AnimatedBackground({ variant = 'default' }: AnimatedBack
           />
         ))}
 
-        {/* Layer 5: Floating Glass Orbs & Bubbles - MORE FOR HOMEPAGE DENSITY! */}
-        <div className={`absolute top-16 left-16 w-80 h-80 ${glassOrbGradients[0]} rounded-full backdrop-blur-sm border ${borderColors[0]} animate-glass-float-1 shadow-lg`} />
-        <div className={`absolute top-32 right-24 w-96 h-96 ${glassOrbGradients[1]} rounded-full backdrop-blur-sm border ${borderColors[1]} animate-glass-float-2 shadow-lg`} />
-        <div className={`absolute bottom-24 left-32 w-72 h-72 ${glassOrbGradients[2]} rounded-full backdrop-blur-sm border ${borderColors[2]} animate-glass-float-3 shadow-lg`} />
-        <div className={`absolute top-1/4 left-1/5 w-56 h-56 ${glassOrbGradients[3]} rounded-full backdrop-blur-sm border ${borderColors[3]} animate-bubble-drift-1 shadow-md`} />
-        <div className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${glassOrbGradients[4]} rounded-full backdrop-blur-sm border ${borderColors[4]} animate-bubble-drift-2 shadow-md`} />
+        {/* Layer 5: Glass orbs removed - keeping other particles and React icons */}
         
-        {/* MORE glass orbs for homepage density */}
-        <div className={`absolute top-[65%] right-[45%] w-48 h-48 ${glassOrbGradients[0]} rounded-full backdrop-blur-sm border ${borderColors[0]} animate-glass-float-4 shadow-md`} />
-        <div className={`absolute bottom-[65%] left-[45%] w-52 h-52 ${glassOrbGradients[1]} rounded-full backdrop-blur-sm border ${borderColors[1]} animate-bubble-drift-3 shadow-md`} />
-        <div className={`absolute top-[15%] left-[75%] w-40 h-40 ${glassOrbGradients[2]} rounded-full backdrop-blur-sm border ${borderColors[2]} animate-glass-float-1 shadow-md`} />
-        <div className={`absolute bottom-[85%] right-[75%] w-44 h-44 ${glassOrbGradients[3]} rounded-full backdrop-blur-sm border ${borderColors[3]} animate-bubble-drift-1 shadow-md`} />
-        <div className={`absolute top-[85%] left-[25%] w-36 h-36 ${glassOrbGradients[4]} rounded-full backdrop-blur-sm border ${borderColors[4]} animate-glass-float-2 shadow-md`} />
-        <div className={`absolute bottom-[15%] right-[25%] w-60 h-60 ${glassOrbGradients[0]} rounded-full backdrop-blur-sm border ${borderColors[0]} animate-bubble-drift-2 shadow-md`} />
-        <div className={`absolute top-[45%] right-[85%] w-32 h-32 ${glassOrbGradients[1]} rounded-full backdrop-blur-sm border ${borderColors[1]} animate-glass-float-3 shadow-md`} />
-        <div className={`absolute bottom-[45%] left-[85%] w-38 h-38 ${glassOrbGradients[2]} rounded-full backdrop-blur-sm border ${borderColors[2]} animate-bubble-drift-3 shadow-md`} />
+        {/* React SVG icons distributed evenly across the entire page */}
         
-        {/* MANY MORE SVG icons for rich background */}
-        <div className="absolute top-[18%] left-[23%] opacity-40 floating-icon-slow">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-28 w-28 ${symbolColors[6]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {/* TOP ROW (5-15% height) - spread across width */}
+        <div className="absolute top-[8%] left-[5%] opacity-35 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[0]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
         </div>
-        <div className="absolute bottom-[35%] right-[15%] opacity-35 floating-icon-reverse">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-24 w-24 ${symbolColors[8]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        <div className="absolute top-[12%] left-[30%] opacity-30 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[1]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
         </div>
-        
-        {/* Brain & Intelligence Icons */}
-        <div className="absolute top-[25%] right-[65%] opacity-30 floating-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[10]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <div className="absolute top-[10%] left-[55%] opacity-35 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-22 w-22 ${symbolColors[2]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        
-        {/* Academic Icons */}
-        <div className="absolute bottom-[25%] left-[65%] opacity-35 floating-icon-reverse">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-22 w-22 ${symbolColors[12]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute top-[14%] left-[80%] opacity-30 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[3]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
         </div>
-        
-        {/* Technology Icons */}
-        <div className="absolute top-[75%] right-[35%] opacity-30 floating-icon-slow">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[14]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute top-[6%] right-[8%] opacity-35 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-24 w-24 ${symbolColors[4]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+        </div>
+
+        {/* UPPER-MIDDLE ROW (25-35% height) */}
+        <div className="absolute top-[28%] left-[8%] opacity-30 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[5]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </div>
+        <div className="absolute top-[32%] left-[40%] opacity-35 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[6]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
-        
-        {/* Navigation Icons */}
-        <div className="absolute bottom-[75%] left-[35%] opacity-35 floating-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-26 w-26 ${symbolColors[0]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute top-[30%] right-[12%] opacity-30 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-22 w-22 ${symbolColors[7]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
-        
-        {/* Chat/AI Icons */}
-        <div className="absolute top-[62%] left-[92%] opacity-30 floating-icon-reverse">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[2]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+
+        {/* MIDDLE ROW (45-55% height) */}
+        <div className="absolute top-[48%] left-[3%] opacity-35 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[8]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        
-        {/* Search Icons */}
-        <div className="absolute bottom-[62%] right-[92%] opacity-35 floating-icon-slow">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[4]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <div className="absolute top-[52%] left-[25%] opacity-30 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[9]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        
-        {/* Heart/Wellness Icons */}
-        <div className="absolute top-[87%] right-[87%] opacity-30 floating-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-14 w-14 ${symbolColors[6]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </div>
-        
-        {/* User/Community Icons */}
-        <div className="absolute bottom-[87%] left-[87%] opacity-35 floating-icon-reverse">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[8]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute top-[50%] left-[50%] opacity-35 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[10]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
           </svg>
         </div>
-        
-        {/* Star/Achievement Icons */}
-        <div className="absolute top-[33%] left-[63%] opacity-30 floating-icon-slow">
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[11]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        <div className="absolute top-[46%] left-[75%] opacity-30 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-24 w-24 ${symbolColors[11]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
           </svg>
         </div>
-        
-        {/* Shield/Security Icons */}
-        <div className="absolute bottom-[33%] right-[63%] opacity-35 floating-icon">
+        <div className="absolute top-[54%] right-[5%] opacity-35 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[12]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+
+        {/* LOWER-MIDDLE ROW (65-75% height) */}
+        <div className="absolute top-[68%] left-[12%] opacity-30 floating-icon">
           <svg xmlns="http://www.w3.org/2000/svg" className={`h-22 w-22 ${symbolColors[13]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-9 0v16a2 2 0 002 2h6a2 2 0 002-2V4m-6 4v4m0 4h.01" />
+          </svg>
+        </div>
+        <div className="absolute top-[72%] left-[35%] opacity-35 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[14]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+          </svg>
+        </div>
+        <div className="absolute top-[70%] left-[62%] opacity-30 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[15]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </div>
+        <div className="absolute top-[66%] right-[15%] opacity-35 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[0]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+
+        {/* BOTTOM ROW (85-95% height) */}
+        <div className="absolute top-[88%] left-[6%] opacity-30 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[1]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11" />
+          </svg>
+        </div>
+        <div className="absolute top-[90%] left-[28%] opacity-35 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-20 w-20 ${symbolColors[2]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div className="absolute top-[86%] left-[52%] opacity-30 floating-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${symbolColors[3]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <div className="absolute top-[92%] left-[76%] opacity-35 floating-icon-slow">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-22 w-22 ${symbolColors[4]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+        </div>
+        <div className="absolute top-[84%] right-[8%] opacity-30 floating-icon-reverse">
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-18 w-18 ${symbolColors[5]}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
         </div>
       </div>
