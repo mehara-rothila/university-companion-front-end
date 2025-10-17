@@ -44,12 +44,12 @@ export default function Footer() {
                   Athena
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Smart Campus
+                  Smart University
                 </p>
               </div>
             </div>
             <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
-              Your intelligent campus companion, designed to enhance university life through AI-powered assistance and seamless integration.
+              Your intelligent university companion, designed to enhance university life through AI-powered assistance and seamless integration.
             </p>
             
             {/* Social Links */}
@@ -166,7 +166,7 @@ export default function Footer() {
         <div className={`mt-12 pt-8 border-t ${isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'} flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0`}>
           <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-center md:text-left`}>
             <p>
-              © {currentYear} Athena Smart Campus Companion. All rights reserved.
+              © {currentYear} Athena Smart University Companion. All rights reserved.
             </p>
             <p className="mt-1">
               Developed as part of L3 Individual Project at University of Moratuwa.

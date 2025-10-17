@@ -56,13 +56,13 @@ const Navigation = () => {
           >
             <span className="hidden sm:block">Athena</span>
             <span className="sm:hidden">Athena</span>
-            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart Campus</span>
+            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart University</span>
           </Link>
         </div>
 
         {/* Desktop menu */}
         <nav className="hidden lg:flex items-center space-x-4">
-          {/* Smart Campus Navigation Links */}
+          {/* Smart University Navigation Links */}
           <Link href="/" className="nav-link text-sm" onClick={handleNavigation}>
             <Home className="inline h-4 w-4 mr-1" />
             Home
@@ -162,7 +162,7 @@ const Navigation = () => {
         aria-hidden={!isOpen}
       >
         <div className="p-5 space-y-3 border-t border-gray-100 dark:border-gray-700">
-          {/* Mobile Smart Campus Navigation Links */}
+          {/* Mobile Smart University Navigation Links */}
           <Link 
             href="/" 
             className="mobile-nav-link flex items-center" 
@@ -189,7 +189,7 @@ const Navigation = () => {
             className="mobile-nav-link flex items-center" 
             onClick={handleNavigation}
           >
-            <MapPin className="inline h-5 w-5 mr-2"/> Campus Navigation
+            <MapPin className="inline h-5 w-5 mr-2"/> University Navigation
           </Link>
           <Link 
             href="/study-spaces" 
