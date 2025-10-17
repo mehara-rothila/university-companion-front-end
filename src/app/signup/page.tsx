@@ -78,7 +78,7 @@ export default function SignupPage() {
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="glass-premium-card rounded-3xl p-8 w-full max-w-2xl animate-glass-fade-in">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold gradient-text mb-2">Join Smart Campus</h1>
+            <h1 className="text-3xl font-bold gradient-text mb-2">Join Smart University</h1>
             <p className="text-gray-600 dark:text-gray-300">Create your account and start your journey</p>
           </div>
 

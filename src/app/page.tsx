@@ -32,13 +32,13 @@ export default function Home() {
     {
       icon: <Bot className="h-8 w-8" />,
       title: "AI Assistant",
-      description: "Meet Athena, your intelligent campus companion",
+      description: "Meet Athena, your intelligent university companion",
       color: "from-purple-500 to-blue-500"
     },
     {
       icon: <MapPin className="h-8 w-8" />,
       title: "Smart Navigation",
-      description: "Never get lost on campus again",
+      description: "Never get lost on university again",
       color: "from-blue-500 to-cyan-500"
     },
     {
@@ -98,12 +98,12 @@ export default function Home() {
               </h1>
               
               <h2 className={`text-xl sm:text-2xl lg:text-3xl font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-8`}>
-                Your Intelligent Campus Companion
+                Your Intelligent University Companion
               </h2>
 
               <p className={`text-lg sm:text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-12 max-w-3xl mx-auto leading-relaxed`}>
                 Experience the future of university life with AI-powered assistance, 
-                smart navigation, and seamless campus integration designed to enhance your academic journey.
+                smart navigation, and seamless university integration designed to enhance your academic journey.
               </p>
 
               {/* CTA Buttons */}
@@ -178,7 +178,7 @@ export default function Home() {
                 Everything You Need
               </h2>
               <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto`}>
-                Athena brings together all essential campus services in one intelligent platform
+                Athena brings together all essential university services in one intelligent platform
               </p>
             </div>
             
@@ -187,14 +187,14 @@ export default function Home() {
                 {
                   icon: <Bot className="h-8 w-8" />,
                   title: "AI Chat Assistant",
-                  description: "Get instant answers to any campus question",
+                  description: "Get instant answers to any university question",
                   color: "from-purple-500/20 to-blue-500/20",
                   borderColor: "border-purple-400/30"
                 },
                 {
                   icon: <MapPin className="h-8 w-8" />,
                   title: "Interactive Maps",
-                  description: "Navigate campus with real-time directions",
+                  description: "Navigate university with real-time directions",
                   color: "from-blue-500/20 to-cyan-500/20",
                   borderColor: "border-blue-400/30"
                 },
@@ -281,7 +281,7 @@ export default function Home() {
             <div className={`glass-card bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-lg border ${isDarkMode ? 'border-purple-400/30' : 'border-purple-400/40'} rounded-3xl p-12 shadow-2xl`}>
               <Sparkles className={`h-16 w-16 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mx-auto mb-6`} />
               <h2 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                Ready to Transform Your Campus Experience?
+                Ready to Transform Your University Experience?
               </h2>
               <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 max-w-2xl mx-auto`}>
                 Join thousands of students who are already experiencing the future of university life with Athena.

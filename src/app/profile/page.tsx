@@ -555,7 +555,7 @@ export default function ProfilePage() {
                 
                 <div className="space-y-4">
                   {[
-                    { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language campus assistance and support' },
+                    { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language university assistance and support' },
                     { key: 'studySpaceRecommendations', name: 'Study Space Recommendations', desc: 'ML-powered space suggestions based on preferences' },
                     { key: 'scheduleOptimization', name: 'Schedule Optimization', desc: 'AI-driven calendar and task management' },
                     { key: 'wellnessCheckins', name: 'Wellness Check-ins', desc: 'Mood tracking and mental health support' },
