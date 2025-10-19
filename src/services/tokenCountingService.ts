@@ -66,7 +66,9 @@ class TokenCountingService {
     };
 
     // Store updated usage
-    localStorage.setItem(`${this.STORAGE_KEY}_${today}`, JSON.stringify(newUsage));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${this.STORAGE_KEY}_${today}`, JSON.stringify(newUsage));
+    }
     
     // Store transaction
     this.storeTransaction(transaction);
@@ -139,6 +141,8 @@ class TokenCountingService {
 
   // Reset daily usage (called automatically at midnight)
   resetDailyUsage(): void {
+    if (typeof window === 'undefined') return;
+    
     const today = this.getTodayKey();
     localStorage.removeItem(`${this.STORAGE_KEY}_${today}`);
     console.log('🔄 Daily token usage reset');
@@ -146,6 +150,8 @@ class TokenCountingService {
 
   // Clean up old usage data (keep last 7 days)
   cleanupOldData(): void {
+    if (typeof window === 'undefined') return;
+    
     const keys = Object.keys(localStorage);
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 7);
@@ -172,6 +178,7 @@ class TokenCountingService {
   }
 
   private getStoredUsage(dateKey: string): { used: number; sessions: number; lastUpdated?: string } {
+    if (typeof window === 'undefined') return { used: 0, sessions: 0 };
     const stored = localStorage.getItem(`${this.STORAGE_KEY}_${dateKey}`);
     return stored ? JSON.parse(stored) : { used: 0, sessions: 0 };
   }
@@ -189,10 +196,13 @@ class TokenCountingService {
 
   private getCurrentUserId(): string {
     // In a real app, this would get the actual user ID from auth context
+    if (typeof window === 'undefined') return 'student_anonymous';
     return 'student_' + (localStorage.getItem('user_id') || 'anonymous');
   }
 
   private storeTransaction(transaction: TokenTransaction): void {
+    if (typeof window === 'undefined') return;
+    
     const transactions = this.getRecentTransactions(100); // Keep last 100
     transactions.unshift(transaction);
     
@@ -205,6 +215,7 @@ class TokenCountingService {
   }
 
   private getRecentTransactions(limit: number = 10): TokenTransaction[] {
+    if (typeof window === 'undefined') return [];
     const stored = localStorage.getItem(this.TRANSACTIONS_KEY);
     const transactions = stored ? JSON.parse(stored) : [];
     return transactions.slice(0, limit);
@@ -212,18 +223,21 @@ class TokenCountingService {
 
   // Auto-cleanup on initialization
   constructor() {
-    this.cleanupOldData();
-    
-    // Check if we need to reset daily usage (new day)
-    const lastReset = localStorage.getItem('last_token_reset');
-    const today = this.getTodayKey();
-    
-    if (lastReset !== today) {
-      // Don't reset if it's the same day
-      if (lastReset && lastReset < today) {
-        this.resetDailyUsage();
+    // Only run client-side code in browser
+    if (typeof window !== 'undefined') {
+      this.cleanupOldData();
+      
+      // Check if we need to reset daily usage (new day)
+      const lastReset = localStorage.getItem('last_token_reset');
+      const today = this.getTodayKey();
+      
+      if (lastReset !== today) {
+        // Don't reset if it's the same day
+        if (lastReset && lastReset < today) {
+          this.resetDailyUsage();
+        }
+        localStorage.setItem('last_token_reset', today);
       }
-      localStorage.setItem('last_token_reset', today);
     }
   }
 
