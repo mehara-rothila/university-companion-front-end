@@ -6,6 +6,15 @@ import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { athenaService } from '@/services/athenaService';
+import { 
+  generateId, 
+  formatTimestamp, 
+  generateWelcomeMessage, 
+  classifyIntent, 
+  calculateTypingDuration,
+  formatFileSize 
+} from '@/utils/athenaUtils';
 
 // --- Interfaces ---
 interface ChatMessage {
@@ -120,16 +129,26 @@ export default function ChatbotPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize with welcome message
+  // Initialize with Athena welcome message and token usage
   useEffect(() => {
-    const welcomeMessage: ChatMessage = {
-      id: '1',
+    const welcomeMessage = generateWelcomeMessage();
+    // Convert to local ChatMessage format
+    const localWelcomeMessage: ChatMessage = {
+      id: welcomeMessage.id,
       type: 'ai',
-      content: "Hi! I&apos;m your Smart University AI assistant. I can help you with study spaces, navigation, academic planning, wellness support, and much more. You can also upload PDFs for analysis or videos for transcription. How can I assist you today?",
-      timestamp: new Date(),
-      suggestions: QUICK_ACTIONS.slice(0, 3)
+      content: welcomeMessage.content,
+      timestamp: welcomeMessage.timestamp,
+      suggestions: welcomeMessage.suggestions
     };
-    setMessages([welcomeMessage]);
+    setMessages([localWelcomeMessage]);
+    
+    // Initialize with real token usage
+    const currentUsage = athenaService.getTokenUsage();
+    setTokenUsage({
+      used: currentUsage.used,
+      limit: currentUsage.limit,
+      resetTime: currentUsage.resetTime
+    });
   }, []);
 
   // Scroll to bottom when new messages arrive
@@ -137,12 +156,16 @@ export default function ChatbotPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typingIndicator.isTyping]);
 
-  // Mock token usage update
+  // Real token usage update
   const updateTokenUsage = useCallback((tokens: number) => {
-    setTokenUsage(prev => ({
-      ...prev,
-      used: Math.min(prev.used + tokens, prev.limit)
-    }));
+    // Token counting is now handled by athenaService/tokenCountingService
+    // Update UI state to reflect current usage
+    const currentUsage = athenaService.getTokenUsage();
+    setTokenUsage({
+      used: currentUsage.used,
+      limit: currentUsage.limit,
+      resetTime: currentUsage.resetTime
+    });
   }, []);
 
   // Mock file processing functions
@@ -249,34 +272,74 @@ export default function ChatbotPage() {
         continue;
       }
 
-      const fileType = getFileType(file);
-      if (!fileType) {
-        alert(`File type not supported: ${file.name}`);
-        continue;
+      try {
+        // Upload file using Athena service
+        const { attachment } = await athenaService.uploadFile(file);
+        
+        const userMessage: ChatMessage = {
+          id: generateId(),
+          type: 'user',
+          content: `Uploaded ${attachment.type}: ${attachment.name}`,
+          timestamp: new Date(),
+          attachments: [attachment]
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+
+        // Process the attachment with AI
+        try {
+          const processedAttachment = await athenaService.processAttachment(attachment);
+          
+          // Update the message with processed attachment
+          setMessages(prev => prev.map(msg => 
+            msg.id === userMessage.id ? {
+              ...msg,
+              attachments: [processedAttachment]
+            } : msg
+          ));
+
+          // Update token usage
+          updateTokenUsage(0);
+
+          // Send AI response about the processed file
+          setTimeout(async () => {
+            const response = await athenaService.processMessage(
+              `I've uploaded a ${attachment.type} file: ${attachment.name}. Can you analyze it for me?`,
+              messages,
+              [processedAttachment]
+            );
+            
+            const aiMessage: ChatMessage = {
+              id: generateId(),
+              type: 'ai',
+              content: response.content,
+              timestamp: new Date(),
+              suggestions: response.suggestions
+            };
+            
+            setMessages(prev => [...prev, aiMessage]);
+            updateTokenUsage(0);
+          }, 1000);
+
+        } catch (processingError) {
+          console.error('File processing error:', processingError);
+          // Update attachment status to error
+          setMessages(prev => prev.map(msg => 
+            msg.id === userMessage.id ? {
+              ...msg,
+              attachments: msg.attachments?.map(att => ({
+                ...att,
+                processingStatus: 'error'
+              }))
+            } : msg
+          ));
+        }
+
+      } catch (uploadError) {
+        alert(`Upload failed for ${file.name}: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
       }
-
-      const attachment: ChatAttachment = {
-        type: fileType as 'pdf' | 'video' | 'image',
-        name: file.name,
-        size: file.size,
-        content: URL.createObjectURL(file),
-        processingStatus: 'pending'
-      };
-
-      const userMessage: ChatMessage = {
-        id: `user-${Date.now()}-${file.name}`,
-        type: 'user',
-        content: `Uploaded ${fileType}: ${file.name}`,
-        timestamp: new Date(),
-        attachments: [attachment]
-      };
-
-      setMessages(prev => [...prev, userMessage]);
-
-      // Process the file
-      processFile(file, attachment, userMessage.id);
     }
-  }, [processFile]);
+  }, [messages, updateTokenUsage]);
 
   const getFileType = (file: File): string | null => {
     if (ACCEPTED_FILE_TYPES.pdf.includes(file.type)) return 'pdf';
@@ -285,73 +348,61 @@ export default function ChatbotPage() {
     return null;
   };
 
-  // Generate AI response (enhanced for file context)
-  const generateAIResponse = useCallback((userInput: string, hasAttachments = false): ChatMessage => {
+  // Generate AI response using Athena service
+  const generateAIResponse = useCallback(async (userInput: string, hasAttachments = false): Promise<ChatMessage> => {
     const input = userInput.toLowerCase();
-    let response = '';
-    let suggestions: QuickAction[] = [];
     let tokenCost = Math.floor(Math.random() * 200) + 50;
 
     if (hasAttachments) {
-      response = "I can see you&apos;ve uploaded a file! I&apos;m processing it now and will be able to help you analyze the content once it&apos;s ready. In the meantime, feel free to ask me anything else!";
-      tokenCost += 100;
-    } else if (input.includes('study') || input.includes('library')) {
-      response = "I can help you find the perfect study space! Based on your preferences and current availability, I recommend checking out the quiet study zones in the Main Library Level 3. They&apos;re less crowded right now and have great natural lighting.";
-      suggestions = [
-        { id: 'study-1', text: 'Find available spaces', action: 'find_spaces', route: '/study-spaces' },
-        { id: 'study-2', text: 'Book a study room', action: 'book_room', route: '/study-spaces' },
-        { id: 'study-3', text: 'View library hours', action: 'library_hours', route: '/library' }
-      ];
-    } else if (input.includes('navigation') || input.includes('direction') || input.includes('where')) {
-      response = "I&apos;d be happy to help you navigate university! I can provide optimal routes considering current foot traffic, accessibility needs, and construction updates. Where would you like to go?";
-      suggestions = [
-        { id: 'nav-1', text: 'Open university map', action: 'open_map', route: '/navigation' },
-        { id: 'nav-2', text: 'Find parking', action: 'find_parking', route: '/navigation' },
-        { id: 'nav-3', text: 'Accessibility routes', action: 'accessibility', route: '/navigation' }
-      ];
-    } else if (input.includes('schedule') || input.includes('class') || input.includes('academic')) {
-      response = "Let me help you with your academic schedule! I can optimize your calendar, suggest study times, and help manage deadlines. Your next class is Physics 201 in Engineering Building Room 105 at 2:00 PM.";
-      suggestions = [
-        { id: 'academic-1', text: 'View full schedule', action: 'view_schedule', route: '/academic' },
-        { id: 'academic-2', text: 'Add study time', action: 'add_study', route: '/academic' },
-        { id: 'academic-3', text: 'Check assignments', action: 'check_assignments', route: '/academic' }
-      ];
-    } else if (input.includes('wellness') || input.includes('stress') || input.includes('health')) {
-      response = "I notice you&apos;re asking about wellness - that&apos;s great self-care! I can help you track your mood, find stress management resources, or connect you with university wellness services. How are you feeling today?";
-      suggestions = [
-        { id: 'wellness-1', text: 'Daily check-in', action: 'daily_checkin', route: '/wellness' },
-        { id: 'wellness-2', text: 'Stress resources', action: 'stress_help', route: '/wellness' },
-        { id: 'wellness-3', text: 'Contact counseling', action: 'counseling', route: '/wellness' }
-      ];
-    } else if (input.includes('food') || input.includes('dining') || input.includes('meal')) {
-      response = "Looking for food options? I can show you current dining hall menus, wait times, and even suggest meals based on your dietary preferences. The North Dining Hall has shorter lines right now!";
-      suggestions = [
-        { id: 'dining-1', text: 'View menus', action: 'view_menus', route: '/dining' },
-        { id: 'dining-2', text: 'Check wait times', action: 'wait_times', route: '/dining' },
-        { id: 'dining-3', text: 'Dietary options', action: 'dietary', route: '/dining' }
-      ];
-    } else {
-      response = "I understand you&apos;re looking for help with university life. I&apos;m equipped to assist with study spaces, navigation, academic planning, wellness support, dining options, file analysis, and much more. What specific area would you like help with?";
-      suggestions = QUICK_ACTIONS.slice(0, 4);
+      updateTokenUsage(tokenCost + 100);
+      return {
+        id: generateId(),
+        type: 'ai',
+        content: "I can see you've uploaded a file! I'm processing it now and will be able to help you analyze the content once it's ready. In the meantime, feel free to ask me anything else!",
+        timestamp: new Date(),
+        suggestions: [
+          { text: 'How can I help?', action: 'help' },
+          { text: 'University services', action: 'services' }
+        ]
+      };
     }
 
-    updateTokenUsage(tokenCost);
+    try {
+      // Use Athena service for real AI responses
+      const response = await athenaService.processMessage(userInput, messages);
+      
+      updateTokenUsage(tokenCost);
 
-    return {
-      id: `ai-${Date.now()}`,
-      type: 'ai',
-      content: response,
-      timestamp: new Date(),
-      suggestions
-    };
-  }, [updateTokenUsage]);
+      return {
+        id: generateId(),
+        type: 'ai',
+        content: response.content,
+        timestamp: new Date(),
+        suggestions: response.suggestions || []
+      };
+    } catch (error) {
+      console.error('Athena service error:', error);
+      updateTokenUsage(tokenCost);
+      
+      return {
+        id: generateId(),
+        type: 'ai',
+        content: "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment.",
+        timestamp: new Date(),
+        suggestions: [
+          { text: 'Try again', action: 'retry' },
+          { text: 'Contact support', action: 'contact_support' }
+        ]
+      };
+    }
+  }, [updateTokenUsage, messages]);
 
   // Handle sending message
   const handleSendMessage = useCallback(async (content: string = inputValue) => {
     if (!content.trim()) return;
 
     const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
+      id: generateId(),
       type: 'user',
       content: content.trim(),
       timestamp: new Date()
@@ -361,16 +412,31 @@ export default function ChatbotPage() {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI typing
-    setTypingIndicator({ isTyping: true, duration: 2000 });
+    // Calculate dynamic typing duration based on expected response length
+    const typingDuration = calculateTypingDuration(content.length);
+    setTypingIndicator({ isTyping: true, duration: typingDuration });
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(content);
+    try {
+      // Get AI response from Athena service
+      const aiResponse = await generateAIResponse(content);
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorMessage: ChatMessage = {
+        id: generateId(),
+        type: 'ai',
+        content: "I apologize for the inconvenience. I'm having trouble processing your request right now. Please try again.",
+        timestamp: new Date(),
+        suggestions: [
+          { text: 'Try again', action: 'retry' },
+          { text: 'Contact support', action: 'contact_support' }
+        ]
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setTypingIndicator({ isTyping: false, duration: 0 });
       setIsLoading(false);
-    }, 2000);
+    }
   }, [inputValue, generateAIResponse]);
 
   // Handle quick action click
@@ -539,7 +605,7 @@ export default function ChatbotPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    AI University Assistant
+                    Athena AI Assistant
                   </h1>
                   <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     Your intelligent companion for university life
@@ -620,7 +686,7 @@ export default function ChatbotPage() {
                                 ? 'text-purple-200' 
                                 : isDarkMode ? 'text-gray-400' : 'text-gray-500'
                             }`}>
-                              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {formatTimestamp(message.timestamp)}
                             </p>
                           </div>
 
