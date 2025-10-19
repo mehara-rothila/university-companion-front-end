@@ -1,11 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useDarkMode } from '../../context/DarkModeContext'
 import AnimatedBackground from '../../../components/AnimatedBackground'
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
   const { isDarkMode } = useDarkMode()
@@ -69,5 +70,13 @@ export default function AuthErrorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthErrorContent />
+    </Suspense>
   )
 }
