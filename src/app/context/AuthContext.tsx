@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import axios from 'axios';
 
 export interface User {
@@ -10,12 +11,15 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  image?: string;
+  name?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (username: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
@@ -31,18 +35,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    // Check for stored auth data on mount
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    if (status === 'loading') {
+      setLoading(true);
+      return;
+    }
+
+    if (session?.user) {
+      // Handle Google OAuth user
+      const googleUser: User = {
+        id: 0, // Will be set from backend
+        username: session.user.name || session.user.email?.split('@')[0] || '',
+        email: session.user.email || '',
+        firstName: session.user.name?.split(' ')[0] || '',
+        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+        role: 'student', // Default role
+        image: session.user.image || undefined,
+        name: session.user.name || undefined,
+      };
+      setUser(googleUser);
+      setToken(session.accessToken || 'google-oauth-token');
+    } else {
+      // Check for stored auth data (traditional login)
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      }
     }
     setLoading(false);
-  }, []);
+  }, [session, status]);
 
   useEffect(() => {
     // Set up axios interceptor to include token
@@ -77,17 +103,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const loginWithGoogle = async () => {
+    try {
+      await signIn('google', { callbackUrl: '/dashboard' });
+    } catch (error) {
+      console.error('Google login failed:', error);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    if (session) {
+      // Google OAuth logout
+      await signOut({ callbackUrl: '/' });
+    } else {
+      // Traditional logout
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
   };
 
   const value = {
     user,
     token,
     login,
+    loginWithGoogle,
     logout,
     isAuthenticated: !!user,
     loading
