@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import WeatherCard from '@/components/WeatherCard';
@@ -32,10 +33,24 @@ interface UniversityUpdate {
 
 export default function Dashboard() {
   const { isDarkMode } = useDarkMode();
+  const { user } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [userName] = useState('Mehara');
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  
+  // Get display name from authenticated user
+  const getDisplayName = () => {
+    if (user?.firstName) {
+      return user.firstName;
+    }
+    if (user?.name) {
+      return user.name.split(' ')[0]; // First name from full name
+    }
+    if (user?.username) {
+      return user.username;
+    }
+    return 'Student'; // Fallback
+  };
 
 
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
@@ -404,7 +419,7 @@ export default function Dashboard() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                  {getGreeting()}, {userName}!
+                  {getGreeting()}, {getDisplayName()}!
                 </h1>
                 <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   {currentTime.toLocaleDateString('en-US', { 

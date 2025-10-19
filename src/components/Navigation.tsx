@@ -103,9 +103,18 @@ const Navigation = () => {
           {/* Auth Links */}
           {isAuthenticated ? (
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700 dark:text-gray-300">
-                Hi, {user?.firstName}!
-              </span>
+              <div className="flex items-center space-x-2">
+                {user?.image && (
+                  <img 
+                    src={user.image} 
+                    alt="Profile" 
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <span className="text-gray-700 dark:text-gray-300">
+                  Hi, {user?.firstName || user?.name?.split(' ')[0]}!
+                </span>
+              </div>
               <button
                 onClick={() => {
                   logout();
@@ -242,8 +251,15 @@ const Navigation = () => {
           <div className="pt-3 space-y-3">
             {isAuthenticated ? (
               <div className="space-y-3">
-                <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center">
-                  Hi, {user?.firstName}!
+                <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center flex items-center justify-center space-x-2">
+                  {user?.image && (
+                    <img 
+                      src={user.image} 
+                      alt="Profile" 
+                      className="w-8 h-8 rounded-full"
+                    />
+                  )}
+                  <span>Hi, {user?.firstName || user?.name?.split(' ')[0]}!</span>
                 </div>
                 <button
                   onClick={() => {
