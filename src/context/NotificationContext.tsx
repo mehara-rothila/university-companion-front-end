@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState } from 'react';
+import React, { createContext, useContext, ReactNode, useState, useMemo, useCallback, useRef } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 
 interface RealtimeNotification {
@@ -40,14 +40,31 @@ interface NotificationProviderProps {
   userId?: string;
 }
 
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({ 
-  children, 
-  userId 
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({
+  children,
+  userId
 }) => {
   const { notifications, isConnected, connectionError, sendMessage, clearNotifications } = useWebSocket(userId);
   const [toastNotifications, setToastNotifications] = useState<ToastNotification[]>([]);
 
-  const addToastNotification = (notification: Omit<ToastNotification, 'id' | 'timestamp'>) => {
+  // Track timer IDs for cleanup
+  const timersRef = useRef<Set<NodeJS.Timeout>>(new Set());
+  // Track processed notification IDs to prevent duplicates
+  const processedNotificationsRef = useRef<Set<string>>(new Set());
+
+  // Cleanup all timers on unmount
+  React.useEffect(() => {
+    return () => {
+      timersRef.current.forEach(timer => clearTimeout(timer));
+      timersRef.current.clear();
+    };
+  }, []);
+
+  const removeToastNotification = useCallback((id: string) => {
+    setToastNotifications(prev => prev.filter(n => n.id !== id));
+  }, []);
+
+  const addToastNotification = useCallback((notification: Omit<ToastNotification, 'id' | 'timestamp'>) => {
     const newNotification: ToastNotification = {
       ...notification,
       id: Date.now().toString(),
@@ -57,20 +74,24 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     // Auto-remove after 5 seconds for non-urgent notifications
     if (notification.priority !== 'URGENT') {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         removeToastNotification(newNotification.id);
+        timersRef.current.delete(timer);
       }, 5000);
+      timersRef.current.add(timer);
     }
-  };
-
-  const removeToastNotification = (id: string) => {
-    setToastNotifications(prev => prev.filter(n => n.id !== id));
-  };
+  }, [removeToastNotification]);
 
   // Convert realtime notifications to toast notifications
   React.useEffect(() => {
     notifications.forEach(notification => {
-      const toastType: 'info' | 'success' | 'warning' | 'error' = 
+      // Prevent duplicate processing
+      if (processedNotificationsRef.current.has(notification.id)) {
+        return;
+      }
+      processedNotificationsRef.current.add(notification.id);
+
+      const toastType: 'info' | 'success' | 'warning' | 'error' =
         notification.type === 'SYSTEM' ? 'info' :
         notification.type === 'WELLNESS' ? 'success' :
         notification.priority === 'URGENT' ? 'error' : 'info';
@@ -82,20 +103,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
         priority: notification.priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
       });
     });
-  }, [notifications]);
+  }, [notifications, addToastNotification]);
+
+  const contextValue = useMemo(() => ({
+    realtimeNotifications: notifications,
+    toastNotifications,
+    isConnected,
+    connectionError,
+    sendMessage,
+    clearNotifications,
+    addToastNotification,
+    removeToastNotification,
+    notificationCount: notifications.length
+  }), [notifications, toastNotifications, isConnected, connectionError, sendMessage, clearNotifications, addToastNotification, removeToastNotification]);
 
   return (
-    <NotificationContext.Provider value={{
-      realtimeNotifications: notifications,
-      toastNotifications,
-      isConnected,
-      connectionError,
-      sendMessage,
-      clearNotifications,
-      addToastNotification,
-      removeToastNotification,
-      notificationCount: notifications.length
-    }}>
+    <NotificationContext.Provider value={contextValue}>
       {children}
     </NotificationContext.Provider>
   );
