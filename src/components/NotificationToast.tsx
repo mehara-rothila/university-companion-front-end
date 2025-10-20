@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useNotifications } from '../context/NotificationContext';
 import { X, CheckCircle, AlertTriangle, AlertCircle, Info, Bell, Wifi, WifiOff } from 'lucide-react';
 
@@ -93,4 +93,5 @@ const NotificationToast: React.FC = () => {
   );
 };
 
-export default NotificationToast;
+// Memoize to prevent unnecessary re-renders
+export default memo(NotificationToast);
