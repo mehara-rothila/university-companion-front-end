@@ -1,7 +1,7 @@
 // app/components/AnimatedBackground.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { useDarkMode } from '@/app/context/DarkModeContext'
 
 // Seeded random function for deterministic values
@@ -14,7 +14,7 @@ interface AnimatedBackgroundProps {
   variant?: 'dashboard' | 'default';
 }
 
-export default function AnimatedBackground({ variant = 'default' }: AnimatedBackgroundProps) {
+function AnimatedBackground({ variant = 'default' }: AnimatedBackgroundProps) {
   const [isClient, setIsClient] = useState(false)
   const { isDarkMode } = useDarkMode()
 
@@ -25,8 +25,8 @@ export default function AnimatedBackground({ variant = 'default' }: AnimatedBack
     setIsClient(true)
   }, [])
 
-  // Generate deterministic particles using seeded random with better distribution - INCREASED for homepage
-  const particles = [...Array(300)].map((_, i) => {
+  // Generate deterministic particles using seeded random with better distribution - OPTIMIZED for performance
+  const particles = [...Array(200)].map((_, i) => {
     // Use different seeds to get better spread across the screen
     const leftSeed = i * 1337 + 42;
     const topSeed = i * 1789 + 156;
@@ -528,3 +528,6 @@ export default function AnimatedBackground({ variant = 'default' }: AnimatedBack
     </>
   )
 }
+
+// Memoize to prevent unnecessary re-renders
+export default memo(AnimatedBackground)

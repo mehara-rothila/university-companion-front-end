@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import axios from 'axios';
 
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [token]);
 
-  const login = async (usernameOrEmail: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean> => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${API_URL}/api/auth/signin`, {
@@ -101,18 +101,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Login failed:', error);
       return false;
     }
-  };
+  }, []);
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = useCallback(async () => {
     try {
       await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       console.error('Google login failed:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     if (session) {
       // Google OAuth logout
       await signOut({ callbackUrl: '/' });
@@ -123,9 +123,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
-  };
+  }, [session]);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     token,
     login,
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     isAuthenticated: !!user,
     loading
-  };
+  }), [user, token, login, loginWithGoogle, logout, loading]);
 
   return (
     <AuthContext.Provider value={value}>

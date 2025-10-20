@@ -1,7 +1,7 @@
 // src/app/notifications/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
@@ -196,10 +196,11 @@ export default function NotificationsPage() {
     if (user) {
       loadNotifications();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentPage]);
 
-  // Filter notifications based on active tab and filters
-  useEffect(() => {
+  // Filter notifications based on active tab and filters using useMemo for performance
+  const filteredNotificationsMemo = useMemo(() => {
     let filtered = notifications;
 
     // Filter by tab
@@ -220,13 +221,13 @@ export default function NotificationsPage() {
     if (filters.type !== 'all') {
       filtered = filtered.filter(n => n.type === filters.type);
     }
-    
+
     if (filters.priority !== 'all') {
       filtered = filtered.filter(n => n.priority === filters.priority);
     }
-    
+
     if (filters.readStatus !== 'all') {
-      filtered = filtered.filter(n => 
+      filtered = filtered.filter(n =>
         filters.readStatus === 'read' ? n.isRead : !n.isRead
       );
     }
@@ -254,9 +255,14 @@ export default function NotificationsPage() {
 
     // Sort by createdAt (newest first)
     filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    
-    setFilteredNotifications(filtered);
+
+    return filtered;
   }, [notifications, activeTab, filters]);
+
+  // Update filteredNotifications when memo changes
+  useEffect(() => {
+    setFilteredNotifications(filteredNotificationsMemo);
+  }, [filteredNotificationsMemo]);
 
   // Get notification type icon
   const getTypeIcon = (type: string) => {
@@ -301,25 +307,25 @@ export default function NotificationsPage() {
   };
 
   // Mark notification as read
-  const markAsRead = (id: number) => {
-    setNotifications(prev => 
+  const markAsRead = useCallback((id: number) => {
+    setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, isRead: true } : n)
     );
-  };
+  }, []);
 
   // Archive notification
-  const archiveNotification = (id: number) => {
-    setNotifications(prev => 
+  const archiveNotification = useCallback((id: number) => {
+    setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, isArchived: true } : n)
     );
-  };
+  }, []);
 
   // Mark all as read
-  const markAllAsRead = () => {
-    setNotifications(prev => 
+  const markAllAsRead = useCallback(() => {
+    setNotifications(prev =>
       prev.map(n => ({ ...n, isRead: true }))
     );
-  };
+  }, []);
 
   // Get unread count
   const unreadCount = notifications.filter(n => !n.isRead && !n.isArchived).length;

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
 
 interface Notification {
   title: string;
@@ -26,35 +26,42 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const subscriptionsRef = useRef<{ [key: string]: any }>({});
+  const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
+    // Prevent creating duplicate clients if one already exists
+    if (clientRef.current?.active) {
+      console.log('WebSocket already connected, skipping new connection');
+      return;
+    }
+
     // Create STOMP client with SockJS transport
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     console.log('Connecting to WebSocket at:', `${API_URL}/ws`);
-    
+
     const stompClient = new Client({
       webSocketFactory: () => {
         console.log('Creating SockJS connection...');
         return new SockJS(`${API_URL}/ws`);
       },
-      
+
       connectHeaders: {
         // Add authentication headers if needed
       },
-      
+
       debug: (str) => {
         console.log('STOMP Debug:', str);
       },
-      
+
       reconnectDelay: 5000, // Reconnect every 5 seconds if connection is lost
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
-      
+
       onConnect: (frame) => {
         console.log('STOMP Connected:', frame);
         setIsConnected(true);
         setConnectionError(null);
-        
+
         // Subscribe to global notifications
         const globalSub = stompClient.subscribe('/topic/notifications', (message: IMessage) => {
           try {
@@ -87,20 +94,20 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
           body: 'Hello from client!'
         });
       },
-      
+
       onDisconnect: (frame) => {
         console.log('STOMP Disconnected:', frame);
         setIsConnected(false);
         // Clear subscriptions
         subscriptionsRef.current = {};
       },
-      
+
       onStompError: (frame) => {
         console.error('STOMP Error:', frame);
         setConnectionError(`Connection error: ${frame.headers['message'] || 'Unknown error'}`);
         setIsConnected(false);
       },
-      
+
       onWebSocketError: (error) => {
         console.error('WebSocket Error:', error);
         setConnectionError('WebSocket connection failed');
@@ -111,9 +118,12 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
     // Activate the client
     stompClient.activate();
     setClient(stompClient);
+    clientRef.current = stompClient;
 
     // Cleanup on unmount
     return () => {
+      console.log('Cleaning up WebSocket connection');
+
       // Unsubscribe from all subscriptions
       Object.values(subscriptionsRef.current).forEach(sub => {
         if (sub && typeof sub.unsubscribe === 'function') {
@@ -121,11 +131,12 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
         }
       });
       subscriptionsRef.current = {};
-      
+
       // Deactivate the client
-      if (stompClient.active) {
-        stompClient.deactivate();
+      if (clientRef.current?.active) {
+        clientRef.current.deactivate();
       }
+      clientRef.current = null;
     };
   }, [userId]);
 
