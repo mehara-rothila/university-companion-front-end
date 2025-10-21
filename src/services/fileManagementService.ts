@@ -6,8 +6,8 @@ export interface UserFile {
   id: number;
   fileUrl: string;
   fileName: string;
-  fileType: 'image' | 'pdf';
-  source: 'lost_found' | 'book_photo' | 'book_pdf';
+  fileType: 'image' | 'pdf' | 'video';
+  source: 'lost_found' | 'book_photo' | 'book_pdf' | 'chatbot_upload';
   sourceTitle: string;
   fileSize: number | null;
   uploadedAt: string;
@@ -18,12 +18,17 @@ export interface FileStats {
   totalFiles: number;
   imageCount: number;
   pdfCount: number;
+  videoCount?: number;
   totalStorageBytes: number;
   totalStorageMB: number;
   breakdown: {
     lostFoundImages: number;
     bookPhotos: number;
     bookPdfs: number;
+    chatbotUploads?: number;
+    chatbotImages?: number;
+    chatbotPdfs?: number;
+    chatbotVideos?: number;
   };
 }
 
@@ -86,6 +91,18 @@ export const fileManagementService = {
     }
   },
 
+  // Delete a chatbot upload
+  deleteChatbotUpload: async (uploadId: number, userId: number): Promise<void> => {
+    try {
+      await axios.delete(`${API_URL}/api/files/chatbot-upload/${uploadId}`, {
+        params: { userId }
+      });
+    } catch (error) {
+      console.error('Error deleting chatbot upload:', error);
+      throw error;
+    }
+  },
+
   // Format file size for display
   formatFileSize: (bytes: number | null): string => {
     if (!bytes) return 'Unknown';
@@ -108,6 +125,8 @@ export const fileManagementService = {
         return 'Book Photo';
       case 'book_pdf':
         return 'Book PDF';
+      case 'chatbot_upload':
+        return 'Chatbot Upload';
       default:
         return source;
     }
