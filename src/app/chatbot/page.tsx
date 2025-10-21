@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { athenaService } from '@/services/athenaService';
@@ -114,6 +115,7 @@ const ACCEPTED_FILE_TYPES = {
 
 export default function ChatbotPage() {
   const { isDarkMode } = useDarkMode();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -273,8 +275,8 @@ export default function ChatbotPage() {
       }
 
       try {
-        // Upload file using Athena service
-        const { attachment } = await athenaService.uploadFile(file);
+        // Upload file using Athena service and track in database
+        const { attachment } = await athenaService.uploadFile(file, user?.id);
         
         const userMessage: ChatMessage = {
           id: generateId(),
