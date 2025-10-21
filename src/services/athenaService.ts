@@ -3,7 +3,7 @@ import { ChatMessage, ChatResponse, UniversityContext, ChatAttachment } from '@/
 import { fileUploadService, FileProcessingResult } from './fileUploadService';
 import { tokenCountingService } from './tokenCountingService';
 
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent';
 
 class AthenaService {
@@ -383,7 +383,7 @@ Remember: You represent ${context.university} and should embody the values of ac
     try {
       attachment.processingStatus = 'processing';
 
-      let processingResult: FileProcessingResult;
+      let processingResult: FileProcessingResult | undefined;
 
       if (attachment.type === 'image') {
         processingResult = await fileUploadService.processImageWithAI(

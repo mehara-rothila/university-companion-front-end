@@ -2,7 +2,7 @@
 
 export interface ChatMessage {
   id: string;
-  type: 'user' | 'athena' | 'system';
+  type: 'user' | 'ai' | 'athena' | 'system';
   content: string;
   timestamp: Date;
   suggestions?: QuickAction[];
@@ -11,6 +11,7 @@ export interface ChatMessage {
 }
 
 export interface QuickAction {
+  id?: string;
   text: string;
   action: string;
   route?: string;
@@ -36,6 +37,7 @@ export interface ChatResponse {
     tokens?: number;
     responseTime?: number;
     confidence?: number;
+    attachmentsProcessed?: number;
   };
 }
 

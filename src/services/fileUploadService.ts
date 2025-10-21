@@ -152,7 +152,13 @@ class FileUploadService {
   // Convert image URL to base64 for Gemini Vision
   private async getImageAsBase64(imageUrl: string): Promise<string> {
     try {
-      const response = await fetch(imageUrl);
+      // Use backend API to serve the image to avoid CORS issues
+      const apiUrl = `http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(imageUrl)}`;
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
       const blob = await response.blob();
       
       return new Promise((resolve, reject) => {
