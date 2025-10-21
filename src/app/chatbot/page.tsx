@@ -341,6 +341,29 @@ export default function ChatbotPage() {
     }
   }, [messages, updateTokenUsage]);
 
+  // Handle attachment deletion
+  const handleDeleteAttachment = useCallback((messageId: string, attachmentIndex: number) => {
+    setMessages(prev => prev.map(msg => {
+      if (msg.id === messageId && msg.attachments) {
+        const updatedAttachments = msg.attachments.filter((_, index) => index !== attachmentIndex);
+
+        // If no attachments left, update the message content
+        if (updatedAttachments.length === 0) {
+          return {
+            ...msg,
+            content: msg.content + ' (file removed)',
+            attachments: undefined
+          };
+        }
+
+        return {
+          ...msg,
+          attachments: updatedAttachments
+        };
+      }
+      return msg;
+    }));
+  }, []);
   const getFileType = (file: File): string | null => {
     if (ACCEPTED_FILE_TYPES.pdf.includes(file.type)) return 'pdf';
     if (ACCEPTED_FILE_TYPES.video.includes(file.type)) return 'video';
@@ -744,6 +767,18 @@ export default function ChatbotPage() {
                                           <span className={`text-xs text-red-500`}>Error</span>
                                         </div>
                                       )}
+                                      {/* Delete Button */}
+                                      <button
+                                        onClick={() => handleDeleteAttachment(message.id, index)}
+                                        className={`p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200 ${
+                                          isDarkMode ? 'text-gray-400 hover:text-red-400' : 'text-gray-500 hover:text-red-600'
+                                        }`}
+                                        title="Delete attachment"
+                                      >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                      </button>
                                     </div>
                                   </div>
 
