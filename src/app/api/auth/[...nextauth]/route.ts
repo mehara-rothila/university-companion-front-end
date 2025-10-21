@@ -10,20 +10,61 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account) {
+    async jwt({ token, account, profile, user }) {
+      if (account && profile) {
+        // Call backend to register/login OAuth user
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+
+          const names = user.name?.split(' ') || ['', '']
+          const firstName = names[0] || ''
+          const lastName = names.slice(1).join(' ') || ''
+
+          const response = await fetch(`${apiUrl}/api/auth/oauth/register`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: user.email,
+              firstName: firstName,
+              lastName: lastName,
+              provider: 'google',
+              providerId: account.providerAccountId,
+              imageUrl: user.image,
+              role: 'STUDENT'
+            }),
+          })
+
+          if (response.ok) {
+            const backendUser = await response.json()
+            // Store backend user data in token
+            token.backendUser = backendUser
+            token.backendToken = backendUser.accessToken
+          } else {
+            console.error('Failed to register OAuth user with backend')
+          }
+        } catch (error) {
+          console.error('Error calling backend OAuth endpoint:', error)
+        }
+
         token.accessToken = account.access_token
       }
       return token
     },
     async session({ session, token }) {
-      // Send properties to the client
+      // Send properties to the client, including backend user data
       session.accessToken = token.accessToken as string
+      if (token.backendUser) {
+        session.backendUser = token.backendUser as any
+      }
+      if (token.backendToken) {
+        session.backendToken = token.backendToken as string
+      }
       return session
     },
     async signIn({ user, account, profile, email, credentials }) {
-      // You can add custom logic here to verify users
-      // For now, allow all Google users
+      // Allow all Google users
       return true
     },
     async redirect({ url, baseUrl }) {
