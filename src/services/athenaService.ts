@@ -342,7 +342,7 @@ Remember: You represent ${context.university} and should embody the values of ac
   }
 
   // File upload methods
-  async uploadFile(file: File): Promise<{ attachment: ChatAttachment; uploadResult: any }> {
+  async uploadFile(file: File, userId?: number): Promise<{ attachment: ChatAttachment; uploadResult: any }> {
     try {
       const fileType = fileUploadService.getFileType(file);
       if (!fileType) {
@@ -350,7 +350,7 @@ Remember: You represent ${context.university} and should embody the values of ac
       }
 
       let uploadResult;
-      
+
       switch (fileType) {
         case 'image':
           uploadResult = await fileUploadService.uploadImage(file);
@@ -365,6 +365,23 @@ Remember: You represent ${context.university} and should embody the values of ac
           throw new Error(`File type ${fileType} not supported`);
       }
 
+      // Track upload in database if userId is provided
+      if (userId && uploadResult.fileUrl) {
+        try {
+          await this.trackChatbotUpload({
+            userId,
+            fileUrl: uploadResult.fileUrl,
+            fileName: uploadResult.fileName,
+            fileType: fileType,
+            fileSize: uploadResult.fileSize
+          });
+          console.log('✅ Chatbot upload tracked in database');
+        } catch (dbError) {
+          // Log error but don't fail the upload
+          console.error('⚠️ Failed to track upload in database:', dbError);
+        }
+      }
+
       const attachment: ChatAttachment = {
         type: fileType,
         name: uploadResult.fileName,
@@ -376,6 +393,26 @@ Remember: You represent ${context.university} and should embody the values of ac
       return { attachment, uploadResult };
     } catch (error) {
       throw new Error(`File upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private async trackChatbotUpload(uploadData: {
+    userId: number;
+    fileUrl: string;
+    fileName: string;
+    fileType: string;
+    fileSize?: number;
+  }): Promise<void> {
+    const response = await fetch('http://localhost:8080/api/chatbot/uploads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(uploadData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to track upload: ${response.statusText}`);
     }
   }
 
