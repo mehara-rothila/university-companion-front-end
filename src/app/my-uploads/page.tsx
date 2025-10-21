@@ -6,7 +6,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { fileManagementService, UserFile, FileStats } from '@/services/fileManagementService';
-import { Trash2, Download, Image, FileText, HardDrive, FolderOpen } from 'lucide-react';
+import { Trash2, Download, Image, FileText, HardDrive, FolderOpen, Video } from 'lucide-react';
 
 export default function MyUploadsPage() {
   const { isDarkMode } = useDarkMode();
@@ -14,7 +14,7 @@ export default function MyUploadsPage() {
   const [files, setFiles] = useState<UserFile[]>([]);
   const [stats, setStats] = useState<FileStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'images' | 'pdfs'>('all');
+  const [filter, setFilter] = useState<'all' | 'images' | 'pdfs' | 'videos'>('all');
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -64,6 +64,9 @@ export default function MyUploadsPage() {
         case 'book_pdf':
           await fileManagementService.deleteBookPdf(file.id, user.id);
           break;
+        case 'chatbot_upload':
+          await fileManagementService.deleteChatbotUpload(file.id, user.id);
+          break;
       }
 
       // Reload files and stats
@@ -82,11 +85,14 @@ export default function MyUploadsPage() {
     if (filter === 'all') return true;
     if (filter === 'images') return file.fileType === 'image';
     if (filter === 'pdfs') return file.fileType === 'pdf';
+    if (filter === 'videos') return file.fileType === 'video';
     return true;
   });
 
   const getFileIcon = (fileType: string) => {
-    return fileType === 'pdf' ? <FileText className="w-6 h-6" /> : <Image className="w-6 h-6" />;
+    if (fileType === 'pdf') return <FileText className="w-6 h-6" />;
+    if (fileType === 'video') return <Video className="w-6 h-6" />;
+    return <Image className="w-6 h-6" />;
   };
 
   return (
@@ -211,6 +217,18 @@ export default function MyUploadsPage() {
             }`}
           >
             PDFs ({files.filter(f => f.fileType === 'pdf').length})
+          </button>
+          <button
+            onClick={() => setFilter('videos')}
+            className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              filter === 'videos'
+                ? 'bg-orange-600 text-white shadow-lg'
+                : isDarkMode
+                ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Videos ({files.filter(f => f.fileType === 'video').length})
           </button>
         </div>
 
