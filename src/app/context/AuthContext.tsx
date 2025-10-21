@@ -44,19 +44,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     if (session?.user) {
-      // Handle Google OAuth user
-      const googleUser: User = {
-        id: 0, // Will be set from backend
-        username: session.user.name || session.user.email?.split('@')[0] || '',
-        email: session.user.email || '',
-        firstName: session.user.name?.split(' ')[0] || '',
-        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
-        role: 'student', // Default role
-        image: session.user.image || undefined,
-        name: session.user.name || undefined,
-      };
-      setUser(googleUser);
-      setToken(session.accessToken || 'google-oauth-token');
+      // Handle Google OAuth user - use backend user data if available
+      const sessionData = session as any;
+
+      if (sessionData.backendUser) {
+        // Backend user data is available
+        const backendUser: User = {
+          id: sessionData.backendUser.id || 0,
+          username: sessionData.backendUser.username || '',
+          email: sessionData.backendUser.email || '',
+          firstName: sessionData.backendUser.firstName || '',
+          lastName: sessionData.backendUser.lastName || '',
+          role: sessionData.backendUser.role || 'STUDENT',
+          image: sessionData.backendUser.imageUrl || session.user.image || undefined,
+          name: session.user.name || undefined,
+        };
+        setUser(backendUser);
+        setToken(sessionData.backendToken || 'google-oauth-token');
+
+        // Store in localStorage for persistence
+        localStorage.setItem('token', sessionData.backendToken || 'google-oauth-token');
+        localStorage.setItem('user', JSON.stringify(backendUser));
+      } else {
+        // Fallback to session data only (shouldn't happen with new implementation)
+        const googleUser: User = {
+          id: 0,
+          username: session.user.name || session.user.email?.split('@')[0] || '',
+          email: session.user.email || '',
+          firstName: session.user.name?.split(' ')[0] || '',
+          lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+          role: 'student',
+          image: session.user.image || undefined,
+          name: session.user.name || undefined,
+        };
+        setUser(googleUser);
+        setToken(session.accessToken || 'google-oauth-token');
+      }
     } else {
       // Check for stored auth data (traditional login)
       const storedToken = localStorage.getItem('token');
