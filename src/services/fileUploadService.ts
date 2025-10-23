@@ -20,9 +20,9 @@ class FileUploadService {
   private readonly API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   // Upload image to S3
-  async uploadImage(file: File): Promise<UploadResponse> {
+  async uploadImage(file: File, folder?: string): Promise<UploadResponse> {
     this.validateImageFile(file);
-    return await this.uploadToS3(file, '/api/upload/image');
+    return await this.uploadToS3(file, '/api/upload/image', folder);
   }
 
   // Upload PDF to S3  
@@ -39,9 +39,14 @@ class FileUploadService {
   }
 
   // General S3 upload method
-  private async uploadToS3(file: File, endpoint: string): Promise<UploadResponse> {
+  private async uploadToS3(file: File, endpoint: string, folder?: string): Promise<UploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
+
+    // Add folder parameter if provided
+    if (folder) {
+      formData.append('folder', folder);
+    }
 
     const response = await fetch(`${this.API_URL}${endpoint}`, {
       method: 'POST',
@@ -54,7 +59,7 @@ class FileUploadService {
     }
 
     const data = await response.json();
-    
+
     return {
       fileUrl: data.imageUrl || data.pdfUrl || data.fileUrl,
       fileName: file.name,
