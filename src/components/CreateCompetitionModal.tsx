@@ -90,7 +90,7 @@ export default function CreateCompetitionModal({
 
       let imageUrl = null;
       if (imageFile) {
-        const uploadResult = await fileUploadService.uploadImage(imageFile);
+        const uploadResult = await fileUploadService.uploadImage(imageFile, 'competition-images');
         imageUrl = uploadResult.fileUrl;
       }
 

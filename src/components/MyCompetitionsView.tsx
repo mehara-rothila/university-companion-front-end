@@ -109,7 +109,16 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                 key={competition.id}
                 className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}
               >
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex gap-4 mb-4">
+                  {competition.imageUrl && (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={competition.imageUrl}
+                        alt={competition.title}
+                        className="w-32 h-32 rounded-lg object-cover"
+                      />
+                    </div>
+                  )}
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <h3 className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>

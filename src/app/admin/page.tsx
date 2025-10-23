@@ -7,16 +7,17 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
-import { 
-  Users, 
-  GraduationCap, 
-  Building, 
-  Shield, 
-  DollarSign, 
-  Bell, 
-  Settings, 
+import {
+  Users,
+  GraduationCap,
+  Building,
+  Shield,
+  DollarSign,
+  Bell,
+  Settings,
   ChevronRight,
-  Clock
+  Clock,
+  Trophy
 } from 'lucide-react';
 
 // Types
@@ -33,6 +34,9 @@ interface User {
   enabled: boolean;
   createdAt: string;
   updatedAt: string;
+  provider?: string;
+  providerId?: string;
+  imageUrl?: string;
 }
 
 interface DashboardStats {
@@ -470,7 +474,7 @@ export default function AdminPanel() {
           </div>
 
           {/* Admin Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 animate-fade-in">
             {/* User Management */}
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-700/30' : 'bg-gradient-to-br from-blue-50/90 to-blue-100/90 border-blue-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
@@ -562,6 +566,39 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} flex items-center justify-end`}>
                     Manage Notifications
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Competition Management */}
+            <Link href="/admin/competitions">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-orange-900/20 to-orange-800/20 border-orange-700/30' : 'bg-gradient-to-br from-orange-50/90 to-orange-100/90 border-orange-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-orange-800/50' : 'bg-orange-100'} flex-shrink-0`}>
+                    <Trophy className={`w-8 h-8 ${isDarkMode ? 'text-orange-300' : 'text-orange-600'}`} />
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} bg-gradient-to-r ${isDarkMode ? 'from-orange-400 to-orange-300' : 'from-orange-600 to-orange-500'} bg-clip-text text-transparent block`}>
+                      ACTIVE
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`}>
+                      Available
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Competitions
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and approve competition submissions from faculty and students
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} flex items-center justify-end`}>
+                    Manage Competitions
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
@@ -845,22 +882,48 @@ export default function AdminPanel() {
                         />
                       </td>
                       <td className="p-4">
-                        <div>
-                          <div className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                            {user.firstName} {user.lastName}
-                          </div>
-                          <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            {user.email}
-                          </div>
-                          <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                            @{user.username}
+                        <div className="flex items-center gap-3">
+                          {user.imageUrl ? (
+                            <img
+                              src={user.imageUrl}
+                              alt={`${user.firstName} ${user.lastName}`}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                              <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <div className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              {user.firstName} {user.lastName}
+                            </div>
+                            <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {user.email}
+                            </div>
+                            <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                              @{user.username}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(user.role)}`}>
-                          {user.role}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(user.role)} w-fit`}>
+                            {user.role}
+                          </span>
+                          {user.provider && user.provider !== 'local' && (
+                            <span className={`px-2 py-1 text-xs rounded-full w-fit ${
+                              user.provider === 'google'
+                                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                                : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                            }`}>
+                              {user.provider === 'google' ? '🔐 Google' : `🔐 ${user.provider}`}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-4">
                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>

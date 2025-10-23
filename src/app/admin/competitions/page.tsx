@@ -175,15 +175,29 @@ export default function AdminCompetitionsPage() {
                     className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}
                   >
                     {/* Competition Image */}
-                    {competition.imageUrl && (
-                      <div className="mb-4 rounded-lg overflow-hidden">
+                    <div className="mb-4 rounded-lg overflow-hidden">
+                      {competition.imageUrl ? (
                         <img
                           src={competition.imageUrl}
                           alt={competition.title}
                           className="w-full h-64 object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
                         />
+                      ) : null}
+                      <div
+                        className={`w-full h-64 bg-gradient-to-br ${isDarkMode ? 'from-gray-700 to-gray-600' : 'from-gray-200 to-gray-300'} flex items-center justify-center ${competition.imageUrl ? 'hidden' : 'flex'}`}
+                      >
+                        <div className="text-center">
+                          <ImageIcon className={`w-16 h-16 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                        </div>
                       </div>
-                    )}
+                    </div>
 
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
