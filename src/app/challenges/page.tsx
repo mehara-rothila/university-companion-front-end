@@ -143,7 +143,7 @@ export default function ChallengesPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <div className="text-center">
+            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
                 <Trophy className="h-10 w-10 mr-3 text-purple-500" />
                 Competitions & Challenges
