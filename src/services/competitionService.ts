@@ -22,6 +22,8 @@ export interface Competition {
   rejectionReason: string | null;
   enrollmentCount?: number;
   formFields?: FormField[];
+  organizerName?: string;
+  organizerEmail?: string;
 }
 
 export interface FormField {
@@ -220,6 +222,32 @@ export const competitionService = {
       return response.data;
     } catch (error) {
       console.error('Error rejecting competition:', error);
+      throw error;
+    }
+  },
+
+  // Admin: Hide competition
+  hideCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+    try {
+      const response = await axios.post(`${API_URL}/${competitionId}/hide`, null, {
+        params: { adminId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error hiding competition:', error);
+      throw error;
+    }
+  },
+
+  // Admin: Unhide competition
+  unhideCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+    try {
+      const response = await axios.post(`${API_URL}/${competitionId}/unhide`, null, {
+        params: { adminId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error unhiding competition:', error);
       throw error;
     }
   },
