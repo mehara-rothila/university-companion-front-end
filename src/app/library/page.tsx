@@ -421,7 +421,7 @@ export default function LibraryPage() {
 
           {/* Header */}
           <div className="mb-8 animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className={`flex flex-col md:flex-row md:items-center md:justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <div>
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
