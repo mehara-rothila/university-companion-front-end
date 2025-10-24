@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
-import { Shield, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon } from 'lucide-react';
 
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
@@ -139,15 +139,15 @@ export default function AdminCompetitionsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
-                  <Shield className="h-10 w-10 mr-3 text-purple-500" />
+                  <Trophy className="h-10 w-10 mr-3 text-orange-500" />
                   Admin - Competition Review
                 </h1>
                 <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Review and approve pending competition submissions
                 </p>
               </div>
-              <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
-                <p className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+              <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-orange-900/30 border border-orange-700/30' : 'bg-orange-100 border border-orange-200'}`}>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>
                   Pending: <span className="font-bold text-lg">{competitions.length}</span>
                 </p>
               </div>
@@ -159,7 +159,7 @@ export default function AdminCompetitionsPage() {
 
             {competitions.length === 0 ? (
               <div className="text-center py-12">
-                <Shield className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+                <Trophy className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
                 <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   No pending competitions
                 </p>
@@ -174,135 +174,147 @@ export default function AdminCompetitionsPage() {
                     key={competition.id}
                     className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}
                   >
-                    {/* Competition Image */}
-                    <div className="mb-4 rounded-lg overflow-hidden">
-                      {competition.imageUrl ? (
-                        <img
-                          src={competition.imageUrl}
-                          alt={competition.title}
-                          className="w-full h-64 object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback = target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={`w-full h-64 bg-gradient-to-br ${isDarkMode ? 'from-gray-700 to-gray-600' : 'from-gray-200 to-gray-300'} flex items-center justify-center ${competition.imageUrl ? 'hidden' : 'flex'}`}
-                      >
-                        <div className="text-center">
-                          <ImageIcon className={`w-16 h-16 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                    {/* Two Column Layout: Image and Details */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
+                      {/* Competition Image - Left Side */}
+                      <div className="lg:col-span-1">
+                        <div className="rounded-lg overflow-hidden h-full">
+                          {competition.imageUrl ? (
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(competition.imageUrl)}`}
+                              alt={competition.title}
+                              className="w-full h-full object-contain bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 min-h-[300px] max-h-[400px]"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const fallback = target.nextElementSibling as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className={`w-full h-full min-h-[300px] bg-gradient-to-br ${isDarkMode ? 'from-gray-700 to-gray-600' : 'from-gray-200 to-gray-300'} flex items-center justify-center ${competition.imageUrl ? 'hidden' : 'flex'}`}
+                          >
+                            <div className="text-center">
+                              <ImageIcon className={`w-16 h-16 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <h3 className={`font-bold text-xl ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                            {competition.title}
-                          </h3>
-                          {competition.category && (
-                            <span className={`px-3 py-1 text-xs font-medium rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                              {competition.category}
-                            </span>
+                      {/* Competition Details - Right Side */}
+                      <div className="lg:col-span-2">
+                        {/* Header */}
+                        <div className="mb-4">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className={`font-bold text-2xl ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              {competition.title}
+                            </h3>
+                            {competition.category && (
+                              <span className={`px-3 py-1 text-xs font-medium rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                                {competition.category}
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
+                            {competition.description}
+                          </p>
+                          <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                            Submitted on {formatDate(competition.createdAt)}
+                          </p>
+                        </div>
+
+                        {/* Details Grid */}
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div className="flex items-start">
+                            <Calendar className={`w-4 h-4 mr-2 mt-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                            <div>
+                              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Start Date</p>
+                              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{formatDate(competition.startDate)}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start">
+                            <Calendar className={`w-4 h-4 mr-2 mt-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                            <div>
+                              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>End Date</p>
+                              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{formatDate(competition.endDate)}</p>
+                            </div>
+                          </div>
+
+                          {competition.registrationDeadline && (
+                            <div className="flex items-start">
+                              <Calendar className={`w-4 h-4 mr-2 mt-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                              <div>
+                                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Registration Deadline</p>
+                                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{formatDate(competition.registrationDeadline)}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {competition.location && (
+                            <div className="flex items-start">
+                              <MapPin className={`w-4 h-4 mr-2 mt-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                              <div>
+                                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Location</p>
+                                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{competition.location}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {competition.maxParticipants && (
+                            <div className="flex items-start">
+                              <Users className={`w-4 h-4 mr-2 mt-1 ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`} />
+                              <div>
+                                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Max Participants</p>
+                                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{competition.maxParticipants}</p>
+                              </div>
+                            </div>
                           )}
                         </div>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
-                          {competition.description}
-                        </p>
-                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                          Submitted on {formatDate(competition.createdAt)}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Details Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                      <div className="flex items-center">
-                        <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                        <div>
-                          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Start Date</p>
-                          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.startDate)}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center">
-                        <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                        <div>
-                          <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>End Date</p>
-                          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.endDate)}</p>
-                        </div>
-                      </div>
-
-                      {competition.registrationDeadline && (
-                        <div className="flex items-center">
-                          <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                          <div>
-                            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Registration Deadline</p>
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.registrationDeadline)}</p>
+                        {/* Prizes */}
+                        {competition.prizes && (
+                          <div className={`p-4 rounded-lg mb-4 ${isDarkMode ? 'bg-orange-900/20 border border-orange-700/30' : 'bg-orange-50 border border-orange-200'}`}>
+                            <p className={`text-sm font-semibold ${isDarkMode ? 'text-orange-300' : 'text-orange-800'} mb-1`}>Prizes</p>
+                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{competition.prizes}</p>
                           </div>
-                        </div>
-                      )}
-
-                      {competition.location && (
-                        <div className="flex items-center">
-                          <MapPin className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                          <div>
-                            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Location</p>
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{competition.location}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {competition.maxParticipants && (
-                        <div className="flex items-center">
-                          <Users className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                          <div>
-                            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs font-medium`}>Max Participants</p>
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{competition.maxParticipants}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Prizes */}
-                    {competition.prizes && (
-                      <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100'}`}>
-                        <p className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>Prizes:</p>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{competition.prizes}</p>
-                      </div>
-                    )}
-
-                    {/* Enrollment Options */}
-                    <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100'}`}>
-                      <p className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Enrollment Options:</p>
-                      <div className="space-y-1 text-sm">
-                        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          • Internal Enrollment: {competition.internalEnrollmentEnabled ? '✓ Enabled' : '✗ Disabled'}
-                        </p>
-                        {competition.internalEnrollmentEnabled && competition.formFields && (
-                          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            • Form Fields: {competition.formFields.length} custom fields
-                          </p>
                         )}
-                        {competition.externalEnrollmentUrl && (
-                          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} flex items-center`}>
-                            • External Link:
-                            <a
-                              href={competition.externalEnrollmentUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-1 text-blue-500 hover:underline flex items-center"
-                            >
-                              View <ExternalLink className="w-3 h-3 ml-1" />
-                            </a>
-                          </p>
-                        )}
+
+                        {/* Enrollment Options */}
+                        <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                          <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>Enrollment Options</p>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center">
+                              <span className={`w-2 h-2 rounded-full mr-2 ${competition.internalEnrollmentEnabled ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                Internal Enrollment: {competition.internalEnrollmentEnabled ? 'Enabled' : 'Disabled'}
+                              </p>
+                            </div>
+                            {competition.internalEnrollmentEnabled && competition.formFields && (
+                              <div className="flex items-center">
+                                <span className={`w-2 h-2 rounded-full mr-2 ${isDarkMode ? 'bg-orange-500' : 'bg-orange-500'}`}></span>
+                                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  {competition.formFields.length} custom form fields
+                                </p>
+                              </div>
+                            )}
+                            {competition.externalEnrollmentUrl && (
+                              <div className="flex items-center">
+                                <span className={`w-2 h-2 rounded-full mr-2 ${isDarkMode ? 'bg-orange-500' : 'bg-orange-500'}`}></span>
+                                <a
+                                  href={competition.externalEnrollmentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`${isDarkMode ? 'text-orange-400' : 'text-orange-600'} hover:underline flex items-center`}
+                                >
+                                  External enrollment link <ExternalLink className="w-3 h-3 ml-1" />
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
 

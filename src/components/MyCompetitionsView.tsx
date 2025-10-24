@@ -113,9 +113,9 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                   {competition.imageUrl && (
                     <div className="flex-shrink-0">
                       <img
-                        src={competition.imageUrl}
+                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(competition.imageUrl)}`}
                         alt={competition.title}
-                        className="w-32 h-32 rounded-lg object-cover"
+                        className="w-32 h-32 rounded-lg object-contain bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700"
                       />
                     </div>
                   )}
