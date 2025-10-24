@@ -159,7 +159,7 @@ export default function AdminCompetitionsPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
+            <div className={`flex items-center justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <div>
                 <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
                   <Trophy className="h-10 w-10 mr-3 text-orange-500" />

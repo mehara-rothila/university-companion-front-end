@@ -121,12 +121,14 @@ export default function WeatherPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-              University Weather
-            </h1>
-            <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              University of Moratuwa Weather Forecast
-            </p>
+            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
+              <h1 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                University Weather
+              </h1>
+              <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                University of Moratuwa Weather Forecast
+              </p>
+            </div>
           </div>
 
           {/* Current Weather - Large Card */}

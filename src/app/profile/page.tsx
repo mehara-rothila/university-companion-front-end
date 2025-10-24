@@ -160,7 +160,7 @@ export default function ProfilePage() {
           
           {/* Header */}
           <div className="mb-8 animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className={`flex flex-col md:flex-row md:items-center md:justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
                   {userProfile.personalInfo.name.split(' ').map(n => n[0]).join('')}
