@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
-import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff } from 'lucide-react';
 
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
@@ -17,6 +17,7 @@ export default function AdminCompetitionsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -48,17 +49,39 @@ export default function AdminCompetitionsPage() {
     }
   };
 
-  const handleApprove = async (competitionId: number) => {
-    if (!user?.id) return;
+  const handleApprove = async () => {
+    if (!user?.id || !selectedCompetition) return;
 
     try {
       setActionLoading(true);
-      await competitionService.approveCompetition(competitionId, user.id);
+      await competitionService.approveCompetition(selectedCompetition.id, user.id);
       alert('Competition approved successfully!');
+      setShowApproveModal(false);
+      setSelectedCompetition(null);
       loadPendingCompetitions();
     } catch (error) {
       console.error('Error approving competition:', error);
       alert('Failed to approve competition');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleHide = async (competitionId: number) => {
+    if (!user?.id) return;
+
+    if (!confirm('Are you sure you want to hide this competition? It will be removed from public view.')) {
+      return;
+    }
+
+    try {
+      setActionLoading(true);
+      await competitionService.hideCompetition(competitionId, user.id);
+      alert('Competition hidden successfully!');
+      loadPendingCompetitions();
+    } catch (error) {
+      console.error('Error hiding competition:', error);
+      alert('Failed to hide competition');
     } finally {
       setActionLoading(false);
     }
@@ -220,6 +243,26 @@ export default function AdminCompetitionsPage() {
                           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
                             {competition.description}
                           </p>
+
+                          {/* Organizer Info */}
+                          {competition.organizerName && (
+                            <div className={`p-3 rounded-lg mb-3 ${isDarkMode ? 'bg-blue-900/20 border border-blue-700/30' : 'bg-blue-50 border border-blue-200'}`}>
+                              <p className={`text-xs font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-1`}>Organizer</p>
+                              <div className="flex items-center space-x-4">
+                                <div className="flex items-center">
+                                  <User className={`w-3 h-3 mr-1.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
+                                  <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{competition.organizerName}</span>
+                                </div>
+                                {competition.organizerEmail && (
+                                  <div className="flex items-center">
+                                    <Mail className={`w-3 h-3 mr-1.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
+                                    <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{competition.organizerEmail}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
                           <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                             Submitted on {formatDate(competition.createdAt)}
                           </p>
@@ -319,11 +362,14 @@ export default function AdminCompetitionsPage() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex space-x-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <button
-                        onClick={() => handleApprove(competition.id)}
+                        onClick={() => {
+                          setSelectedCompetition(competition);
+                          setShowApproveModal(true);
+                        }}
                         disabled={actionLoading}
-                        className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                        className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
                       >
                         <Check className="w-5 h-5 mr-2" />
                         Approve
@@ -334,10 +380,18 @@ export default function AdminCompetitionsPage() {
                           setShowRejectModal(true);
                         }}
                         disabled={actionLoading}
-                        className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                        className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
                       >
                         <X className="w-5 h-5 mr-2" />
                         Reject
+                      </button>
+                      <button
+                        onClick={() => handleHide(competition.id)}
+                        disabled={actionLoading}
+                        className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                      >
+                        <EyeOff className="w-5 h-5 mr-2" />
+                        Hide
                       </button>
                     </div>
                   </div>
@@ -346,6 +400,69 @@ export default function AdminCompetitionsPage() {
             )}
           </div>
         </div>
+
+        {/* Approve Confirmation Modal */}
+        {showApproveModal && selectedCompetition && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  Approve Competition
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowApproveModal(false);
+                    setSelectedCompetition(null);
+                  }}
+                  className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
+                  Are you sure you want to approve this competition?
+                </p>
+                <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                  <p className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-1`}>
+                    {selectedCompetition.title}
+                  </p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {selectedCompetition.category} • {selectedCompetition.location}
+                  </p>
+                </div>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} mt-3`}>
+                  This will make the competition visible to all users on the platform.
+                </p>
+              </div>
+
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => {
+                    setShowApproveModal(false);
+                    setSelectedCompetition(null);
+                  }}
+                  className={`flex-1 px-6 py-3 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'}`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleApprove}
+                  disabled={actionLoading}
+                  className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 flex items-center justify-center"
+                >
+                  {actionLoading ? 'Approving...' : (
+                    <>
+                      <Check className="w-5 h-5 mr-2" />
+                      Approve
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Reject Modal */}
         {showRejectModal && selectedCompetition && (
