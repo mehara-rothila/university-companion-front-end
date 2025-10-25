@@ -5,6 +5,8 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { CloudRain, Wind, Droplets, Eye, Sun, CloudSun, Cloud, CloudDrizzle } from 'lucide-react';
+import { weatherService } from '@/services/weatherService';
+import WeatherChatbot from '@/components/WeatherChatbot';
 
 interface WeatherData {
   temperature: number;
@@ -36,39 +38,45 @@ interface DailyForecast {
 
 export default function WeatherPage() {
   const { isDarkMode } = useDarkMode();
+  const [isLoading, setIsLoading] = useState(true);
   const [currentWeather, setCurrentWeather] = useState<WeatherData>({
-    temperature: 24,
-    condition: 'Partly Cloudy',
-    humidity: 65,
-    windSpeed: 12,
-    feelsLike: 26,
-    uvIndex: 7,
-    visibility: 10,
-    pressure: 1013,
-    sunrise: '6:15 AM',
-    sunset: '6:30 PM'
+    temperature: 0,
+    condition: '',
+    humidity: 0,
+    windSpeed: 0,
+    feelsLike: 0,
+    uvIndex: 0,
+    visibility: 0,
+    pressure: 0,
+    sunrise: '',
+    sunset: ''
   });
 
-  const [hourlyForecast] = useState<HourlyForecast[]>([
-    { time: '12 PM', temperature: 24, condition: 'Partly Cloudy', precipitation: 10 },
-    { time: '1 PM', temperature: 25, condition: 'Partly Cloudy', precipitation: 15 },
-    { time: '2 PM', temperature: 26, condition: 'Sunny', precipitation: 5 },
-    { time: '3 PM', temperature: 27, condition: 'Sunny', precipitation: 0 },
-    { time: '4 PM', temperature: 26, condition: 'Partly Cloudy', precipitation: 10 },
-    { time: '5 PM', temperature: 25, condition: 'Cloudy', precipitation: 20 },
-    { time: '6 PM', temperature: 23, condition: 'Cloudy', precipitation: 30 },
-    { time: '7 PM', temperature: 22, condition: 'Rainy', precipitation: 60 },
-  ]);
+  const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
+  const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>([]);
+  const [fullWeatherData, setFullWeatherData] = useState<any>(null);
 
-  const [dailyForecast] = useState<DailyForecast[]>([
-    { day: 'Monday', high: 28, low: 22, condition: 'Sunny', precipitation: 10 },
-    { day: 'Tuesday', high: 27, low: 21, condition: 'Partly Cloudy', precipitation: 20 },
-    { day: 'Wednesday', high: 26, low: 20, condition: 'Cloudy', precipitation: 40 },
-    { day: 'Thursday', high: 25, low: 19, condition: 'Rainy', precipitation: 70 },
-    { day: 'Friday', high: 26, low: 20, condition: 'Partly Cloudy', precipitation: 30 },
-    { day: 'Saturday', high: 27, low: 21, condition: 'Sunny', precipitation: 10 },
-    { day: 'Sunday', high: 28, low: 22, condition: 'Sunny', precipitation: 5 },
-  ]);
+  // Fetch weather data on component mount
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await weatherService.getWeather();
+        if (data) {
+          setCurrentWeather(data.current);
+          setHourlyForecast(data.hourly);
+          setDailyForecast(data.daily);
+          setFullWeatherData(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch weather data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWeatherData();
+  }, []);
 
   const getWeatherIcon = (condition: string, size: 'sm' | 'md' | 'lg' = 'md') => {
     const sizeClasses = {
@@ -111,6 +119,21 @@ export default function WeatherPage() {
     if (index <= 10) return 'Very High';
     return 'Extreme';
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <>
+        <Navigation />
+        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading weather data...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -239,23 +262,49 @@ export default function WeatherPage() {
               {hourlyForecast.map((hour, index) => (
                 <div
                   key={index}
-                  className={`flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 text-center min-w-[100px]`}
+                  className={`flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 min-w-[120px]`}
                 >
-                  <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  {/* Time */}
+                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 text-center`}>
                     {hour.time}
                   </p>
-                  <div className="flex justify-center mb-2">
+
+                  {/* Weather Icon */}
+                  <div className="flex justify-center mb-3">
                     {getWeatherIcon(hour.condition, 'sm')}
                   </div>
-                  <p className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1`}>
-                    {Math.round(hour.temperature)}°
-                  </p>
-                  <p className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    {hour.precipitation}%
+
+                  {/* Temperature */}
+                  <div className="mb-2">
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>
+                      Temperature
+                    </p>
+                    <p className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} text-center`}>
+                      {Math.round(hour.temperature)}°C
+                    </p>
+                  </div>
+
+                  {/* Rain Chance */}
+                  <div className="flex items-center justify-center space-x-1">
+                    <Droplets className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                    <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      {hour.precipitation}%
+                    </p>
+                  </div>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-center mt-1`}>
+                    Rain Chance
                   </p>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Weather Chatbot */}
+          <div className="mb-8">
+            <h3 className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+              Ask About the Weather
+            </h3>
+            <WeatherChatbot weatherData={fullWeatherData} isDarkMode={isDarkMode} />
           </div>
 
           {/* 7-Day Forecast */}
@@ -269,8 +318,9 @@ export default function WeatherPage() {
                   key={index}
                   className={`flex items-center justify-between ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} rounded-xl p-4`}
                 >
+                  {/* Day & Condition */}
                   <div className="flex items-center space-x-4 flex-1">
-                    <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} w-24`}>
+                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} w-24`}>
                       {day.day}
                     </p>
                     <div className="flex items-center space-x-2">
@@ -280,17 +330,41 @@ export default function WeatherPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <p className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                      💧 {day.precipitation}%
-                    </p>
-                    <div className="flex items-center space-x-2">
-                      <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                        {Math.round(day.high)}°
-                      </p>
-                      <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-                        {Math.round(day.low)}°
-                      </p>
+
+                  {/* Weather Info */}
+                  <div className="flex items-center space-x-6">
+                    {/* Rain Chance */}
+                    <div className="flex items-center space-x-1">
+                      <Droplets className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                      <div>
+                        <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                          {day.precipitation}%
+                        </p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                          Rain
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Temperature */}
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className={`text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {Math.round(day.high)}°C
+                        </p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                          High
+                        </p>
+                      </div>
+                      <div className={`w-px h-8 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
+                      <div>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {Math.round(day.low)}°C
+                        </p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                          Low
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
