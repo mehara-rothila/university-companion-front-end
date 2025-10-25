@@ -39,6 +39,10 @@ DEPLOYMENT_FIX.md
 URGENT_CORS_FIX.md
 HEROKU_FIX_COMPLETE.md
 
+# project documentation (internal only)
+smart_university_companion_spec.md
+DOCUMENTATION.md
+
 # vercel
 .vercel
 

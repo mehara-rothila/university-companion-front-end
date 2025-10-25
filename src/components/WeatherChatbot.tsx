@@ -71,59 +71,38 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
     return context;
   };
 
-  // Call Gemini AI API
+  // Call Backend Chat API
   const callGeminiAI = async (userMessage: string): Promise<string> => {
-    const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-
-    const weatherContext = generateWeatherContext();
-
-    const systemPrompt = `You are a helpful weather assistant for University of Moratuwa students.
-
-Current Weather Data:
-${weatherContext}
-
-Guidelines:
-- Provide accurate weather information based on the data above
-- Be conversational and friendly
-- Give practical campus-specific recommendations (e.g., "bring umbrella to library", "great day for sports complex")
-- Keep responses concise (max 150 words)
-- Use emojis moderately for clarity
-- Focus on how weather affects campus life
-
-User Question: ${userMessage}
-
-Provide a helpful response:`;
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GEMINI_API_KEY}`,
+        `${backendUrl}/api/weather/chat`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            contents: [{
-              parts: [{ text: systemPrompt }]
-            }],
-            generationConfig: {
-              temperature: 0.7,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 1024,
-            },
+            message: userMessage,
+            userId: null, // Set to user ID when auth is implemented
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status}`);
+        throw new Error(`Chat API error: ${response.status}`);
       }
 
       const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to get response');
+      }
+
+      return data.response;
     } catch (error) {
-      console.error('Gemini AI error:', error);
+      console.error('Backend Chat error:', error);
       throw error;
     }
   };
