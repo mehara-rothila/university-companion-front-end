@@ -1,100 +1,219 @@
-# Smart University Companion - Frontend
+# Smart University Companion
 
-A modern, responsive Next.js web application for the Smart University Companion system - L3 Individual Project at University of Moratuwa.
+> A modern Next.js web application for the Smart University Companion system - L3 Individual Project at University of Moratuwa
 
-## 🎯 Project Overview
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.6-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4+-38bdf8)](https://tailwindcss.com/)
 
-The Smart University Companion is an AI-powered digital assistant designed to enhance university life through human-centered design and ethical AI implementation. This frontend provides an intuitive interface for students to access university services, navigation, and personalized assistance with real-time data integration and secure user management.
+## Overview
 
-## ✨ Features
+An AI-powered digital assistant designed to enhance university life through intuitive interfaces for students to access university services, navigation, and personalized assistance with real-time data integration and secure user management.
 
-### 🔐 Authentication System
-- **JWT-based Authentication** - Secure login and registration
-- **Session Management** - Automatic token refresh and logout
-- **Protected Routes** - Role-based access control
-- **User Context** - Global authentication state management
+## Features
 
-### 📚 Lost & Found System (Fully Implemented)
-- **Item Management** - Post lost or found items with detailed descriptions
-- **AWS S3 Image Upload** - Secure photo upload with 10MB limit
-- **Advanced Search & Filtering** - Filter by category, location, type, status
-- **Real-time Statistics** - Live item counts and success metrics
-- **User Dashboard** - Manage your posted items
-- **Contact System** - Anonymous and direct contact options
-- **Item Removal** - Delete your posted items with confirmation
-- **Success Stories** - Community achievements showcase
+### Core Functionality
 
-### 🎨 User Experience Features
-- **Dark/Light Mode Toggle** - Persistent theme preference
-- **Responsive Design** - Mobile-first approach with Tailwind CSS
-- **Animated Backgrounds** - Dynamic mathematical visualizations
-- **Loading States** - Smooth transitions and user feedback
-- **Error Handling** - Graceful error management with user-friendly messages
-- **Form Validation** - Real-time input validation and feedback
+- **🔐 Authentication** - JWT-based secure login/registration with role-based access control
+- **�️ Admin Panel** - Complete user management with CRUD operations and bulk actions
+- **📚 Lost & Found** - Item management with AWS S3 image upload, search, and filtering
+- **💰 Financial Aid** - Application portal with multiple aid types and status tracking
+- **🔔 Notifications** - Real-time WebSocket notifications with toast display
+- **🎨 Theme System** - Dark/light mode with persistent user preferences
+- **📱 Responsive Design** - Mobile-first approach with Tailwind CSS
 
-### 🗺️ Navigation & University Services
-- **Interactive University Maps** - Location finder and directions
-- **Library Integration** - Book search and reservation system
-- **Study Spaces** - Real-time availability tracking
-- **University Information** - Quick access to university services
 
-### 🛡️ Admin Panel (Fully Implemented)
-- **User Management** - Complete CRUD operations for users
-- **Dashboard Statistics** - Real-time user metrics and analytics
-- **Role-based Access Control** - Admin-only panel with secure authentication
-- **Bulk Operations** - Enable/disable/delete multiple users
-- **Advanced Filtering** - Search and filter users by role, name, email
-- **Password Management** - Admin password reset functionality
-- **User Status Toggle** - Enable/disable user accounts
+## Tech Stack
 
-### 💰 Financial Aid System (Fully Implemented)
-- **Application Management** - Submit and track financial aid applications
-- **Multiple Aid Types** - Scholarships, grants, loans, emergency aid, work-study
-- **Status Tracking** - Real-time application status updates
-- **Document Upload** - Attach supporting documents
-- **Application History** - View all past applications
-- **Statistics Dashboard** - Personal financial aid metrics
-- **Donation Feature** - Community donation system
+- **Framework:** Next.js 15.4.6 with App Router
+- **Language:** TypeScript 5.0+
+- **Styling:** Tailwind CSS 3.4+
+- **State Management:** React Context API
+- **HTTP Client:** Axios
+- **Real-time:** Socket.io, SockJS, STOMP WebSocket
+- **Image Storage:** AWS S3
+- **Authentication:** JWT tokens
 
-### 🔔 Notification System (Fully Implemented)
-- **Real-time Notifications** - WebSocket-based instant notifications
-- **Toast Notifications** - Non-intrusive notification display
-- **Notification Center** - View all notifications in one place
-- **Read/Unread Status** - Track notification status
-- **Bulk Actions** - Mark all as read, delete all read
-- **Priority Levels** - High, medium, low priority indicators
-- **Multiple Types** - System, financial aid, lost & found, academic alerts
+## Getting Started
 
-### 📱 Additional Features
-- **AI Assistant Interface** - Chatbot for university queries
-- **Profile Management** - Personal information and preferences
-- **Challenges & Rewards** - Gamified university engagement
-- **Study Spaces** - Real-time availability tracking
-- **Wellness Hub** - Mental health and wellness resources
+### Prerequisites
 
-## 🛠️ Tech Stack
+- Node.js 18.0+
+- npm 8.0+ or yarn 1.22+
+- Backend API running on port 8080
 
-### Core Technologies
-- **Framework**: Next.js 15.4.6 (React 19)
-- **Language**: TypeScript 5.0+
-- **Styling**: Tailwind CSS 3.4+
-- **State Management**: React Context API
-- **Routing**: Next.js App Router
+### Installation
 
-### Development Tools
-- **HTTP Client**: Axios for API communication
-- **Authentication**: JWT tokens with localStorage
-- **Icons**: Heroicons and Lucide React
-- **Image Upload**: AWS S3 integration
-- **Form Handling**: Native React with validation
-- **Error Boundary**: React error handling
-- **WebSocket**: Socket.io-client, SockJS, STOMP for real-time communication
+1. **Clone and navigate to the project**
+   ```bash
+   git clone <repository-url>
+   cd "3rd year project"
+   ```
 
-### Build & Deployment
-- **Package Manager**: npm/yarn
-- **Linting**: ESLint with TypeScript
-- **Code Formatting**: Prettier (optional)
-- **Deployment**: Vercel-ready configuration
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   
+   Create `.env.local` in the root directory:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080
+   NEXT_PUBLIC_WS_URL=http://localhost:8080/ws
+   NEXT_PUBLIC_APP_NAME=Smart University Companion
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the application**
+   - Frontend: http://localhost:3000
+   - Ensure backend is running on http://localhost:8080
+
+### Production Build
+
+```bash
+npm run build
+npm start
+```
+
+## Project Structure
+
+```
+src/
+├── app/                      # Next.js App Router pages
+│   ├── context/              # React Context providers
+│   ├── admin/                # Admin user management
+│   ├── lost-found/           # Lost & Found system
+│   ├── financial-aid/        # Financial aid applications
+│   ├── notifications/        # Notification center
+│   ├── login/                # Authentication
+│   ├── signup/               # User registration
+│   └── layout.tsx            # Root layout
+├── components/               # Reusable UI components
+│   ├── Navigation.tsx
+│   ├── ImageUpload.tsx
+│   ├── NotificationToast.tsx
+│   └── ...
+├── services/                 # API service layer
+│   ├── lostFoundService.ts
+│   ├── financialAidService.ts
+│   └── ...
+└── types/                    # TypeScript definitions
+```
+
+## API Integration
+
+The frontend communicates with a Spring Boot backend on port 8080.
+
+### Key Endpoints
+
+**Authentication**
+```
+POST /api/auth/login
+POST /api/auth/register
+```
+
+**Admin Management**
+```
+GET    /api/admin/users
+PUT    /api/admin/users/{id}
+DELETE /api/admin/users/{id}
+PATCH  /api/admin/users/{id}/toggle-status
+```
+
+**Lost & Found**
+```
+GET    /api/lost-found/items
+POST   /api/lost-found/items
+DELETE /api/lost-found/items/{id}
+```
+
+**Financial Aid**
+```
+GET  /api/financial-aid/applications
+POST /api/financial-aid/applications
+PUT  /api/financial-aid/applications/{id}
+```
+
+**Notifications (WebSocket)**
+```
+CONNECT    /ws
+SUBSCRIBE  /topic/notifications/{userId}
+```
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
+
+## Deployment
+
+### Netlify
+
+1. Set environment variables in Netlify dashboard:
+   ```
+   NEXT_PUBLIC_API_URL=<production-api-url>
+   NEXT_PUBLIC_WS_URL=<production-ws-url>
+   ```
+
+2. Build settings:
+   - Build command: `npm run build`
+   - Publish directory: `.next`
+   - Node version: 18.x
+
+3. Deploy automatically on push to main branch
+
+## Troubleshooting
+
+### Common Issues
+
+**Port already in use**
+```bash
+npx kill-port 3000
+npm run dev
+```
+
+**Backend connection issues**
+```bash
+# Verify backend is running
+curl http://localhost:8080/api/lost-found/items
+```
+
+**Authentication problems**
+```javascript
+// Clear stored auth data
+localStorage.removeItem('token');
+localStorage.removeItem('user');
+```
+
+**Build errors**
+```bash
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+## Academic Context
+
+This project is part of the L3 Individual Project at the University of Moratuwa, focusing on:
+- Human-centered design principles
+- Ethical AI implementation
+- Modern web development practices
+- University digitalization solutions
+
+## License
+
+Developed for academic purposes as part of university coursework.
+
 
 ## 🚀 Getting Started
 
