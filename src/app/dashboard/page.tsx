@@ -7,6 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import WeatherCard from '@/components/WeatherCard';
+import AuthGuard from '@/components/AuthGuard';
 import { Bell } from 'lucide-react';
 
 // --- Interfaces ---
@@ -405,7 +406,7 @@ export default function Dashboard() {
 
 
   return (
-    <>
+    <AuthGuard>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
@@ -1106,6 +1107,6 @@ export default function Dashboard() {
           </div>
         )}
       </main>
-    </>
+    </AuthGuard>
   );
 }
