@@ -7,6 +7,7 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import AuthGuard from '@/components/AuthGuard';
 import axios from 'axios';
 import { Bell } from 'lucide-react';
 
@@ -166,10 +167,32 @@ export default function NotificationsPage() {
   };
 
   const loadNotifications = async () => {
+    // Check for both user and token
+    const token = localStorage.getItem('token');
+    
+    console.log('🔍 Notification page - Auth check:', {
+      hasUser: !!user,
+      userId: user?.id,
+      hasToken: !!token,
+      tokenPreview: token ? `${token.substring(0, 20)}...` : 'none'
+    });
+    
+    if (!user?.id || !token) {
+      console.log('❌ User not authenticated or token missing');
+      setNotifications([]);
+      return;
+    }
+
     try {
       setIsLoading(true);
+      const headers = getAuthHeaders();
+      console.log('📤 Sending request with headers:', {
+        ...headers,
+        Authorization: headers.Authorization ? `${headers.Authorization.substring(0, 30)}...` : 'none'
+      });
+      
       const response = await axios.get(`${API_BASE}/notifications/student/my?page=${currentPage}&size=10`, {
-        headers: getAuthHeaders()
+        headers
       });
       
       const notificationData = response.data.content || [];
@@ -184,7 +207,13 @@ export default function NotificationsPage() {
       setError(null);
     } catch (error) {
       console.error('Failed to load notifications:', error);
-      setError('Failed to load notifications');
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setError('Please log in to view notifications');
+      } else if (axios.isAxiosError(error) && error.response?.status === 400) {
+        setError('Invalid request. Please try logging in again.');
+      } else {
+        setError('Failed to load notifications');
+      }
       setNotifications([]);
     } finally {
       setIsLoading(false);
@@ -372,7 +401,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <>
+    <AuthGuard>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
@@ -878,6 +907,6 @@ export default function NotificationsPage() {
           )}
         </div>
       </main>
-    </>
+    </AuthGuard>
   );
 }
