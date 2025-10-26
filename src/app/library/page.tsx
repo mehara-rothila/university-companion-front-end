@@ -66,7 +66,7 @@ const PHYSICAL_BOOK_PLACEHOLDER = 'Describe the book condition, course usage, an
 
 export default function LibraryPage() {
   const { isDarkMode } = useDarkMode();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, token } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('browse');
   const [bookTypeFilter, setBookTypeFilter] = useState<BookTypeFilter>('ALL');
   const [isLoading, setIsLoading] = useState(true);
@@ -116,11 +116,22 @@ export default function LibraryPage() {
     offerPrice: 0
   });
 
+  // Helper function to get auth headers
+  const getAuthHeaders = () => {
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
   // Fetch books
   const fetchBooks = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`${API_URL}/api/books`);
+      const response = await fetch(`${API_URL}/api/books`, {
+        headers: getAuthHeaders()
+      });
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched books:', data);
@@ -143,7 +154,9 @@ export default function LibraryPage() {
   const fetchRequests = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`${API_URL}/api/books/requests/user/${user.id}`);
+      const response = await fetch(`${API_URL}/api/books/requests/user/${user.id}`, {
+        headers: getAuthHeaders()
+      });
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
@@ -270,7 +283,7 @@ export default function LibraryPage() {
     try {
       const response = await fetch(`${API_URL}/api/books/requests`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(requestData)
       });
 
@@ -293,7 +306,8 @@ export default function LibraryPage() {
     try {
       // Increment download count
       await fetch(`${API_URL}/api/books/${book.id}/download`, {
-        method: 'POST'
+        method: 'POST',
+        headers: getAuthHeaders()
       });
 
       // Open PDF in new tab
@@ -341,7 +355,7 @@ export default function LibraryPage() {
     try {
       const response = await fetch(`${API_URL}/api/books`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(bookData)
       });
 
@@ -365,9 +379,12 @@ export default function LibraryPage() {
         fetchBooks();
         setActiveTab('mybooks');
       } else {
-        alert('Failed to upload book. Please try again.');
+        const errorData = await response.json().catch(() => null);
+        console.error('Failed to upload book:', response.status, errorData);
+        alert(`Failed to upload book: ${errorData?.message || response.statusText}`);
       }
     } catch (error) {
+      console.error('Error uploading book:', error);
       alert('Failed to upload book. Please try again.');
     }
   };
@@ -380,7 +397,8 @@ export default function LibraryPage() {
 
     try {
       const response = await fetch(`${API_URL}/api/books/${bookId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       if (response.ok) {
