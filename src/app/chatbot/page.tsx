@@ -719,7 +719,7 @@ export default function ChatbotPage() {
                           {message.attachments && message.attachments.length > 0 && (
                             <div className="mt-3 space-y-2">
                               {message.attachments.map((attachment, index) => (
-                                <div key={index} className={`p-3 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
+                                <div key={`${attachment.name}-${attachment.size}-${index}`} className={`p-3 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'}`}>
                                   <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-3">
                                       <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900/50">
