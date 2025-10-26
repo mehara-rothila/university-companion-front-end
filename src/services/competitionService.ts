@@ -76,8 +76,13 @@ export const competitionService = {
     try {
       const response = await axios.get(`${API_URL}/approved`);
       return response.data;
-    } catch (error) {
-      console.error('Error fetching approved competitions:', error);
+    } catch (error: any) {
+      console.error('Error fetching approved competitions:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message
+      });
       throw error;
     }
   },

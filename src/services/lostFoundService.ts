@@ -76,7 +76,7 @@ class LostFoundService {
   async getItems(filters?: LostFoundFilters): Promise<LostFoundItem[]> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.type && filters.type !== 'all') {
         params.append('type', filters.type);
       }
@@ -95,8 +95,15 @@ class LostFoundService {
 
       const response = await this.api.get(`/lost-found/items?${params.toString()}`);
       return response.data;
-    } catch (error) {
-      console.error('Error fetching lost-found items:', error);
+    } catch (error: any) {
+      console.error('Error fetching lost-found items:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+        url: error.config?.url,
+        params: filters
+      });
       throw error;
     }
   }
