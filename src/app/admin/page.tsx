@@ -6,6 +6,7 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import AuthGuard from '@/components/AuthGuard';
 import axios from 'axios';
 import {
   Users,
@@ -102,13 +103,16 @@ export default function AdminPanel() {
     enabled: true
   });
 
+  // Get auth token from context
+  const { token } = useAuth();
+
   // API base URL
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
 
   // Helper function to get auth headers
   const getAuthHeaders = () => ({
-    'Authorization': `Bearer fake-jwt-token`,
+    'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
   });
 
@@ -364,7 +368,7 @@ export default function AdminPanel() {
   }
 
   return (
-    <>
+    <AuthGuard allowedRoles={['admin']}>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
@@ -1259,6 +1263,6 @@ export default function AdminPanel() {
           </div>
         )}
       </main>
-    </>
+    </AuthGuard>
   );
 }
