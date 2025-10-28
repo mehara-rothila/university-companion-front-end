@@ -1,7 +1,7 @@
 // src/app/lost-found/page.tsx
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
@@ -73,18 +73,7 @@ export default function LostFoundPage() {
     tags: []
   });
 
-  // Load data on component mount
-  useEffect(() => {
-    loadItems();
-    loadStats();
-  }, []);
-
-  // Reload items when filters change
-  useEffect(() => {
-    loadItems();
-  }, [viewMode, selectedCategory, selectedLocation, searchQuery]);
-
-  const loadItems = async () => {
+  const loadItems = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -105,16 +94,26 @@ export default function LostFoundPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [viewMode, selectedCategory, selectedLocation, searchQuery]);
 
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const statsData = await lostFoundService.getStats();
       setStats(statsData);
     } catch (err) {
       console.error('Error loading stats:', err);
     }
-  };
+  }, []);
+
+  // Load data on component mount and when filters change
+  useEffect(() => {
+    loadItems();
+  }, [loadItems]);
+
+  // Load stats on component mount only
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
 
   const categories: ItemCategory[] = [
     {
