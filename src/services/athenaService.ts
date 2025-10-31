@@ -60,12 +60,33 @@ class AthenaService {
     return this.context;
   }
 
-  async processMessage(message: string, conversationHistory: ChatMessage[] = [], attachments?: ChatAttachment[]): Promise<ChatResponse> {
+  async processMessage(message: string, conversationHistory: ChatMessage[] = [], attachments?: ChatAttachment[], userId?: number): Promise<ChatResponse> {
     try {
       await this.initializeContext();
       this.conversationHistory = conversationHistory;
 
-      // Check token limits before processing
+      // Check token limits from backend if userId is available
+      if (userId) {
+        try {
+          const backendUsage = await tokenCountingService.getTokenUsageFromBackend(userId);
+          if (backendUsage.remainingTokens <= 500) {
+            return {
+              content: `⚠️ **Daily Token Limit Reached**\n\nYou've used ${backendUsage.used.toLocaleString()} out of your ${backendUsage.limit.toLocaleString()} daily tokens.\n\nYour limit will reset at midnight (${backendUsage.resetTime.toLocaleTimeString()}).\n\nIn the meantime, you can browse university services directly using the buttons below.`,
+              suggestions: [
+                { text: 'Lost & Found', action: 'lost_found', route: '/lost-found' },
+                { text: 'Financial Aid', action: 'financial_aid', route: '/financial-aid' },
+                { text: 'Library Services', action: 'library', route: '/library' },
+                { text: 'Contact Support', action: 'contact_support' }
+              ],
+              intent: 'token_limit_exceeded'
+            };
+          }
+        } catch (error) {
+          console.warn('Backend token check failed, falling back to local check:', error);
+        }
+      }
+
+      // Check token limits before processing (local fallback)
       const estimatedInputTokens = tokenCountingService.estimateTokenCount(message);
       if (!tokenCountingService.canMakeRequest(estimatedInputTokens + 500)) {
         const usage = tokenCountingService.getTokenUsage();
