@@ -256,8 +256,17 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       uploadedFiles.forEach(f => URL.revokeObjectURL(f.preview));
       setUploadedFiles([]);
 
-      // Record token usage locally (100 input tokens + 300 output tokens estimate)
-      tokenCountingService.recordTokenUsage(100, 300, 'chat');
+      // Record token usage with REAL token counts from backend
+      const inputTokens = data.inputTokens || 0;
+      const outputTokens = data.outputTokens || 0;
+      if (inputTokens > 0 || outputTokens > 0) {
+        // Use real token counts from Gemini API
+        tokenCountingService.recordTokenUsage(inputTokens, outputTokens, 'chat');
+        console.log(`✅ Real token consumption: ${inputTokens} input + ${outputTokens} output = ${inputTokens + outputTokens} total`);
+      } else {
+        // Fallback to estimation if API doesn't return real counts
+        tokenCountingService.recordTokenUsage(100, 300, 'chat');
+      }
 
       // Refresh token display after successful response
       setTimeout(() => triggerTokenRefresh(), 100);
