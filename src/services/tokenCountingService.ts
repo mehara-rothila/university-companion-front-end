@@ -21,16 +21,17 @@ export interface TokenTransaction {
 }
 
 class TokenCountingService {
-  private readonly DAILY_LIMIT = 1000000; // 1M tokens per day per student
+  private readonly DAILY_LIMIT = 500000; // 500K tokens per day per student (updated from 1M)
   private readonly STORAGE_KEY = 'athena_token_usage';
   private readonly TRANSACTIONS_KEY = 'athena_token_transactions';
+  private readonly API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-  // Get current token usage for today
+  // Get current token usage for today (synchronous - uses localStorage fallback)
   getTokenUsage(): TokenUsage {
     const today = this.getTodayKey();
     const usage = this.getStoredUsage(today);
     const resetTime = this.getNextResetTime();
-    
+
     return {
       used: usage.used,
       limit: this.DAILY_LIMIT,
@@ -39,6 +40,45 @@ class TokenCountingService {
       remainingTokens: Math.max(0, this.DAILY_LIMIT - usage.used),
       percentageUsed: (usage.used / this.DAILY_LIMIT) * 100
     };
+  }
+
+  // Get token usage from backend (async - preferred method)
+  async getTokenUsageFromBackend(userId: number | string): Promise<TokenUsage> {
+    try {
+      const response = await fetch(`${this.API_URL}/api/tokens/usage/${userId}`);
+      if (!response.ok) {
+        console.warn('Failed to fetch token usage from backend, using local storage');
+        return this.getTokenUsage();
+      }
+
+      const data = await response.json();
+      return {
+        used: data.tokensUsed || 0,
+        limit: data.dailyLimit || this.DAILY_LIMIT,
+        resetTime: this.getNextResetTime(),
+        sessionsToday: 0, // Not provided by backend, but we can track locally
+        remainingTokens: data.tokensRemaining || this.DAILY_LIMIT,
+        percentageUsed: (data.tokensUsed / data.dailyLimit) * 100 || 0
+      };
+    } catch (error) {
+      console.error('Error fetching token usage from backend:', error);
+      // Fallback to local storage
+      return this.getTokenUsage();
+    }
+  }
+
+  // Get token statistics from backend (async)
+  async getTokenStatsFromBackend(userId: number | string): Promise<any> {
+    try {
+      const response = await fetch(`${this.API_URL}/api/tokens/stats/${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch token stats');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching token stats from backend:', error);
+      return null;
+    }
   }
 
   // Record token usage
