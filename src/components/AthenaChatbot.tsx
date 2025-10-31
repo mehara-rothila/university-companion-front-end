@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { Upload, X, FileText, Image as ImageIcon, Send, Loader } from 'lucide-react';
+import TokenUsageDisplay, { triggerTokenRefresh } from './TokenUsageDisplay';
+import { tokenCountingService } from '@/services/tokenCountingService';
 
 interface Message {
   id: string;
@@ -123,12 +125,29 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
     const data = await response.json();
 
-    // Track in database if user is logged in
-    if (user?.id) {
-      await trackUpload(user.id, data.fileUrl, file.name, fileType, file.size);
+    // Handle different response formats (imageUrl, pdfUrl, or fileUrl)
+    const fileUrl = data.fileUrl || data.imageUrl || data.pdfUrl;
+
+    // Validate fileUrl exists
+    if (!fileUrl) {
+      console.error('Upload response missing file URL:', data);
+      throw new Error('Upload succeeded but no file URL returned');
     }
 
-    return data.fileUrl;
+    // Track in database if user is logged in
+    if (user?.id) {
+      try {
+        await trackUpload(user.id, fileUrl, file.name, fileType, file.size);
+        console.log('✅ Upload tracked in database');
+      } catch (error) {
+        console.error('❌ Failed to track upload in database:', error);
+        // Don't throw error - file uploaded successfully to S3
+      }
+    } else {
+      console.warn('⚠️ User not logged in - upload will not be tracked in "My Uploads"');
+    }
+
+    return fileUrl;
   };
 
   // Track upload in database
@@ -141,23 +160,31 @@ You can also upload images or PDFs for me to analyze! What would you like help w
   ) => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-    try {
-      await fetch(`${backendUrl}/api/chatbot/uploads`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-          fileUrl,
-          fileName,
-          fileType: fileType.toUpperCase(),
-          fileSize,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to track upload:', error);
+    // Validate inputs
+    if (!fileUrl || !fileName) {
+      throw new Error('Missing required upload information');
     }
+
+    const response = await fetch(`${backendUrl}/api/chatbot/uploads`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        fileUrl,
+        fileName,
+        fileType: fileType.toUpperCase(),
+        fileSize,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Failed to track upload: ${errorData.error || response.statusText}`);
+    }
+
+    return response.json();
   };
 
   // Remove uploaded file
@@ -229,6 +256,12 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       uploadedFiles.forEach(f => URL.revokeObjectURL(f.preview));
       setUploadedFiles([]);
 
+      // Record token usage locally (100 input tokens + 300 output tokens estimate)
+      tokenCountingService.recordTokenUsage(100, 300, 'chat');
+
+      // Refresh token display after successful response
+      setTimeout(() => triggerTokenRefresh(), 100);
+
     } catch (error) {
       console.error('Chat error:', error);
 
@@ -240,6 +273,9 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       };
 
       setMessages(prev => [...prev, errorMessage]);
+
+      // Refresh token display even on error
+      setTimeout(() => triggerTokenRefresh(), 100);
     } finally {
       setIsLoading(false);
     }
@@ -273,6 +309,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
               University of Moratuwa • Powered by Gemini 2.5 Pro
             </p>
           </div>
+        </div>
+
+        {/* Token Usage Display */}
+        <div className="mt-3">
+          <TokenUsageDisplay compact={true} />
         </div>
       </div>
 
