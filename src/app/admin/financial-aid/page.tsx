@@ -10,7 +10,7 @@ import { User } from '@/app/context/AuthContext';
 
 export default function AdminFinancialAidPage() {
   const { isDarkMode } = useDarkMode();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, token } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [applications, setApplications] = useState<FinancialAidApplication[]>([]);
   const [pendingApplications, setPendingApplications] = useState<FinancialAidApplication[]>([]);
@@ -95,7 +95,7 @@ export default function AdminFinancialAidPage() {
       // We'll use a mock API call for users - in real implementation this would come from a user service
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/admin/users`, {
         headers: {
-          'Authorization': `Bearer fake-jwt-token`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });

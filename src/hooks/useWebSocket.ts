@@ -27,6 +27,8 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const subscriptionsRef = useRef<{ [key: string]: any }>({});
   const clientRef = useRef<Client | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const maxReconnectAttempts = 5;
 
   useEffect(() => {
     // Prevent creating duplicate clients if one already exists
@@ -34,6 +36,9 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       console.log('WebSocket already connected, skipping new connection');
       return;
     }
+
+    // Reset reconnect attempts on new connection
+    reconnectAttemptsRef.current = 0;
 
     // Create STOMP client with SockJS transport
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -50,53 +55,55 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       },
 
       debug: (str) => {
-        console.log('STOMP Debug:', str);
+        // Only log important debug messages to reduce console spam
+        if (str.includes('ERROR') || str.includes('RECEIPT') || str.includes('CONNECT')) {
+          console.log('STOMP Debug:', str);
+        }
       },
 
       reconnectDelay: 5000, // Reconnect every 5 seconds if connection is lost
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
+      heartbeatIncoming: 10000, // Increased from 4000
+      heartbeatOutgoing: 10000, // Increased from 4000
 
       onConnect: (frame) => {
-        console.log('STOMP Connected:', frame);
+        console.log('✅ STOMP Connected successfully');
         setIsConnected(true);
         setConnectionError(null);
+        reconnectAttemptsRef.current = 0;
 
         // Subscribe to global notifications
-        const globalSub = stompClient.subscribe('/topic/notifications', (message: IMessage) => {
-          try {
-            const notification: Notification = JSON.parse(message.body);
-            console.log('Received global notification:', notification);
-            setNotifications(prev => [...prev, notification]);
-          } catch (error) {
-            console.error('Error parsing notification:', error);
-          }
-        });
-        subscriptionsRef.current['global'] = globalSub;
-
-        // Subscribe to user-specific notifications if userId is provided
-        if (userId) {
-          const userSub = stompClient.subscribe(`/topic/notifications/${userId}`, (message: IMessage) => {
+        try {
+          const globalSub = stompClient.subscribe('/topic/notifications', (message: IMessage) => {
             try {
               const notification: Notification = JSON.parse(message.body);
-              console.log('Received user-specific notification:', notification);
+              console.log('Received global notification:', notification);
               setNotifications(prev => [...prev, notification]);
             } catch (error) {
-              console.error('Error parsing user notification:', error);
+              console.error('Error parsing notification:', error);
             }
           });
-          subscriptionsRef.current['user'] = userSub;
-        }
+          subscriptionsRef.current['global'] = globalSub;
 
-        // Send a test message to confirm connection
-        stompClient.publish({
-          destination: '/app/hello',
-          body: 'Hello from client!'
-        });
+          // Subscribe to user-specific notifications if userId is provided
+          if (userId) {
+            const userSub = stompClient.subscribe(`/topic/notifications/${userId}`, (message: IMessage) => {
+              try {
+                const notification: Notification = JSON.parse(message.body);
+                console.log('Received user-specific notification:', notification);
+                setNotifications(prev => [...prev, notification]);
+              } catch (error) {
+                console.error('Error parsing user notification:', error);
+              }
+            });
+            subscriptionsRef.current['user'] = userSub;
+          }
+        } catch (error) {
+          console.error('Error setting up subscriptions:', error);
+        }
       },
 
       onDisconnect: (frame) => {
-        console.log('STOMP Disconnected:', frame);
+        console.log('STOMP Disconnected');
         setIsConnected(false);
         // Clear subscriptions
         subscriptionsRef.current = {};
@@ -104,21 +111,42 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
 
       onStompError: (frame) => {
         console.error('STOMP Error:', frame);
-        setConnectionError(`Connection error: ${frame.headers['message'] || 'Unknown error'}`);
+        reconnectAttemptsRef.current++;
+        
+        if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+          setConnectionError(`Connection failed after ${maxReconnectAttempts} attempts. WebSocket notifications disabled.`);
+          console.warn('Max reconnection attempts reached. Stopping reconnection.');
+          stompClient.deactivate();
+        } else {
+          setConnectionError(`Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
+        }
         setIsConnected(false);
       },
 
       onWebSocketError: (error) => {
         console.error('WebSocket Error:', error);
-        setConnectionError('WebSocket connection failed');
+        reconnectAttemptsRef.current++;
+        
+        if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+          setConnectionError('WebSocket connection unavailable. Real-time notifications disabled.');
+          console.warn('WebSocket connection failed. Operating without real-time notifications.');
+          stompClient.deactivate();
+        } else {
+          setConnectionError(`Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
+        }
         setIsConnected(false);
       }
     });
 
     // Activate the client
-    stompClient.activate();
-    setClient(stompClient);
-    clientRef.current = stompClient;
+    try {
+      stompClient.activate();
+      setClient(stompClient);
+      clientRef.current = stompClient;
+    } catch (error) {
+      console.error('Error activating WebSocket client:', error);
+      setConnectionError('Failed to initialize WebSocket connection');
+    }
 
     // Cleanup on unmount
     return () => {
@@ -127,14 +155,22 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       // Unsubscribe from all subscriptions
       Object.values(subscriptionsRef.current).forEach(sub => {
         if (sub && typeof sub.unsubscribe === 'function') {
-          sub.unsubscribe();
+          try {
+            sub.unsubscribe();
+          } catch (error) {
+            console.error('Error unsubscribing:', error);
+          }
         }
       });
       subscriptionsRef.current = {};
 
       // Deactivate the client
       if (clientRef.current?.active) {
-        clientRef.current.deactivate();
+        try {
+          clientRef.current.deactivate();
+        } catch (error) {
+          console.error('Error deactivating client:', error);
+        }
       }
       clientRef.current = null;
     };

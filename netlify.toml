@@ -5,7 +5,7 @@
 # Make environment variables available during build
 [build.environment]
   NODE_VERSION = "18"
-  # IMPORTANT: Next.js needs these at build time to bake into the bundle
+  # Backend API is hosted on Heroku
   NEXT_PUBLIC_API_URL = "https://l3project-398c7c93d2bb.herokuapp.com"
   NEXT_PUBLIC_WS_URL = "https://l3project-398c7c93d2bb.herokuapp.com/ws"
 
