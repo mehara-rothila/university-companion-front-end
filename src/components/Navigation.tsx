@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useI18n } from '@/app/context/I18nContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,6 +110,9 @@ const Navigation = () => {
               {t('navigation', 'admin')}
             </Link>
           )}
+
+          {/* Language Switcher */}
+          <LanguageSwitcher />
 
           {/* Auth Links */}
           {isAuthenticated ? (
@@ -257,6 +261,13 @@ const Navigation = () => {
           >
             <HelpCircle className="inline h-5 w-5 mr-2" /> {t('navigation', 'helpSupport')}
           </Link>
+
+          {/* Mobile Language Switcher */}
+          <div className="border-t border-gray-100 dark:border-gray-700 pt-3 mt-3">
+            <div className="px-3 py-2">
+              <LanguageSwitcher />
+            </div>
+          </div>
 
           {/* Mobile Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (

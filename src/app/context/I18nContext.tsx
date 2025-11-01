@@ -32,7 +32,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const loadTranslations = async () => {
       try {
         setLoading(true);
-        const namespaces = ['common', 'auth', 'chatbot', 'dashboard', 'uploads', 'navigation', 'errors', 'footer', 'forgotPassword', 'resetPassword', 'career', 'challenges', 'dining', 'financialAid', 'help', 'library', 'lostFound', 'myUploads'];
+        const namespaces = ['common', 'auth', 'chatbot', 'dashboard', 'uploads', 'navigation', 'errors', 'footer', 'forgotPassword', 'resetPassword', 'career', 'challenges', 'dining', 'financialAid', 'help', 'library', 'lostFound', 'myUploads', 'home', 'onboarding'];
         const newTranslations: Record<Language, Translations> = {
           en: {},
           si: {},
