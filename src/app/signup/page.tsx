@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useI18n } from '../context/I18nContext'
 
 export default function SignupPage() {
+  const { t } = useI18n()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -32,7 +34,7 @@ export default function SignupPage() {
     setSuccess('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('auth', 'passwordMismatch'))
       setIsLoading(false)
       return
     }
@@ -51,14 +53,14 @@ export default function SignupPage() {
       })
 
       if (response.ok) {
-        setSuccess('Account created successfully! Please sign in.')
+        setSuccess(t('auth', 'accountCreatedSuccess'))
         setTimeout(() => router.push('/login'), 2000)
       } else {
         const errorText = await response.text()
-        setError(errorText || 'Registration failed')
+        setError(errorText || t('auth', 'registrationFailed'))
       }
     } catch (err) {
-      setError('Connection error. Please try again.')
+      setError(t('auth', 'connectionError'))
     } finally {
       setIsLoading(false)
     }
@@ -78,8 +80,8 @@ export default function SignupPage() {
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="glass-premium-card rounded-3xl p-8 w-full max-w-2xl animate-glass-fade-in">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold gradient-text mb-2">Join Smart University</h1>
-            <p className="text-gray-600 dark:text-gray-300">Create your account and start your journey</p>
+            <h1 className="text-3xl font-bold gradient-text mb-2">{t('auth', 'joinSmartUniversity')}</h1>
+            <p className="text-gray-600 dark:text-gray-300">{t('auth', 'createAccountStartJourney')}</p>
           </div>
 
           {error && (
@@ -98,7 +100,7 @@ export default function SignupPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  First Name *
+                  {t('auth', 'firstNameRequired')}
                 </label>
                 <input
                   type="text"
@@ -108,13 +110,13 @@ export default function SignupPage() {
                   onChange={handleChange}
                   required
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="First name"
+                  placeholder={t('auth', 'firstNamePlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Last Name *
+                  {t('auth', 'lastNameRequired')}
                 </label>
                 <input
                   type="text"
@@ -124,14 +126,14 @@ export default function SignupPage() {
                   onChange={handleChange}
                   required
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Last name"
+                  placeholder={t('auth', 'lastNamePlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email Address *
+                {t('auth', 'emailAddressRequired')}
               </label>
               <input
                 type="email"
@@ -141,13 +143,13 @@ export default function SignupPage() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="your.email@university.edu"
+                placeholder={t('auth', 'emailPlaceholder')}
               />
             </div>
 
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Username *
+                {t('auth', 'usernameRequired')}
               </label>
               <input
                 type="text"
@@ -157,14 +159,14 @@ export default function SignupPage() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Choose a username"
+                placeholder={t('auth', 'chooseUsername')}
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Password *
+                  {t('auth', 'passwordRequired')}
                 </label>
                 <input
                   type="password"
@@ -175,13 +177,13 @@ export default function SignupPage() {
                   required
                   minLength={6}
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Create password"
+                  placeholder={t('auth', 'createPassword')}
                 />
               </div>
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Confirm Password *
+                  Confirm {t('auth', 'passwordRequired')}
                 </label>
                 <input
                   type="password"
@@ -191,7 +193,7 @@ export default function SignupPage() {
                   onChange={handleChange}
                   required
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Confirm password"
+                  placeholder={t('auth', 'confirmPasswordPlaceholder')}
                 />
               </div>
             </div>
@@ -199,7 +201,7 @@ export default function SignupPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Student ID
+                  {t('auth', 'studentId')}
                 </label>
                 <input
                   type="text"
@@ -208,13 +210,13 @@ export default function SignupPage() {
                   value={formData.studentId}
                   onChange={handleChange}
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g., 225089N"
+                  placeholder={t('auth', 'studentIdPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="major" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Major
+                  {t('auth', 'major')}
                 </label>
                 <input
                   type="text"
@@ -223,13 +225,13 @@ export default function SignupPage() {
                   value={formData.major}
                   onChange={handleChange}
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Computer Science"
+                  placeholder={t('auth', 'majorPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Year
+                  {t('auth', 'year')}
                 </label>
                 <select
                   id="year"
@@ -238,19 +240,19 @@ export default function SignupPage() {
                   onChange={handleChange}
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                 >
-                  <option value="">Select year</option>
-                  <option value="1">1st Year</option>
-                  <option value="2">2nd Year</option>
-                  <option value="3">3rd Year</option>
-                  <option value="4">4th Year</option>
-                  <option value="5">5th Year</option>
+                  <option value="">{t('auth', 'select{t('auth', 'year')}')}</option>
+                  <option value="1">{t('auth', 'first{t('auth', 'year')}')}</option>
+                  <option value="2">{t('auth', 'second{t('auth', 'year')}')}</option>
+                  <option value="3">{t('auth', 'third{t('auth', 'year')}')}</option>
+                  <option value="4">{t('auth', 'fourth{t('auth', 'year')}')}</option>
+                  <option value="5">{t('auth', 'fifth{t('auth', 'year')}')}</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Account Type
+                {t('auth', 'accountType')}
               </label>
               <select
                 id="role"
@@ -259,9 +261,9 @@ export default function SignupPage() {
                 onChange={handleChange}
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               >
-                <option value="STUDENT">Student</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="ADMIN">Administrator</option>
+                <option value="STUDENT">{t('auth', 'student')}</option>
+                <option value="FACULTY">{t('auth', 'faculty')}</option>
+                <option value="ADMIN">{t('auth', 'administrator')}</option>
               </select>
             </div>
 
@@ -270,22 +272,22 @@ export default function SignupPage() {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? t('auth', 'creatingAccount') : t('auth', 'createAccount')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Already have an account?{' '}
+              {t('auth', 'alreadyHaveAccount')}{' '}
               <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
-                Sign in
+                {t('auth', 'signIn')}
               </Link>
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              ← Back to Home
+              {t('auth', 'backToHome')}
             </Link>
           </div>
         </div>
