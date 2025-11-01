@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useI18n } from '@/app/context/I18nContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import WeatherCard from '@/components/WeatherCard';
@@ -35,9 +36,8 @@ interface UniversityUpdate {
 export default function Dashboard() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useI18n();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   
   // Get display name from authenticated user
   const getDisplayName = () => {
@@ -120,267 +120,10 @@ export default function Dashboard() {
   // Active features list - Now includes AI Assistant, Library, Weather, and Notifications
   const activeFeatures = ['lost-found', 'financial-aid', 'profile', 'challenges', 'chatbot', 'library', 'notifications', 'weather'];
 
-  // Language options with native names
-  const languages = [
-    { code: 'si', name: 'සිංහල', nativeName: 'Sinhala' },
-    { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' }
-  ];
-
-  // Translation objects
-  const translations = {
-    en: {
-      greeting: {
-        morning: 'Good morning',
-        afternoon: 'Good afternoon',
-        evening: 'Good evening'
-      },
-      emergency: 'Emergency',
-      wellnessSupport: 'Wellness Support',
-      universityWeather: 'University Weather',
-      humidity: 'Humidity',
-      wind: 'Wind',
-      dailyWellnessCheckin: 'Daily Wellness Check-in',
-      comingSoon: 'Coming Soon',
-      wellnessTrackingDesc: 'Wellness tracking and mood monitoring will be available soon to help personalize your university experience.',
-      quickActions: 'Quick Actions',
-      aiAssistant: 'AI Assistant',
-      studySpaces: 'Study Spaces',
-      universityNavigation: 'University Navigation',
-      academicHub: 'Academic Hub',
-      available: 'Available',
-      universityServices: 'University Services',
-      notifications: 'Notifications',
-      socialEvents: 'Social & Events',
-      dining: 'Dining',
-      wellness: 'Wellness',
-      lostFound: 'Lost & Found',
-      library: 'Library',
-      soon: 'Soon',
-      additionalServices: 'Additional Services',
-      careerServices: 'Career Services',
-      financialAid: 'Financial Aid',
-      challenges: 'Challenges',
-      profile: 'Profile',
-      helpSupport: 'Help & Support',
-      platformStatus: 'Platform Status & Development',
-      nowAvailable: 'Now Available',
-      corePlatformDesc: 'Core platform features are now live and ready to use.',
-      lostFoundSystem: 'Lost & Found System',
-      financialAidPortal: 'Financial Aid Portal',
-      profileManagement: 'Profile Management',
-      challengesRewards: 'Challenges & Rewards',
-      aiAssistantFull: 'AI Assistant',
-      libraryServices: 'Library Services',
-      phase1: 'Coming Soon - Phase 1',
-      smartFeaturesDesc: 'Smart features launching in the next few weeks.',
-      phase2: 'Coming Soon - Phase 2',
-      enhancedServicesDesc: 'Enhanced university services and community features.',
-      diningServices: 'Dining Services',
-      wellnessHub: 'Wellness Hub',
-      socialEventsShort: 'Social & Events',
-      libraryIntegration: 'Library Integration',
-      platformUpdates: 'Platform Updates',
-      developmentNews: 'Development News',
-      welcomeUom: 'Welcome to UoM Smart University',
-      exploreFeatures: 'Explore the available features and stay tuned for more',
-      lostFoundAvailable: 'Lost & Found Available',
-      lostFoundDesc: 'You can now report and search for lost items',
-      financialAidActive: 'Financial Aid Portal Active',
-      financialAidDesc: 'Apply for scholarships and community support',
-      profileReady: 'Profile Management Ready',
-      profileDesc: 'Update your personal information and preferences',
-      platformLaunch: 'Platform Launch',
-      platformLaunchDesc: 'UoM Smart University platform is now live with initial features',
-      moreFeaturesDesc: 'AI Assistant, Study Spaces, and University Navigation launching soon',
-      systemUpdates: 'System Updates',
-      systemUpdatesDesc: 'Regular updates will bring new features and improvements',
-      comingSoonModal: {
-        title: 'Coming Soon',
-        description: 'This feature is currently under development and will be available soon. We are working hard to bring you the best university experience possible.',
-        currentlyAvailable: 'Currently Available:',
-        gotIt: 'Got it, thanks!'
-      }
-    },
-    si: {
-      greeting: {
-        morning: 'සුභ උදෑසනක්',
-        afternoon: 'සුභ දහවලක්',
-        evening: 'සුභ සන්ධ්‍යාවක්'
-      },
-      emergency: 'හදිසි',
-      wellnessSupport: 'සෞඛ්‍ය සහාය',
-      universityWeather: 'කැම්පස් කාලගුණය',
-      humidity: 'ආර්ද්‍රතාව',
-      wind: 'සුළං',
-      dailyWellnessCheckin: 'දෛනික සෞඛ්‍ය පරීක්ෂාව',
-      comingSoon: 'ඉක්මනින්',
-      wellnessTrackingDesc: 'ඔබේ කැම්පස් අත්දැකීම පුද්ගලීකරණය කිරීමට සෞඛ්‍ය ස්ථිතිය සහ මනෝ තත්වය නිරීක්ෂණය ඉක්මනින් ලබා ගත හැක.',
-      quickActions: 'ඉක්මන් ක්‍රියා',
-      aiAssistant: 'AI සහායක',
-      studySpaces: 'අධ්‍යයන ස්ථාන',
-      universityNavigation: 'කැම්පස් මඟ පෙන්වීම',
-      academicHub: 'ශාස්ත්‍රීය මධ්‍යස්ථානය',
-      available: 'ලබා ගත හැක',
-      universityServices: 'කැම්පස් සේවා',
-      notifications: 'දැනුම්දීම්',
-      socialEvents: 'සමාජීය සහ උත්සව',
-      dining: 'ආහාර ගැනීම',
-      wellness: 'සෞඛ්‍යය',
-      lostFound: 'නැති වූ සහ සොයා ගත්',
-      library: 'පුස්තකාලය',
-      soon: 'ඉක්මනින්',
-      additionalServices: 'අමතර සේවාවන්',
-      careerServices: 'වෘත්තීය සේවාවන්',
-      financialAid: 'මූල්‍ය ආධාර',
-      challenges: 'අභියෝග',
-      profile: 'පැතිකඩ',
-      helpSupport: 'උපකාර සහ සහාය',
-      platformStatus: 'වේදිකා තත්වය සහ සංවර්ධනය',
-      nowAvailable: 'දැන් ලබා ගත හැක',
-      corePlatformDesc: 'මූලික වේදිකා විශේෂාංග දැන් සජීව වී භාවිතයට සූදානම්.',
-      lostFoundSystem: 'නැති වූ සහ සොයා ගත් ක්‍රමය',
-      financialAidPortal: 'මූල්‍ය ආධාර ද්වාරය',
-      profileManagement: 'පැතිකඩ කළමනාකරණය',
-      challengesRewards: 'අභියෝග සහ ත්‍යාග',
-      aiAssistantFull: 'AI සහායක',
-      libraryServices: 'පුස්තකාල සේවා',
-      phase1: 'ඉක්මනින් - පළමු අදියර',
-      smartFeaturesDesc: 'ස්මාර්ත් විශේෂාංග ඉදිරි සති කිහිපය තුළ ආරම්භ වේ.',
-      phase2: 'ඉක්මනින් - දෙවන අදියර',
-      enhancedServicesDesc: 'වැඩිදියුණු කළ කැම්පස් සේවා සහ ප්‍රජා විශේෂාංග.',
-      diningServices: 'ආහාර සේවා',
-      wellnessHub: 'සෞඛ්‍ය මධ්‍යස්ථානය',
-      socialEventsShort: 'සමාජීය සහ උත්සව',
-      libraryIntegration: 'පුස්තකාල ඒකාබද්ධතාව',
-      platformUpdates: 'වේදිකා යාවත්කාල',
-      developmentNews: 'සංවර්ධන ප්‍රවෘත්ති',
-      welcomeUom: 'UoM ස්මාර්ට් කැම්පස් වෙත ආයුබෝවන්',
-      exploreFeatures: 'ලබා ගත හැකි විශේෂාංග ගවේෂණය කර වැඩි දේ සඳහා බලා සිටින්න',
-      lostFoundAvailable: 'නැති වූ සහ සොයා ගත් ලබා ගත හැක',
-      lostFoundDesc: 'ඔබට දැන් නැති වූ අයිතම වාර්තා කර සොයා ගත හැක',
-      financialAidActive: 'මූල්‍ය ආධාර ද්වාරය සක්‍රීය',
-      financialAidDesc: 'ශිෂ්‍යත්ව සහ ප්‍රජා සහයෝගිතාව සඳහා අයදුම් කරන්න',
-      profileReady: 'පැතිකඩ කළමනාකරණය සූදානම්',
-      profileDesc: 'ඔබේ පුද්ගලික තොරතුරු සහ මනාපයන් යාවත්කාලීන කරන්න',
-      platformLaunch: 'වේදිකා දියත් කිරීම',
-      platformLaunchDesc: 'UoM ස්මාර්ට් කැම්පස් වේදිකාව මූලික විශේෂාංග සමඟ දැන් සජීවයි',
-      moreFeaturesDesc: 'AI සහායක, අධ්‍යයන ස්ථාන සහ කැම්පස් මඟ පෙන්වීම ඉක්මනින් ආරම්භ වේ',
-      systemUpdates: 'පද්ධති යාවත්කාල',
-      systemUpdatesDesc: 'නිතිපතා යාවත්කාල නව විශේෂාංග සහ වැඩිදියුණු කිරීම් ගෙන එනු ඇත',
-      comingSoonModal: {
-        title: 'ඉක්මනින්',
-        description: 'මෙම විශේෂාංගය දැනට සංවර්ධනය වෙමින් පවතින අතර ඉක්මනින් ලබා ගත හැකි වනු ඇත. ඔබට හොඳම කැම්පස් අත්දැකීමක් ලබා දීමට අපි වෙහෙස මහන්සි වෙමින් සිටිමු.',
-        currentlyAvailable: 'දැනට ලබා ගත හැක:',
-        gotIt: 'හරි, ස්තූතියි!'
-      }
-    },
-    ta: {
-      greeting: {
-        morning: 'காலை வணக்கம்',
-        afternoon: 'மதிய வணக்கம்',
-        evening: 'மாலை வணக்கம்'
-      },
-      emergency: 'அவசரம்',
-      wellnessSupport: 'நலவாழ்வு ஆதரவு',
-      universityWeather: 'வளாக வானிலை',
-      humidity: 'ஈரப்பதம்',
-      wind: 'காற்று',
-      dailyWellnessCheckin: 'தினசரி நலவாழ்வு சரிபார்ப்பு',
-      comingSoon: 'விரைவில்',
-      wellnessTrackingDesc: 'உங்கள் வளாக அனுபவத்தை தனிப்பயனாக்க நலவாழ்வு கண்காணிப்பு மற்றும் மனநிலை கண்காணிப்பு விரைவில் கிடைக்கும்.',
-      quickActions: 'விரைவு செயல்கள்',
-      aiAssistant: 'AI உதவியாளர்',
-      studySpaces: 'படிப்பு இடங்கள்',
-      universityNavigation: 'வளாக வழிகாட்டல்',
-      academicHub: 'கல்வி மையம்',
-      available: 'கிடைக்கும்',
-      universityServices: 'வளாக சேவைகள்',
-      notifications: 'அறிவிப்புகள்',
-      socialEvents: 'சமூக மற்றும் நிகழ்வுகள்',
-      dining: 'உணவு',
-      wellness: 'நலவாழ்வு',
-      lostFound: 'இழந்த மற்றும் கண்டெடுக்கப்பட்ட',
-      library: 'நூலகம்',
-      soon: 'விரைவில்',
-      additionalServices: 'கூடுதல் சேவைகள்',
-      careerServices: 'தொழில் சேவைகள்',
-      financialAid: 'நிதி உதவி',
-      challenges: 'சவால்கள்',
-      profile: 'சுயவிவரம்',
-      helpSupport: 'உதவி மற்றும் ஆதரவு',
-      platformStatus: 'தளம் நிலை மற்றும் மேம்பாடு',
-      nowAvailable: 'இப்போது கிடைக்கிறது',
-      corePlatformDesc: 'முக்கிய தள அம்சங்கள் இப்போது நேரலையாக உள்ளன மற்றும் பயன்படுத்த தயாராக உள்ளன.',
-      lostFoundSystem: 'இழந்த மற்றும் கண்டெடுக்கப்பட்ட அமைப்பு',
-      financialAidPortal: 'நிதி உதவி போர்ட்டல்',
-      profileManagement: 'சுயவிவர மேலாண்மை',
-      challengesRewards: 'சவால்கள் மற்றும் வெகுமதிகள்',
-      aiAssistantFull: 'AI உதவியாளர்',
-      libraryServices: 'நூலக சேவைகள்',
-      phase1: 'விரைவில் - முதல் கட்டம்',
-      smartFeaturesDesc: 'அடுத்த சில வாரங்களில் ஸ்மார்ட் அம்சங்கள் தொடங்கப்படும்.',
-      phase2: 'விரைவில் - இரண்டாம் கட்டம்',
-      enhancedServicesDesc: 'மேம்படுத்தப்பட்ட வளாக சேவைகள் மற்றும் சமூக அம்சங்கள்.',
-      diningServices: 'உணவு சேவைகள்',
-      wellnessHub: 'நலவாழ்வு மையம்',
-      socialEventsShort: 'சமூக மற்றும் நிகழ்வுகள்',
-      libraryIntegration: 'நூலக ஒருங்கிணைப்பு',
-      platformUpdates: 'தள புதுப்பிப்புகள்',
-      developmentNews: 'மேம்பாட்டு செய்திகள்',
-      welcomeUom: 'UoM ஸ்மார்ட் வளாகத்திற்கு வரவேற்கிறோம்',
-      exploreFeatures: 'கிடைக்கக்கூடிய அம்சங்களை ஆராய்ந்து மேலும் அறிய காத்திருங்கள்',
-      lostFoundAvailable: 'இழந்த மற்றும் கண்டெடுக்கப்பட்டது கிடைக்கும்',
-      lostFoundDesc: 'நீங்கள் இப்போது இழந்த பொருட்களை புகாரளித்து தேடலாம்',
-      financialAidActive: 'நிதி உதவி போர்ட்டல் செயல்பாட்டில்',
-      financialAidDesc: 'உதவித்தொகை மற்றும் சமூக ஆதரவுக்கு விண்ணப்பிக்கவும்',
-      profileReady: 'சுயவிவர மேலாண்மை தயார்',
-      profileDesc: 'உங்கள் தனிப்பட்ட தகவல் மற்றும் விருப்பத்தேர்வுகளை புதுப்பிக்கவும்',
-      platformLaunch: 'தள வெளியீடு',
-      platformLaunchDesc: 'UoM ஸ்மார்ட் வளாக தளம் ஆரம்ப அம்சங்களுடன் இப்போது நேரலையில் உள்ளது',
-      moreFeaturesDesc: 'AI உதவியாளர், படிப்பு இடங்கள் மற்றும் வளாக வழிகாட்டல் விரைவில் தொடங்கப்படும்',
-      systemUpdates: 'அமைப்பு புதுப்பிப்புகள்',
-      systemUpdatesDesc: 'வழக்கமான புதுப்பிப்புகள் புதிய அம்சங்கள் மற்றும் மேம்பாடுகளை கொண்டு வரும்',
-      comingSoonModal: {
-        title: 'விரைவில்',
-        description: 'இந்த அம்சம் தற்போது மேம்பாட்டில் உள்ளது மற்றும் விரைவில் கிடைக்கும். உங்களுக்கு சிறந்த வளாக அனுபவத்தை வழங்க நாங்கள் கடுமையாக உழைத்து வருகிறோம்.',
-        currentlyAvailable: 'தற்போது கிடைக்கும்:',
-        gotIt: 'சரி, நன்றி!'
-      }
-    }
-  };
-
-  // Get current language info
-  const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === currentLanguage) || languages[1];
-  };
-
-  // Translation function
-  const t = (key: string): string => {
-    const keys = key.split('.');
-    let value: unknown = translations[currentLanguage as keyof typeof translations];
-    for (const k of keys) {
-      if (typeof value === 'object' && value !== null && k in value) {
-        value = (value as Record<string, unknown>)[k];
-      } else {
-        return key;
-      }
-    }
-    return typeof value === 'string' ? value : key;
-  };
-
   // Handle coming soon click
   const handleComingSoonClick = (featureName: string) => {
     setComingSoonFeature(featureName);
     setShowComingSoonModal(true);
-  };
-
-  // Handle language change
-  const handleLanguageChange = (langCode: string) => {
-    setCurrentLanguage(langCode);
-    setShowLanguageDropdown(false);
-    // In a real app, you would also update the app's locale/translations here
-    console.log(`Language changed to: ${langCode}`);
   };
 
   // Update current time every minute
@@ -395,9 +138,9 @@ export default function Dashboard() {
   // Get greeting based on time of day
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return t('greeting.morning');
-    if (hour < 17) return t('greeting.afternoon');
-    return t('greeting.evening');
+    if (hour < 12) return t('dashboard', 'greeting.morning');
+    if (hour < 17) return t('dashboard', 'greeting.afternoon');
+    return t('dashboard', 'greeting.evening');
   };
 
   // Get mood color and icon
@@ -434,56 +177,7 @@ export default function Dashboard() {
               
               {/* Emergency Quick Access */}
               <div className="mt-4 md:mt-0 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                {/* Language Switcher */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                    className={`p-2 rounded-lg transition-colors duration-200 flex items-center space-x-1 ${
-                      isDarkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                    </svg>
-                    <span className="text-sm font-medium">{getCurrentLanguage().name}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  
-                  {/* Language Dropdown */}
-                  {showLanguageDropdown && (
-                    <div className={`absolute top-full right-0 mt-1 w-40 sm:w-44 rounded-lg shadow-lg border z-50 ${
-                      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                    }`}>
-                      {languages.map((language) => (
-                        <button
-                          key={language.code}
-                          onClick={() => handleLanguageChange(language.code)}
-                          className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
-                            currentLanguage === language.code
-                              ? isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-50 text-blue-700'
-                              : isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{language.name}</span>
-                            {currentLanguage === language.code && (
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {language.nativeName}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <button 
+                <button
                   onClick={() => handleComingSoonClick('Emergency Services')}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 >
@@ -491,16 +185,16 @@ export default function Dashboard() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18.25C13.83 15.932 18 12.813 18 8.25a6.75 6.75 0 1 0-13.5 0c0 4.563 4.17 7.682 6 10z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5z" />
                   </svg>
-                  {t('emergency')}
+                  {t('dashboard', 'emergency')}
                 </button>
-                <button 
+                <button
                   onClick={() => handleComingSoonClick('Wellness Support')}
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
-                  {t('wellnessSupport')}
+                  {t('dashboard', 'wellnessSupport')}
                 </button>
               </div>
             </div>
@@ -518,24 +212,24 @@ export default function Dashboard() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                {t('dailyWellnessCheckin')}
+                {t('dashboard', 'dailyWellnessCheckin')}
                 <span className="ml-2 px-2 py-1 text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 rounded-full">
-                  {t('comingSoon')}
+                  {t('dashboard', 'comingSoon')}
                 </span>
               </h3>
               
               <div>
                 <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
-                  {t('wellnessTrackingDesc')}
+                  {t('dashboard', 'wellnessTrackingDesc')}
                 </p>
-                <button 
+                <button
                   onClick={() => handleComingSoonClick('Wellness Check-in')}
                   className="px-4 py-2 bg-gray-400 text-gray-600 rounded-lg font-medium cursor-not-allowed flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  {t('comingSoon')}
+                  {t('dashboard', 'comingSoon')}
                 </button>
               </div>
             </div>
@@ -774,12 +468,12 @@ export default function Dashboard() {
             {/* Additional Services */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                {t('additionalServices')}
+                {t('dashboard', 'additionalServices')}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
-                  { 
-                    title: t('careerServices'), 
+                  {
+                    title: t('dashboard', 'careerServices'),
                     url: '/career', 
                     color: 'from-violet-500/20 to-violet-600/20',
                     borderColor: 'border-violet-400/30',
@@ -791,8 +485,8 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: t('financialAid'), 
+                  {
+                    title: t('dashboard', 'financialAid'),
                     url: '/financial-aid', 
                     color: 'from-amber-500/20 to-amber-600/20',
                     borderColor: 'border-amber-400/30',
@@ -804,8 +498,8 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: t('challenges'), 
+                  {
+                    title: t('dashboard', 'challenges'),
                     url: '/challenges', 
                     color: 'from-rose-500/20 to-rose-600/20',
                     borderColor: 'border-rose-400/30',
@@ -818,7 +512,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: t('profile'), 
+                    title: t('dashboard', 'profile'), 
                     url: '/profile', 
                     color: 'from-slate-500/20 to-slate-600/20',
                     borderColor: 'border-slate-400/30',
@@ -831,7 +525,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: t('helpSupport'), 
+                    title: t('dashboard', 'helpSupport'), 
                     url: '/help', 
                     color: 'from-cyan-500/20 to-cyan-600/20',
                     borderColor: 'border-cyan-400/30',
@@ -885,7 +579,7 @@ export default function Dashboard() {
                         </span>
                       </div>
                       <div className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border border-amber-400/30 font-medium">
-                        {t('soon')}
+                        {t('dashboard', 'soon')}
                       </div>
                     </button>
                   );
@@ -903,7 +597,7 @@ export default function Dashboard() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {t('platformStatus')}
+                {t('dashboard', 'platformStatus')}
               </h3>
               
               <div className="space-y-4">
@@ -911,14 +605,14 @@ export default function Dashboard() {
                   <div className="flex items-center mb-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                     <h4 className={`font-semibold ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>
-                      {t('nowAvailable')}
+                      {t('dashboard', 'nowAvailable')}
                     </h4>
                   </div>
                   <p className={`text-sm ${isDarkMode ? 'text-green-400' : 'text-green-700'} mb-2`}>
-                    {t('corePlatformDesc')}
+                    {t('dashboard', 'corePlatformDesc')}
                   </p>
                   <div className="text-xs text-green-600 dark:text-green-400">
-                    ✓ {t('lostFoundSystem')} • ✓ {t('financialAidPortal')} • ✓ {t('profileManagement')} • ✓ {t('challengesRewards')} • ✓ {t('aiAssistantFull')} • ✓ {t('libraryServices')}
+                    ✓ {t('dashboard', 'lostFoundSystem')} • ✓ {t('dashboard', 'financialAidPortal')} • ✓ {t('dashboard', 'profileManagement')} • ✓ {t('dashboard', 'challengesRewards')} • ✓ {t('dashboard', 'aiAssistantFull')} • ✓ {t('dashboard', 'libraryServices')}
                   </div>
                 </div>
 
@@ -926,14 +620,14 @@ export default function Dashboard() {
                   <div className="flex items-center mb-2">
                     <div className="w-3 h-3 bg-amber-500 rounded-full mr-2"></div>
                     <h4 className={`font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>
-                      {t('phase1')}
+                      {t('dashboard', 'phase1')}
                     </h4>
                   </div>
                   <p className={`text-sm ${isDarkMode ? 'text-amber-400' : 'text-amber-700'} mb-2`}>
-                    {t('smartFeaturesDesc')}
+                    {t('dashboard', 'smartFeaturesDesc')}
                   </p>
                   <div className="text-xs text-amber-600 dark:text-amber-400">
-                    🤖 {t('aiAssistant')} • 📚 {t('studySpaces')} • 🗺️ {t('universityNavigation')}
+                    🤖 {t('dashboard', 'aiAssistant')} • 📚 {t('dashboard', 'studySpaces')} • 🗺️ {t('dashboard', 'universityNavigation')}
                   </div>
                 </div>
 
@@ -941,14 +635,14 @@ export default function Dashboard() {
                   <div className="flex items-center mb-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
                     <h4 className={`font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-800'}`}>
-                      {t('phase2')}
+                      {t('dashboard', 'phase2')}
                     </h4>
                   </div>
                   <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'} mb-2`}>
-                    {t('enhancedServicesDesc')}
+                    {t('dashboard', 'enhancedServicesDesc')}
                   </p>
                   <div className="text-xs text-blue-600 dark:text-blue-400">
-                    🍽️ {t('diningServices')} • 💚 {t('wellnessHub')} • 📱 {t('socialEventsShort')} • 📚 {t('libraryIntegration')}
+                    🍽️ {t('dashboard', 'diningServices')} • 💚 {t('dashboard', 'wellnessHub')} • 📱 {t('dashboard', 'socialEventsShort')} • 📚 {t('dashboard', 'libraryIntegration')}
                   </div>
                 </div>
               </div>
@@ -963,7 +657,7 @@ export default function Dashboard() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {t('platformUpdates')}
+                  {t('dashboard', 'platformUpdates')}
                 </h3>
                 
                 <div className="space-y-3">
@@ -978,10 +672,10 @@ export default function Dashboard() {
                       }`}></div>
                       <div className="flex-1">
                         <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                          {t(activity.title)}
+                          {t('dashboard', activity.title)}
                         </h4>
                         <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-                          {t(activity.description)}
+                          {t('dashboard', activity.description)}
                         </p>
                         <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} mt-1`}>
                           {activity.timestamp}
@@ -998,7 +692,7 @@ export default function Dashboard() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
                   </svg>
-                  {t('developmentNews')}
+                  {t('dashboard', 'developmentNews')}
                 </h3>
                 
                 <div className="space-y-3">
@@ -1006,7 +700,7 @@ export default function Dashboard() {
                     <div key={update.id} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'}`}>
                       <div className="flex items-center justify-between mb-1">
                         <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                          {t(update.title)}
+                          {t('dashboard', update.title)}
                         </h4>
                         <span className={`px-2 py-1 text-xs rounded-full ${
                           update.type === 'alert' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
@@ -1018,7 +712,7 @@ export default function Dashboard() {
                         </span>
                       </div>
                       <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                        {t(update.description)}
+                        {t('dashboard', update.description)}
                       </p>
                       <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                         {update.timestamp}
@@ -1037,7 +731,7 @@ export default function Dashboard() {
             <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto`}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                  {t('comingSoonModal.title')}
+                  {t('dashboard', 'comingSoonModal.title')}
                 </h2>
                 <button 
                   onClick={() => setShowComingSoonModal(false)}
@@ -1061,37 +755,37 @@ export default function Dashboard() {
                 </h3>
                 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  {t('comingSoonModal.description')}
+                  {t('dashboard', 'comingSoonModal.description')}
                 </p>
 
                 <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} mb-6`}>
                   <p className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} font-medium mb-2`}>
-                    {t('comingSoonModal.currentlyAvailable')}
+                    {t('dashboard', 'comingSoonModal.currentlyAvailable')}
                   </p>
                   <div className="space-y-1 text-xs">
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('lostFoundSystem')}
+                      {t('dashboard', 'lostFoundSystem')}
                     </div>
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('financialAidPortal')}
+                      {t('dashboard', 'financialAidPortal')}
                     </div>
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('profileManagement')}
+                      {t('dashboard', 'profileManagement')}
                     </div>
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('challengesRewards')}
+                      {t('dashboard', 'challengesRewards')}
                     </div>
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('aiAssistantFull')}
+                      {t('dashboard', 'aiAssistantFull')}
                     </div>
                     <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-700'} flex items-center`}>
                       <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                      {t('libraryServices')}
+                      {t('dashboard', 'libraryServices')}
                     </div>
                   </div>
                 </div>
@@ -1100,7 +794,7 @@ export default function Dashboard() {
                   onClick={() => setShowComingSoonModal(false)}
                   className="w-full px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  {t('comingSoonModal.gotIt')}
+                  {t('dashboard', 'comingSoonModal.gotIt')}
                 </button>
               </div>
             </div>
