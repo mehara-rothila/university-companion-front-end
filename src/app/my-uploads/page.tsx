@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useI18n } from '@/app/context/I18nContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { fileManagementService, UserFile, FileStats } from '@/services/fileManagementService';
@@ -11,6 +12,7 @@ import { Trash2, Download, Image, FileText, HardDrive, FolderOpen, Video } from 
 export default function MyUploadsPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useI18n('my-uploads');
   const [files, setFiles] = useState<UserFile[]>([]);
   const [stats, setStats] = useState<FileStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ export default function MyUploadsPage() {
       setDeleteConfirm(null);
     } catch (error) {
       console.error('Error deleting file:', error);
-      alert('Failed to delete file. Please try again.');
+      alert(t('deleteError'));
     } finally {
       setDeleting(false);
     }
@@ -104,10 +106,10 @@ export default function MyUploadsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            My Uploads
+            {t('pageTitle')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage your uploaded files and free up storage space
+            {t('pageSubtitle')}
           </p>
         </div>
 
@@ -121,7 +123,7 @@ export default function MyUploadsPage() {
             } backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Files</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('totalFiles')}</p>
                   <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                     {stats.totalFiles}
                   </p>
@@ -137,7 +139,7 @@ export default function MyUploadsPage() {
             } backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Images</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('images')}</p>
                   <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
                     {stats.imageCount}
                   </p>
@@ -153,7 +155,7 @@ export default function MyUploadsPage() {
             } backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">PDFs</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('pdfs')}</p>
                   <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-1">
                     {stats.pdfCount}
                   </p>
@@ -169,7 +171,7 @@ export default function MyUploadsPage() {
             } backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Storage Used</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('storageUsed')}</p>
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">
                     {stats.totalStorageMB.toFixed(2)} MB
                   </p>
@@ -192,7 +194,7 @@ export default function MyUploadsPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            All Files ({files.length})
+            {t('allFiles')} ({files.length})
           </button>
           <button
             onClick={() => setFilter('images')}
@@ -204,7 +206,7 @@ export default function MyUploadsPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Images ({files.filter(f => f.fileType === 'image').length})
+            {t('images')} ({files.filter(f => f.fileType === 'image').length})
           </button>
           <button
             onClick={() => setFilter('pdfs')}
@@ -216,7 +218,7 @@ export default function MyUploadsPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            PDFs ({files.filter(f => f.fileType === 'pdf').length})
+            {t('pdfs')} ({files.filter(f => f.fileType === 'pdf').length})
           </button>
           <button
             onClick={() => setFilter('videos')}
@@ -228,7 +230,7 @@ export default function MyUploadsPage() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Videos ({files.filter(f => f.fileType === 'video').length})
+            {t('videos')} ({files.filter(f => f.fileType === 'video').length})
           </button>
         </div>
 
@@ -236,7 +238,7 @@ export default function MyUploadsPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading your files...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">{t('loading')}</p>
           </div>
         ) : filteredFiles.length === 0 ? (
           <div className={`text-center py-12 rounded-xl ${
@@ -245,9 +247,9 @@ export default function MyUploadsPage() {
               : 'bg-white border border-gray-200'
           } backdrop-blur-sm`}>
             <FolderOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">No files found</p>
+            <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">{t('noFilesTitle')}</p>
             <p className="text-gray-500 dark:text-gray-500 mt-2">
-              {filter !== 'all' ? 'Try changing the filter' : 'Upload some files to get started'}
+              {filter !== 'all' ? t('noFilesFilter') : t('noFilesMessage')}
             </p>
           </div>
         ) : (
@@ -303,7 +305,7 @@ export default function MyUploadsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                      title="Download"
+                      title={t('download')}
                     >
                       <Download className="w-5 h-5" />
                     </a>
@@ -315,21 +317,21 @@ export default function MyUploadsPage() {
                           disabled={deleting}
                           className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-sm disabled:opacity-50"
                         >
-                          {deleting ? 'Deleting...' : 'Confirm'}
+                          {deleting ? t('deleting') : t('confirm')}
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(null)}
                           disabled={deleting}
                           className="px-3 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
                         >
-                          Cancel
+                          {t('cancel')}
                         </button>
                       </div>
                     ) : (
                       <button
                         onClick={() => setDeleteConfirm(file.id)}
                         className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                        title="Delete"
+                        title={t('delete')}
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>

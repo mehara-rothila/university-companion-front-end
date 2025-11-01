@@ -1,0 +1,20 @@
+{
+  "pageTitle": "My Uploads",
+  "pageSubtitle": "Manage your uploaded files and free up storage space",
+  "totalFiles": "Total Files",
+  "images": "Images",
+  "pdfs": "PDFs",
+  "storageUsed": "Storage Used",
+  "allFiles": "All Files",
+  "videos": "Videos",
+  "loading": "Loading your files...",
+  "noFilesTitle": "No files found",
+  "noFilesMessage": "Upload some files to get started",
+  "noFilesFilter": "Try changing the filter",
+  "download": "Download",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "deleting": "Deleting...",
+  "deleteError": "Failed to delete file. Please try again."
+}
