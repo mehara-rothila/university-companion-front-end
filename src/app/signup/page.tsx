@@ -240,12 +240,12 @@ export default function SignupPage() {
                   onChange={handleChange}
                   className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                 >
-                  <option value="">{t('auth', 'select{t('auth', 'year')}')}</option>
-                  <option value="1">{t('auth', 'first{t('auth', 'year')}')}</option>
-                  <option value="2">{t('auth', 'second{t('auth', 'year')}')}</option>
-                  <option value="3">{t('auth', 'third{t('auth', 'year')}')}</option>
-                  <option value="4">{t('auth', 'fourth{t('auth', 'year')}')}</option>
-                  <option value="5">{t('auth', 'fifth{t('auth', 'year')}')}</option>
+                  <option value="">{t('auth', 'selectYear')}</option>
+                  <option value="1">{t('auth', 'firstYear')}</option>
+                  <option value="2">{t('auth', 'secondYear')}</option>
+                  <option value="3">{t('auth', 'thirdYear')}</option>
+                  <option value="4">{t('auth', 'fourthYear')}</option>
+                  <option value="5">{t('auth', 'fifthYear')}</option>
                 </select>
               </div>
             </div>
