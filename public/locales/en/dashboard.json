@@ -1,0 +1,23 @@
+{
+  "welcome": "Welcome back",
+  "dashboard": "Dashboard",
+  "overview": "Overview",
+  "statistics": "Statistics",
+  "recentActivity": "Recent Activity",
+  "noActivity": "No recent activity",
+  "tokenUsage": "Token Usage",
+  "tokensRemaining": "Tokens Remaining",
+  "tokensUsed": "Tokens Used",
+  "dailyLimit": "Daily Limit",
+  "usagePercentage": "Usage Percentage",
+  "dayLeft": "Day left to reset",
+  "resetTomorrow": "Resets tomorrow",
+  "quickStats": "Quick Statistics",
+  "sessionsToday": "Sessions Today",
+  "averageTokensPerMessage": "Average Tokens per Message",
+  "mostTokensInSingleRequest": "Most Tokens in Single Request",
+  "recentChats": "Recent Chats",
+  "viewAll": "View All",
+  "noChats": "No chats yet",
+  "startChat": "Start a conversation with Athena"
+}

@@ -1,0 +1,23 @@
+{
+  "welcome": "மீண்டும் நல்வரவே",
+  "dashboard": "வினாடி பலகம்",
+  "overview": "சுருக்கம்",
+  "statistics": "புள்ளிவிபரங்கள்",
+  "recentActivity": "சமீபத்திய செயல்பாடு",
+  "noActivity": "சமீபத்திய செயல்பாடு இல்லை",
+  "tokenUsage": "டோக்கன் பயன்பாடு",
+  "tokensRemaining": "மீதமுள்ள டோக்கன்கள்",
+  "tokensUsed": "பயன்படுத்தப்பட்ட டோக்கன்கள்",
+  "dailyLimit": "தினசரி வரம்பு",
+  "usagePercentage": "பயன்பாடு சதவீதம்",
+  "dayLeft": "மீட்டமைப்புக்கு வரும் நாள்",
+  "resetTomorrow": "நாளை மீட்டமை",
+  "quickStats": "விரைவு புள்ளிவிபரங்கள்",
+  "sessionsToday": "இன்றைய அமர்வுகள்",
+  "averageTokensPerMessage": "செய்திக்கு சராசரி டோக்கன்கள்",
+  "mostTokensInSingleRequest": "ஒற்றை கோரிக்கையில் அதிகம்",
+  "recentChats": "சமீபத்திய உரையாடல்கள்",
+  "viewAll": "அனைத்தையும் பார்க்க",
+  "noChats": "இன்னும் உரையாடல் இல்லை",
+  "startChat": "அதேனாவுடன் உரையாடலைத் தொடங்கவும்"
+}
