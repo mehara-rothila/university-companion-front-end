@@ -240,12 +240,12 @@ export default function Dashboard() {
             {/* Primary Actions */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                Quick Actions
+                {t('dashboard', 'quickActions')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { 
-                    title: 'AI Assistant', 
+                    title: t('dashboard', 'aiAssistant'), 
                     url: '/chatbot', 
                     color: 'from-blue-500/20 to-blue-600/20',
                     borderColor: 'border-blue-400/30',
@@ -258,7 +258,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: 'Weather', 
+                    title: t('dashboard', 'universityWeather'), 
                     url: '/weather', 
                     color: 'from-sky-500/20 to-sky-600/20',
                     borderColor: 'border-sky-400/30',
@@ -271,7 +271,7 @@ export default function Dashboard() {
                     )
                   },
                   {
-                    title: 'University Navigation', 
+                    title: t('dashboard', 'universityNavigation'), 
                     url: '/navigation', 
                     color: 'from-purple-500/20 to-purple-600/20',
                     borderColor: 'border-purple-400/30',
@@ -285,7 +285,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: 'Academic Hub', 
+                    title: t('dashboard', 'academicHub'), 
                     url: '/academic', 
                     color: 'from-orange-500/20 to-orange-600/20',
                     borderColor: 'border-orange-400/30',
@@ -339,7 +339,7 @@ export default function Dashboard() {
                         </span>
                       </div>
                       <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border border-amber-400/30 font-medium">
-                        Coming Soon
+                        {t('dashboard', 'comingSoon')}
                       </div>
                     </button>
                   );
@@ -347,15 +347,15 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* University Services */}
+            {/* {t('dashboard', 'universityServices')} */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                University Services
+                {t('dashboard', 'universityServices')}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
                   {
-                    title: 'Notifications',
+                    title: t('dashboard', 'notifications'),
                     url: '/notifications',
                     color: 'from-red-500/20 to-red-600/20',
                     borderColor: 'border-red-400/30',
@@ -364,7 +364,7 @@ export default function Dashboard() {
                     icon: <Bell className="h-6 w-6" strokeWidth={1.5} />
                   },
                   { 
-                    title: 'Social & Events', 
+                    title: t('dashboard', 'socialEvents'), 
                     url: '/social', 
                     color: 'from-pink-500/20 to-pink-600/20',
                     borderColor: 'border-pink-400/30',
@@ -377,7 +377,7 @@ export default function Dashboard() {
                     )
                   },
                   {
-                    title: 'Wellness', 
+                    title: t('dashboard', 'wellness'), 
                     url: '/wellness', 
                     color: 'from-teal-500/20 to-teal-600/20',
                     borderColor: 'border-teal-400/30',
@@ -390,7 +390,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: 'Lost & Found', 
+                    title: t('dashboard', 'lostFound'), 
                     url: '/lost-found', 
                     color: 'from-indigo-500/20 to-indigo-600/20',
                     borderColor: 'border-indigo-400/30',
@@ -403,7 +403,7 @@ export default function Dashboard() {
                     )
                   },
                   { 
-                    title: 'Library', 
+                    title: t('dashboard', 'library'), 
                     url: '/library', 
                     color: 'from-emerald-500/20 to-emerald-600/20',
                     borderColor: 'border-emerald-400/30',
