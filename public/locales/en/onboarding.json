@@ -1,0 +1,19 @@
+{
+  "welcomeTitle": "Welcome to Smart University",
+  "welcomeSubtitle": "Let's personalize your AI-powered campus experience",
+  "step": "Step",
+  "of": "of",
+  "step1Title": "Personal Preferences",
+  "step1Subtitle": "Tell us about yourself and your learning style",
+  "step2Title": "University Information",
+  "step2Subtitle": "Help us understand your campus life",
+  "step3Title": "Schedule & Academic",
+  "step3Subtitle": "Set up your academic profile",
+  "step4Title": "AI Features & Notifications",
+  "step4Subtitle": "Customize your AI assistant and notification preferences",
+  "previous": "Previous",
+  "next": "Next",
+  "completeSetup": "Complete Setup",
+  "skip": "Skip",
+  "saving": "Saving preferences..."
+}
