@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useI18n } from '../context/I18nContext'
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isDarkMode } = useDarkMode()
+  const { t } = useI18n('reset-password')
 
   useEffect(() => {
     const emailParam = searchParams.get('email')
@@ -35,21 +37,21 @@ function ResetPasswordForm() {
 
     // Validate passwords match
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('errorPasswordMatch'))
       setIsLoading(false)
       return
     }
 
     // Validate password length
     if (formData.newPassword.length < 6) {
-      setError('Password must be at least 6 characters long')
+      setError(t('errorPasswordLength'))
       setIsLoading(false)
       return
     }
 
     // Validate OTP format (6 digits)
     if (!/^\d{6}$/.test(formData.otp)) {
-      setError('OTP must be exactly 6 digits')
+      setError(t('errorOtpFormat'))
       setIsLoading(false)
       return
     }
@@ -70,15 +72,15 @@ function ResetPasswordForm() {
       const data = await response.json()
 
       if (response.ok && data.success) {
-        setSuccess(data.message || 'Password reset successful!')
+        setSuccess(data.message || t('successMessage'))
         setTimeout(() => {
           router.push('/login')
         }, 2000)
       } else {
-        setError(data.message || 'Failed to reset password. Please try again.')
+        setError(data.message || t('errorDefault'))
       }
     } catch (err) {
-      setError('Connection error. Please check your internet and try again.')
+      setError(t('errorConnection'))
     } finally {
       setIsLoading(false)
     }
@@ -112,9 +114,9 @@ function ResetPasswordForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">Reset Password</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">{t('title')}</h1>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-              Enter the OTP sent to your email and create a new password
+              {t('subtitle')}
             </p>
           </div>
 
@@ -133,7 +135,7 @@ function ResetPasswordForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email Address
+                {t('emailLabel')}
               </label>
               <input
                 type="email"
@@ -143,14 +145,14 @@ function ResetPasswordForm() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="your.email@university.edu"
+                placeholder={t('emailPlaceholder')}
                 disabled={isLoading}
               />
             </div>
 
             <div>
               <label htmlFor="otp" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                OTP Code
+                {t('otpLabel')}
               </label>
               <input
                 type="text"
@@ -162,17 +164,17 @@ function ResetPasswordForm() {
                 maxLength={6}
                 pattern="\d{6}"
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-center text-2xl tracking-widest font-mono"
-                placeholder="000000"
+                placeholder={t('otpPlaceholder')}
                 disabled={isLoading}
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Enter the 6-digit code sent to your email
+                {t('otpHelper')}
               </p>
             </div>
 
             <div>
               <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                New Password
+                {t('newPasswordLabel')}
               </label>
               <input
                 type="password"
@@ -183,14 +185,14 @@ function ResetPasswordForm() {
                 required
                 minLength={6}
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter new password"
+                placeholder={t('newPasswordPlaceholder')}
                 disabled={isLoading}
               />
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Confirm Password
+                {t('confirmPasswordLabel')}
               </label>
               <input
                 type="password"
@@ -200,7 +202,7 @@ function ResetPasswordForm() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Confirm new password"
+                placeholder={t('confirmPasswordPlaceholder')}
                 disabled={isLoading}
               />
             </div>
@@ -216,32 +218,32 @@ function ResetPasswordForm() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Resetting Password...
+                  {t('resettingButton')}
                 </span>
               ) : (
-                'Reset Password'
+                t('submitButton')
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Didn&apos;t receive the code?{' '}
+              {t('didntReceiveCode')}{' '}
               <Link href="/forgot-password" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
-                Resend OTP
+                {t('resendOtp')}
               </Link>
             </p>
             <p className="text-gray-600 dark:text-gray-400">
-              Remember your password?{' '}
+              {t('rememberPassword')}{' '}
               <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
-                Sign in
+                {t('signIn')}
               </Link>
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              ← Back to Home
+              {t('backToHome')}
             </Link>
           </div>
         </div>
