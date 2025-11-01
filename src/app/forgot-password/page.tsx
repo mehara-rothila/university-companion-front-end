@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useI18n } from '../context/I18nContext'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -13,6 +14,7 @@ export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState('')
   const router = useRouter()
   const { isDarkMode } = useDarkMode()
+  const { t } = useI18n('forgot-password')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,15 +34,15 @@ export default function ForgotPasswordPage() {
       const data = await response.json()
 
       if (response.ok && data.success) {
-        setSuccess(data.message || 'Password reset OTP has been sent to your email.')
+        setSuccess(data.message || t('successMessage'))
         setTimeout(() => {
           router.push(`/reset-password?email=${encodeURIComponent(email)}`)
         }, 2000)
       } else {
-        setError(data.message || 'Failed to send reset email. Please try again.')
+        setError(data.message || t('errorDefault'))
       }
     } catch (err) {
-      setError('Connection error. Please check your internet and try again.')
+      setError(t('errorConnection'))
     } finally {
       setIsLoading(false)
     }
@@ -58,9 +60,9 @@ export default function ForgotPasswordPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">Forgot Password?</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">{t('title')}</h1>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-              No worries! Enter your email and we&apos;ll send you a reset code
+              {t('subtitle')}
             </p>
           </div>
 
@@ -79,7 +81,7 @@ export default function ForgotPasswordPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email Address
+                {t('emailLabel')}
               </label>
               <input
                 type="email"
@@ -89,7 +91,7 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="your.email@university.edu"
+                placeholder={t('emailPlaceholder')}
                 disabled={isLoading}
               />
             </div>
@@ -105,26 +107,26 @@ export default function ForgotPasswordPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Sending OTP...
+                  {t('sendingButton')}
                 </span>
               ) : (
-                'Send Reset Code'
+                t('submitButton')
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Remember your password?{' '}
+              {t('rememberPassword')}{' '}
               <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
-                Sign in
+                {t('signIn')}
               </Link>
             </p>
           </div>
 
           <div className="mt-4 text-center">
             <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              ← Back to Home
+              {t('backToHome')}
             </Link>
           </div>
         </div>
