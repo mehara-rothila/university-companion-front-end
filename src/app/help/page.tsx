@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useI18n } from '@/app/context/I18nContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -39,6 +40,7 @@ interface ContactMethod {
 
 export default function HelpSupportPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useI18n('help');
   const [activeSection, setActiveSection] = useState('faq');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -250,11 +252,11 @@ export default function HelpSupportPage() {
 
   // Section navigation
   const sections = [
-    { id: 'faq', name: 'FAQ', icon: '❓' },
-    { id: 'tutorials', name: 'Tutorials', icon: '🎓' },
-    { id: 'contact', name: 'Contact', icon: '📞' },
-    { id: 'tickets', name: 'Support Tickets', icon: '🎫' },
-    { id: 'feedback', name: 'Feedback', icon: '💬' }
+    { id: 'faq', name: t('faqTab'), icon: '❓' },
+    { id: 'tutorials', name: t('tutorialsTab'), icon: '🎓' },
+    { id: 'contact', name: t('contactTab'), icon: '📞' },
+    { id: 'tickets', name: t('ticketsTab'), icon: '🎫' },
+    { id: 'feedback', name: t('feedbackTab'), icon: '💬' }
   ];
 
   return (
@@ -274,10 +276,10 @@ export default function HelpSupportPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                Help & Support Center
+                {t('pageTitle')}
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto`}>
-                Get help with Smart University features, troubleshoot issues, and learn how to make the most of your AI-powered university assistant.
+                {t('pageSubtitle')}
               </p>
             </div>
 
@@ -323,7 +325,7 @@ export default function HelpSupportPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
-                  Support ticket submitted successfully! We&apos;ll get back to you within 24 hours.
+                  {t('ticketSuccess')}
                 </p>
               </div>
             </div>
@@ -369,10 +371,10 @@ export default function HelpSupportPage() {
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search FAQs..."
+                        placeholder={t('searchPlaceholder')}
                         className={`pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 ${
-                          isDarkMode 
-                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                          isDarkMode
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                             : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                         } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                       />
