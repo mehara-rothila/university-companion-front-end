@@ -80,10 +80,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     return value || defaultValue || key;
   };
 
-  if (loading) {
-    return <>{children}</>;
-  }
-
   return (
     <I18nContext.Provider value={{ language, setLanguage, t }}>
       {children}
