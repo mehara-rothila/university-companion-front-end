@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useI18n } from '@/app/context/I18nContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isDarkMode = false;
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useI18n();
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -56,7 +58,7 @@ const Navigation = () => {
           >
             <span className="hidden sm:block">Athena</span>
             <span className="sm:hidden">Athena</span>
-            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart University</span>
+            <span className="text-purple-800 dark:text-purple-400 block text-xs">{t('navigation', 'smartUniversity')}</span>
           </Link>
         </div>
 
@@ -65,38 +67,38 @@ const Navigation = () => {
           {/* Smart University Navigation Links */}
           <Link href="/" className="nav-link text-sm" onClick={handleNavigation}>
             <Home className="inline h-4 w-4 mr-1" />
-            Home
+            {t('navigation', 'home')}
           </Link>
           <Link href="/dashboard" className="nav-link text-sm" onClick={handleNavigation}>
             <User className="inline h-4 w-4 mr-1" />
-            Dashboard
+            {t('navigation', 'dashboard')}
           </Link>
           <Link href="/chatbot" className="nav-link text-sm" onClick={handleNavigation}>
             <Bot className="inline h-4 w-4 mr-1" />
-            AI Assistant
+            {t('navigation', 'aiAssistant')}
           </Link>
           <Link href="/navigation" className="nav-link text-sm" onClick={handleNavigation}>
             <MapPin className="inline h-4 w-4 mr-1" />
-            Navigation
+            {t('navigation', 'navigation')}
           </Link>
           <Link href="/study-spaces" className="nav-link text-sm" onClick={handleNavigation}>
             <BookOpen className="inline h-4 w-4 mr-1" />
-            Study
+            {t('navigation', 'study')}
           </Link>
           <Link href="/wellness" className="nav-link text-sm" onClick={handleNavigation}>
             <Heart className="inline h-4 w-4 mr-1" />
-            Wellness
+            {t('navigation', 'wellness')}
           </Link>
           <Link href="/weather" className="nav-link text-sm" onClick={handleNavigation}>
             <Cloud className="inline h-4 w-4 mr-1" />
-            Weather
+            {t('navigation', 'weather')}
           </Link>
 
           {/* My Uploads Link - Only show for authenticated users */}
           {isAuthenticated && (
             <Link href="/my-uploads" className="nav-link text-sm" onClick={handleNavigation}>
               <FolderOpen className="inline h-4 w-4 mr-1" />
-              My Uploads
+              {t('navigation', 'myUploads')}
             </Link>
           )}
 
@@ -104,7 +106,7 @@ const Navigation = () => {
           {isAuthenticated && user?.role === 'ADMIN' && (
             <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-md" onClick={handleNavigation}>
               <Settings className="inline h-4 w-4 mr-1" />
-              Admin
+              {t('navigation', 'admin')}
             </Link>
           )}
 
@@ -113,14 +115,14 @@ const Navigation = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 {user?.image && (
-                  <img 
-                    src={user.image} 
-                    alt="Profile" 
+                  <img
+                    src={user.image}
+                    alt="Profile"
                     className="w-8 h-8 rounded-full"
                   />
                 )}
                 <span className="text-gray-700 dark:text-gray-300">
-                  Hi, {user?.firstName || user?.name?.split(' ')[0]}!
+                  {t('navigation', 'greeting').replace('{name}', user?.firstName || user?.name?.split(' ')[0] || 'User')}
                 </span>
               </div>
               <button
@@ -130,16 +132,16 @@ const Navigation = () => {
                 }}
                 className="text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
               >
-                <LogOut className="inline h-5 w-5 mr-1" /> Logout
+                <LogOut className="inline h-5 w-5 mr-1" /> {t('navigation', 'logout')}
               </button>
             </div>
           ) : (
-            <Link 
-              href="/login" 
-              className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center" 
+            <Link
+              href="/login"
+              className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center"
               onClick={handleNavigation}
             >
-              <LogIn className="inline h-5 w-5 mr-1" /> Login
+              <LogIn className="inline h-5 w-5 mr-1" /> {t('navigation', 'login')}
             </Link>
           )}
         </nav>
@@ -147,11 +149,11 @@ const Navigation = () => {
         {/* Mobile Hamburger button area */}
         <div className="lg:hidden flex items-center space-x-3">
           {/* Hamburger Button */}
-          <button 
-            type="button" 
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+          <button
+            type="button"
+            aria-label={isOpen ? t('navigation', 'closeMenu') : t('navigation', 'openMenu')}
             aria-expanded={isOpen}
-            className="p-2 rounded-md flex items-center transition-all duration-200 text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500" 
+            className="p-2 rounded-md flex items-center transition-all duration-200 text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
             onClick={handleToggle}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -180,61 +182,61 @@ const Navigation = () => {
       >
         <div className="p-5 space-y-3 border-t border-gray-100 dark:border-gray-700">
           {/* Mobile Smart University Navigation Links */}
-          <Link 
-            href="/" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Home className="inline h-5 w-5 mr-2"/> Home
+            <Home className="inline h-5 w-5 mr-2" /> {t('navigation', 'home')}
           </Link>
-          <Link 
-            href="/dashboard" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/dashboard"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <User className="inline h-5 w-5 mr-2"/> Dashboard
+            <User className="inline h-5 w-5 mr-2" /> {t('navigation', 'dashboard')}
           </Link>
-          <Link 
-            href="/chatbot" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/chatbot"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Bot className="inline h-5 w-5 mr-2"/> AI Assistant
+            <Bot className="inline h-5 w-5 mr-2" /> {t('navigation', 'aiAssistant')}
           </Link>
-          <Link 
-            href="/navigation" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/navigation"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <MapPin className="inline h-5 w-5 mr-2"/> University Navigation
+            <MapPin className="inline h-5 w-5 mr-2" /> {t('navigation', 'universityNavigation')}
           </Link>
-          <Link 
-            href="/study-spaces" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/study-spaces"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <BookOpen className="inline h-5 w-5 mr-2"/> Study Spaces
+            <BookOpen className="inline h-5 w-5 mr-2" /> {t('navigation', 'studySpaces')}
           </Link>
-          <Link 
-            href="/academic" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/academic"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Calendar className="inline h-5 w-5 mr-2"/> Academic Hub
+            <Calendar className="inline h-5 w-5 mr-2" /> {t('navigation', 'academicHub')}
           </Link>
-          <Link 
-            href="/wellness" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/wellness"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Heart className="inline h-5 w-5 mr-2"/> Health & Wellness
+            <Heart className="inline h-5 w-5 mr-2" /> {t('navigation', 'healthWellness')}
           </Link>
           <Link
             href="/weather"
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Cloud className="inline h-5 w-5 mr-2"/> Weather
+            <Cloud className="inline h-5 w-5 mr-2" /> {t('navigation', 'weather')}
           </Link>
 
           {/* Mobile My Uploads Link - Only show for authenticated users */}
@@ -244,7 +246,7 @@ const Navigation = () => {
               className="mobile-nav-link flex items-center"
               onClick={handleNavigation}
             >
-              <FolderOpen className="inline h-5 w-5 mr-2"/> My Uploads
+              <FolderOpen className="inline h-5 w-5 mr-2" /> {t('navigation', 'myUploads')}
             </Link>
           )}
 
@@ -253,17 +255,17 @@ const Navigation = () => {
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <HelpCircle className="inline h-5 w-5 mr-2"/> Help & Support
+            <HelpCircle className="inline h-5 w-5 mr-2" /> {t('navigation', 'helpSupport')}
           </Link>
 
           {/* Mobile Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link 
-              href="/admin" 
-              className="mobile-nav-link flex items-center" 
+            <Link
+              href="/admin"
+              className="mobile-nav-link flex items-center"
               onClick={handleNavigation}
             >
-              <Settings className="inline h-5 w-5 mr-2"/> Admin Panel
+              <Settings className="inline h-5 w-5 mr-2" /> {t('navigation', 'adminPanel')}
             </Link>
           )}
 
@@ -273,13 +275,13 @@ const Navigation = () => {
               <div className="space-y-3">
                 <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center flex items-center justify-center space-x-2">
                   {user?.image && (
-                    <img 
-                      src={user.image} 
-                      alt="Profile" 
+                    <img
+                      src={user.image}
+                      alt="Profile"
                       className="w-8 h-8 rounded-full"
                     />
                   )}
-                  <span>Hi, {user?.firstName || user?.name?.split(' ')[0]}!</span>
+                  <span>{t('navigation', 'greeting').replace('{name}', user?.firstName || user?.name?.split(' ')[0] || 'User')}</span>
                 </div>
                 <button
                   onClick={() => {
@@ -288,24 +290,24 @@ const Navigation = () => {
                   }}
                   className="mobile-login-button w-full flex items-center justify-center bg-red-600 hover:bg-red-700"
                 >
-                  <LogOut className="inline h-5 w-5 mr-2" /> Logout
+                  <LogOut className="inline h-5 w-5 mr-2" /> {t('navigation', 'logout')}
                 </button>
               </div>
             ) : (
               <>
-                <Link 
-                  href="/onboarding" 
-                  className="mobile-nav-link flex items-center" 
+                <Link
+                  href="/onboarding"
+                  className="mobile-nav-link flex items-center"
                   onClick={handleNavigation}
                 >
-                  <UserPlus className="inline h-5 w-5 mr-2"/> Get Started
+                  <UserPlus className="inline h-5 w-5 mr-2" /> {t('navigation', 'getStarted')}
                 </Link>
-                <Link 
-                  href="/login" 
-                  className="mobile-login-button w-full flex items-center justify-center" 
+                <Link
+                  href="/login"
+                  className="mobile-login-button w-full flex items-center justify-center"
                   onClick={handleNavigation}
                 >
-                  <LogIn className="inline h-5 w-5 mr-2" /> Sign In
+                  <LogIn className="inline h-5 w-5 mr-2" /> {t('navigation', 'login')}
                 </Link>
               </>
             )}
