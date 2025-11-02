@@ -157,5 +157,113 @@
       "errorConnection": "සම්බන්ධතා දෝෂයකි. කරුණාකර නැවත උත්සාහ කරන්න.",
       "successMessage": "ගිණුම සාර්ථකව සාදන ලදී! කරුණාකර පුරනය වන්න."
     }
+  },
+  "profile": {
+    "tabs": {
+      "personal": "පෞද්ගලික තොරතුරු",
+      "preferences": "පසන්ද",
+      "privacy": "රහස්‍යතාව",
+      "aiFeatures": "AI විශේෂාංග",
+      "activity": "ක්‍රියාකාරකම"
+    },
+    "buttons": {
+      "editProfile": "පැතිකඩ සංස්කරණය",
+      "saveChanges": "වෙනස්කම් සුරකින්න",
+      "cancel": "අවලංගු කරන්න",
+      "saving": "සුරකිමින්...",
+      "saved": "සුරකින ලදී!"
+    },
+    "personal": {
+      "title": "පෞද්ගලික තොරතුරු",
+      "fullName": "සම්පූර්ණ නම",
+      "studentId": "ශිෂ්‍ය අංකය",
+      "studentIdNote": "ශිෂ්‍ය අංකය වෙනස් කළ නොහැක",
+      "email": "විද්‍යුත් තැපැල් ලිපිනය",
+      "phone": "දුරකථන අංකය",
+      "major": "ප්‍රධාන විෂයය",
+      "academicYear": "අධ්‍යාපන වර්ෂය",
+      "emergencyContact": "හදිසි සම්බන්ධතා",
+      "year1": "1 වන වසර",
+      "year2": "2 වන වසර",
+      "year3": "3 වන වසර",
+      "year4": "4 වන වසර",
+      "postgraduate": "පශ්චාත් උපාධි"
+    },
+    "preferences": {
+      "title": "මනාපයන්",
+      "notificationPreferences": "දැනුම්දීම් මනාපයන්",
+      "email": "විද්‍යුත් තැපෑල",
+      "push": "තෙල්ල",
+      "sms": "කෙටි පණිවුඩ",
+      "academic": "අධ්‍යාපනික",
+      "wellness": "සෞඛ්‍යය",
+      "social": "සමාජීය",
+      "dining": "ආහාර",
+      "studyPreferences": "අධ්‍යයන මනාපයන්",
+      "quietSpaces": "නිහඬ ස්ථාන",
+      "groupStudy": "කණ්ඩායම් අධ්‍යයනය",
+      "library": "පුස්තකාලය",
+      "outdoorAreas": "එළිමහන් ප්‍රදේශ",
+      "cafes": "කෝපි ශාලා",
+      "lateNightStudy": "රාත්‍රී අධ්‍යයනය",
+      "learningStyle": "ඉගෙනීමේ ශෛලිය",
+      "visual": "දෘශ්‍ය",
+      "auditory": "ශ්‍රවණ",
+      "readingWriting": "කියවීම/ලිවීම",
+      "kinesthetic": "චලන"
+    },
+    "privacy": {
+      "title": "රහස්‍යතා සැකසුම්",
+      "profileVisibility": "පැතිකඩ දෘශ්‍යතාව",
+      "public": "ප්‍රසිද්ධ",
+      "publicDesc": "සැමට දෘශ්‍යමාන",
+      "friends": "මිතුරන්",
+      "friendsDesc": "සම්බන්ධතා පමණක් දෘශ්‍යමාන",
+      "private": "පුද්ගලික",
+      "privateDesc": "ඔබට පමණක් දෘශ්‍යමාන",
+      "dataSharing": "තෙවන පාර්ශවයන් සමඟ දත්ත බෙදාගැනීම",
+      "dataSharingDesc": "පර්යේෂණ සඳහා නිර්නාමික දත්ත බෙදාගැනීමට ඉඩ දෙන්න",
+      "analytics": "විශ්ලේෂණ සහ තීක්ෂණතා",
+      "analyticsDesc": "භාවිත විශ්ලේෂණ සමඟ යෙදුම වැඩිදියුණු කිරීමට උදව් කරන්න",
+      "locationTracking": "ස්ථාන ලුහුබැඳීම",
+      "locationTrackingDesc": "ස්ථාන පාදක විශේෂාංග සහ සංචලනය සබල කරන්න",
+      "dataManagement": "දත්ත කළමනාකරණය",
+      "exportData": "මගේ දත්ත අපනයනය කරන්න",
+      "viewDataPolicy": "දත්ත ප්‍රතිපත්තිය බලන්න",
+      "deleteAccount": "ගිණුම මකන්න"
+    },
+    "aiFeatures": {
+      "title": "AI විශේෂාංග",
+      "chatbot": "AI චැට්බොට් සහායක",
+      "chatbotDesc": "ස්වාභාවික භාෂා විශ්වවිද්‍යාල සහාය සහ සහයෝගය",
+      "studySpaceRecs": "අධ්‍යයන ස්ථාන නිර්දේශ",
+      "studySpaceRecsDesc": "මනාපයන් මත පදනම් වූ ML-බලගැන්වූ ස්ථාන යෝජනා",
+      "scheduleOptimization": "කාලසටහන ප්‍රශස්තකරණය",
+      "scheduleOptimizationDesc": "AI-මඟ පෙන්වන දින දර්ශනය සහ කාර්ය කළමනාකරණය",
+      "wellnessCheckins": "සෞඛ්‍ය පරීක්ෂණ",
+      "wellnessCheckinsDesc": "මනෝභාව ලුහුබැඳීම සහ මානසික සෞඛ්‍ය සහාය",
+      "careerGuidance": "වෘත්තීය මඟපෙන්වීම",
+      "careerGuidanceDesc": "AI-බලගන්වන වෘත්තීය මාර්ග නිර්දේශ",
+      "smartNavigation": "දක්ෂ සංචලනය",
+      "smartNavigationDesc": "බුද්ධිමත් මාර්ග සැලසුම් සහ ජනකඩ විශ්ලේෂණය",
+      "aiTransparency": "AI විනිවිදභාවය සහ ආචාර ධර්ම",
+      "aiTransparencyDesc": "අපගේ AI පද්ධති ක්‍රියා කරන ආකාරය, දත්ත භාවිතය සහ ආචාර සලකා බැලීම් ගැන ඉගෙන ගන්න.",
+      "viewEthicsDashboard": "AI ආචාර ධර්ම පුවරුව බලන්න"
+    },
+    "activity": {
+      "title": "ක්‍රියාකාරකම් දළ විශ්ලේෂණය",
+      "totalLogins": "මුළු පුරනයවීම්",
+      "studySessions": "අධ්‍යයන සැසි",
+      "wellnessCheckins": "සෞඛ්‍ය පරීක්ෂණ",
+      "aiInteractions": "AI අන්තර්ක්‍රියා",
+      "lastLogin": "අවසාන පුරනයවීම",
+      "quickLinks": "ඉක්මන් සබැඳි"
+    },
+    "deleteModal": {
+      "title": "ගිණුම මකන්න",
+      "warning": "ඔබේ ගිණුම මකා දැමීමට ඔබට විශ්වාසද? මෙම ක්‍රියාව ආපසු හැරවිය නොහැකි අතර ඔබගේ සියලු දත්ත ස්ථිරවම ඉවත් වනු ඇත.",
+      "cancel": "අවලංගු කරන්න",
+      "confirm": "ගිණුම මකන්න"
+    }
   }
 }
