@@ -4,6 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from '../context/NotificationContext';
+import { TranslationProvider } from '../contexts/TranslationContext';
 
 function NotificationProviderWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -19,11 +20,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <AuthProvider>
-        <DarkModeProvider>
-          <NotificationProviderWrapper>
-            {children}
-          </NotificationProviderWrapper>
-        </DarkModeProvider>
+        <TranslationProvider>
+          <DarkModeProvider>
+            <NotificationProviderWrapper>
+              {children}
+            </NotificationProviderWrapper>
+          </DarkModeProvider>
+        </TranslationProvider>
       </AuthProvider>
     </SessionProvider>
   );
