@@ -157,5 +157,113 @@
       "errorConnection": "Connection error. Please try again.",
       "successMessage": "Account created successfully! Please sign in."
     }
+  },
+  "profile": {
+    "tabs": {
+      "personal": "Personal Info",
+      "preferences": "Preferences",
+      "privacy": "Privacy",
+      "aiFeatures": "AI Features",
+      "activity": "Activity"
+    },
+    "buttons": {
+      "editProfile": "Edit Profile",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saved": "Saved!"
+    },
+    "personal": {
+      "title": "Personal Information",
+      "fullName": "Full Name",
+      "studentId": "Student ID",
+      "studentIdNote": "Student ID cannot be changed",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "major": "Major",
+      "academicYear": "Academic Year",
+      "emergencyContact": "Emergency Contact",
+      "year1": "Year 1",
+      "year2": "Year 2",
+      "year3": "Year 3",
+      "year4": "Year 4",
+      "postgraduate": "Postgraduate"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "notificationPreferences": "Notification Preferences",
+      "email": "Email",
+      "push": "Push",
+      "sms": "SMS",
+      "academic": "Academic",
+      "wellness": "Wellness",
+      "social": "Social",
+      "dining": "Dining",
+      "studyPreferences": "Study Preferences",
+      "quietSpaces": "Quiet Spaces",
+      "groupStudy": "Group Study",
+      "library": "Library",
+      "outdoorAreas": "Outdoor Areas",
+      "cafes": "Cafes",
+      "lateNightStudy": "Late Night Study",
+      "learningStyle": "Learning Style",
+      "visual": "Visual",
+      "auditory": "Auditory",
+      "readingWriting": "Reading/Writing",
+      "kinesthetic": "Kinesthetic"
+    },
+    "privacy": {
+      "title": "Privacy Settings",
+      "profileVisibility": "Profile Visibility",
+      "public": "Public",
+      "publicDesc": "Visible to everyone",
+      "friends": "Friends",
+      "friendsDesc": "Visible to connections only",
+      "private": "Private",
+      "privateDesc": "Only visible to you",
+      "dataSharing": "Data Sharing with Third Parties",
+      "dataSharingDesc": "Allow sharing anonymized data for research",
+      "analytics": "Analytics & Insights",
+      "analyticsDesc": "Help improve the app with usage analytics",
+      "locationTracking": "Location Tracking",
+      "locationTrackingDesc": "Enable location-based features and navigation",
+      "dataManagement": "Data Management",
+      "exportData": "Export My Data",
+      "viewDataPolicy": "View Data Policy",
+      "deleteAccount": "Delete Account"
+    },
+    "aiFeatures": {
+      "title": "AI Features",
+      "chatbot": "AI Chatbot Assistant",
+      "chatbotDesc": "Natural language university assistance and support",
+      "studySpaceRecs": "Study Space Recommendations",
+      "studySpaceRecsDesc": "ML-powered space suggestions based on preferences",
+      "scheduleOptimization": "Schedule Optimization",
+      "scheduleOptimizationDesc": "AI-driven calendar and task management",
+      "wellnessCheckins": "Wellness Check-ins",
+      "wellnessCheckinsDesc": "Mood tracking and mental health support",
+      "careerGuidance": "Career Guidance",
+      "careerGuidanceDesc": "AI-powered career path recommendations",
+      "smartNavigation": "Smart Navigation",
+      "smartNavigationDesc": "Intelligent route planning and crowd analysis",
+      "aiTransparency": "AI Transparency & Ethics",
+      "aiTransparencyDesc": "Learn about how our AI systems work, data usage, and ethical considerations.",
+      "viewEthicsDashboard": "View AI Ethics Dashboard"
+    },
+    "activity": {
+      "title": "Activity Overview",
+      "totalLogins": "Total Logins",
+      "studySessions": "Study Sessions",
+      "wellnessCheckins": "Wellness Check-ins",
+      "aiInteractions": "AI Interactions",
+      "lastLogin": "Last Login",
+      "quickLinks": "Quick Links"
+    },
+    "deleteModal": {
+      "title": "Delete Account",
+      "warning": "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.",
+      "cancel": "Cancel",
+      "confirm": "Delete Account"
+    }
   }
 }
