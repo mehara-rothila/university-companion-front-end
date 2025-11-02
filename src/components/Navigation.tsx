@@ -75,49 +75,19 @@ const Navigation = () => {
         </div>
 
         {/* Desktop menu */}
-        <nav className="hidden lg:flex items-center space-x-4">
-          {/* Smart University Navigation Links */}
-          <Link href="/" className="nav-link text-sm" onClick={handleNavigation}>
-            <Home className="inline h-4 w-4 mr-1" />
-            {t('nav.home')}
-          </Link>
-          <Link href="/dashboard" className="nav-link text-sm" onClick={handleNavigation}>
-            <User className="inline h-4 w-4 mr-1" />
-            {t('nav.dashboard')}
-          </Link>
-          <Link href="/chatbot" className="nav-link text-sm" onClick={handleNavigation}>
-            <Bot className="inline h-4 w-4 mr-1" />
-            {t('nav.aiAssistant')}
-          </Link>
-          <Link href="/navigation" className="nav-link text-sm" onClick={handleNavigation}>
-            <MapPin className="inline h-4 w-4 mr-1" />
-            {t('nav.navigation')}
-          </Link>
-          <Link href="/study-spaces" className="nav-link text-sm" onClick={handleNavigation}>
-            <BookOpen className="inline h-4 w-4 mr-1" />
-            {t('nav.study')}
-          </Link>
-          <Link href="/wellness" className="nav-link text-sm" onClick={handleNavigation}>
-            <Heart className="inline h-4 w-4 mr-1" />
-            {t('nav.wellness')}
-          </Link>
-          <Link href="/weather" className="nav-link text-sm" onClick={handleNavigation}>
-            <Cloud className="inline h-4 w-4 mr-1" />
-            {t('nav.weather')}
-          </Link>
-
-          {/* My Uploads Link - Only show for authenticated users */}
+        <nav className="hidden lg:flex items-center space-x-6">
+          {/* Dashboard - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/my-uploads" className="nav-link text-sm" onClick={handleNavigation}>
-              <FolderOpen className="inline h-4 w-4 mr-1" />
-              {t('nav.myUploads')}
+            <Link href="/dashboard" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+              <User className="inline h-4 w-4 mr-1.5" />
+              {t('nav.dashboard')}
             </Link>
           )}
 
           {/* Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-md" onClick={handleNavigation}>
-              <Settings className="inline h-4 w-4 mr-1" />
+            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-3 py-1.5 rounded-lg font-medium" onClick={handleNavigation}>
+              <Settings className="inline h-4 w-4 mr-1.5" />
               {t('nav.admin')}
             </Link>
           )}
