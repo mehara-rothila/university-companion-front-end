@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
+import Navigation from '../../components/Navigation'
 import { useDarkMode } from '../context/DarkModeContext'
 import { useAuth } from '../context/AuthContext'
 import { useTranslation } from '@/contexts/TranslationContext'
@@ -72,8 +73,9 @@ function LoginForm() {
   return (
     <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'}`}>
       <AnimatedBackground />
-      
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <Navigation />
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 pt-20">
         <div className="glass-premium-card rounded-3xl p-6 sm:p-8 w-full max-w-md animate-glass-fade-in">
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">{t('auth.login.title')}</h1>
@@ -165,12 +167,6 @@ function LoginForm() {
                 {t('auth.login.signUpLink')}
               </Link>
             </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              {t('auth.login.backToHome')}
-            </Link>
           </div>
         </div>
       </div>

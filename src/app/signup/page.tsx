@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
+import Navigation from '../../components/Navigation'
 import { useDarkMode } from '../context/DarkModeContext'
 import { useTranslation } from '@/contexts/TranslationContext'
 
@@ -76,8 +77,9 @@ export default function SignupPage() {
   return (
     <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'}`}>
       <AnimatedBackground />
-      
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <Navigation />
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 pt-20">
         <div className="glass-premium-card rounded-3xl p-8 w-full max-w-2xl animate-glass-fade-in">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold gradient-text mb-2">{t('auth.signup.title')}</h1>
@@ -283,12 +285,6 @@ export default function SignupPage() {
                 {t('auth.signup.signInLink')}
               </Link>
             </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              {t('auth.signup.backToHome')}
-            </Link>
           </div>
         </div>
       </div>
