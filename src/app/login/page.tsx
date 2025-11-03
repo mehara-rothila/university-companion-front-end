@@ -4,8 +4,10 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
+import Navigation from '../../components/Navigation'
 import { useDarkMode } from '../context/DarkModeContext'
 import { useAuth } from '../context/AuthContext'
+import { useTranslation } from '@/contexts/TranslationContext'
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -18,6 +20,7 @@ function LoginForm() {
   const searchParams = useSearchParams()
   const { isDarkMode } = useDarkMode()
   const { login, loginWithGoogle } = useAuth()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const errorParam = searchParams.get('error')
@@ -39,10 +42,10 @@ function LoginForm() {
         const from = searchParams.get('from') || '/dashboard';
         router.push(from);
       } else {
-        setError('Invalid username/email or password');
+        setError(t('auth.login.errorInvalidCredentials'));
       }
     } catch (err) {
-      setError('Connection error. Please try again.');
+      setError(t('auth.login.errorConnection'));
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +64,7 @@ function LoginForm() {
       setError('')
       await loginWithGoogle()
     } catch (err) {
-      setError('Google login failed. Please try again.')
+      setError(t('auth.login.errorGoogleLogin'))
     } finally {
       setIsLoading(false)
     }
@@ -70,12 +73,13 @@ function LoginForm() {
   return (
     <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'}`}>
       <AnimatedBackground />
-      
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <Navigation />
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 pt-20">
         <div className="glass-premium-card rounded-3xl p-6 sm:p-8 w-full max-w-md animate-glass-fade-in">
           <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Sign in to your Smart University account</p>
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">{t('auth.login.title')}</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{t('auth.login.subtitle')}</p>
           </div>
 
           {error && (
@@ -87,7 +91,7 @@ function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="usernameOrEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Username or Email
+                {t('auth.login.usernameOrEmail')}
               </label>
               <input
                 type="text"
@@ -97,17 +101,17 @@ function LoginForm() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your username or email"
+                placeholder={t('auth.login.usernamePlaceholder')}
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Password
+                  {t('auth.login.password')}
                 </label>
                 <Link href="/forgot-password" className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 animated-link">
-                  Forgot password?
+                  {t('auth.login.forgotPassword')}
                 </Link>
               </div>
               <input
@@ -118,7 +122,7 @@ function LoginForm() {
                 onChange={handleChange}
                 required
                 className="glass-input w-full px-4 py-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your password"
+                placeholder={t('auth.login.passwordPlaceholder')}
               />
             </div>
 
@@ -127,7 +131,7 @@ function LoginForm() {
               disabled={isLoading}
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? t('auth.login.signingIn') : t('auth.login.signIn')}
             </button>
           </form>
 
@@ -137,7 +141,7 @@ function LoginForm() {
                 <div className="w-full border-t border-gray-300 dark:border-gray-600" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">Or continue with</span>
+                <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">{t('auth.login.orContinueWith')}</span>
               </div>
             </div>
 
@@ -152,23 +156,17 @@ function LoginForm() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Continue with Google
+              {t('auth.login.continueWithGoogle')}
             </button>
           </div>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
-              Don&apos;t have an account?{' '}
+              {t('auth.login.noAccount')}{' '}
               <Link href="/signup" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
-                Sign up
+                {t('auth.login.signUpLink')}
               </Link>
             </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <Link href="/" className="text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 animated-link">
-              ← Back to Home
-            </Link>
           </div>
         </div>
       </div>
@@ -176,9 +174,14 @@ function LoginForm() {
   )
 }
 
+function LoadingFallback() {
+  const { t } = useTranslation()
+  return <div>{t('auth.login.loading')}</div>
+}
+
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingFallback />}>
       <LoginForm />
     </Suspense>
   )

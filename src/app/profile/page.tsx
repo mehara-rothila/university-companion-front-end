@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 // --- Interfaces ---
 interface UserProfile {
@@ -59,6 +60,7 @@ interface ActivityStats {
 
 export default function ProfilePage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -141,11 +143,11 @@ export default function ProfilePage() {
 
   // Tab navigation
   const tabs = [
-    { id: 'personal', name: 'Personal Info', icon: '👤' },
-    { id: 'preferences', name: 'Preferences', icon: '⚙️' },
-    { id: 'privacy', name: 'Privacy', icon: '🔒' },
-    { id: 'ai-features', name: 'AI Features', icon: '🤖' },
-    { id: 'activity', name: 'Activity', icon: '📊' }
+    { id: 'personal', name: t('profile.tabs.personal'), icon: '👤' },
+    { id: 'preferences', name: t('profile.tabs.preferences'), icon: '⚙️' },
+    { id: 'privacy', name: t('profile.tabs.privacy'), icon: '🔒' },
+    { id: 'ai-features', name: t('profile.tabs.aiFeatures'), icon: '🤖' },
+    { id: 'activity', name: t('profile.tabs.activity'), icon: '📊' }
   ];
 
   return (
@@ -185,7 +187,7 @@ export default function ProfilePage() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Edit Profile
+                    {t('profile.buttons.editProfile')}
                   </button>
                 ) : (
                   <div className="flex space-x-2">
@@ -204,13 +206,13 @@ export default function ProfilePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       )}
-                      {saveStatus === 'saving' ? 'Saving...' : 'Save Changes'}
+                      {saveStatus === 'saving' ? t('profile.buttons.saving') : t('profile.buttons.saveChanges')}
                     </button>
-                    <button 
+                    <button
                       onClick={() => setIsEditing(false)}
                       className={`px-6 py-2 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} rounded-lg font-medium transition-all duration-200`}
                     >
-                      Cancel
+                      {t('profile.buttons.cancel')}
                     </button>
                   </div>
                 )}
@@ -221,7 +223,7 @@ export default function ProfilePage() {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span className="text-sm font-medium">Saved!</span>
+                    <span className="text-sm font-medium">{t('profile.buttons.saved')}</span>
                   </div>
                 )}
               </div>
@@ -256,11 +258,11 @@ export default function ProfilePage() {
             {/* Personal Info Tab */}
             {activeTab === 'personal' && (
               <div className="space-y-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Personal Information</h2>
-                
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>{t('profile.personal.title')}</h2>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Full Name</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.fullName')}</label>
                     <input
                       type="text"
                       value={userProfile.personalInfo.name}
@@ -275,37 +277,37 @@ export default function ProfilePage() {
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Student ID</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.studentId')}</label>
                     <input
                       type="text"
                       value={userProfile.personalInfo.studentId}
                       disabled
                       className={`w-full px-4 py-3 rounded-lg border opacity-60 cursor-not-allowed ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100'
                           : 'bg-gray-100 border-gray-300 text-gray-900'
                       }`}
                     />
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>Student ID cannot be changed</p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>{t('profile.personal.studentIdNote')}</p>
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Email Address</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.email')}</label>
                     <input
                       type="email"
                       value={userProfile.personalInfo.email}
                       onChange={(e) => handleProfileUpdate('personalInfo', 'email', e.target.value)}
                       disabled={!isEditing}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100'
                           : 'bg-white border-gray-300 text-gray-900'
                       } ${!isEditing ? 'opacity-60 cursor-not-allowed' : 'focus:ring-2 focus:ring-purple-500 focus:border-transparent'}`}
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Phone Number</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.phone')}</label>
                     <input
                       type="tel"
                       value={userProfile.personalInfo.phone}
@@ -320,43 +322,43 @@ export default function ProfilePage() {
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Major</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.major')}</label>
                     <input
                       type="text"
                       value={userProfile.personalInfo.major}
                       onChange={(e) => handleProfileUpdate('personalInfo', 'major', e.target.value)}
                       disabled={!isEditing}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100'
                           : 'bg-white border-gray-300 text-gray-900'
                       } ${!isEditing ? 'opacity-60 cursor-not-allowed' : 'focus:ring-2 focus:ring-purple-500 focus:border-transparent'}`}
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Academic Year</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.academicYear')}</label>
                     <select
                       value={userProfile.personalInfo.academicYear}
                       onChange={(e) => handleProfileUpdate('personalInfo', 'academicYear', e.target.value)}
                       disabled={!isEditing}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100'
                           : 'bg-white border-gray-300 text-gray-900'
                       } ${!isEditing ? 'opacity-60 cursor-not-allowed' : 'focus:ring-2 focus:ring-purple-500 focus:border-transparent'}`}
                     >
-                      <option value="Year 1">Year 1</option>
-                      <option value="Year 2">Year 2</option>
-                      <option value="Year 3">Year 3</option>
-                      <option value="Year 4">Year 4</option>
-                      <option value="Postgraduate">Postgraduate</option>
+                      <option value="Year 1">{t('profile.personal.year1')}</option>
+                      <option value="Year 2">{t('profile.personal.year2')}</option>
+                      <option value="Year 3">{t('profile.personal.year3')}</option>
+                      <option value="Year 4">{t('profile.personal.year4')}</option>
+                      <option value="Postgraduate">{t('profile.personal.postgraduate')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Emergency Contact</label>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('profile.personal.emergencyContact')}</label>
                   <input
                     type="tel"
                     value={userProfile.personalInfo.emergencyContact}
@@ -375,16 +377,16 @@ export default function ProfilePage() {
             {/* Preferences Tab */}
             {activeTab === 'preferences' && (
               <div className="space-y-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Preferences</h2>
-                
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>{t('profile.preferences.title')}</h2>
+
                 {/* Notification Preferences */}
                 <div>
-                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Notification Preferences</h3>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('profile.preferences.notificationPreferences')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Object.entries(userProfile.preferences.notifications).map(([key, value]) => (
                       <div key={key} className="flex items-center justify-between">
                         <label className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} capitalize`}>
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                          {t(`profile.preferences.${key}`)}
                         </label>
                         <button
                           onClick={() => handleProfileUpdate('preferences', 'notifications', {
@@ -408,25 +410,32 @@ export default function ProfilePage() {
 
                 {/* Study Preferences */}
                 <div>
-                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Study Preferences</h3>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('profile.preferences.studyPreferences')}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {['Quiet Spaces', 'Group Study', 'Library', 'Outdoor Areas', 'Cafes', 'Late Night Study'].map((pref) => (
+                    {[
+                      { key: 'Quiet Spaces', label: t('profile.preferences.quietSpaces') },
+                      { key: 'Group Study', label: t('profile.preferences.groupStudy') },
+                      { key: 'Library', label: t('profile.preferences.library') },
+                      { key: 'Outdoor Areas', label: t('profile.preferences.outdoorAreas') },
+                      { key: 'Cafes', label: t('profile.preferences.cafes') },
+                      { key: 'Late Night Study', label: t('profile.preferences.lateNightStudy') }
+                    ].map((pref) => (
                       <button
-                        key={pref}
+                        key={pref.key}
                         onClick={() => {
                           const current = userProfile.preferences.studyPreferences;
-                          const updated = current.includes(pref)
-                            ? current.filter(p => p !== pref)
-                            : [...current, pref];
+                          const updated = current.includes(pref.key)
+                            ? current.filter(p => p !== pref.key)
+                            : [...current, pref.key];
                           handleProfileUpdate('preferences', 'studyPreferences', updated);
                         }}
                         className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
-                          userProfile.preferences.studyPreferences.includes(pref)
+                          userProfile.preferences.studyPreferences.includes(pref.key)
                             ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
                             : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-400 text-gray-700 dark:text-gray-300'
                         }`}
                       >
-                        {pref}
+                        {pref.label}
                       </button>
                     ))}
                   </div>
@@ -434,19 +443,24 @@ export default function ProfilePage() {
 
                 {/* Learning Style */}
                 <div>
-                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Learning Style</h3>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('profile.preferences.learningStyle')}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {['Visual', 'Auditory', 'Reading/Writing', 'Kinesthetic'].map((style) => (
+                    {[
+                      { key: 'Visual', label: t('profile.preferences.visual') },
+                      { key: 'Auditory', label: t('profile.preferences.auditory') },
+                      { key: 'Reading/Writing', label: t('profile.preferences.readingWriting') },
+                      { key: 'Kinesthetic', label: t('profile.preferences.kinesthetic') }
+                    ].map((style) => (
                       <button
-                        key={style}
-                        onClick={() => handleProfileUpdate('preferences', 'learningStyle', style)}
+                        key={style.key}
+                        onClick={() => handleProfileUpdate('preferences', 'learningStyle', style.key)}
                         className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
-                          userProfile.preferences.learningStyle === style
+                          userProfile.preferences.learningStyle === style.key
                             ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
                             : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-400 text-gray-700 dark:text-gray-300'
                         }`}
                       >
-                        {style}
+                        {style.label}
                       </button>
                     ))}
                   </div>
@@ -457,12 +471,12 @@ export default function ProfilePage() {
             {/* Privacy Tab */}
             {activeTab === 'privacy' && (
               <div className="space-y-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Privacy Settings</h2>
-                
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>{t('profile.privacy.title')}</h2>
+
                 <div className="space-y-6">
                   {/* Profile Visibility */}
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>Profile Visibility</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3`}>{t('profile.privacy.profileVisibility')}</label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       {['public', 'friends', 'private'].map((level) => (
                         <button
@@ -474,11 +488,9 @@ export default function ProfilePage() {
                               : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-400 text-gray-700 dark:text-gray-300'
                           }`}
                         >
-                          <h4 className="font-medium capitalize">{level}</h4>
+                          <h4 className="font-medium capitalize">{t(`profile.privacy.${level}`)}</h4>
                           <p className="text-xs opacity-70 mt-1">
-                            {level === 'public' && 'Visible to everyone'}
-                            {level === 'friends' && 'Visible to connections only'}
-                            {level === 'private' && 'Only visible to you'}
+                            {t(`profile.privacy.${level}Desc`)}
                           </p>
                         </button>
                       ))}
@@ -488,9 +500,9 @@ export default function ProfilePage() {
                   {/* Privacy Controls */}
                   <div className="space-y-4">
                     {[
-                      { key: 'dataSharing', label: 'Data Sharing with Third Parties', desc: 'Allow sharing anonymized data for research' },
-                      { key: 'analyticsOptIn', label: 'Analytics & Insights', desc: 'Help improve the app with usage analytics' },
-                      { key: 'locationTracking', label: 'Location Tracking', desc: 'Enable location-based features and navigation' }
+                      { key: 'dataSharing', label: t('profile.privacy.dataSharing'), desc: t('profile.privacy.dataSharingDesc') },
+                      { key: 'analyticsOptIn', label: t('profile.privacy.analytics'), desc: t('profile.privacy.analyticsDesc') },
+                      { key: 'locationTracking', label: t('profile.privacy.locationTracking'), desc: t('profile.privacy.locationTrackingDesc') }
                     ].map((setting) => (
                       <div key={setting.key} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                         <div className="flex items-center justify-between">
@@ -517,30 +529,30 @@ export default function ProfilePage() {
 
                   {/* Data Management */}
                   <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
-                    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-4`}>Data Management</h3>
+                    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-4`}>{t('profile.privacy.dataManagement')}</h3>
                     <div className="space-y-3">
                       <Link href="/ai-ethics" className={`inline-flex items-center text-sm ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-700 hover:text-red-800'} transition-colors duration-200`}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Export My Data
+                        {t('profile.privacy.exportData')}
                       </Link>
-                      
+
                       <Link href="/privacy" className={`inline-flex items-center text-sm ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-700 hover:text-red-800'} transition-colors duration-200 ml-6`}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        View Data Policy
+                        {t('profile.privacy.viewDataPolicy')}
                       </Link>
-                      
-                      <button 
+
+                      <button
                         onClick={() => setShowDeleteModal(true)}
                         className={`inline-flex items-center text-sm ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-700 hover:text-red-800'} transition-colors duration-200 ml-6`}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        Delete Account
+                        {t('profile.privacy.deleteAccount')}
                       </button>
                     </div>
                   </div>
@@ -551,16 +563,16 @@ export default function ProfilePage() {
             {/* AI Features Tab */}
             {activeTab === 'ai-features' && (
               <div className="space-y-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>AI Features</h2>
-                
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>{t('profile.aiFeatures.title')}</h2>
+
                 <div className="space-y-4">
                   {[
-                    { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language university assistance and support' },
-                    { key: 'studySpaceRecommendations', name: 'Study Space Recommendations', desc: 'ML-powered space suggestions based on preferences' },
-                    { key: 'scheduleOptimization', name: 'Schedule Optimization', desc: 'AI-driven calendar and task management' },
-                    { key: 'wellnessCheckins', name: 'Wellness Check-ins', desc: 'Mood tracking and mental health support' },
-                    { key: 'careerGuidance', name: 'Career Guidance', desc: 'AI-powered career path recommendations' },
-                    { key: 'smartNavigation', name: 'Smart Navigation', desc: 'Intelligent route planning and crowd analysis' }
+                    { key: 'chatbot', name: t('profile.aiFeatures.chatbot'), desc: t('profile.aiFeatures.chatbotDesc') },
+                    { key: 'studySpaceRecommendations', name: t('profile.aiFeatures.studySpaceRecs'), desc: t('profile.aiFeatures.studySpaceRecsDesc') },
+                    { key: 'scheduleOptimization', name: t('profile.aiFeatures.scheduleOptimization'), desc: t('profile.aiFeatures.scheduleOptimizationDesc') },
+                    { key: 'wellnessCheckins', name: t('profile.aiFeatures.wellnessCheckins'), desc: t('profile.aiFeatures.wellnessCheckinsDesc') },
+                    { key: 'careerGuidance', name: t('profile.aiFeatures.careerGuidance'), desc: t('profile.aiFeatures.careerGuidanceDesc') },
+                    { key: 'smartNavigation', name: t('profile.aiFeatures.smartNavigation'), desc: t('profile.aiFeatures.smartNavigationDesc') }
                   ].map((feature) => (
                     <div key={feature.key} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                       <div className="flex items-center justify-between">
@@ -587,18 +599,18 @@ export default function ProfilePage() {
 
                 {/* AI Ethics Link */}
                 <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
-                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-3`}>AI Transparency & Ethics</h3>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-3`}>{t('profile.aiFeatures.aiTransparency')}</h3>
                   <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'} mb-4`}>
-                    Learn about how our AI systems work, data usage, and ethical considerations.
+                    {t('profile.aiFeatures.aiTransparencyDesc')}
                   </p>
-                  <Link 
+                  <Link
                     href="/ai-ethics"
                     className={`inline-flex items-center text-sm ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-700 hover:text-blue-800'} transition-colors duration-200`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    View AI Ethics Dashboard
+                    {t('profile.aiFeatures.viewEthicsDashboard')}
                   </Link>
                 </div>
               </div>
@@ -607,40 +619,40 @@ export default function ProfilePage() {
             {/* Activity Tab */}
             {activeTab === 'activity' && (
               <div className="space-y-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>Activity Overview</h2>
-                
+                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>{t('profile.activity.title')}</h2>
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'}`}>
                     <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{activityStats.totalLogins}</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Total Logins</div>
+                    <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>{t('profile.activity.totalLogins')}</div>
                   </div>
-                  
+
                   <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
                     <div className="text-2xl font-bold text-green-600 dark:text-green-400">{activityStats.studySessionsBooked}</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Study Sessions</div>
+                    <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>{t('profile.activity.studySessions')}</div>
                   </div>
-                  
+
                   <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
                     <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{activityStats.wellnessCheckins}</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Wellness Check-ins</div>
+                    <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>{t('profile.activity.wellnessCheckins')}</div>
                   </div>
-                  
+
                   <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'}`}>
                     <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{activityStats.aiInteractions}</div>
-                    <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>AI Interactions</div>
+                    <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>{t('profile.activity.aiInteractions')}</div>
                   </div>
                 </div>
 
                 {/* Last Login */}
                 <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <h3 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>Last Login</h3>
+                  <h3 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>{t('profile.activity.lastLogin')}</h3>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{activityStats.lastLogin}</p>
                 </div>
 
                 {/* Quick Links */}
                 <div>
-                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Quick Links</h3>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('profile.activity.quickLinks')}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {[
                       { name: 'Dashboard', route: '/dashboard', icon: '🏠' },
@@ -680,23 +692,23 @@ export default function ProfilePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Delete Account</h2>
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>{t('profile.deleteModal.title')}</h2>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.
+                  {t('profile.deleteModal.warning')}
                 </p>
                 <div className="flex space-x-3">
-                  <button 
+                  <button
                     onClick={() => setShowDeleteModal(false)}
                     className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
                         : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     }`}
                   >
-                    Cancel
+                    {t('profile.deleteModal.cancel')}
                   </button>
                   <button className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200">
-                    Delete Account
+                    {t('profile.deleteModal.confirm')}
                   </button>
                 </div>
               </div>

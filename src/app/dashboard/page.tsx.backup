@@ -128,11 +128,246 @@ export default function Dashboard() {
     { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' }
   ];
 
-  // Translations now loaded from JSON files via TranslationContext
+  // Translation objects
+  const translations = {
+    en: {
+      greeting: {
+        morning: 'Good morning',
+        afternoon: 'Good afternoon',
+        evening: 'Good evening'
+      },
+      emergency: 'Emergency',
+      wellnessSupport: 'Wellness Support',
+      universityWeather: 'University Weather',
+      humidity: 'Humidity',
+      wind: 'Wind',
+      dailyWellnessCheckin: 'Daily Wellness Check-in',
+      comingSoon: 'Coming Soon',
+      wellnessTrackingDesc: 'Wellness tracking and mood monitoring will be available soon to help personalize your university experience.',
+      quickActions: 'Quick Actions',
+      aiAssistant: 'AI Assistant',
+      studySpaces: 'Study Spaces',
+      universityNavigation: 'University Navigation',
+      academicHub: 'Academic Hub',
+      available: 'Available',
+      universityServices: 'University Services',
+      notifications: 'Notifications',
+      socialEvents: 'Social & Events',
+      dining: 'Dining',
+      wellness: 'Wellness',
+      lostFound: 'Lost & Found',
+      library: 'Library',
+      soon: 'Soon',
+      additionalServices: 'Additional Services',
+      careerServices: 'Career Services',
+      financialAid: 'Financial Aid',
+      challenges: 'Challenges',
+      profile: 'Profile',
+      helpSupport: 'Help & Support',
+      platformStatus: 'Platform Status & Development',
+      nowAvailable: 'Now Available',
+      corePlatformDesc: 'Core platform features are now live and ready to use.',
+      lostFoundSystem: 'Lost & Found System',
+      financialAidPortal: 'Financial Aid Portal',
+      profileManagement: 'Profile Management',
+      challengesRewards: 'Challenges & Rewards',
+      aiAssistantFull: 'AI Assistant',
+      libraryServices: 'Library Services',
+      phase1: 'Coming Soon - Phase 1',
+      smartFeaturesDesc: 'Smart features launching in the next few weeks.',
+      phase2: 'Coming Soon - Phase 2',
+      enhancedServicesDesc: 'Enhanced university services and community features.',
+      diningServices: 'Dining Services',
+      wellnessHub: 'Wellness Hub',
+      socialEventsShort: 'Social & Events',
+      libraryIntegration: 'Library Integration',
+      platformUpdates: 'Platform Updates',
+      developmentNews: 'Development News',
+      welcomeUom: 'Welcome to UoM Smart University',
+      exploreFeatures: 'Explore the available features and stay tuned for more',
+      lostFoundAvailable: 'Lost & Found Available',
+      lostFoundDesc: 'You can now report and search for lost items',
+      financialAidActive: 'Financial Aid Portal Active',
+      financialAidDesc: 'Apply for scholarships and community support',
+      profileReady: 'Profile Management Ready',
+      profileDesc: 'Update your personal information and preferences',
+      platformLaunch: 'Platform Launch',
+      platformLaunchDesc: 'UoM Smart University platform is now live with initial features',
+      moreFeaturesDesc: 'AI Assistant, Study Spaces, and University Navigation launching soon',
+      systemUpdates: 'System Updates',
+      systemUpdatesDesc: 'Regular updates will bring new features and improvements',
+      comingSoonModal: {
+        title: 'Coming Soon',
+        description: 'This feature is currently under development and will be available soon. We are working hard to bring you the best university experience possible.',
+        currentlyAvailable: 'Currently Available:',
+        gotIt: 'Got it, thanks!'
+      }
+    },
+    si: {
+      greeting: {
+        morning: 'සුභ උදෑසනක්',
+        afternoon: 'සුභ දහවලක්',
+        evening: 'සුභ සන්ධ්‍යාවක්'
+      },
+      emergency: 'හදිසි',
+      wellnessSupport: 'සෞඛ්‍ය සහාය',
+      universityWeather: 'කැම්පස් කාලගුණය',
+      humidity: 'ආර්ද්‍රතාව',
+      wind: 'සුළං',
+      dailyWellnessCheckin: 'දෛනික සෞඛ්‍ය පරීක්ෂාව',
+      comingSoon: 'ඉක්මනින්',
+      wellnessTrackingDesc: 'ඔබේ කැම්පස් අත්දැකීම පුද්ගලීකරණය කිරීමට සෞඛ්‍ය ස්ථිතිය සහ මනෝ තත්වය නිරීක්ෂණය ඉක්මනින් ලබා ගත හැක.',
+      quickActions: 'ඉක්මන් ක්‍රියා',
+      aiAssistant: 'AI සහායක',
+      studySpaces: 'අධ්‍යයන ස්ථාන',
+      universityNavigation: 'කැම්පස් මඟ පෙන්වීම',
+      academicHub: 'ශාස්ත්‍රීය මධ්‍යස්ථානය',
+      available: 'ලබා ගත හැක',
+      universityServices: 'කැම්පස් සේවා',
+      notifications: 'දැනුම්දීම්',
+      socialEvents: 'සමාජීය සහ උත්සව',
+      dining: 'ආහාර ගැනීම',
+      wellness: 'සෞඛ්‍යය',
+      lostFound: 'නැති වූ සහ සොයා ගත්',
+      library: 'පුස්තකාලය',
+      soon: 'ඉක්මනින්',
+      additionalServices: 'අමතර සේවාවන්',
+      careerServices: 'වෘත්තීය සේවාවන්',
+      financialAid: 'මූල්‍ය ආධාර',
+      challenges: 'අභියෝග',
+      profile: 'පැතිකඩ',
+      helpSupport: 'උපකාර සහ සහාය',
+      platformStatus: 'වේදිකා තත්වය සහ සංවර්ධනය',
+      nowAvailable: 'දැන් ලබා ගත හැක',
+      corePlatformDesc: 'මූලික වේදිකා විශේෂාංග දැන් සජීව වී භාවිතයට සූදානම්.',
+      lostFoundSystem: 'නැති වූ සහ සොයා ගත් ක්‍රමය',
+      financialAidPortal: 'මූල්‍ය ආධාර ද්වාරය',
+      profileManagement: 'පැතිකඩ කළමනාකරණය',
+      challengesRewards: 'අභියෝග සහ ත්‍යාග',
+      aiAssistantFull: 'AI සහායක',
+      libraryServices: 'පුස්තකාල සේවා',
+      phase1: 'ඉක්මනින් - පළමු අදියර',
+      smartFeaturesDesc: 'ස්මාර්ත් විශේෂාංග ඉදිරි සති කිහිපය තුළ ආරම්භ වේ.',
+      phase2: 'ඉක්මනින් - දෙවන අදියර',
+      enhancedServicesDesc: 'වැඩිදියුණු කළ කැම්පස් සේවා සහ ප්‍රජා විශේෂාංග.',
+      diningServices: 'ආහාර සේවා',
+      wellnessHub: 'සෞඛ්‍ය මධ්‍යස්ථානය',
+      socialEventsShort: 'සමාජීය සහ උත්සව',
+      libraryIntegration: 'පුස්තකාල ඒකාබද්ධතාව',
+      platformUpdates: 'වේදිකා යාවත්කාල',
+      developmentNews: 'සංවර්ධන ප්‍රවෘත්ති',
+      welcomeUom: 'UoM ස්මාර්ට් කැම්පස් වෙත ආයුබෝවන්',
+      exploreFeatures: 'ලබා ගත හැකි විශේෂාංග ගවේෂණය කර වැඩි දේ සඳහා බලා සිටින්න',
+      lostFoundAvailable: 'නැති වූ සහ සොයා ගත් ලබා ගත හැක',
+      lostFoundDesc: 'ඔබට දැන් නැති වූ අයිතම වාර්තා කර සොයා ගත හැක',
+      financialAidActive: 'මූල්‍ය ආධාර ද්වාරය සක්‍රීය',
+      financialAidDesc: 'ශිෂ්‍යත්ව සහ ප්‍රජා සහයෝගිතාව සඳහා අයදුම් කරන්න',
+      profileReady: 'පැතිකඩ කළමනාකරණය සූදානම්',
+      profileDesc: 'ඔබේ පුද්ගලික තොරතුරු සහ මනාපයන් යාවත්කාලීන කරන්න',
+      platformLaunch: 'වේදිකා දියත් කිරීම',
+      platformLaunchDesc: 'UoM ස්මාර්ට් කැම්පස් වේදිකාව මූලික විශේෂාංග සමඟ දැන් සජීවයි',
+      moreFeaturesDesc: 'AI සහායක, අධ්‍යයන ස්ථාන සහ කැම්පස් මඟ පෙන්වීම ඉක්මනින් ආරම්භ වේ',
+      systemUpdates: 'පද්ධති යාවත්කාල',
+      systemUpdatesDesc: 'නිතිපතා යාවත්කාල නව විශේෂාංග සහ වැඩිදියුණු කිරීම් ගෙන එනු ඇත',
+      comingSoonModal: {
+        title: 'ඉක්මනින්',
+        description: 'මෙම විශේෂාංගය දැනට සංවර්ධනය වෙමින් පවතින අතර ඉක්මනින් ලබා ගත හැකි වනු ඇත. ඔබට හොඳම කැම්පස් අත්දැකීමක් ලබා දීමට අපි වෙහෙස මහන්සි වෙමින් සිටිමු.',
+        currentlyAvailable: 'දැනට ලබා ගත හැක:',
+        gotIt: 'හරි, ස්තූතියි!'
+      }
+    },
+    ta: {
+      greeting: {
+        morning: 'காலை வணக்கம்',
+        afternoon: 'மதிய வணக்கம்',
+        evening: 'மாலை வணக்கம்'
+      },
+      emergency: 'அவசரம்',
+      wellnessSupport: 'நலவாழ்வு ஆதரவு',
+      universityWeather: 'வளாக வானிலை',
+      humidity: 'ஈரப்பதம்',
+      wind: 'காற்று',
+      dailyWellnessCheckin: 'தினசரி நலவாழ்வு சரிபார்ப்பு',
+      comingSoon: 'விரைவில்',
+      wellnessTrackingDesc: 'உங்கள் வளாக அனுபவத்தை தனிப்பயனாக்க நலவாழ்வு கண்காணிப்பு மற்றும் மனநிலை கண்காணிப்பு விரைவில் கிடைக்கும்.',
+      quickActions: 'விரைவு செயல்கள்',
+      aiAssistant: 'AI உதவியாளர்',
+      studySpaces: 'படிப்பு இடங்கள்',
+      universityNavigation: 'வளாக வழிகாட்டல்',
+      academicHub: 'கல்வி மையம்',
+      available: 'கிடைக்கும்',
+      universityServices: 'வளாக சேவைகள்',
+      notifications: 'அறிவிப்புகள்',
+      socialEvents: 'சமூக மற்றும் நிகழ்வுகள்',
+      dining: 'உணவு',
+      wellness: 'நலவாழ்வு',
+      lostFound: 'இழந்த மற்றும் கண்டெடுக்கப்பட்ட',
+      library: 'நூலகம்',
+      soon: 'விரைவில்',
+      additionalServices: 'கூடுதல் சேவைகள்',
+      careerServices: 'தொழில் சேவைகள்',
+      financialAid: 'நிதி உதவி',
+      challenges: 'சவால்கள்',
+      profile: 'சுயவிவரம்',
+      helpSupport: 'உதவி மற்றும் ஆதரவு',
+      platformStatus: 'தளம் நிலை மற்றும் மேம்பாடு',
+      nowAvailable: 'இப்போது கிடைக்கிறது',
+      corePlatformDesc: 'முக்கிய தள அம்சங்கள் இப்போது நேரலையாக உள்ளன மற்றும் பயன்படுத்த தயாராக உள்ளன.',
+      lostFoundSystem: 'இழந்த மற்றும் கண்டெடுக்கப்பட்ட அமைப்பு',
+      financialAidPortal: 'நிதி உதவி போர்ட்டல்',
+      profileManagement: 'சுயவிவர மேலாண்மை',
+      challengesRewards: 'சவால்கள் மற்றும் வெகுமதிகள்',
+      aiAssistantFull: 'AI உதவியாளர்',
+      libraryServices: 'நூலக சேவைகள்',
+      phase1: 'விரைவில் - முதல் கட்டம்',
+      smartFeaturesDesc: 'அடுத்த சில வாரங்களில் ஸ்மார்ட் அம்சங்கள் தொடங்கப்படும்.',
+      phase2: 'விரைவில் - இரண்டாம் கட்டம்',
+      enhancedServicesDesc: 'மேம்படுத்தப்பட்ட வளாக சேவைகள் மற்றும் சமூக அம்சங்கள்.',
+      diningServices: 'உணவு சேவைகள்',
+      wellnessHub: 'நலவாழ்வு மையம்',
+      socialEventsShort: 'சமூக மற்றும் நிகழ்வுகள்',
+      libraryIntegration: 'நூலக ஒருங்கிணைப்பு',
+      platformUpdates: 'தள புதுப்பிப்புகள்',
+      developmentNews: 'மேம்பாட்டு செய்திகள்',
+      welcomeUom: 'UoM ஸ்மார்ட் வளாகத்திற்கு வரவேற்கிறோம்',
+      exploreFeatures: 'கிடைக்கக்கூடிய அம்சங்களை ஆராய்ந்து மேலும் அறிய காத்திருங்கள்',
+      lostFoundAvailable: 'இழந்த மற்றும் கண்டெடுக்கப்பட்டது கிடைக்கும்',
+      lostFoundDesc: 'நீங்கள் இப்போது இழந்த பொருட்களை புகாரளித்து தேடலாம்',
+      financialAidActive: 'நிதி உதவி போர்ட்டல் செயல்பாட்டில்',
+      financialAidDesc: 'உதவித்தொகை மற்றும் சமூக ஆதரவுக்கு விண்ணப்பிக்கவும்',
+      profileReady: 'சுயவிவர மேலாண்மை தயார்',
+      profileDesc: 'உங்கள் தனிப்பட்ட தகவல் மற்றும் விருப்பத்தேர்வுகளை புதுப்பிக்கவும்',
+      platformLaunch: 'தள வெளியீடு',
+      platformLaunchDesc: 'UoM ஸ்மார்ட் வளாக தளம் ஆரம்ப அம்சங்களுடன் இப்போது நேரலையில் உள்ளது',
+      moreFeaturesDesc: 'AI உதவியாளர், படிப்பு இடங்கள் மற்றும் வளாக வழிகாட்டல் விரைவில் தொடங்கப்படும்',
+      systemUpdates: 'அமைப்பு புதுப்பிப்புகள்',
+      systemUpdatesDesc: 'வழக்கமான புதுப்பிப்புகள் புதிய அம்சங்கள் மற்றும் மேம்பாடுகளை கொண்டு வரும்',
+      comingSoonModal: {
+        title: 'விரைவில்',
+        description: 'இந்த அம்சம் தற்போது மேம்பாட்டில் உள்ளது மற்றும் விரைவில் கிடைக்கும். உங்களுக்கு சிறந்த வளாக அனுபவத்தை வழங்க நாங்கள் கடுமையாக உழைத்து வருகிறோம்.',
+        currentlyAvailable: 'தற்போது கிடைக்கும்:',
+        gotIt: 'சரி, நன்றி!'
+      }
+    }
+  };
 
   // Get current language info
   const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === locale) || languages[1];
+    return languages.find(lang => lang.code === currentLanguage) || languages[1];
+  };
+
+  // Translation function
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: unknown = translations[currentLanguage as keyof typeof translations];
+    for (const k of keys) {
+      if (typeof value === 'object' && value !== null && k in value) {
+        value = (value as Record<string, unknown>)[k];
+      } else {
+        return key;
+      }
+    }
+    return typeof value === 'string' ? value : key;
   };
 
   // Handle coming soon click
@@ -226,14 +461,14 @@ export default function Dashboard() {
                           key={language.code}
                           onClick={() => handleLanguageChange(language.code)}
                           className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
-                            locale === language.code
+                            currentLanguage === language.code
                               ? isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-50 text-blue-700'
                               : isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-medium">{language.name}</span>
-                            {locale === language.code && (
+                            {currentLanguage === language.code && (
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>

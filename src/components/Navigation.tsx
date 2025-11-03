@@ -5,12 +5,26 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const isDarkMode = false;
   const { user, isAuthenticated, logout } = useAuth();
+  const { locale, setLocale, t } = useTranslation();
+
+  // Language options
+  const languages = [
+    { code: 'si', name: 'සිංහල', nativeName: 'Sinhala' },
+    { code: 'en', name: 'English', nativeName: 'English' },
+    { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' }
+  ];
+
+  const getCurrentLanguage = () => {
+    return languages.find(lang => lang.code === locale) || languages[1];
+  };
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -54,59 +68,74 @@ const Navigation = () => {
             className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
             onClick={handleNavigation}
           >
-            <span className="hidden sm:block">Athena</span>
-            <span className="sm:hidden">Athena</span>
-            <span className="text-purple-800 dark:text-purple-400 block text-xs">Smart University</span>
+            <span className="hidden sm:block">{t('nav.brandName')}</span>
+            <span className="sm:hidden">{t('nav.brandName')}</span>
+            <span className="text-purple-800 dark:text-purple-400 block text-xs">{t('nav.brandTagline')}</span>
           </Link>
         </div>
 
         {/* Desktop menu */}
-        <nav className="hidden lg:flex items-center space-x-4">
-          {/* Smart University Navigation Links */}
-          <Link href="/" className="nav-link text-sm" onClick={handleNavigation}>
-            <Home className="inline h-4 w-4 mr-1" />
-            Home
-          </Link>
-          <Link href="/dashboard" className="nav-link text-sm" onClick={handleNavigation}>
-            <User className="inline h-4 w-4 mr-1" />
-            Dashboard
-          </Link>
-          <Link href="/chatbot" className="nav-link text-sm" onClick={handleNavigation}>
-            <Bot className="inline h-4 w-4 mr-1" />
-            AI Assistant
-          </Link>
-          <Link href="/navigation" className="nav-link text-sm" onClick={handleNavigation}>
-            <MapPin className="inline h-4 w-4 mr-1" />
-            Navigation
-          </Link>
-          <Link href="/study-spaces" className="nav-link text-sm" onClick={handleNavigation}>
-            <BookOpen className="inline h-4 w-4 mr-1" />
-            Study
-          </Link>
-          <Link href="/wellness" className="nav-link text-sm" onClick={handleNavigation}>
-            <Heart className="inline h-4 w-4 mr-1" />
-            Wellness
-          </Link>
-          <Link href="/weather" className="nav-link text-sm" onClick={handleNavigation}>
-            <Cloud className="inline h-4 w-4 mr-1" />
-            Weather
-          </Link>
-
-          {/* My Uploads Link - Only show for authenticated users */}
+        <nav className="hidden lg:flex items-center space-x-6">
+          {/* Dashboard - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/my-uploads" className="nav-link text-sm" onClick={handleNavigation}>
-              <FolderOpen className="inline h-4 w-4 mr-1" />
-              My Uploads
+            <Link href="/dashboard" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+              <User className="inline h-4 w-4 mr-1.5" />
+              {t('nav.dashboard')}
             </Link>
           )}
 
           {/* Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded-md" onClick={handleNavigation}>
-              <Settings className="inline h-4 w-4 mr-1" />
-              Admin
+            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-3 py-1.5 rounded-lg font-medium" onClick={handleNavigation}>
+              <Settings className="inline h-4 w-4 mr-1.5" />
+              {t('nav.admin')}
             </Link>
           )}
+
+          {/* Language Switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+              className="flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="text-sm font-medium">{getCurrentLanguage().name}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {showLanguageDropdown && (
+              <div className="absolute top-full right-0 mt-1 w-44 rounded-lg shadow-lg border bg-white dark:bg-gray-800 dark:border-gray-700 z-50">
+                {languages.map((language) => (
+                  <button
+                    key={language.code}
+                    onClick={() => {
+                      setLocale(language.code as 'en' | 'si' | 'ta');
+                      setShowLanguageDropdown(false);
+                    }}
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
+                      locale === language.code
+                        ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{language.name}</span>
+                      {locale === language.code && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {language.nativeName}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Auth Links */}
           {isAuthenticated ? (
@@ -130,16 +159,16 @@ const Navigation = () => {
                 }}
                 className="text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
               >
-                <LogOut className="inline h-5 w-5 mr-1" /> Logout
+                <LogOut className="inline h-5 w-5 mr-1" /> {t('nav.logout')}
               </button>
             </div>
           ) : (
-            <Link 
-              href="/login" 
-              className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center" 
+            <Link
+              href="/login"
+              className="text-white bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 px-5 py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg dark:shadow-purple-900/20 flex items-center"
               onClick={handleNavigation}
             >
-              <LogIn className="inline h-5 w-5 mr-1" /> Login
+              <LogIn className="inline h-5 w-5 mr-1" /> {t('nav.login')}
             </Link>
           )}
         </nav>
@@ -147,11 +176,11 @@ const Navigation = () => {
         {/* Mobile Hamburger button area */}
         <div className="lg:hidden flex items-center space-x-3">
           {/* Hamburger Button */}
-          <button 
-            type="button" 
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+          <button
+            type="button"
+            aria-label={isOpen ? t('nav.closeMenu') : t('nav.openMenu')}
             aria-expanded={isOpen}
-            className="p-2 rounded-md flex items-center transition-all duration-200 text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500" 
+            className="p-2 rounded-md flex items-center transition-all duration-200 text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
             onClick={handleToggle}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -180,61 +209,61 @@ const Navigation = () => {
       >
         <div className="p-5 space-y-3 border-t border-gray-100 dark:border-gray-700">
           {/* Mobile Smart University Navigation Links */}
-          <Link 
-            href="/" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Home className="inline h-5 w-5 mr-2"/> Home
+            <Home className="inline h-5 w-5 mr-2"/> {t('nav.home')}
           </Link>
-          <Link 
-            href="/dashboard" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/dashboard"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <User className="inline h-5 w-5 mr-2"/> Dashboard
+            <User className="inline h-5 w-5 mr-2"/> {t('nav.dashboard')}
           </Link>
-          <Link 
-            href="/chatbot" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/chatbot"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Bot className="inline h-5 w-5 mr-2"/> AI Assistant
+            <Bot className="inline h-5 w-5 mr-2"/> {t('nav.aiAssistant')}
           </Link>
-          <Link 
-            href="/navigation" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/navigation"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <MapPin className="inline h-5 w-5 mr-2"/> University Navigation
+            <MapPin className="inline h-5 w-5 mr-2"/> {t('nav.universityNavigation')}
           </Link>
-          <Link 
-            href="/study-spaces" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/study-spaces"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <BookOpen className="inline h-5 w-5 mr-2"/> Study Spaces
+            <BookOpen className="inline h-5 w-5 mr-2"/> {t('nav.studySpaces')}
           </Link>
-          <Link 
-            href="/academic" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/academic"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Calendar className="inline h-5 w-5 mr-2"/> Academic Hub
+            <Calendar className="inline h-5 w-5 mr-2"/> {t('nav.academicHub')}
           </Link>
-          <Link 
-            href="/wellness" 
-            className="mobile-nav-link flex items-center" 
+          <Link
+            href="/wellness"
+            className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Heart className="inline h-5 w-5 mr-2"/> Health & Wellness
+            <Heart className="inline h-5 w-5 mr-2"/> {t('nav.healthWellness')}
           </Link>
           <Link
             href="/weather"
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <Cloud className="inline h-5 w-5 mr-2"/> Weather
+            <Cloud className="inline h-5 w-5 mr-2"/> {t('nav.weather')}
           </Link>
 
           {/* Mobile My Uploads Link - Only show for authenticated users */}
@@ -244,7 +273,7 @@ const Navigation = () => {
               className="mobile-nav-link flex items-center"
               onClick={handleNavigation}
             >
-              <FolderOpen className="inline h-5 w-5 mr-2"/> My Uploads
+              <FolderOpen className="inline h-5 w-5 mr-2"/> {t('nav.myUploads')}
             </Link>
           )}
 
@@ -253,17 +282,17 @@ const Navigation = () => {
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <HelpCircle className="inline h-5 w-5 mr-2"/> Help & Support
+            <HelpCircle className="inline h-5 w-5 mr-2"/> {t('nav.helpSupport')}
           </Link>
 
           {/* Mobile Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link 
-              href="/admin" 
-              className="mobile-nav-link flex items-center" 
+            <Link
+              href="/admin"
+              className="mobile-nav-link flex items-center"
               onClick={handleNavigation}
             >
-              <Settings className="inline h-5 w-5 mr-2"/> Admin Panel
+              <Settings className="inline h-5 w-5 mr-2"/> {t('nav.adminPanel')}
             </Link>
           )}
 
@@ -288,24 +317,24 @@ const Navigation = () => {
                   }}
                   className="mobile-login-button w-full flex items-center justify-center bg-red-600 hover:bg-red-700"
                 >
-                  <LogOut className="inline h-5 w-5 mr-2" /> Logout
+                  <LogOut className="inline h-5 w-5 mr-2" /> {t('nav.logout')}
                 </button>
               </div>
             ) : (
               <>
-                <Link 
-                  href="/onboarding" 
-                  className="mobile-nav-link flex items-center" 
+                <Link
+                  href="/onboarding"
+                  className="mobile-nav-link flex items-center"
                   onClick={handleNavigation}
                 >
-                  <UserPlus className="inline h-5 w-5 mr-2"/> Get Started
+                  <UserPlus className="inline h-5 w-5 mr-2"/> {t('nav.getStarted')}
                 </Link>
-                <Link 
-                  href="/login" 
-                  className="mobile-login-button w-full flex items-center justify-center" 
+                <Link
+                  href="/login"
+                  className="mobile-login-button w-full flex items-center justify-center"
                   onClick={handleNavigation}
                 >
-                  <LogIn className="inline h-5 w-5 mr-2" /> Sign In
+                  <LogIn className="inline h-5 w-5 mr-2" /> {t('nav.signIn')}
                 </Link>
               </>
             )}
