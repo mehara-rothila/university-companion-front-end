@@ -400,5 +400,50 @@
       "page": "Page",
       "of": "of"
     }
+  },
+  "chatbot": {
+    "title": "Athena AI Assistant",
+    "subtitle": "Your intelligent university companion powered by Gemini 2.5 Pro",
+    "welcomeBack": "Welcome back, {{name}}!",
+    "features": {
+      "smartChat": {
+        "title": "Smart Chat",
+        "description": "Natural conversations"
+      },
+      "imageAnalysis": {
+        "title": "Image Analysis",
+        "description": "Upload & analyze"
+      },
+      "pdfReader": {
+        "title": "PDF Reader",
+        "description": "Extract & summarize"
+      },
+      "fastResponse": {
+        "title": "Fast Response",
+        "description": "Instant answers"
+      }
+    },
+    "tips": {
+      "title": "Quick Tips",
+      "imageUpload": "Image Upload: Upload screenshots, notes, diagrams, or photos for analysis",
+      "pdfUpload": "PDF Upload: Upload assignments, forms, or documents for summarization",
+      "askQuestions": "Ask Questions: \"What's in this image?\", \"Summarize this PDF\"",
+      "getHelp": "Get Help: Academic planning, campus navigation, wellness support"
+    },
+    "examples": {
+      "title": "Example Queries",
+      "queries": {
+        "assignment": "Help me understand this assignment",
+        "library": "What building is the library in?",
+        "summarize": "Summarize this document for me",
+        "financialAid": "How do I apply for financial aid?",
+        "studySpaces": "What are my study space options?",
+        "translate": "Translate this image to English"
+      }
+    },
+    "footer": {
+      "poweredBy": "Athena uses Gemini 2.5 Pro for intelligent, context-aware responses",
+      "security": "All uploaded files are securely stored and processed"
+    }
   }
 }

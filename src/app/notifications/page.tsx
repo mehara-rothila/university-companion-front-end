@@ -472,10 +472,10 @@ export default function NotificationsPage() {
           <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
             <div className="flex overflow-x-auto">
               {[
-                { id: 'all', label: 'All', count: notifications.filter(n => !n.isArchived).length },
-                { id: 'unread', label: 'Unread', count: unreadCount },
-                { id: 'archived', label: 'Archived', count: notifications.filter(n => n.isArchived).length },
-                { id: 'settings', label: 'Settings', count: null }
+                { id: 'all', label: t('notifications.tabs.all'), count: notifications.filter(n => !n.isArchived).length },
+                { id: 'unread', label: t('notifications.tabs.unread'), count: unreadCount },
+                { id: 'archived', label: t('notifications.tabs.archived'), count: notifications.filter(n => n.isArchived).length },
+                { id: 'settings', label: t('notifications.tabs.settings'), count: null }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -505,14 +505,14 @@ export default function NotificationsPage() {
           {(showSettings || activeTab === 'settings') && (
             <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
               <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                Notification Settings
+                {t('notifications.settings.title')}
               </h3>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Notification Categories */}
                 <div>
                   <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                    Categories
+                    {t('notifications.settings.categories')}
                   </h4>
                   
                   <div className="space-y-4">
@@ -521,8 +521,8 @@ export default function NotificationsPage() {
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center">
                             <span className="text-lg mr-2">{getTypeIcon(category)}</span>
-                            <h5 className={`font-medium capitalize ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                              {category}
+                            <h5 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              {t(`notifications.settings.categoryLabels.${category}`)}
                             </h5>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
@@ -548,15 +548,15 @@ export default function NotificationsPage() {
                                   checked={value as boolean}
                                   onChange={(e) => setSettings(prev => ({
                                     ...prev,
-                                    [category]: { 
-                                      ...categorySettings, 
-                                      [setting]: e.target.checked 
+                                    [category]: {
+                                      ...categorySettings,
+                                      [setting]: e.target.checked
                                     }
                                   }))}
                                   className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                 />
-                                <span className={`ml-2 text-sm capitalize ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                  {setting.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                                <span className={`ml-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                  {t(`notifications.settings.${category}Options.${setting}`)}
                                 </span>
                               </label>
                             ))}
@@ -572,13 +572,13 @@ export default function NotificationsPage() {
                   {/* Delivery Methods */}
                   <div>
                     <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                      Delivery Methods
+                      {t('notifications.settings.deliveryMethods')}
                     </h4>
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} space-y-3`}>
                       {Object.entries(settings.delivery).map(([method, enabled]) => (
                         <label key={method} className="flex items-center justify-between">
-                          <span className={`capitalize ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {method === 'inApp' ? 'In-App' : method}
+                          <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {t(`notifications.settings.deliveryOptions.${method}`)}
                           </span>
                           <input
                             type="checkbox"
@@ -597,12 +597,12 @@ export default function NotificationsPage() {
                   {/* Quiet Hours */}
                   <div>
                     <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                      Schedule
+                      {t('notifications.settings.schedule')}
                     </h4>
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} space-y-4`}>
                       <label className="flex items-center justify-between">
                         <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Enable Quiet Hours
+                          {t('notifications.settings.scheduleOptions.enableQuietHours')}
                         </span>
                         <input
                           type="checkbox"
@@ -622,7 +622,7 @@ export default function NotificationsPage() {
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className={`block text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                              Start Time
+                              {t('notifications.settings.scheduleOptions.startTime')}
                             </label>
                             <input
                               type="time"
@@ -635,15 +635,15 @@ export default function NotificationsPage() {
                                 }
                               }))}
                               className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                                isDarkMode 
-                                  ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                                isDarkMode
+                                  ? 'bg-gray-700 border-gray-600 text-gray-100'
                                   : 'bg-white border-gray-300 text-gray-900'
                               } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                             />
                           </div>
                           <div>
                             <label className={`block text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                              End Time
+                              {t('notifications.settings.scheduleOptions.endTime')}
                             </label>
                             <input
                               type="time"
@@ -664,10 +664,10 @@ export default function NotificationsPage() {
                           </div>
                         </div>
                       )}
-                      
+
                       <label className="flex items-center justify-between">
                         <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Reduce notifications on weekends
+                          {t('notifications.settings.scheduleOptions.reduceWeekends')}
                         </span>
                         <input
                           type="checkbox"
@@ -685,12 +685,12 @@ export default function NotificationsPage() {
                   {/* Save Button */}
                   <button
                     onClick={() => {
-                      alert('Settings saved successfully!');
+                      alert(t('notifications.messages.settingsSaved'));
                       setShowSettings(false);
                     }}
                     className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                   >
-                    Save Settings
+                    {t('notifications.buttons.saveSettings')}
                   </button>
                 </div>
               </div>
@@ -703,87 +703,87 @@ export default function NotificationsPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    Type
+                    {t('notifications.filters.type')}
                   </label>
                   <select
                     value={filters.type}
                     onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100'
                         : 'bg-white border-gray-300 text-gray-900'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">All Types</option>
-                    <option value="GENERAL">General</option>
-                    <option value="ACADEMIC">Academic</option>
-                    <option value="SOCIAL">Social</option>
-                    <option value="WELLNESS">Wellness</option>
-                    <option value="SYSTEM">System</option>
-                    <option value="FINANCIAL_AID">Financial Aid</option>
-                    <option value="DINING">Dining</option>
-                    <option value="LIBRARY">Library</option>
-                    <option value="LOST_FOUND">Lost & Found</option>
+                    <option value="all">{t('notifications.filterOptions.allTypes')}</option>
+                    <option value="GENERAL">{t('notifications.types.general')}</option>
+                    <option value="ACADEMIC">{t('notifications.types.academic')}</option>
+                    <option value="SOCIAL">{t('notifications.types.social')}</option>
+                    <option value="WELLNESS">{t('notifications.types.wellness')}</option>
+                    <option value="SYSTEM">{t('notifications.types.system')}</option>
+                    <option value="FINANCIAL_AID">{t('notifications.types.financialAid')}</option>
+                    <option value="DINING">{t('notifications.types.dining')}</option>
+                    <option value="LIBRARY">{t('notifications.types.library')}</option>
+                    <option value="LOST_FOUND">{t('notifications.types.lostFound')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    Priority
+                    {t('notifications.filters.priority')}
                   </label>
                   <select
                     value={filters.priority}
                     onChange={(e) => setFilters(prev => ({ ...prev, priority: e.target.value }))}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100'
                         : 'bg-white border-gray-300 text-gray-900'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">All Priorities</option>
-                    <option value="URGENT">Urgent</option>
-                    <option value="HIGH">High</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="LOW">Low</option>
+                    <option value="all">{t('notifications.filterOptions.allPriorities')}</option>
+                    <option value="URGENT">{t('notifications.priorities.urgent')}</option>
+                    <option value="HIGH">{t('notifications.priorities.high')}</option>
+                    <option value="MEDIUM">{t('notifications.priorities.medium')}</option>
+                    <option value="LOW">{t('notifications.priorities.low')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    Time
+                    {t('notifications.filters.time')}
                   </label>
                   <select
                     value={filters.timeframe}
                     onChange={(e) => setFilters(prev => ({ ...prev, timeframe: e.target.value }))}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100'
                         : 'bg-white border-gray-300 text-gray-900'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
+                    <option value="all">{t('notifications.filterOptions.allTime')}</option>
+                    <option value="today">{t('notifications.filterOptions.today')}</option>
+                    <option value="week">{t('notifications.filterOptions.week')}</option>
+                    <option value="month">{t('notifications.filterOptions.month')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    Status
+                    {t('notifications.filters.status')}
                   </label>
                   <select
                     value={filters.readStatus}
                     onChange={(e) => setFilters(prev => ({ ...prev, readStatus: e.target.value }))}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100'
                         : 'bg-white border-gray-300 text-gray-900'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">All</option>
-                    <option value="read">Read</option>
-                    <option value="unread">Unread</option>
+                    <option value="all">{t('notifications.filterOptions.all')}</option>
+                    <option value="read">{t('notifications.filterOptions.read')}</option>
+                    <option value="unread">{t('notifications.filterOptions.unread')}</option>
                   </select>
                 </div>
               </div>
@@ -839,10 +839,10 @@ export default function NotificationsPage() {
                           <div className={`mb-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             <span className="mr-4">📅 {new Date(notification.createdAt).toLocaleDateString()}</span>
                             {notification.expiresAt && (
-                              <span className="mr-4">⏰ Expires: {new Date(notification.expiresAt).toLocaleDateString()}</span>
+                              <span className="mr-4">⏰ {t('notifications.timeLabels.expires')}: {new Date(notification.expiresAt).toLocaleDateString()}</span>
                             )}
                             <span className={`px-2 py-1 rounded text-xs ${notification.target === 'ALL_STUDENTS' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'}`}>
-                              {notification.target === 'ALL_STUDENTS' ? 'All Students' : 'Targeted'}
+                              {notification.target === 'ALL_STUDENTS' ? t('notifications.target.allStudents') : t('notifications.target.targeted')}
                             </span>
                           </div>
                           
@@ -853,15 +853,15 @@ export default function NotificationsPage() {
                                 onClick={() => markAsRead(notification.id)}
                                 className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
                               >
-                                Mark as read
+                                {t('notifications.actions.markAsRead')}
                               </button>
                             )}
-                            
+
                             <button
                               onClick={() => archiveNotification(notification.id)}
                               className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
                             >
-                              Archive
+                              {t('notifications.actions.archive')}
                             </button>
                           </div>
                         </div>
@@ -875,10 +875,10 @@ export default function NotificationsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1m14 0V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1" />
                   </svg>
                   <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                    No notifications found
+                    {t('notifications.messages.noNotifications')}
                   </h3>
                   <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {activeTab === 'unread' ? "You're all caught up!" : 'Try adjusting your filters to see more notifications.'}
+                    {activeTab === 'unread' ? t('notifications.messages.allCaughtUp') : t('notifications.messages.adjustFilters')}
                   </p>
                 </div>
               )}
@@ -893,17 +893,17 @@ export default function NotificationsPage() {
                 onClick={() => setCurrentPage(prev => prev - 1)}
                 className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                Previous
+                {t('notifications.pagination.previous')}
               </button>
               <span className={`px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                Page {currentPage + 1} of {totalPages}
+                {t('notifications.pagination.page')} {currentPage + 1} {t('notifications.pagination.of')} {totalPages}
               </span>
               <button
                 disabled={currentPage >= totalPages - 1}
                 onClick={() => setCurrentPage(prev => prev + 1)}
                 className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                Next
+                {t('notifications.pagination.next')}
               </button>
             </div>
           )}
