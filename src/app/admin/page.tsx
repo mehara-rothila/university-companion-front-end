@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
@@ -60,6 +61,7 @@ interface PaginatedUsers {
 export default function AdminPanel() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [users, setUsers] = useState<PaginatedUsers | null>(null);
   const [loading, setLoading] = useState(true);
@@ -161,7 +163,7 @@ export default function AdminPanel() {
 
   // Delete user
   const deleteUser = async (userId: number) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm(t('admin.messages.confirmDelete'))) return;
 
     try {
       await axios.delete(`${API_BASE}/admin/users/${userId}`, {
@@ -224,8 +226,8 @@ export default function AdminPanel() {
   // Bulk actions
   const performBulkAction = async (action: string) => {
     if (selectedUsers.length === 0) return;
-    
-    if (!confirm(`Are you sure you want to ${action} ${selectedUsers.length} user(s)?`)) return;
+
+    if (!confirm(t('admin.messages.confirmBulkAction', { action, count: selectedUsers.length }))) return;
 
     try {
       await axios.post(`${API_BASE}/admin/users/bulk-action`, {
@@ -344,8 +346,8 @@ export default function AdminPanel() {
           <AnimatedBackground variant="dashboard" />
           <div className="flex items-center justify-center h-screen">
             <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-              <p>You need admin privileges to access this page.</p>
+              <h1 className="text-2xl font-bold mb-4">{t('admin.accessDenied.title')}</h1>
+              <p>{t('admin.accessDenied.message')}</p>
             </div>
           </div>
         </main>
@@ -397,10 +399,10 @@ export default function AdminPanel() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Admin Dashboard
+                {t('admin.title')}
               </h1>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
-                Comprehensive administrative control panel for managing users, financial aid applications, and system-wide settings.
+                {t('admin.subtitle')}
               </p>
             </div>
           </div>
@@ -408,9 +410,9 @@ export default function AdminPanel() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
             {[
-              { 
-                title: 'Total Users', 
-                value: stats?.totalUsers || 0, 
+              {
+                title: t('admin.stats.totalUsers'),
+                value: stats?.totalUsers || 0,
                 icon: (
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -419,9 +421,9 @@ export default function AdminPanel() {
                 color: 'from-blue-500/20 to-blue-600/20',
                 borderColor: 'border-blue-400/30'
               },
-              { 
-                title: 'Students', 
-                value: stats?.totalStudents || 0, 
+              {
+                title: t('admin.stats.students'),
+                value: stats?.totalStudents || 0,
                 icon: (
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
@@ -432,9 +434,9 @@ export default function AdminPanel() {
                 color: 'from-green-500/20 to-green-600/20',
                 borderColor: 'border-green-400/30'
               },
-              { 
-                title: 'Faculty', 
-                value: stats?.totalFaculty || 0, 
+              {
+                title: t('admin.stats.faculty'),
+                value: stats?.totalFaculty || 0,
                 icon: (
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -443,9 +445,9 @@ export default function AdminPanel() {
                 color: 'from-purple-500/20 to-purple-600/20',
                 borderColor: 'border-purple-400/30'
               },
-              { 
-                title: 'Admins', 
-                value: stats?.totalAdmins || 0, 
+              {
+                title: t('admin.stats.admins'),
+                value: stats?.totalAdmins || 0,
                 icon: (
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -490,21 +492,21 @@ export default function AdminPanel() {
                     {stats?.totalUsers || 0}
                   </span>
                   <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`}>
-                    Total Users
+                    {t('admin.modules.userManagement.statusLabel')}
                   </span>
                 </div>
               </div>
               <div className="flex-grow">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                  User Management
+                  {t('admin.modules.userManagement.title')}
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
-                  Manage student, faculty, and admin accounts with comprehensive user control features
+                  {t('admin.modules.userManagement.description')}
                 </p>
               </div>
               <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} flex items-center justify-end`}>
-                  Manage Users
+                  {t('admin.modules.userManagement.action')}
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </span>
               </div>
@@ -519,24 +521,24 @@ export default function AdminPanel() {
                   </div>
                   <div className="text-right">
                     <span className={`text-sm font-semibold ${isDarkMode ? 'text-green-300' : 'text-green-600'} bg-gradient-to-r ${isDarkMode ? 'from-green-400 to-green-300' : 'from-green-600 to-green-500'} bg-clip-text text-transparent block`}>
-                      ACTIVE
+                      {t('admin.modules.financialAid.status')}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-500'}`}>
-                      Available
+                      {t('admin.modules.financialAid.availability')}
                     </span>
                   </div>
                 </div>
                 <div className="flex-grow">
                   <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                    Financial Aid
+                    {t('admin.modules.financialAid.title')}
                   </h3>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
-                    Review and manage financial aid applications, track funding status, and process approvals
+                    {t('admin.modules.financialAid.description')}
                   </p>
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-green-300' : 'text-green-600'} flex items-center justify-end`}>
-                    Manage Applications
+                    {t('admin.modules.financialAid.action')}
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
@@ -552,24 +554,24 @@ export default function AdminPanel() {
                   </div>
                   <div className="text-right">
                     <span className={`text-sm font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} bg-gradient-to-r ${isDarkMode ? 'from-amber-400 to-amber-300' : 'from-amber-600 to-amber-500'} bg-clip-text text-transparent block`}>
-                      NEW
+                      {t('admin.modules.notifications.status')}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`}>
-                      Available
+                      {t('admin.modules.notifications.availability')}
                     </span>
                   </div>
                 </div>
                 <div className="flex-grow">
                   <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                    Notifications
+                    {t('admin.modules.notifications.title')}
                   </h3>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
-                    Create and manage notifications for all students or specific users
+                    {t('admin.modules.notifications.description')}
                   </p>
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} flex items-center justify-end`}>
-                    Manage Notifications
+                    {t('admin.modules.notifications.action')}
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
@@ -585,24 +587,24 @@ export default function AdminPanel() {
                   </div>
                   <div className="text-right">
                     <span className={`text-sm font-semibold ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} bg-gradient-to-r ${isDarkMode ? 'from-orange-400 to-orange-300' : 'from-orange-600 to-orange-500'} bg-clip-text text-transparent block`}>
-                      ACTIVE
+                      {t('admin.modules.competitions.status')}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`}>
-                      Available
+                      {t('admin.modules.competitions.availability')}
                     </span>
                   </div>
                 </div>
                 <div className="flex-grow">
                   <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                    Competitions
+                    {t('admin.modules.competitions.title')}
                   </h3>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
-                    Review and approve competition submissions from faculty and students
+                    {t('admin.modules.competitions.description')}
                   </p>
                 </div>
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} flex items-center justify-end`}>
-                    Manage Competitions
+                    {t('admin.modules.competitions.action')}
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
@@ -617,24 +619,24 @@ export default function AdminPanel() {
                 </div>
                 <div className="text-right">
                   <span className={`text-sm font-semibold ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} bg-gradient-to-r ${isDarkMode ? 'from-purple-400 to-purple-300' : 'from-purple-600 to-purple-500'} bg-clip-text text-transparent block`}>
-                    SOON
+                    {t('admin.modules.systemSettings.status')}
                   </span>
                   <span className={`text-xs ${isDarkMode ? 'text-purple-400' : 'text-purple-500'}`}>
-                    Coming
+                    {t('admin.modules.systemSettings.availability')}
                   </span>
                 </div>
               </div>
               <div className="flex-grow">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                  System Settings
+                  {t('admin.modules.systemSettings.title')}
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
-                  Configure system-wide settings, manage preferences, and control platform features
+                  {t('admin.modules.systemSettings.description')}
                 </p>
               </div>
               <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-600'} flex items-center justify-end opacity-60`}>
-                  Coming Soon
+                  {t('admin.modules.systemSettings.action')}
                   <Clock className="w-4 h-4 ml-1" />
                 </span>
               </div>
@@ -644,14 +646,14 @@ export default function AdminPanel() {
           {/* Quick Actions */}
           <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm mb-8 animate-fade-in`}>
             <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
-              Quick Actions
+              {t('admin.quickActions.title')}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => openUserModal()}
                 className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
-                  isDarkMode 
-                    ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20' 
+                  isDarkMode
+                    ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20'
                     : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
                 }`}
               >
@@ -661,14 +663,14 @@ export default function AdminPanel() {
                   </svg>
                 </div>
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
-                  Add New User
+                  {t('admin.quickActions.addUser')}
                 </span>
               </button>
 
               <Link href="/admin/financial-aid">
                 <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center text-center ${
-                  isDarkMode 
-                    ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20' 
+                  isDarkMode
+                    ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20'
                     : 'border-gray-300 hover:border-green-400 bg-gray-50 hover:bg-green-50'
                 }`}>
                   <div className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} mb-2`}>
@@ -677,7 +679,7 @@ export default function AdminPanel() {
                     </svg>
                   </div>
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
-                    Review Applications
+                    {t('admin.quickActions.reviewApplications')}
                   </span>
                 </div>
               </Link>
@@ -688,8 +690,8 @@ export default function AdminPanel() {
                   loadUsers();
                 }}
                 className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
-                  isDarkMode 
-                    ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20' 
+                  isDarkMode
+                    ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20'
                     : 'border-gray-300 hover:border-purple-400 bg-gray-50 hover:bg-purple-50'
                 }`}
               >
@@ -699,15 +701,15 @@ export default function AdminPanel() {
                   </svg>
                 </div>
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
-                  Refresh Data
+                  {t('admin.quickActions.refreshData')}
                 </span>
               </button>
 
               <button
                 disabled
                 className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed flex flex-col items-center text-center ${
-                  isDarkMode 
-                    ? 'border-gray-600 bg-gray-700/30' 
+                  isDarkMode
+                    ? 'border-gray-600 bg-gray-700/30'
                     : 'border-gray-300 bg-gray-50'
                 }`}
               >
@@ -717,7 +719,7 @@ export default function AdminPanel() {
                   </svg>
                 </div>
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-center`}>
-                  Analytics (Soon)
+                  {t('admin.quickActions.analytics')}
                 </span>
               </button>
             </div>
@@ -727,7 +729,7 @@ export default function AdminPanel() {
           <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 lg:mb-0`}>
-                User Management
+                {t('admin.userManagement.title')}
               </h2>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -735,7 +737,7 @@ export default function AdminPanel() {
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder="Search users..."
+                    placeholder={t('admin.userManagement.search')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className={`glass-input pl-10 pr-4 py-2 rounded-lg w-full sm:w-64 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
@@ -759,9 +761,9 @@ export default function AdminPanel() {
                       isDarkMode ? 'text-gray-100' : 'text-gray-900'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    {roleFilter === '' ? 'All Roles' : 
-                     roleFilter === 'STUDENT' ? 'Students' :
-                     roleFilter === 'FACULTY' ? 'Faculty' : 'Admins'}
+                    {roleFilter === '' ? t('admin.userManagement.filters.allRoles') :
+                     roleFilter === 'STUDENT' ? t('admin.userManagement.filters.students') :
+                     roleFilter === 'FACULTY' ? t('admin.userManagement.filters.faculty') : t('admin.userManagement.filters.admins')}
                     <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -776,10 +778,10 @@ export default function AdminPanel() {
                         : 'bg-white border-gray-300'
                     }`}>
                       {[
-                        { value: '', label: 'All Roles' },
-                        { value: 'STUDENT', label: 'Students' },
-                        { value: 'FACULTY', label: 'Faculty' },
-                        { value: 'ADMIN', label: 'Admins' }
+                        { value: '', label: t('admin.userManagement.filters.allRoles') },
+                        { value: 'STUDENT', label: t('admin.userManagement.filters.students') },
+                        { value: 'FACULTY', label: t('admin.userManagement.filters.faculty') },
+                        { value: 'ADMIN', label: t('admin.userManagement.filters.admins') }
                       ].map((option) => (
                         <button
                           key={option.value}
@@ -807,7 +809,7 @@ export default function AdminPanel() {
                   <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  Add User
+                  {t('admin.userManagement.addUser')}
                 </button>
               </div>
             </div>
@@ -816,26 +818,26 @@ export default function AdminPanel() {
             {selectedUsers.length > 0 && (
               <div className={`flex items-center gap-4 p-4 rounded-lg mb-4 ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
                 <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'}`}>
-                  {selectedUsers.length} user(s) selected
+                  {selectedUsers.length} {t('admin.userManagement.bulkActions.selected')}
                 </span>
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     onClick={() => performBulkAction('enable')}
                     className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
                   >
-                    Enable
+                    {t('admin.userManagement.bulkActions.enable')}
                   </button>
-                  <button 
+                  <button
                     onClick={() => performBulkAction('disable')}
                     className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white text-sm rounded transition-colors"
                   >
-                    Disable
+                    {t('admin.userManagement.bulkActions.disable')}
                   </button>
-                  <button 
+                  <button
                     onClick={() => performBulkAction('delete')}
                     className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
                   >
-                    Delete
+                    {t('admin.userManagement.bulkActions.delete')}
                   </button>
                 </div>
               </div>
@@ -855,19 +857,19 @@ export default function AdminPanel() {
                       />
                     </th>
                     <th className={`text-left p-4 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      User
+                      {t('admin.userManagement.table.headers.user')}
                     </th>
                     <th className={`text-left p-4 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      Role
+                      {t('admin.userManagement.table.headers.role')}
                     </th>
                     <th className={`text-left p-4 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      Details
+                      {t('admin.userManagement.table.headers.details')}
                     </th>
                     <th className={`text-left p-4 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      Status
+                      {t('admin.userManagement.table.headers.status')}
                     </th>
                     <th className={`text-left p-4 font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                      Actions
+                      {t('admin.userManagement.table.headers.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -932,23 +934,23 @@ export default function AdminPanel() {
                       <td className="p-4">
                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           {user.studentId && (
-                            <div>ID: {user.studentId}</div>
+                            <div>{t('admin.userManagement.table.details.id')}: {user.studentId}</div>
                           )}
                           {user.major && (
-                            <div>Major: {user.major}</div>
+                            <div>{t('admin.userManagement.table.details.major')}: {user.major}</div>
                           )}
                           {user.year && (
-                            <div>Year: {user.year}</div>
+                            <div>{t('admin.userManagement.table.details.year')}: {user.year}</div>
                           )}
                         </div>
                       </td>
                       <td className="p-4">
                         <span className={`px-2 py-1 text-xs rounded-full ${
-                          user.enabled 
+                          user.enabled
                             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                             : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                         }`}>
-                          {user.enabled ? 'Active' : 'Disabled'}
+                          {user.enabled ? t('admin.userManagement.table.status.active') : t('admin.userManagement.table.status.disabled')}
                         </span>
                       </td>
                       <td className="p-4">
@@ -956,7 +958,7 @@ export default function AdminPanel() {
                           <button
                             onClick={() => openUserModal(user)}
                             className="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded transition-colors"
-                            title="Edit"
+                            title={t('admin.userManagement.table.actions.edit')}
                           >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -965,7 +967,7 @@ export default function AdminPanel() {
                           <button
                             onClick={() => toggleUserStatus(user.id)}
                             className="p-2 text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded transition-colors"
-                            title={user.enabled ? 'Disable' : 'Enable'}
+                            title={user.enabled ? t('admin.userManagement.table.actions.disable') : t('admin.userManagement.table.actions.enable')}
                           >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -974,7 +976,7 @@ export default function AdminPanel() {
                           <button
                             onClick={() => deleteUser(user.id)}
                             className="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
-                            title="Delete"
+                            title={t('admin.userManagement.table.actions.delete')}
                           >
                             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -991,7 +993,7 @@ export default function AdminPanel() {
             {/* Pagination */}
             <div className="flex items-center justify-between mt-6">
               <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Showing {((users?.currentPage || 0) * pageSize) + 1} to {Math.min(((users?.currentPage || 0) + 1) * pageSize, users?.totalItems || 0)} of {users?.totalItems || 0} users
+                {t('admin.userManagement.pagination.showing')} {((users?.currentPage || 0) * pageSize) + 1} {t('admin.userManagement.pagination.to')} {Math.min(((users?.currentPage || 0) + 1) * pageSize, users?.totalItems || 0)} {t('admin.userManagement.pagination.of')} {users?.totalItems || 0} {t('admin.userManagement.pagination.users')}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -999,17 +1001,17 @@ export default function AdminPanel() {
                   onClick={() => setCurrentPage(prev => prev - 1)}
                   className="px-3 py-1 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  Previous
+                  {t('admin.userManagement.pagination.previous')}
                 </button>
                 <span className={`px-3 py-1 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Page {(users?.currentPage || 0) + 1} of {users?.totalPages || 1}
+                  {t('admin.userManagement.pagination.page')} {(users?.currentPage || 0) + 1} {t('admin.userManagement.pagination.of')} {users?.totalPages || 1}
                 </span>
                 <button
                   disabled={!users?.hasNext}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   className="px-3 py-1 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  Next
+                  {t('admin.userManagement.pagination.next')}
                 </button>
               </div>
             </div>
@@ -1022,7 +1024,7 @@ export default function AdminPanel() {
             <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto`}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                  {selectedUser ? 'Edit User' : 'Add New User'}
+                  {selectedUser ? t('admin.modal.editUser') : t('admin.modal.addUser')}
                 </h2>
                 <button 
                   onClick={() => setShowUserModal(false)}
@@ -1038,32 +1040,32 @@ export default function AdminPanel() {
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>First Name</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.firstName')}</label>
                     <input
                       type="text"
                       required
                       value={userForm.firstName}
                       onChange={(e) => setUserForm(prev => ({ ...prev, firstName: e.target.value }))}
-                      placeholder="Enter first name"
+                      placeholder={t('admin.modal.placeholders.firstName')}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Last Name</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.lastName')}</label>
                     <input
                       type="text"
                       required
                       value={userForm.lastName}
                       onChange={(e) => setUserForm(prev => ({ ...prev, lastName: e.target.value }))}
-                      placeholder="Enter last name"
+                      placeholder={t('admin.modal.placeholders.lastName')}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
@@ -1071,32 +1073,32 @@ export default function AdminPanel() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Email Address</label>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.email')}</label>
                   <input
                     type="email"
                     required
                     value={userForm.email}
                     onChange={(e) => setUserForm(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="user@university.edu"
+                    placeholder={t('admin.modal.placeholders.email')}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   />
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Username</label>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.username')}</label>
                   <input
                     type="text"
                     required
                     value={userForm.username}
                     onChange={(e) => setUserForm(prev => ({ ...prev, username: e.target.value }))}
-                    placeholder="Enter username"
+                    placeholder={t('admin.modal.placeholders.username')}
                     className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   />
@@ -1104,16 +1106,16 @@ export default function AdminPanel() {
 
                 {!selectedUser && (
                   <div>
-                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Password</label>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.password')}</label>
                     <input
                       type="password"
                       required={!selectedUser}
                       value={userForm.password}
                       onChange={(e) => setUserForm(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Enter secure password"
+                      placeholder={t('admin.modal.placeholders.password')}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
@@ -1121,19 +1123,19 @@ export default function AdminPanel() {
                 )}
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>User Role</label>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.role')}</label>
                   <div className="relative dropdown-container">
                     <button
                       type="button"
                       onClick={() => setShowUserRoleDropdown(!showUserRoleDropdown)}
                       className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 text-left ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100'
                           : 'bg-white border-gray-300 text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     >
-                      {userForm.role === 'STUDENT' ? 'Student' :
-                       userForm.role === 'FACULTY' ? 'Faculty Member' : 'Administrator'}
+                      {userForm.role === 'STUDENT' ? t('admin.modal.roles.student') :
+                       userForm.role === 'FACULTY' ? t('admin.modal.roles.faculty') : t('admin.modal.roles.admin')}
                       <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -1148,9 +1150,9 @@ export default function AdminPanel() {
                           : 'bg-white border-gray-300'
                       }`}>
                         {[
-                          { value: 'STUDENT', label: 'Student' },
-                          { value: 'FACULTY', label: 'Faculty Member' },
-                          { value: 'ADMIN', label: 'Administrator' }
+                          { value: 'STUDENT', label: t('admin.modal.roles.student') },
+                          { value: 'FACULTY', label: t('admin.modal.roles.faculty') },
+                          { value: 'ADMIN', label: t('admin.modal.roles.admin') }
                         ].map((option) => (
                           <button
                             key={option.value}
@@ -1174,50 +1176,50 @@ export default function AdminPanel() {
                 {/* Student Information */}
                 {userForm.role === 'STUDENT' && (
                   <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
-                    <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>Student Information</h4>
+                    <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>{t('admin.modal.sections.studentInfo')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Student ID</label>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.studentId')}</label>
                         <input
                           type="text"
                           value={userForm.studentId}
                           onChange={(e) => setUserForm(prev => ({ ...prev, studentId: e.target.value }))}
-                          placeholder="e.g., CS/2021/001"
+                          placeholder={t('admin.modal.placeholders.studentId')}
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                            isDarkMode 
-                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            isDarkMode
+                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                           } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                         />
                       </div>
 
                       <div>
-                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Academic Year</label>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.academicYear')}</label>
                         <input
                           type="number"
                           min="1"
                           max="8"
                           value={userForm.year || ''}
                           onChange={(e) => setUserForm(prev => ({ ...prev, year: e.target.value ? parseInt(e.target.value) : undefined }))}
-                          placeholder="1-8"
+                          placeholder={t('admin.modal.placeholders.academicYear')}
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                            isDarkMode 
-                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                            isDarkMode
+                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                           } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                         />
                       </div>
                     </div>
                     <div className="mt-4">
-                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Major/Department</label>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.major')}</label>
                       <input
                         type="text"
                         value={userForm.major}
                         onChange={(e) => setUserForm(prev => ({ ...prev, major: e.target.value }))}
-                        placeholder="e.g., Computer Science"
+                        placeholder={t('admin.modal.placeholders.major')}
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                          isDarkMode 
-                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' 
+                          isDarkMode
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
                             : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                         } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                       />
@@ -1235,27 +1237,27 @@ export default function AdminPanel() {
                     className="mr-3"
                   />
                   <label htmlFor="enabled" className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Account enabled (user can log in)
+                    {t('admin.modal.accountEnabled')}
                   </label>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
-                  <button 
+                  <button
                     onClick={() => setShowUserModal(false)}
                     className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                      isDarkMode 
-                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
                         : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     }`}
                   >
-                    Cancel
+                    {t('admin.modal.buttons.cancel')}
                   </button>
-                  <button 
+                  <button
                     onClick={saveUser}
                     className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
                   >
-                    {selectedUser ? 'Update User' : 'Create User'}
+                    {selectedUser ? t('admin.modal.buttons.update') : t('admin.modal.buttons.create')}
                   </button>
                 </div>
               </div>

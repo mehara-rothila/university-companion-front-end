@@ -463,7 +463,8 @@
       "userManagement": {
         "title": "User Management",
         "description": "Manage student, faculty, and admin accounts with comprehensive user control features",
-        "action": "Manage Users"
+        "action": "Manage Users",
+        "statusLabel": "Total Users"
       },
       "financialAid": {
         "title": "Financial Aid",
