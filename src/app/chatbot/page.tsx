@@ -2,6 +2,7 @@
 
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AthenaChatbot from '@/components/AthenaChatbot';
@@ -10,6 +11,7 @@ import { FileText, Image, MessageCircle, Zap } from 'lucide-react';
 export default function ChatbotPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
@@ -21,14 +23,14 @@ export default function ChatbotPage() {
         <div className="mb-8">
           <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg text-center`}>
             <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3">
-              Athena AI Assistant
+              {t('chatbot.title')}
             </h1>
             <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-              Your intelligent university companion powered by Gemini 2.5 Pro
+              {t('chatbot.subtitle')}
             </p>
             {user && (
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Welcome back, {user.firstName}! 👋
+                {t('chatbot.welcomeBack', { name: user.firstName })} 👋
               </p>
             )}
           </div>
@@ -47,10 +49,10 @@ export default function ChatbotPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                  Smart Chat
+                  {t('chatbot.features.smartChat.title')}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Natural conversations
+                  {t('chatbot.features.smartChat.description')}
                 </p>
               </div>
             </div>
@@ -67,10 +69,10 @@ export default function ChatbotPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                  Image Analysis
+                  {t('chatbot.features.imageAnalysis.title')}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Upload & analyze
+                  {t('chatbot.features.imageAnalysis.description')}
                 </p>
               </div>
             </div>
@@ -87,10 +89,10 @@ export default function ChatbotPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                  PDF Reader
+                  {t('chatbot.features.pdfReader.title')}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Extract & summarize
+                  {t('chatbot.features.pdfReader.description')}
                 </p>
               </div>
             </div>
@@ -107,10 +109,10 @@ export default function ChatbotPage() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                  Fast Response
+                  {t('chatbot.features.fastResponse.title')}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  Instant answers
+                  {t('chatbot.features.fastResponse.description')}
                 </p>
               </div>
             </div>
@@ -124,20 +126,20 @@ export default function ChatbotPage() {
             : 'bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200'
         }`}>
           <h3 className="font-semibold text-lg mb-3 text-gray-900 dark:text-white">
-            💡 Quick Tips
+            💡 {t('chatbot.tips.title')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
             <div>
-              <strong>📸 Image Upload:</strong> Upload screenshots, notes, diagrams, or photos for analysis
+              <strong>📸</strong> {t('chatbot.tips.imageUpload')}
             </div>
             <div>
-              <strong>📄 PDF Upload:</strong> Upload assignments, forms, or documents for summarization
+              <strong>📄</strong> {t('chatbot.tips.pdfUpload')}
             </div>
             <div>
-              <strong>🔍 Ask Questions:</strong> "What's in this image?", "Summarize this PDF"
+              <strong>🔍</strong> {t('chatbot.tips.askQuestions')}
             </div>
             <div>
-              <strong>🎯 Get Help:</strong> Academic planning, campus navigation, wellness support
+              <strong>🎯</strong> {t('chatbot.tips.getHelp')}
             </div>
           </div>
         </div>
@@ -154,16 +156,16 @@ export default function ChatbotPage() {
             : 'bg-white/50 border border-gray-200'
         } backdrop-blur-sm`}>
           <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">
-            📝 Example Queries
+            📝 {t('chatbot.examples.title')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[
-              'Help me understand this assignment',
-              'What building is the library in?',
-              'Summarize this document for me',
-              'How do I apply for financial aid?',
-              'What are my study space options?',
-              'Translate this image to English',
+              t('chatbot.examples.queries.assignment'),
+              t('chatbot.examples.queries.library'),
+              t('chatbot.examples.queries.summarize'),
+              t('chatbot.examples.queries.financialAid'),
+              t('chatbot.examples.queries.studySpaces'),
+              t('chatbot.examples.queries.translate'),
             ].map((query, index) => (
               <div
                 key={index}
@@ -184,10 +186,10 @@ export default function ChatbotPage() {
         {/* Footer Info */}
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Athena uses Gemini 2.5 Pro for intelligent, context-aware responses
+            {t('chatbot.footer.poweredBy')}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-            All uploaded files are securely stored and processed
+            {t('chatbot.footer.security')}
           </p>
         </div>
       </div>
