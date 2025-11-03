@@ -445,5 +445,160 @@
       "poweredBy": "Athena uses Gemini 2.5 Pro for intelligent, context-aware responses",
       "security": "All uploaded files are securely stored and processed"
     }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "Comprehensive administrative control panel for managing users, financial aid applications, and system-wide settings.",
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "You need admin privileges to access this page."
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "students": "Students",
+      "faculty": "Faculty",
+      "admins": "Admins"
+    },
+    "modules": {
+      "userManagement": {
+        "title": "User Management",
+        "description": "Manage student, faculty, and admin accounts with comprehensive user control features",
+        "action": "Manage Users",
+        "statusLabel": "Total Users"
+      },
+      "financialAid": {
+        "title": "Financial Aid",
+        "description": "Review and manage financial aid applications, track funding status, and process approvals",
+        "action": "Manage Applications",
+        "status": "ACTIVE",
+        "availability": "Available"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Create and manage notifications for all students or specific users",
+        "action": "Manage Notifications",
+        "status": "NEW",
+        "availability": "Available"
+      },
+      "competitions": {
+        "title": "Competitions",
+        "description": "Review and approve competition submissions from faculty and students",
+        "action": "Manage Competitions",
+        "status": "ACTIVE",
+        "availability": "Available"
+      },
+      "systemSettings": {
+        "title": "System Settings",
+        "description": "Configure system-wide settings, manage preferences, and control platform features",
+        "action": "Coming Soon",
+        "status": "SOON",
+        "availability": "Coming"
+      }
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "addUser": "Add New User",
+      "reviewApplications": "Review Applications",
+      "refreshData": "Refresh Data",
+      "analytics": "Analytics (Soon)"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "search": "Search users...",
+      "addUser": "Add User",
+      "filters": {
+        "allRoles": "All Roles",
+        "students": "Students",
+        "faculty": "Faculty",
+        "admins": "Admins"
+      },
+      "bulkActions": {
+        "selected": "user(s) selected",
+        "enable": "Enable",
+        "disable": "Disable",
+        "delete": "Delete"
+      },
+      "table": {
+        "headers": {
+          "user": "User",
+          "role": "Role",
+          "details": "Details",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "details": {
+          "id": "ID",
+          "major": "Major",
+          "year": "Year"
+        },
+        "status": {
+          "active": "Active",
+          "disabled": "Disabled"
+        },
+        "actions": {
+          "edit": "Edit",
+          "enable": "Enable",
+          "disable": "Disable",
+          "delete": "Delete"
+        }
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "users": "users",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page"
+      }
+    },
+    "modal": {
+      "editUser": "Edit User",
+      "addUser": "Add New User",
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "username": "Username",
+        "password": "Password",
+        "role": "User Role",
+        "studentId": "Student ID",
+        "academicYear": "Academic Year",
+        "major": "Major/Department"
+      },
+      "placeholders": {
+        "firstName": "Enter first name",
+        "lastName": "Enter last name",
+        "email": "user@university.edu",
+        "username": "Enter username",
+        "password": "Enter secure password",
+        "studentId": "e.g., CS/2021/001",
+        "academicYear": "1-8",
+        "major": "e.g., Computer Science"
+      },
+      "roles": {
+        "student": "Student",
+        "faculty": "Faculty Member",
+        "admin": "Administrator"
+      },
+      "sections": {
+        "studentInfo": "Student Information"
+      },
+      "accountEnabled": "Account enabled (user can log in)",
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create User",
+        "update": "Update User"
+      }
+    },
+    "messages": {
+      "userDeleted": "User deleted successfully",
+      "userStatusUpdated": "User status updated successfully",
+      "userUpdated": "User updated successfully",
+      "userCreated": "User created successfully",
+      "bulkActionCompleted": "Bulk {{action}} completed successfully",
+      "confirmDelete": "Are you sure you want to delete this user?",
+      "confirmBulkAction": "Are you sure you want to {{action}} {{count}} user(s)?"
+    }
   }
 }
