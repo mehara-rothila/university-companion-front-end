@@ -265,5 +265,140 @@
       "cancel": "Cancel",
       "confirm": "Delete Account"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated with smart notifications and AI-powered prioritization",
+    "buttons": {
+      "markAllRead": "Mark All Read",
+      "settings": "Settings",
+      "saveSettings": "Save Settings"
+    },
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "archived": "Archived",
+      "settings": "Settings"
+    },
+    "filters": {
+      "type": "Type",
+      "priority": "Priority",
+      "time": "Time",
+      "status": "Status"
+    },
+    "filterOptions": {
+      "allTypes": "All Types",
+      "allPriorities": "All Priorities",
+      "allTime": "All Time",
+      "all": "All",
+      "read": "Read",
+      "unread": "Unread",
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
+    },
+    "types": {
+      "general": "General",
+      "academic": "Academic",
+      "social": "Social",
+      "wellness": "Wellness",
+      "system": "System",
+      "financialAid": "Financial Aid",
+      "dining": "Dining",
+      "library": "Library",
+      "lostFound": "Lost & Found"
+    },
+    "priorities": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "settings": {
+      "title": "Notification Settings",
+      "categories": "Categories",
+      "deliveryMethods": "Delivery Methods",
+      "schedule": "Schedule",
+      "categoryLabels": {
+        "academic": "Academic",
+        "social": "Social",
+        "system": "System",
+        "wellness": "Wellness",
+        "emergency": "Emergency"
+      },
+      "academicOptions": {
+        "assignments": "Assignments",
+        "grades": "Grades",
+        "scheduleChanges": "Schedule Changes",
+        "deadlineReminders": "Deadline Reminders"
+      },
+      "socialOptions": {
+        "events": "Events",
+        "clubs": "Clubs",
+        "friendUpdates": "Friend Updates",
+        "invitations": "Invitations"
+      },
+      "systemOptions": {
+        "maintenance": "Maintenance",
+        "updates": "Updates",
+        "security": "Security"
+      },
+      "wellnessOptions": {
+        "checkInReminders": "Check-in Reminders",
+        "goalProgress": "Goal Progress",
+        "moodTracking": "Mood Tracking"
+      },
+      "emergencyOptions": {
+        "universityAlerts": "University Alerts",
+        "weatherWarnings": "Weather Warnings",
+        "safetyUpdates": "Safety Updates"
+      },
+      "deliveryOptions": {
+        "push": "Push",
+        "email": "Email",
+        "sms": "SMS",
+        "inApp": "In-App"
+      },
+      "scheduleOptions": {
+        "enableQuietHours": "Enable Quiet Hours",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "reduceWeekends": "Reduce notifications on weekends"
+      }
+    },
+    "actions": {
+      "markAsRead": "Mark as read",
+      "archive": "Archive"
+    },
+    "target": {
+      "allStudents": "All Students",
+      "targeted": "Targeted"
+    },
+    "timeLabels": {
+      "justNow": "Just now",
+      "minutesAgo": "m ago",
+      "hoursAgo": "h ago",
+      "daysAgo": "d ago",
+      "expires": "Expires"
+    },
+    "messages": {
+      "loading": "Loading notifications...",
+      "pleaseLogin": "Please log in to view notifications.",
+      "noNotifications": "No notifications found",
+      "allCaughtUp": "You're all caught up!",
+      "adjustFilters": "Try adjusting your filters to see more notifications.",
+      "settingsSaved": "Settings saved successfully!"
+    },
+    "errors": {
+      "loginRequired": "Please log in to view notifications",
+      "invalidRequest": "Invalid request. Please try logging in again.",
+      "loadFailed": "Failed to load notifications"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
   }
 }

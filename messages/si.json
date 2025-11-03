@@ -265,5 +265,140 @@
       "cancel": "අවලංගු කරන්න",
       "confirm": "ගිණුම මකන්න"
     }
+  },
+  "notifications": {
+    "title": "දැනුම්දීම්",
+    "subtitle": "බුද්ධිමත් දැනුම්දීම් සහ AI ප්‍රමුඛතා ලබාදීම සමඟ යාවත්කාලීන වන්න",
+    "buttons": {
+      "markAllRead": "සියල්ල කියවූ ලෙස සලකුණු කරන්න",
+      "settings": "සැකසුම්",
+      "saveSettings": "සැකසුම් සුරකින්න"
+    },
+    "tabs": {
+      "all": "සියල්ල",
+      "unread": "නොකියවූ",
+      "archived": "සංරක්ෂිත",
+      "settings": "සැකසුම්"
+    },
+    "filters": {
+      "type": "වර්ගය",
+      "priority": "ප්‍රමුඛතාවය",
+      "time": "කාලය",
+      "status": "තත්වය"
+    },
+    "filterOptions": {
+      "allTypes": "සියලු වර්ග",
+      "allPriorities": "සියලු ප්‍රමුඛතා",
+      "allTime": "සියලු කාලය",
+      "all": "සියල්ල",
+      "read": "කියවූ",
+      "unread": "නොකියවූ",
+      "today": "අද",
+      "week": "මෙම සතිය",
+      "month": "මෙම මාසය"
+    },
+    "types": {
+      "general": "සාමාන්‍ය",
+      "academic": "අධ්‍යාපනික",
+      "social": "සමාජීය",
+      "wellness": "සෞඛ්‍යය",
+      "system": "පද්ධතිය",
+      "financialAid": "මූල්‍ය ආධාර",
+      "dining": "ආහාර",
+      "library": "පුස්තකාලය",
+      "lostFound": "නැති වූ සහ සොයා ගත්"
+    },
+    "priorities": {
+      "urgent": "හදිසි",
+      "high": "ඉහළ",
+      "medium": "මධ්‍යම",
+      "low": "අඩු"
+    },
+    "settings": {
+      "title": "දැනුම්දීම් සැකසුම්",
+      "categories": "කාණ්ඩ",
+      "deliveryMethods": "භාරදීමේ ක්‍රම",
+      "schedule": "කාලසටහන",
+      "categoryLabels": {
+        "academic": "අධ්‍යාපනික",
+        "social": "සමාජීය",
+        "system": "පද්ධතිය",
+        "wellness": "සෞඛ්‍යය",
+        "emergency": "හදිසි"
+      },
+      "academicOptions": {
+        "assignments": "පැවරුම්",
+        "grades": "ශ්‍රේණි",
+        "scheduleChanges": "කාලසටහන් වෙනස්කම්",
+        "deadlineReminders": "අවසන් දින සිහිකැඳවීම්"
+      },
+      "socialOptions": {
+        "events": "සිදුවීම්",
+        "clubs": "සමාජ",
+        "friendUpdates": "මිතුරන්ගේ යාවත්කාල",
+        "invitations": "ආරාධනා"
+      },
+      "systemOptions": {
+        "maintenance": "නඩත්තුව",
+        "updates": "යාවත්කාල",
+        "security": "ආරක්ෂාව"
+      },
+      "wellnessOptions": {
+        "checkInReminders": "පරීක්ෂණ සිහිකැඳවීම්",
+        "goalProgress": "ඉලක්ක ප්‍රගතිය",
+        "moodTracking": "මනෝභාව නිරීක්ෂණය"
+      },
+      "emergencyOptions": {
+        "universityAlerts": "විශ්වවිද්‍යාල ඇඟවීම්",
+        "weatherWarnings": "කාලගුණ අනතුරු ඇඟවීම්",
+        "safetyUpdates": "ආරක්ෂණ යාවත්කාල"
+      },
+      "deliveryOptions": {
+        "push": "තල්ලු කිරීම",
+        "email": "විද්‍යුත් තැපෑල",
+        "sms": "කෙටි පණිවුඩ",
+        "inApp": "යෙදුමේ"
+      },
+      "scheduleOptions": {
+        "enableQuietHours": "නිහඬ පැය සබල කරන්න",
+        "startTime": "ආරම්භක කාලය",
+        "endTime": "අවසන් කාලය",
+        "reduceWeekends": "සති අන්තයේ දැනුම්දීම් අඩු කරන්න"
+      }
+    },
+    "actions": {
+      "markAsRead": "කියවූ ලෙස සලකුණු කරන්න",
+      "archive": "සංරක්ෂණය"
+    },
+    "target": {
+      "allStudents": "සියලුම ශිෂ්‍යයන්",
+      "targeted": "ඉලක්කගත"
+    },
+    "timeLabels": {
+      "justNow": "මේ දැන්",
+      "minutesAgo": "මිනි පෙර",
+      "hoursAgo": "පැය පෙර",
+      "daysAgo": "දින පෙර",
+      "expires": "කල් ඉකුත් වේ"
+    },
+    "messages": {
+      "loading": "දැනුම්දීම් පූරණය වෙමින්...",
+      "pleaseLogin": "දැනුම්දීම් බැලීමට කරුණාකර පුරනය වන්න.",
+      "noNotifications": "දැනුම්දීම් හමු නොවීය",
+      "allCaughtUp": "ඔබ සියල්ල බැලීම අවසන්!",
+      "adjustFilters": "වැඩි දැනුම්දීම් බැලීමට ඔබගේ පෙරහන් සකස් කර බලන්න.",
+      "settingsSaved": "සැකසුම් සාර්ථකව සුරකින ලදි!"
+    },
+    "errors": {
+      "loginRequired": "දැනුම්දීම් බැලීමට කරුණාකර පුරනය වන්න",
+      "invalidRequest": "වලංගු නොවන ඉල්ලීමකි. කරුණාකර නැවත පුරනය වීමට උත්සාහ කරන්න.",
+      "loadFailed": "දැනුම්දීම් පූරණය කිරීම අසාර්ථක විය"
+    },
+    "pagination": {
+      "previous": "පෙර",
+      "next": "ඊළඟ",
+      "page": "පිටුව",
+      "of": "න්"
+    }
   }
 }

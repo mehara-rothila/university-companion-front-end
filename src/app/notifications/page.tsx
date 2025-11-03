@@ -5,6 +5,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
@@ -92,6 +93,7 @@ const API_BASE = `${API_BASE_URL}/api`;
 export default function NotificationsPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [filteredNotifications, setFilteredNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -380,7 +382,7 @@ export default function NotificationsPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading notifications...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notifications.messages.loading')}</p>
           </div>
         </main>
       </>
@@ -393,7 +395,7 @@ export default function NotificationsPage() {
         <Navigation />
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Please log in to view notifications.</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notifications.messages.pleaseLogin')}</p>
           </div>
         </main>
       </>
@@ -423,7 +425,7 @@ export default function NotificationsPage() {
               <div>
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
                   <Bell className="h-8 w-8 mr-3 text-purple-500" />
-                  Notifications
+                  {t('notifications.title')}
                   {unreadCount > 0 && (
                     <span className="ml-3 px-2 py-1 text-sm font-medium bg-red-500 text-white rounded-full">
                       {unreadCount}
@@ -431,7 +433,7 @@ export default function NotificationsPage() {
                   )}
                 </h1>
                 <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Stay updated with smart notifications and AI-powered prioritization
+                  {t('notifications.subtitle')}
                 </p>
               </div>
 
@@ -446,13 +448,13 @@ export default function NotificationsPage() {
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  Mark All Read
+                  {t('notifications.buttons.markAllRead')}
                 </button>
                 <button
                   onClick={() => setShowSettings(!showSettings)}
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                    isDarkMode 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                    isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -460,7 +462,7 @@ export default function NotificationsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  Settings
+                  {t('notifications.buttons.settings')}
                 </button>
               </div>
             </div>

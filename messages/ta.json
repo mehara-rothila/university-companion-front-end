@@ -265,5 +265,140 @@
       "cancel": "ரத்து செய்யவும்",
       "confirm": "கணக்கை நீக்கவும்"
     }
+  },
+  "notifications": {
+    "title": "அறிவிப்புகள்",
+    "subtitle": "ஸ்மார்ட் அறிவிப்புகள் மற்றும் AI-ஆல் இயக்கப்படும் முன்னுரிமையுடன் புதுப்பிக்கப்பட்ட நிலையில் இருங்கள்",
+    "buttons": {
+      "markAllRead": "அனைத்தையும் படிக்கப்பட்டதாக குறிக்கவும்",
+      "settings": "அமைப்புகள்",
+      "saveSettings": "அமைப்புகளை சேமிக்கவும்"
+    },
+    "tabs": {
+      "all": "அனைத்தும்",
+      "unread": "படிக்கப்படாதவை",
+      "archived": "காப்பகப்படுத்தப்பட்டவை",
+      "settings": "அமைப்புகள்"
+    },
+    "filters": {
+      "type": "வகை",
+      "priority": "முன்னுரிமை",
+      "time": "நேரம்",
+      "status": "நிலை"
+    },
+    "filterOptions": {
+      "allTypes": "அனைத்து வகைகளும்",
+      "allPriorities": "அனைத்து முன்னுரிமைகளும்",
+      "allTime": "அனைத்து நேரமும்",
+      "all": "அனைத்தும்",
+      "read": "படிக்கப்பட்டவை",
+      "unread": "படிக்கப்படாதவை",
+      "today": "இன்று",
+      "week": "இந்த வாரம்",
+      "month": "இந்த மாதம்"
+    },
+    "types": {
+      "general": "பொதுவான",
+      "academic": "கல்வி",
+      "social": "சமூகம்",
+      "wellness": "நலவாழ்வு",
+      "system": "அமைப்பு",
+      "financialAid": "நிதி உதவி",
+      "dining": "உணவு",
+      "library": "நூலகம்",
+      "lostFound": "இழந்த மற்றும் கண்டுபிடிக்கப்பட்ட"
+    },
+    "priorities": {
+      "urgent": "அவசரம்",
+      "high": "உயர்ந்த",
+      "medium": "நடுத்தர",
+      "low": "குறைந்த"
+    },
+    "settings": {
+      "title": "அறிவிப்பு அமைப்புகள்",
+      "categories": "பிரிவுகள்",
+      "deliveryMethods": "வழங்கல் முறைகள்",
+      "schedule": "அட்டவணை",
+      "categoryLabels": {
+        "academic": "கல்வி",
+        "social": "சமூகம்",
+        "system": "அமைப்பு",
+        "wellness": "நலவாழ்வு",
+        "emergency": "அவசரம்"
+      },
+      "academicOptions": {
+        "assignments": "பணிகள்",
+        "grades": "மதிப்பெண்கள்",
+        "scheduleChanges": "அட்டவணை மாற்றங்கள்",
+        "deadlineReminders": "கால வரம்பு நினைவூட்டல்கள்"
+      },
+      "socialOptions": {
+        "events": "நிகழ்வுகள்",
+        "clubs": "கழகங்கள்",
+        "friendUpdates": "நண்பரின் புதுப்பிப்புகள்",
+        "invitations": "அழைப்புகள்"
+      },
+      "systemOptions": {
+        "maintenance": "பராமரிப்பு",
+        "updates": "புதுப்பிப்புகள்",
+        "security": "பாதுகாப்பு"
+      },
+      "wellnessOptions": {
+        "checkInReminders": "சரிபார்ப்பு நினைவூட்டல்கள்",
+        "goalProgress": "இலக்கு முன்னேற்றம்",
+        "moodTracking": "மனநிலை கண்காணிப்பு"
+      },
+      "emergencyOptions": {
+        "universityAlerts": "பல்கலைக்கழக எச்சரிக்கைகள்",
+        "weatherWarnings": "வானிலை எச்சரிக்கைகள்",
+        "safetyUpdates": "பாதுகாப்பு புதுப்பிப்புகள்"
+      },
+      "deliveryOptions": {
+        "push": "தள்ளுதல்",
+        "email": "மின்னஞ்சல்",
+        "sms": "குறுஞ்செய்தி",
+        "inApp": "செயலியில்"
+      },
+      "scheduleOptions": {
+        "enableQuietHours": "அமைதி மணிநேரங்களை செயல்படுத்தவும்",
+        "startTime": "தொடக்க நேரம்",
+        "endTime": "முடிவு நேரம்",
+        "reduceWeekends": "வார இறுதியில் அறிவிப்புகளைக் குறைக்கவும்"
+      }
+    },
+    "actions": {
+      "markAsRead": "படிக்கப்பட்டதாக குறிக்கவும்",
+      "archive": "காப்பகப்படுத்தவும்"
+    },
+    "target": {
+      "allStudents": "அனைத்து மாணவர்களும்",
+      "targeted": "இலக்கு வைக்கப்பட்டவை"
+    },
+    "timeLabels": {
+      "justNow": "இப்போதுதான்",
+      "minutesAgo": "நி முன்",
+      "hoursAgo": "ம முன்",
+      "daysAgo": "நா முன்",
+      "expires": "காலாவதி ஆகிறது"
+    },
+    "messages": {
+      "loading": "அறிவிப்புகளை ஏற்றுகிறது...",
+      "pleaseLogin": "அறிவிப்புகளைக் காண உள்நுழைக.",
+      "noNotifications": "அறிவிப்புகள் இல்லை",
+      "allCaughtUp": "நீங்கள் அனைத்தையும் பார்த்துவிட்டீர்கள்!",
+      "adjustFilters": "மேலும் அறிவிப்புகளைக் காண உங்கள் வடிப்பான்களைச் சரிசெய்யவும்.",
+      "settingsSaved": "அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன!"
+    },
+    "errors": {
+      "loginRequired": "அறிவிப்புகளைக் காண உள்நுழைய வேண்டும்",
+      "invalidRequest": "தவறான கோரிக்கை. மீண்டும் உள்நுழைய முயற்சிக்கவும்.",
+      "loadFailed": "அறிவிப்புகளை ஏற்றுவது தோல்வியுற்றது"
+    },
+    "pagination": {
+      "previous": "முந்தைய",
+      "next": "அடுத்த",
+      "page": "பக்கம்",
+      "of": "இல்"
+    }
   }
 }
