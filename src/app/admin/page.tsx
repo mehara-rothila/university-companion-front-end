@@ -19,7 +19,8 @@ import {
   Settings,
   ChevronRight,
   Clock,
-  Trophy
+  Trophy,
+  Calendar
 } from 'lucide-react';
 
 // Types
@@ -605,6 +606,39 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} flex items-center justify-end`}>
                     {t('admin.modules.competitions.action')}
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Events Management */}
+            <Link href="/admin/events">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-pink-900/20 to-pink-800/20 border-pink-700/30' : 'bg-gradient-to-br from-pink-50/90 to-pink-100/90 border-pink-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-pink-800/50' : 'bg-pink-100'} flex-shrink-0`}>
+                    <Calendar className={`w-8 h-8 ${isDarkMode ? 'text-pink-300' : 'text-pink-600'}`} />
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-pink-300' : 'text-pink-600'} bg-gradient-to-r ${isDarkMode ? 'from-pink-400 to-pink-300' : 'from-pink-600 to-pink-500'} bg-clip-text text-transparent block`}>
+                      Active
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-pink-400' : 'text-pink-500'}`}>
+                      Available Now
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Events Management
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and approve pending events, manage event submissions, and moderate social activities
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-pink-300' : 'text-pink-600'} flex items-center justify-end`}>
+                    Manage Events
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
