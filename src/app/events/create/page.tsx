@@ -9,8 +9,9 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
+import { fileUploadService } from '@/services/fileUploadService';
 import type { CreateEventRequest } from '@/types/event';
-import { Calendar, MapPin, Users, Clock, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Image as ImageIcon, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CreateEventPage() {
@@ -22,6 +23,8 @@ export default function CreateEventPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -68,6 +71,18 @@ export default function CreateEventPage() {
     }
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,6 +95,13 @@ export default function CreateEventPage() {
     setError('');
 
     try {
+      // Upload image if file is selected
+      let imageUrl = formData.imageUrl;
+      if (imageFile) {
+        const uploadResult = await fileUploadService.uploadImage(imageFile, 'event-images');
+        imageUrl = uploadResult.fileUrl;
+      }
+
       // Combine date and time into ISO format
       const eventDateTime = new Date(`${formData.eventDate}T${formData.eventTime}`).toISOString();
       const endDateTime = new Date(`${formData.eventDate}T${formData.endTime}`).toISOString();
@@ -90,7 +112,7 @@ export default function CreateEventPage() {
       const eventData: CreateEventRequest = {
         title: formData.title,
         description: formData.description,
-        imageUrl: formData.imageUrl || undefined,
+        imageUrl: imageUrl || undefined,
         eventDate: eventDateTime,
         eventTime: eventDateTime,
         endTime: endDateTime,
@@ -230,25 +252,60 @@ export default function CreateEventPage() {
                   </select>
                 </div>
 
-                {/* Image URL */}
+                {/* Event Image */}
                 <div>
-                  <label htmlFor="imageUrl" className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-2">
                     <ImageIcon className="inline mr-2" size={16} />
-                    Event Image URL
+                    Event Image
                   </label>
-                  <input
-                    type="url"
-                    id="imageUrl"
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 rounded-lg border ${
-                      isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-white'
-                        : 'bg-white border-gray-300 text-gray-900'
-                    }`}
-                    placeholder="https://example.com/image.jpg"
-                  />
+
+                  <div className={`border-2 border-dashed rounded-lg p-4 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}>
+                    {imagePreview ? (
+                      <div className="relative">
+                        <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImageFile(null);
+                            setImagePreview(null);
+                          }}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer block text-center">
+                        <Upload className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>Click to upload image</p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>JPG, PNG, GIF, WebP (Max 10MB)</p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  <div className="mt-3">
+                    <p className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Or provide image URL:</p>
+                    <input
+                      type="url"
+                      id="imageUrl"
+                      name="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={handleChange}
+                      disabled={!!imageFile}
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-white disabled:opacity-50'
+                          : 'bg-white border-gray-300 text-gray-900 disabled:opacity-50'
+                      }`}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

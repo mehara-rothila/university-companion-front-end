@@ -109,37 +109,51 @@ export default function AdminEventsPage() {
   if (!user || user.role !== 'ADMIN') {
     return (
       <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-          <AnimatedBackground />
-          <Navigation />
-          <div className="container mx-auto px-4 py-8">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-              Access denied. Admin privileges required.
+        <Navigation />
+        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+          <AnimatedBackground variant="dashboard" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
+                  Access denied. Admin privileges required.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       </AuthGuard>
     );
   }
 
   return (
     <AuthGuard>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <AnimatedBackground />
-        <Navigation />
+      <Navigation />
+      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
 
-        <main className="container mx-auto px-4 py-8 relative z-10">
+        <AnimatedBackground variant="dashboard" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Event Management</h1>
-            <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-              Review and approve pending events
-            </p>
+            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
+              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+                <Calendar className="h-10 w-10 mr-3 text-purple-500" />
+                Event Management
+              </h1>
+              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Review and approve pending events
+              </p>
+            </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Pending Review</p>
@@ -149,17 +163,17 @@ export default function AdminEventsPage() {
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Awaiting Action</p>
-                  <p className="text-3xl font-bold text-blue-500">{pendingEvents.length}</p>
+                  <p className="text-3xl font-bold text-purple-500">{pendingEvents.length}</p>
                 </div>
-                <Calendar size={48} className="text-blue-500 opacity-20" />
+                <Calendar size={48} className="text-purple-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Events</p>
@@ -173,15 +187,22 @@ export default function AdminEventsPage() {
           {/* Loading State */}
           {loading && (
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              <p className="mt-4 text-gray-500">Loading pending events...</p>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading pending events...</p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-              {error}
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
+                  {error}
+                </p>
+              </div>
             </div>
           )}
 
@@ -189,7 +210,7 @@ export default function AdminEventsPage() {
           {!loading && !error && (
             <>
               {pendingEvents.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-12 text-center`}>
+                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
                   <CheckCircle size={64} className="mx-auto mb-4 text-green-500" />
                   <h3 className="text-2xl font-semibold mb-2">All caught up!</h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
@@ -201,7 +222,7 @@ export default function AdminEventsPage() {
                   {pendingEvents.map((event) => (
                     <div
                       key={event.id}
-                      className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg overflow-hidden`}
+                      className={`${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} rounded-xl overflow-hidden transition-all duration-200 hover:shadow-md`}
                     >
                       <div className="flex flex-col md:flex-row">
                         {/* Event Image */}
@@ -282,7 +303,7 @@ export default function AdminEventsPage() {
                               href={`/events/${event.id}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+                              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-all duration-200"
                             >
                               <Eye size={16} />
                               View Details
@@ -314,62 +335,62 @@ export default function AdminEventsPage() {
               )}
             </>
           )}
-        </main>
 
-        {/* Rejection Modal */}
-        {showRejectModal && selectedEvent && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg max-w-md w-full p-6`}>
-              <h2 className="text-2xl font-bold mb-4">Reject Event</h2>
+          {/* Rejection Modal */}
+          {showRejectModal && selectedEvent && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+                <h2 className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Reject Event</h2>
 
-              <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                You are about to reject: <strong>{selectedEvent.title}</strong>
-              </p>
+                <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  You are about to reject: <strong>{selectedEvent.title}</strong>
+                </p>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Rejection Reason *
-                </label>
-                <textarea
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  rows={4}
-                  className={`w-full px-4 py-2 rounded-lg border ${
-                    isDarkMode
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                  placeholder="Please provide a clear reason for rejection..."
-                />
-              </div>
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Rejection Reason *
+                  </label>
+                  <textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    rows={4}
+                    className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 ${
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    placeholder="Please provide a clear reason for rejection..."
+                  />
+                </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={handleReject}
-                  disabled={actionLoading || !rejectionReason.trim()}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg transition-colors"
-                >
-                  {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleReject}
+                    disabled={actionLoading || !rejectionReason.trim()}
+                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
+                  >
+                    {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setShowRejectModal(false);
-                    setSelectedEvent(null);
-                    setRejectionReason('');
-                  }}
-                  disabled={actionLoading}
-                  className={`px-4 py-2 ${
-                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
-                  } rounded-lg transition-colors`}
-                >
-                  Cancel
-                </button>
+                  <button
+                    onClick={() => {
+                      setShowRejectModal(false);
+                      setSelectedEvent(null);
+                      setRejectionReason('');
+                    }}
+                    disabled={actionLoading}
+                    className={`px-4 py-2 ${
+                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                    } rounded-lg font-medium transition-all duration-200`}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </main>
     </AuthGuard>
   );
 }
