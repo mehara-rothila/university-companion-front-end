@@ -252,6 +252,13 @@ const Navigation = () => {
             <Calendar className="inline h-5 w-5 mr-2"/> {t('nav.academicHub')}
           </Link>
           <Link
+            href="/events"
+            className="mobile-nav-link flex items-center"
+            onClick={handleNavigation}
+          >
+            <Calendar className="inline h-5 w-5 mr-2"/> Events & Socials
+          </Link>
+          <Link
             href="/wellness"
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
