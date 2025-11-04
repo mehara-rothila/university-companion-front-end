@@ -120,43 +120,51 @@ export default function EventsPage() {
 
   return (
     <AuthGuard>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <AnimatedBackground />
-        <Navigation />
+      <Navigation />
+      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <AnimatedBackground variant="dashboard" />
 
-        <main className="container mx-auto px-4 py-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">Events & Socials</h1>
-              <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                Discover and join upcoming events
-              </p>
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                  Events & Socials
+                </h1>
+                <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Discover and join upcoming events
+                </p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <Link
+                  href="/events/create"
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <Plus size={20} />
+                  Create Event
+                </Link>
+              </div>
             </div>
-            <Link
-              href="/events/create"
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              <Plus size={20} />
-              Create Event
-            </Link>
           </div>
 
           {/* Filters */}
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6 mb-8`}>
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
             <div className="flex items-center gap-2 mb-4">
-              <Filter size={20} className="text-blue-500" />
-              <h2 className="text-xl font-semibold">Filters</h2>
+              <Filter size={20} className={`${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
+              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Filters</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Time Filter */}
               <div>
-                <label className="block text-sm font-medium mb-2">Time</label>
+                <label htmlFor="time-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Time</label>
                 <select
+                  id="time-filter"
                   value={selectedTimeFilter}
                   onChange={(e) => setSelectedTimeFilter(e.target.value as any)}
-                  className={`w-full px-4 py-2 rounded-lg border ${
+                  aria-label="Filter events by time"
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     isDarkMode
                       ? 'bg-gray-700 border-gray-600 text-white'
                       : 'bg-white border-gray-300 text-gray-900'
@@ -170,11 +178,13 @@ export default function EventsPage() {
 
               {/* Category Filter */}
               <div>
-                <label className="block text-sm font-medium mb-2">Category</label>
+                <label htmlFor="category-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Category</label>
                 <select
+                  id="category-filter"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className={`w-full px-4 py-2 rounded-lg border ${
+                  aria-label="Filter events by category"
+                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     isDarkMode
                       ? 'bg-gray-700 border-gray-600 text-white'
                       : 'bg-white border-gray-300 text-gray-900'
@@ -190,18 +200,19 @@ export default function EventsPage() {
 
               {/* Search */}
               <div>
-                <label className="block text-sm font-medium mb-2">Search</label>
+                <label htmlFor="search-events" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Search</label>
                 <div className="relative">
                   <Search
                     size={18}
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                   <input
+                    id="search-events"
                     type="text"
                     placeholder="Search events..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
+                    className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       isDarkMode
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -212,18 +223,19 @@ export default function EventsPage() {
 
               {/* Location Filter */}
               <div>
-                <label className="block text-sm font-medium mb-2">Location</label>
+                <label htmlFor="location-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Location</label>
                 <div className="relative">
                   <MapPin
                     size={18}
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                   <input
+                    id="location-filter"
                     type="text"
                     placeholder="Filter by location..."
                     value={locationFilter}
                     onChange={(e) => setLocationFilter(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
+                    className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       isDarkMode
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -268,13 +280,14 @@ export default function EventsPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredEvents.map((event) => (
+                  {filteredEvents.map((event, index) => (
                     <Link
                       key={event.id}
                       href={`/events/${event.id}`}
                       className={`block ${
-                        isDarkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:bg-gray-50'
-                      } rounded-lg shadow-lg overflow-hidden transition-all hover:shadow-xl`}
+                        isDarkMode ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800' : 'bg-white/90 border-gray-100 hover:bg-gray-50'
+                      } rounded-2xl shadow-lg border backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       {/* Event Image */}
                       <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
@@ -362,8 +375,8 @@ export default function EventsPage() {
               )}
             </>
           )}
-        </main>
-      </div>
+        </div>
+      </main>
     </AuthGuard>
   );
 }
