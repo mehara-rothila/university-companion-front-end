@@ -223,8 +223,8 @@ export default function EventDetailPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-          <AnimatedBackground />
+        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+          <AnimatedBackground variant="dashboard" />
           <Navigation />
           <div className="flex items-center justify-center h-screen">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -237,8 +237,8 @@ export default function EventDetailPage() {
   if (error || !event) {
     return (
       <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-          <AnimatedBackground />
+        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+          <AnimatedBackground variant="dashboard" />
           <Navigation />
           <div className="container mx-auto px-4 py-8">
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
@@ -255,11 +255,11 @@ export default function EventDetailPage() {
 
   return (
     <AuthGuard>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <AnimatedBackground />
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <AnimatedBackground variant="dashboard" />
         <Navigation />
 
-        <main className="container mx-auto px-4 py-8 relative z-10 max-w-6xl">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
           <div className="mb-8">
             <Link
@@ -317,7 +317,7 @@ export default function EventDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Title and Description */}
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-8 mb-8`}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 mb-8 border backdrop-blur-sm`}>
                 <div className="flex justify-between items-start mb-4">
                   <h1 className="text-4xl font-bold">{event.title}</h1>
                   {canEdit && (
@@ -343,7 +343,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Comments Section */}
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-8`}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                   <MessageCircle size={24} />
                   Comments ({comments.length})
@@ -414,7 +414,7 @@ export default function EventDetailPage() {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               {/* Registration Card */}
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6 mb-6`}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-6 border backdrop-blur-sm`}>
                 <h2 className="text-xl font-bold mb-4">Registration</h2>
 
                 {registrationSuccess && (
@@ -483,7 +483,7 @@ export default function EventDetailPage() {
               </div>
 
               {/* Event Details Card */}
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6`}>
+              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
                 <h2 className="text-xl font-bold mb-4">Event Details</h2>
 
                 <div className="space-y-4">
