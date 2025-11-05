@@ -18,7 +18,9 @@ export default function EventsPage() {
   const { user } = useAuth();
   const { t } = useTranslation();
 
+  const [activeTab, setActiveTab] = useState('explore');
   const [events, setEvents] = useState<Event[]>([]);
+  const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -43,8 +45,12 @@ export default function EventsPage() {
   ];
 
   useEffect(() => {
-    fetchEvents();
-  }, [selectedTimeFilter]);
+    if (activeTab === 'explore') {
+      fetchEvents();
+    } else if (activeTab === 'my-events' && user?.id) {
+      fetchMyEvents();
+    }
+  }, [selectedTimeFilter, activeTab, user]);
 
   useEffect(() => {
     applyFilters();
@@ -68,6 +74,22 @@ export default function EventsPage() {
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to load events');
       console.error('Error fetching events:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyEvents = async () => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+      setError('');
+      const data = await eventService.getMyEvents(user.id);
+      setMyEvents(data);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load your events');
+      console.error('Error fetching my events:', err);
     } finally {
       setLoading(false);
     }
@@ -148,8 +170,35 @@ export default function EventsPage() {
             </div>
           </div>
 
+          {/* Tab Navigation */}
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6 animate-fade-in`}>
+            <div className="flex overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('explore')}
+                className={`flex-1 px-6 py-4 text-sm font-medium transition-all duration-200 border-b-2 ${
+                  activeTab === 'explore'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                Explore Events
+              </button>
+              <button
+                onClick={() => setActiveTab('my-events')}
+                className={`flex-1 px-6 py-4 text-sm font-medium transition-all duration-200 border-b-2 ${
+                  activeTab === 'my-events'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                My Creations
+              </button>
+            </div>
+          </div>
+
           {/* Filters */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
+          {activeTab === 'explore' && (
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
             <div className="flex items-center gap-2 mb-4">
               <Filter size={20} className={`${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Filters</h2>
@@ -244,7 +293,8 @@ export default function EventsPage() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Loading State */}
           {loading && (
@@ -261,8 +311,8 @@ export default function EventsPage() {
             </div>
           )}
 
-          {/* Events Grid */}
-          {!loading && !error && (
+          {/* Explore Events Tab */}
+          {activeTab === 'explore' && !loading && !error && (
             <>
               <div className="mb-4 flex justify-between items-center">
                 <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
@@ -297,6 +347,7 @@ export default function EventsPage() {
                             alt={event.title}
                             fill
                             className="object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -370,6 +421,154 @@ export default function EventsPage() {
                         </div>
                       </div>
                     </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* My Events Tab */}
+          {activeTab === 'my-events' && !loading && !error && (
+            <>
+              <div className="mb-4 flex justify-between items-center">
+                <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                  Showing {myEvents.length} {myEvents.length === 1 ? 'event' : 'events'} you created
+                </p>
+              </div>
+
+              {myEvents.length === 0 ? (
+                <div className="text-center py-12">
+                  <Calendar size={64} className="mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-xl font-semibold mb-2">No events created yet</h3>
+                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    Create your first event to get started!
+                  </p>
+                  <Link
+                    href="/events/create"
+                    className="inline-flex items-center gap-2 px-6 py-3 mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200"
+                  >
+                    <Plus size={20} />
+                    Create Event
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {myEvents.map((event, index) => (
+                    <div
+                      key={event.id}
+                      className={`block ${
+                        isDarkMode ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800' : 'bg-white/90 border-gray-100 hover:bg-gray-50'
+                      } rounded-2xl shadow-lg border backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      {/* Event Image */}
+                      <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
+                        {event.imageUrl ? (
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(event.imageUrl)}`}
+                            alt={event.title}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Calendar size={64} className="text-white opacity-50" />
+                          </div>
+                        )}
+
+                        {/* Status Badge */}
+                        <div className="absolute top-4 left-4">
+                          <span className={`px-3 py-1 backdrop-blur-sm text-sm font-medium rounded-full ${
+                            event.approvalStatus === 'APPROVED'
+                              ? 'bg-green-100/90 text-green-800'
+                              : event.approvalStatus === 'PENDING'
+                              ? 'bg-yellow-100/90 text-yellow-800'
+                              : 'bg-red-100/90 text-red-800'
+                          }`}>
+                            {event.approvalStatus}
+                          </span>
+                        </div>
+
+                        {/* Category Badge */}
+                        <div className="absolute top-4 right-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-sm font-medium rounded-full">
+                            {event.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Event Info */}
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold mb-2 line-clamp-2">{event.title}</h3>
+                        <p
+                          className={`text-sm mb-4 line-clamp-2 ${
+                            isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                          }`}
+                        >
+                          {event.description}
+                        </p>
+
+                        <div className="space-y-2 text-sm">
+                          {/* Date & Time */}
+                          <div className="flex items-center gap-2 text-blue-500">
+                            <Calendar size={16} />
+                            <span>{formatDate(event.eventDate)}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-blue-500">
+                            <Clock size={16} />
+                            <span>
+                              {formatTime(event.eventTime)} - {formatTime(event.endTime)}
+                            </span>
+                          </div>
+
+                          {/* Location */}
+                          <div
+                            className={`flex items-center gap-2 ${
+                              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                            }`}
+                          >
+                            <MapPin size={16} />
+                            <span className="line-clamp-1">{event.location}</span>
+                          </div>
+
+                          {/* Attendees */}
+                          {event.maxAttendees && (
+                            <div
+                              className={`flex items-center gap-2 ${
+                                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                              }`}
+                            >
+                              <Users size={16} />
+                              <span>
+                                {event.registeredCount || 0} / {event.maxAttendees} registered
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="mt-4 flex gap-2">
+                          <Link
+                            href={`/events/${event.id}`}
+                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium text-center transition-colors"
+                          >
+                            View Details
+                          </Link>
+                          {event.approvalStatus === 'APPROVED' && (
+                            <Link
+                              href={`/events/${event.id}/edit`}
+                              className={`px-4 py-2 ${
+                                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
+                              } rounded-lg text-sm font-medium transition-colors`}
+                            >
+                              Edit
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
