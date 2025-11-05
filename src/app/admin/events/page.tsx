@@ -186,9 +186,9 @@ export default function AdminEventsPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className="text-center py-12">
+            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}>
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading pending events...</p>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Loading pending events...</p>
             </div>
           )}
 
@@ -212,7 +212,7 @@ export default function AdminEventsPage() {
               {pendingEvents.length === 0 ? (
                 <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
                   <CheckCircle size={64} className="mx-auto mb-4 text-green-500" />
-                  <h3 className="text-2xl font-semibold mb-2">All caught up!</h3>
+                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>All caught up!</h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     No pending events to review at this time.
                   </p>
