@@ -10,6 +10,26 @@ const nextConfig: NextConfig = {
     // Disable TypeScript checking during builds for deployment
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8080',
+        pathname: '/api/upload/image/serve/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.herokuapp.com',
+        pathname: '/api/upload/image/serve/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.mehara.io',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
