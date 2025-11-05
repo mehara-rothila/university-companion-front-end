@@ -87,7 +87,7 @@ export default function CreateEventPage() {
     e.preventDefault();
 
     if (!user?.id) {
-      setError('You must be logged in to create an event');
+      setError(t('events.errors.mustBeLoggedIn'));
       return;
     }
 
@@ -111,14 +111,14 @@ export default function CreateEventPage() {
 
       // Validation: Check if end time is after start time (backend safety check)
       if (endDateTime <= eventDateTime) {
-        setError('Invalid time: End time must be after start time. Please adjust your times.');
+        setError(t('events.errors.invalidEndTime'));
         setLoading(false);
         return;
       }
 
       // Validation: Check if registration deadline is before event date (backend safety check)
       if (registrationDeadlineDateTime && registrationDeadlineDateTime >= eventDateTime) {
-        setError('Invalid deadline: Registration must close before the event starts. Please adjust the deadline.');
+        setError(t('events.errors.invalidDeadline'));
         setLoading(false);
         return;
       }
@@ -152,7 +152,7 @@ export default function CreateEventPage() {
         router.push('/events');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create event');
+      setError(err.response?.data?.error || t('events.errors.createFailed'));
       console.error('Error creating event:', err);
     } finally {
       setLoading(false);
@@ -175,18 +175,18 @@ export default function CreateEventPage() {
               }`}
             >
               <ArrowLeft size={20} />
-              Back to Events
+              {t('events.backToEvents')}
             </Link>
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>Create New Event</h1>
+            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>{t('events.form.createTitle')}</h1>
             <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Share your event with the university community
+              {t('events.form.createDescription')}
             </p>
           </div>
 
           {/* Success Message */}
           {success && (
             <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-              Event created successfully! Redirecting to events page...
+              {t('events.messages.createSuccessRedirect')}
             </div>
           )}
 
@@ -201,13 +201,13 @@ export default function CreateEventPage() {
           <form onSubmit={handleSubmit} className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm animate-fade-in`}>
             {/* Basic Information */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Basic Information</h2>
+              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.basicInfo')}</h2>
 
               <div className="space-y-4">
                 {/* Title */}
                 <div>
                   <label htmlFor="title" className="block text-sm font-medium mb-2">
-                    Event Title *
+                    {t('events.form.eventTitle')} *
                   </label>
                   <input
                     type="text"
@@ -221,14 +221,14 @@ export default function CreateEventPage() {
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-white border-gray-300 text-gray-900'
                     }`}
-                    placeholder="e.g., Annual Tech Summit 2025"
+                    placeholder={t('events.form.placeholders.title')}
                   />
                 </div>
 
                 {/* Description */}
                 <div>
                   <label htmlFor="description" className="block text-sm font-medium mb-2">
-                    Description *
+                    {t('events.form.description')} *
                   </label>
                   <textarea
                     id="description"
@@ -242,14 +242,14 @@ export default function CreateEventPage() {
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-white border-gray-300 text-gray-900'
                     }`}
-                    placeholder="Describe your event in detail..."
+                    placeholder={t('events.form.placeholders.description')}
                   />
                 </div>
 
                 {/* Category */}
                 <div>
                   <label htmlFor="category" className="block text-sm font-medium mb-2">
-                    Category *
+                    {t('events.form.category')} *
                   </label>
                   <select
                     id="category"
@@ -275,7 +275,7 @@ export default function CreateEventPage() {
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     <ImageIcon className="inline mr-2" size={16} />
-                    Event Image
+                    {t('events.form.imageUpload')}
                   </label>
 
                   <div className={`border-2 border-dashed rounded-lg p-4 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}>
@@ -289,8 +289,8 @@ export default function CreateEventPage() {
                             setImagePreview(null);
                           }}
                           className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-                          aria-label="Remove image"
-                          title="Remove image"
+                          aria-label={t('events.form.removeImage')}
+                          title={t('events.form.removeImage')}
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -298,8 +298,8 @@ export default function CreateEventPage() {
                     ) : (
                       <label className="cursor-pointer block text-center">
                         <Upload className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>Click to upload image</p>
-                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>JPG, PNG, GIF, WebP (Max 10MB)</p>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>{t('events.form.clickToUpload')}</p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>{t('events.form.imageFormats')}</p>
                         <input
                           type="file"
                           accept="image/*"
@@ -311,7 +311,7 @@ export default function CreateEventPage() {
                   </div>
 
                   <div className="mt-3">
-                    <p className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Or provide image URL:</p>
+                    <p className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('events.form.orProvideUrl')}</p>
                     <input
                       type="url"
                       id="imageUrl"
@@ -324,7 +324,7 @@ export default function CreateEventPage() {
                           ? 'bg-gray-700 border-gray-600 text-white disabled:opacity-50'
                           : 'bg-white border-gray-300 text-gray-900 disabled:opacity-50'
                       }`}
-                      placeholder="https://example.com/image.jpg"
+                      placeholder={t('events.form.placeholders.imageUrl')}
                     />
                   </div>
                 </div>
@@ -333,14 +333,14 @@ export default function CreateEventPage() {
 
             {/* Date & Time */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Date & Time</h2>
+              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.dateTime')}</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Event Date */}
                 <div>
                   <label htmlFor="eventDate" className="block text-sm font-medium mb-2">
                     <Calendar className="inline mr-2" size={16} />
-                    Event Date *
+                    {t('events.form.eventDate')} *
                   </label>
                   <input
                     type="date"
@@ -362,7 +362,7 @@ export default function CreateEventPage() {
                 <div>
                   <label htmlFor="eventTime" className="block text-sm font-medium mb-2">
                     <Clock className="inline mr-2" size={16} />
-                    Start Time *
+                    {t('events.form.startTime')} *
                   </label>
                   <input
                     type="time"
@@ -383,7 +383,7 @@ export default function CreateEventPage() {
                 <div>
                   <label htmlFor="endTime" className="block text-sm font-medium mb-2">
                     <Clock className="inline mr-2" size={16} />
-                    End Time *
+                    {t('events.form.endTime')} *
                   </label>
                   <input
                     type="time"
@@ -402,15 +402,15 @@ export default function CreateEventPage() {
                   />
                   <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     {!formData.eventDate || !formData.eventTime
-                      ? 'Fill in Event Date and Start Time first'
-                      : 'Must be after the start time'}
+                      ? t('events.form.validationEndTime')
+                      : t('events.form.validationEndTimeMust')}
                   </p>
                 </div>
 
                 {/* Registration Deadline */}
                 <div>
                   <label htmlFor="registrationDeadline" className="block text-sm font-medium mb-2">
-                    Registration Deadline
+                    {t('events.form.registrationDeadline')}
                   </label>
                   <input
                     type="datetime-local"
@@ -433,14 +433,16 @@ export default function CreateEventPage() {
                   />
                   <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     {!formData.eventDate || !formData.eventTime
-                      ? 'Fill in Event Date and Start Time first'
-                      : `Can be any date/time from now until ${new Date(formData.eventDate + 'T' + formData.eventTime).toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}`}
+                      ? t('events.form.validationDeadline')
+                      : t('events.form.validationDeadlineRange', {
+                          eventDateTime: new Date(formData.eventDate + 'T' + formData.eventTime).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })
+                        })}
                   </p>
                 </div>
               </div>
@@ -448,14 +450,14 @@ export default function CreateEventPage() {
 
             {/* Location & Organizer */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Location & Organizer</h2>
+              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.locationOrganizer')}</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Location */}
                 <div>
                   <label htmlFor="location" className="block text-sm font-medium mb-2">
                     <MapPin className="inline mr-2" size={16} />
-                    Location *
+                    {t('events.form.location')} *
                   </label>
                   <input
                     type="text"
@@ -469,14 +471,14 @@ export default function CreateEventPage() {
                         ? 'bg-gray-700 border-gray-600 text-white'
                         : 'bg-white border-gray-300 text-gray-900'
                     }`}
-                    placeholder="e.g., Main Auditorium"
+                    placeholder={t('events.form.placeholders.location')}
                   />
                 </div>
 
                 {/* Organizer Name */}
                 <div>
                   <label htmlFor="organizerName" className="block text-sm font-medium mb-2">
-                    Organizer Name
+                    {t('events.form.organizerName')}
                   </label>
                   <input
                     type="text"
@@ -492,7 +494,7 @@ export default function CreateEventPage() {
                     placeholder={`${user?.firstName} ${user?.lastName}`}
                   />
                   <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Leave blank to use your name
+                    {t('events.form.placeholders.organizerName')}
                   </p>
                 </div>
               </div>
@@ -500,12 +502,12 @@ export default function CreateEventPage() {
 
             {/* Capacity */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Capacity</h2>
+              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.capacity')}</h2>
 
               <div>
                 <label htmlFor="maxAttendees" className="block text-sm font-medium mb-2">
                   <Users className="inline mr-2" size={16} />
-                  Maximum Attendees
+                  {t('events.form.maxAttendees')}
                 </label>
                 <input
                   type="number"
@@ -522,14 +524,14 @@ export default function CreateEventPage() {
                   placeholder="e.g., 100"
                 />
                 <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  Leave blank for unlimited capacity. Waitlist will be enabled when full.
+                  {t('events.form.hints.maxAttendees')}
                 </p>
               </div>
             </div>
 
             {/* Recurring Event */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Recurrence (Optional)</h2>
+              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.recurrence')}</h2>
 
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -542,14 +544,14 @@ export default function CreateEventPage() {
                     className="mr-2 h-4 w-4"
                   />
                   <label htmlFor="isRecurring" className="text-sm font-medium">
-                    This is a recurring event
+                    {t('events.form.isRecurring')}
                   </label>
                 </div>
 
                 {formData.isRecurring && (
                   <div>
                     <label htmlFor="recurrencePattern" className="block text-sm font-medium mb-2">
-                      Recurrence Pattern
+                      {t('events.form.recurrencePattern')}
                     </label>
                     <select
                       id="recurrencePattern"
@@ -562,10 +564,10 @@ export default function CreateEventPage() {
                           : 'bg-white border-gray-300 text-gray-900'
                       }`}
                     >
-                      <option value="">Select pattern</option>
-                      <option value="WEEKLY">Weekly</option>
-                      <option value="BIWEEKLY">Bi-weekly</option>
-                      <option value="MONTHLY">Monthly</option>
+                      <option value="">{t('events.form.recurrenceOptions.select')}</option>
+                      <option value="WEEKLY">{t('events.form.recurrenceOptions.weekly')}</option>
+                      <option value="BIWEEKLY">{t('events.form.recurrenceOptions.biweekly')}</option>
+                      <option value="MONTHLY">{t('events.form.recurrenceOptions.monthly')}</option>
                     </select>
                   </div>
                 )}
@@ -581,7 +583,7 @@ export default function CreateEventPage() {
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                {loading ? 'Creating...' : 'Create Event'}
+                {loading ? t('events.form.buttons.creating') : t('events.form.buttons.create')}
               </button>
 
               <Link
@@ -590,12 +592,12 @@ export default function CreateEventPage() {
                   isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
                 } rounded-lg font-medium transition-colors text-center`}
               >
-                Cancel
+                {t('events.form.buttons.cancel')}
               </Link>
             </div>
 
             <p className={`text-xs mt-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              * Your event will be submitted for admin approval before it becomes visible to other users.
+              * {t('events.form.hints.approvalNote')}
             </p>
           </form>
         </main>

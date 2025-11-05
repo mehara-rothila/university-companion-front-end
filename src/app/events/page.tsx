@@ -152,10 +152,10 @@ export default function EventsPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                  Events & Socials
+                  {t('events.title')}
                 </h1>
                 <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Discover and join upcoming events
+                  {t('events.description')}
                 </p>
               </div>
               <div className="mt-4 md:mt-0">
@@ -164,7 +164,7 @@ export default function EventsPage() {
                   className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Plus size={20} />
-                  Create Event
+                  {t('events.createEvent')}
                 </Link>
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function EventsPage() {
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                Explore Events
+                {t('events.tabs.explore')}
               </button>
               <button
                 onClick={() => setActiveTab('my-events')}
@@ -191,7 +191,7 @@ export default function EventsPage() {
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                My Creations
+                {t('events.tabs.myCreations')}
               </button>
             </div>
           </div>
@@ -201,13 +201,13 @@ export default function EventsPage() {
             <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
             <div className="flex items-center gap-2 mb-4">
               <Filter size={20} className={`${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
-              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Filters</h2>
+              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.filters.title')}</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Time Filter */}
               <div>
-                <label htmlFor="time-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Time</label>
+                <label htmlFor="time-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.time')}</label>
                 <select
                   id="time-filter"
                   value={selectedTimeFilter}
@@ -219,15 +219,15 @@ export default function EventsPage() {
                       : 'bg-white border-gray-300 text-gray-900'
                   }`}
                 >
-                  <option value="all">All Events</option>
-                  <option value="upcoming">Upcoming</option>
-                  <option value="past">Past Events</option>
+                  <option value="all">{t('events.filters.all')}</option>
+                  <option value="upcoming">{t('events.filters.upcoming')}</option>
+                  <option value="past">{t('events.filters.past')}</option>
                 </select>
               </div>
 
               {/* Category Filter */}
               <div>
-                <label htmlFor="category-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Category</label>
+                <label htmlFor="category-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.category')}</label>
                 <select
                   id="category-filter"
                   value={selectedCategory}
@@ -249,7 +249,7 @@ export default function EventsPage() {
 
               {/* Search */}
               <div>
-                <label htmlFor="search-events" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Search</label>
+                <label htmlFor="search-events" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.search')}</label>
                 <div className="relative">
                   <Search
                     size={18}
@@ -258,7 +258,7 @@ export default function EventsPage() {
                   <input
                     id="search-events"
                     type="text"
-                    placeholder="Search events..."
+                    placeholder={t('events.filters.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -272,7 +272,7 @@ export default function EventsPage() {
 
               {/* Location Filter */}
               <div>
-                <label htmlFor="location-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Location</label>
+                <label htmlFor="location-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.location')}</label>
                 <div className="relative">
                   <MapPin
                     size={18}
@@ -281,7 +281,7 @@ export default function EventsPage() {
                   <input
                     id="location-filter"
                     type="text"
-                    placeholder="Filter by location..."
+                    placeholder={t('events.filters.locationPlaceholder')}
                     value={locationFilter}
                     onChange={(e) => setLocationFilter(e.target.value)}
                     className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -300,7 +300,7 @@ export default function EventsPage() {
           {loading && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              <p className="mt-4 text-gray-500">Loading events...</p>
+              <p className="mt-4 text-gray-500">{t('events.messages.loading')}</p>
             </div>
           )}
 
@@ -314,18 +314,18 @@ export default function EventsPage() {
           {/* Explore Events Tab */}
           {activeTab === 'explore' && !loading && !error && (
             <>
-              <div className="mb-4 flex justify-between items-center">
-                <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                  Showing {filteredEvents.length} {filteredEvents.length === 1 ? 'event' : 'events'}
+              <div className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}>
+                <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                  {t('events.showing')} {filteredEvents.length} {filteredEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')}
                 </p>
               </div>
 
               {filteredEvents.length === 0 ? (
-                <div className="text-center py-12">
+                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}>
                   <Calendar size={64} className="mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold mb-2">No events found</h3>
+                  <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.empty.noEvents')}</h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                    Try adjusting your filters or create a new event
+                    {t('events.empty.adjustFilters')}
                   </p>
                 </div>
               ) : (
@@ -407,13 +407,13 @@ export default function EventsPage() {
                             >
                               <Users size={16} />
                               <span>
-                                {event.registeredCount || 0} / {event.maxAttendees} registered
+                                {event.registeredCount || 0} / {event.maxAttendees} {t('events.registered')}
                               </span>
                               {event.spotsAvailable !== null &&
                                 event.spotsAvailable !== undefined &&
                                 event.spotsAvailable === 0 && (
                                   <span className="ml-2 px-2 py-0.5 bg-red-100 text-red-800 text-xs rounded-full">
-                                    Full
+                                    {t('events.status.full')}
                                   </span>
                                 )}
                             </div>
@@ -430,25 +430,25 @@ export default function EventsPage() {
           {/* My Events Tab */}
           {activeTab === 'my-events' && !loading && !error && (
             <>
-              <div className="mb-4 flex justify-between items-center">
-                <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                  Showing {myEvents.length} {myEvents.length === 1 ? 'event' : 'events'} you created
+              <div className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}>
+                <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                  {t('events.showing')} {myEvents.length} {myEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')} you created
                 </p>
               </div>
 
               {myEvents.length === 0 ? (
-                <div className="text-center py-12">
+                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}>
                   <Calendar size={64} className="mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-semibold mb-2">No events created yet</h3>
+                  <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.myEvents.noEvents')}</h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                    Create your first event to get started!
+                    {t('events.myEvents.noEventsDescription')}
                   </p>
                   <Link
                     href="/events/create"
                     className="inline-flex items-center gap-2 px-6 py-3 mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200"
                   >
                     <Plus size={20} />
-                    Create Event
+                    {t('events.createEvent')}
                   </Link>
                 </div>
               ) : (
@@ -542,7 +542,7 @@ export default function EventsPage() {
                             >
                               <Users size={16} />
                               <span>
-                                {event.registeredCount || 0} / {event.maxAttendees} registered
+                                {event.registeredCount || 0} / {event.maxAttendees} {t('events.registered')}
                               </span>
                             </div>
                           )}
@@ -554,7 +554,7 @@ export default function EventsPage() {
                             href={`/events/${event.id}`}
                             className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium text-center transition-colors"
                           >
-                            View Details
+                            {t('events.viewDetails')}
                           </Link>
                           {event.approvalStatus === 'APPROVED' && (
                             <Link
@@ -563,7 +563,7 @@ export default function EventsPage() {
                                 isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
                               } rounded-lg text-sm font-medium transition-colors`}
                             >
-                              Edit
+                              {t('events.edit')}
                             </Link>
                           )}
                         </div>

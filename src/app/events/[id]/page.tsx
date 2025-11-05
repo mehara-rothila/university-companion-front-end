@@ -226,8 +226,10 @@ export default function EventDetailPage() {
         <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
           <AnimatedBackground variant="dashboard" />
           <Navigation />
-          <div className="flex items-center justify-center h-screen">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div className="flex items-center justify-center h-screen relative z-10">
+            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
           </div>
         </div>
       </AuthGuard>
@@ -240,13 +242,15 @@ export default function EventDetailPage() {
         <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
           <AnimatedBackground variant="dashboard" />
           <Navigation />
-          <div className="container mx-auto px-4 py-8">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-              {error || 'Event not found'}
+          <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
+            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+                {error || 'Event not found'}
+              </div>
+              <Link href="/events" className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+                ← Back to Events
+              </Link>
             </div>
-            <Link href="/events" className="mt-4 inline-block text-blue-500 hover:text-blue-600">
-              ← Back to Events
-            </Link>
           </div>
         </div>
       </AuthGuard>
