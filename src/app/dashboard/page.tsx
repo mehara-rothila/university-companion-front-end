@@ -38,7 +38,6 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { locale, setLocale, t } = useTranslation();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   
   // Get display name from authenticated user
   const getDisplayName = () => {
@@ -121,31 +120,11 @@ export default function Dashboard() {
   // Active features list - Now includes AI Assistant, Library, Weather, Notifications, and Events
   const activeFeatures = ['lost-found', 'financial-aid', 'profile', 'challenges', 'chatbot', 'library', 'notifications', 'weather', 'events'];
 
-  // Language options with native names
-  const languages = [
-    { code: 'si', name: 'සිංහල', nativeName: 'Sinhala' },
-    { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' }
-  ];
-
-  // Translations now loaded from JSON files via TranslationContext
-
-  // Get current language info
-  const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === locale) || languages[1];
-  };
 
   // Handle coming soon click
   const handleComingSoonClick = (featureName: string) => {
     setComingSoonFeature(featureName);
     setShowComingSoonModal(true);
-  };
-
-  // Handle language change
-  const handleLanguageChange = (langCode: string) => {
-    setLocale(langCode as 'en' | 'si' | 'ta');
-    setShowLanguageDropdown(false);
-    console.log(`Language changed to: ${langCode}`);
   };
 
   // Update current time every minute
@@ -199,55 +178,6 @@ export default function Dashboard() {
               
               {/* Emergency Quick Access */}
               <div className="mt-4 md:mt-0 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                {/* Language Switcher */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                    className={`p-2 rounded-lg transition-colors duration-200 flex items-center space-x-1 ${
-                      isDarkMode ? 'bg-gray-800 text-gray-200 hover:bg-gray-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                    </svg>
-                    <span className="text-sm font-medium">{getCurrentLanguage().name}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  
-                  {/* Language Dropdown */}
-                  {showLanguageDropdown && (
-                    <div className={`absolute top-full right-0 mt-1 w-40 sm:w-44 rounded-lg shadow-lg border z-50 ${
-                      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                    }`}>
-                      {languages.map((language) => (
-                        <button
-                          key={language.code}
-                          onClick={() => handleLanguageChange(language.code)}
-                          className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
-                            locale === language.code
-                              ? isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-50 text-blue-700'
-                              : isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{language.name}</span>
-                            {locale === language.code && (
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {language.nativeName}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 <button 
                   onClick={() => handleComingSoonClick('Emergency Services')}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
@@ -311,12 +241,12 @@ export default function Dashboard() {
             {/* Primary Actions */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                Quick Actions
+                {t('quickActions')}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { 
-                    title: 'AI Assistant', 
+                  {
+                    titleKey: 'aiAssistant',
                     url: '/chatbot', 
                     color: 'from-blue-500/20 to-blue-600/20',
                     borderColor: 'border-blue-400/30',
@@ -328,9 +258,9 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: 'Weather', 
-                    url: '/weather', 
+                  {
+                    titleKey: 'weather',
+                    url: '/weather',
                     color: 'from-sky-500/20 to-sky-600/20',
                     borderColor: 'border-sky-400/30',
                     iconColor: 'text-sky-400',
@@ -342,8 +272,8 @@ export default function Dashboard() {
                     )
                   },
                   {
-                    title: 'University Navigation', 
-                    url: '/navigation', 
+                    titleKey: 'navigation',
+                    url: '/navigation',
                     color: 'from-purple-500/20 to-purple-600/20',
                     borderColor: 'border-purple-400/30',
                     iconColor: 'text-purple-400',
@@ -355,8 +285,8 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: 'Academic Hub', 
+                  {
+                    titleKey: 'academicHub',
                     url: '/academic', 
                     color: 'from-orange-500/20 to-orange-600/20',
                     borderColor: 'border-orange-400/30',
@@ -370,11 +300,11 @@ export default function Dashboard() {
                   }
                 ].map((action) => {
                   const isActive = activeFeatures.includes(action.url.replace('/', ''));
-                  
+
                   if (isActive) {
                     return (
                       <Link
-                        key={action.title}
+                        key={action.titleKey}
                         href={action.url}
                         className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1`}
                       >
@@ -384,7 +314,7 @@ export default function Dashboard() {
                             {action.icon}
                           </div>
                           <span className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} transition-colors duration-300`}>
-                            {action.title}
+                            {t(action.titleKey)}
                           </span>
                         </div>
                         <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border border-green-400/30 font-medium">
@@ -393,11 +323,11 @@ export default function Dashboard() {
                       </Link>
                     );
                   }
-                  
+
                   return (
                     <button
-                      key={action.title}
-                      onClick={() => handleComingSoonClick(action.title)}
+                      key={action.titleKey}
+                      onClick={() => handleComingSoonClick(t(action.titleKey))}
                       className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-6 rounded-2xl shadow-lg opacity-75 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1`}
                     >
                       <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -406,11 +336,11 @@ export default function Dashboard() {
                           {action.icon}
                         </div>
                         <span className={`text-sm font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} transition-colors duration-300`}>
-                          {action.title}
+                          {t(action.titleKey)}
                         </span>
                       </div>
                       <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border border-amber-400/30 font-medium">
-                        Coming Soon
+                        {t('comingSoon')}
                       </div>
                     </button>
                   );
@@ -421,12 +351,12 @@ export default function Dashboard() {
             {/* University Services */}
             <div>
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                University Services
+                {t('universityServices')}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
                   {
-                    title: 'Notifications',
+                    titleKey: 'notifications',
                     url: '/notifications',
                     color: 'from-red-500/20 to-red-600/20',
                     borderColor: 'border-red-400/30',
@@ -434,8 +364,8 @@ export default function Dashboard() {
                     isActive: true,
                     icon: <Bell className="h-6 w-6" strokeWidth={1.5} />
                   },
-                  { 
-                    title: 'Social & Events', 
+                  {
+                    titleKey: 'socialEvents',
                     url: '/events', 
                     color: 'from-pink-500/20 to-pink-600/20',
                     borderColor: 'border-pink-400/30',
@@ -448,8 +378,8 @@ export default function Dashboard() {
                     )
                   },
                   {
-                    title: 'Wellness', 
-                    url: '/wellness', 
+                    titleKey: 'wellness',
+                    url: '/wellness',
                     color: 'from-teal-500/20 to-teal-600/20',
                     borderColor: 'border-teal-400/30',
                     iconColor: 'text-teal-400',
@@ -460,9 +390,9 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: 'Lost & Found', 
-                    url: '/lost-found', 
+                  {
+                    titleKey: 'lostFound',
+                    url: '/lost-found',
                     color: 'from-indigo-500/20 to-indigo-600/20',
                     borderColor: 'border-indigo-400/30',
                     iconColor: 'text-indigo-400',
@@ -473,8 +403,8 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: 'Library', 
+                  {
+                    titleKey: 'library',
                     url: '/library', 
                     color: 'from-emerald-500/20 to-emerald-600/20',
                     borderColor: 'border-emerald-400/30',
@@ -488,11 +418,11 @@ export default function Dashboard() {
                   }
                 ].map((action) => {
                   const isActive = activeFeatures.includes(action.url.replace('/', ''));
-                  
+
                   if (isActive) {
                     return (
                       <Link
-                        key={action.title}
+                        key={action.titleKey}
                         href={action.url}
                         className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5`}
                       >
@@ -502,7 +432,7 @@ export default function Dashboard() {
                             {action.icon}
                           </div>
                           <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                            {action.title}
+                            {t(action.titleKey)}
                           </span>
                         </div>
                         <div className="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border border-green-400/30 font-medium">
@@ -511,11 +441,11 @@ export default function Dashboard() {
                       </Link>
                     );
                   }
-                  
+
                   return (
                     <button
-                      key={action.title}
-                      onClick={() => handleComingSoonClick(action.title)}
+                      key={action.titleKey}
+                      onClick={() => handleComingSoonClick(t(action.titleKey))}
                       className={`relative group bg-gradient-to-br ${action.color} backdrop-blur-lg border ${action.borderColor} p-4 rounded-xl shadow-md opacity-75 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5`}
                     >
                       <div className="absolute inset-0 bg-white/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -524,11 +454,11 @@ export default function Dashboard() {
                           {action.icon}
                         </div>
                         <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {action.title}
+                          {t(action.titleKey)}
                         </span>
                       </div>
                       <div className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border border-amber-400/30 font-medium">
-                        Soon
+                        {t('soon')}
                       </div>
                     </button>
                   );
