@@ -103,20 +103,39 @@ export default function CreateEventPage() {
       }
 
       // Combine date and time into ISO format
-      const eventDateTime = new Date(`${formData.eventDate}T${formData.eventTime}`).toISOString();
-      const endDateTime = new Date(`${formData.eventDate}T${formData.endTime}`).toISOString();
+      const eventDateTime = new Date(`${formData.eventDate}T${formData.eventTime}`);
+      const endDateTime = new Date(`${formData.eventDate}T${formData.endTime}`);
       const registrationDeadlineDateTime = formData.registrationDeadline
-        ? new Date(formData.registrationDeadline).toISOString()
+        ? new Date(formData.registrationDeadline)
         : undefined;
+
+      // Validation: Check if end time is after start time (backend safety check)
+      if (endDateTime <= eventDateTime) {
+        setError('Invalid time: End time must be after start time. Please adjust your times.');
+        setLoading(false);
+        return;
+      }
+
+      // Validation: Check if registration deadline is before event date (backend safety check)
+      if (registrationDeadlineDateTime && registrationDeadlineDateTime >= eventDateTime) {
+        setError('Invalid deadline: Registration must close before the event starts. Please adjust the deadline.');
+        setLoading(false);
+        return;
+      }
+
+      // Convert to ISO strings
+      const eventDateTimeISO = eventDateTime.toISOString();
+      const endDateTimeISO = endDateTime.toISOString();
+      const registrationDeadlineDateTimeISO = registrationDeadlineDateTime?.toISOString();
 
       const eventData: CreateEventRequest = {
         title: formData.title,
         description: formData.description,
         imageUrl: imageUrl || undefined,
-        eventDate: eventDateTime,
-        eventTime: eventDateTime,
-        endTime: endDateTime,
-        registrationDeadline: registrationDeadlineDateTime,
+        eventDate: eventDateTimeISO,
+        eventTime: eventDateTimeISO,
+        endTime: endDateTimeISO,
+        registrationDeadline: registrationDeadlineDateTimeISO,
         category: formData.category,
         location: formData.location,
         organizerName: formData.organizerName || `${user.firstName} ${user.lastName}`,
@@ -373,12 +392,19 @@ export default function CreateEventPage() {
                     required
                     value={formData.endTime}
                     onChange={handleChange}
+                    min={formData.eventTime || undefined}
+                    disabled={!formData.eventDate || !formData.eventTime}
                     className={`w-full px-4 py-2 rounded-lg border ${
                       isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-white'
-                        : 'bg-white border-gray-300 text-gray-900'
+                        ? 'bg-gray-700 border-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                        : 'bg-white border-gray-300 text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed'
                     }`}
                   />
+                  <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {!formData.eventDate || !formData.eventTime
+                      ? 'Fill in Event Date and Start Time first'
+                      : 'Must be after the start time'}
+                  </p>
                 </div>
 
                 {/* Registration Deadline */}
@@ -392,12 +418,30 @@ export default function CreateEventPage() {
                     name="registrationDeadline"
                     value={formData.registrationDeadline}
                     onChange={handleChange}
+                    disabled={!formData.eventDate || !formData.eventTime}
+                    min={new Date().toISOString().slice(0, 16)}
+                    max={
+                      formData.eventDate && formData.eventTime
+                        ? `${formData.eventDate}T${formData.eventTime}`
+                        : undefined
+                    }
                     className={`w-full px-4 py-2 rounded-lg border ${
                       isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-white'
-                        : 'bg-white border-gray-300 text-gray-900'
+                        ? 'bg-gray-700 border-gray-600 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+                        : 'bg-white border-gray-300 text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed'
                     }`}
                   />
+                  <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {!formData.eventDate || !formData.eventTime
+                      ? 'Fill in Event Date and Start Time first'
+                      : `Can be any date/time from now until ${new Date(formData.eventDate + 'T' + formData.eventTime).toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}`}
+                  </p>
                 </div>
               </div>
             </div>
