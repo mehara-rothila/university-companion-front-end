@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Clock,
   Trophy,
-  Calendar
+  Calendar,
+  Search
 } from 'lucide-react';
 
 // Types
@@ -213,7 +214,7 @@ export default function AdminPanel() {
         });
         setSuccessMessage('User created successfully');
       }
-      
+
       setShowUserModal(false);
       resetForm();
       loadUsers();
@@ -237,7 +238,7 @@ export default function AdminPanel() {
       }, {
         headers: getAuthHeaders()
       });
-      
+
       setSuccessMessage(`Bulk ${action} completed successfully`);
       setSelectedUsers([]);
       loadUsers();
@@ -289,8 +290,8 @@ export default function AdminPanel() {
 
   // Handle user selection
   const handleUserSelect = (userId: number) => {
-    setSelectedUsers(prev => 
-      prev.includes(userId) 
+    setSelectedUsers(prev =>
+      prev.includes(userId)
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
@@ -374,7 +375,7 @@ export default function AdminPanel() {
     <AuthGuard allowedRoles={['admin']}>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-        
+
         <AnimatedBackground variant="dashboard" />
 
         {/* Messages */}
@@ -391,7 +392,7 @@ export default function AdminPanel() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-          
+
           {/* Header */}
           <div className="mb-8 animate-fade-in">
             <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
@@ -612,6 +613,39 @@ export default function AdminPanel() {
               </div>
             </Link>
 
+            {/* Lost & Found Management */}
+            <Link href="/admin/lost-found">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-cyan-900/20 to-cyan-800/20 border-cyan-700/30' : 'bg-gradient-to-br from-cyan-50/90 to-cyan-100/90 border-cyan-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-cyan-800/50' : 'bg-cyan-100'} flex-shrink-0`}>
+                    <Search className={`w-8 h-8 ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'}`} />
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} bg-gradient-to-r ${isDarkMode ? 'from-cyan-400 to-cyan-300' : 'from-cyan-600 to-cyan-500'} bg-clip-text text-transparent block`}>
+                      Active
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-cyan-400' : 'text-cyan-500'}`}>
+                      Review Items
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Lost & Found
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and approve lost and found submissions
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} flex items-center justify-end`}>
+                    Manage Items
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
             {/* Events Management */}
             <Link href="/admin/events">
               <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-pink-900/20 to-pink-800/20 border-pink-700/30' : 'bg-gradient-to-br from-pink-50/90 to-pink-100/90 border-pink-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
@@ -685,11 +719,10 @@ export default function AdminPanel() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => openUserModal()}
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
-                  isDarkMode
-                    ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20'
-                    : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
-                }`}
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${isDarkMode
+                  ? 'border-gray-600 hover:border-blue-500 bg-gray-700/30 hover:bg-blue-900/20'
+                  : 'border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50'
+                  }`}
               >
                 <div className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} mb-2`}>
                   <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -702,11 +735,10 @@ export default function AdminPanel() {
               </button>
 
               <Link href="/admin/financial-aid">
-                <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center text-center ${
-                  isDarkMode
-                    ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20'
-                    : 'border-gray-300 hover:border-green-400 bg-gray-50 hover:bg-green-50'
-                }`}>
+                <div className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 cursor-pointer flex flex-col items-center text-center ${isDarkMode
+                  ? 'border-gray-600 hover:border-green-500 bg-gray-700/30 hover:bg-green-900/20'
+                  : 'border-gray-300 hover:border-green-400 bg-gray-50 hover:bg-green-50'
+                  }`}>
                   <div className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} mb-2`}>
                     <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -723,11 +755,10 @@ export default function AdminPanel() {
                   loadStats();
                   loadUsers();
                 }}
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${
-                  isDarkMode
-                    ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20'
-                    : 'border-gray-300 hover:border-purple-400 bg-gray-50 hover:bg-purple-50'
-                }`}
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 hover:scale-105 flex flex-col items-center text-center ${isDarkMode
+                  ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30 hover:bg-purple-900/20'
+                  : 'border-gray-300 hover:border-purple-400 bg-gray-50 hover:bg-purple-50'
+                  }`}
               >
                 <div className={`${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mb-2`}>
                   <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -741,11 +772,10 @@ export default function AdminPanel() {
 
               <button
                 disabled
-                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed flex flex-col items-center text-center ${
-                  isDarkMode
-                    ? 'border-gray-600 bg-gray-700/30'
-                    : 'border-gray-300 bg-gray-50'
-                }`}
+                className={`p-4 rounded-lg border-2 border-dashed transition-all duration-200 opacity-50 cursor-not-allowed flex flex-col items-center text-center ${isDarkMode
+                  ? 'border-gray-600 bg-gray-700/30'
+                  : 'border-gray-300 bg-gray-50'
+                  }`}
               >
                 <div className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mb-2`}>
                   <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -765,7 +795,7 @@ export default function AdminPanel() {
               <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 lg:mb-0`}>
                 {t('admin.userManagement.title')}
               </h2>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Search */}
                 <div className="relative">
@@ -791,26 +821,24 @@ export default function AdminPanel() {
                   <button
                     type="button"
                     onClick={() => setShowRoleFilterDropdown(!showRoleFilterDropdown)}
-                    className={`glass-input px-4 py-2 rounded-lg transition-all duration-200 text-left min-w-[120px] ${
-                      isDarkMode ? 'text-gray-100' : 'text-gray-900'
-                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    className={`glass-input px-4 py-2 rounded-lg transition-all duration-200 text-left min-w-[120px] ${isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     {roleFilter === '' ? t('admin.userManagement.filters.allRoles') :
-                     roleFilter === 'STUDENT' ? t('admin.userManagement.filters.students') :
-                     roleFilter === 'FACULTY' ? t('admin.userManagement.filters.faculty') : t('admin.userManagement.filters.admins')}
+                      roleFilter === 'STUDENT' ? t('admin.userManagement.filters.students') :
+                        roleFilter === 'FACULTY' ? t('admin.userManagement.filters.faculty') : t('admin.userManagement.filters.admins')}
                     <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
                   </button>
-                  
+
                   {showRoleFilterDropdown && (
-                    <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
-                      isDarkMode 
-                        ? 'bg-gray-700 border-gray-600' 
-                        : 'bg-white border-gray-300'
-                    }`}>
+                    <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${isDarkMode
+                      ? 'bg-gray-700 border-gray-600'
+                      : 'bg-white border-gray-300'
+                      }`}>
                       {[
                         { value: '', label: t('admin.userManagement.filters.allRoles') },
                         { value: 'STUDENT', label: t('admin.userManagement.filters.students') },
@@ -824,9 +852,8 @@ export default function AdminPanel() {
                             setRoleFilter(option.value);
                             setShowRoleFilterDropdown(false);
                           }}
-                          className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${
-                            isDarkMode ? 'text-gray-100' : 'text-gray-900'
-                          }`}
+                          className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                            }`}
                         >
                           {option.label}
                         </button>
@@ -955,11 +982,10 @@ export default function AdminPanel() {
                             {user.role}
                           </span>
                           {user.provider && user.provider !== 'local' && (
-                            <span className={`px-2 py-1 text-xs rounded-full w-fit ${
-                              user.provider === 'google'
-                                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                                : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                            }`}>
+                            <span className={`px-2 py-1 text-xs rounded-full w-fit ${user.provider === 'google'
+                              ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                              : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                              }`}>
                               {user.provider === 'google' ? '🔐 Google' : `🔐 ${user.provider}`}
                             </span>
                           )}
@@ -979,11 +1005,10 @@ export default function AdminPanel() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          user.enabled
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                        }`}>
+                        <span className={`px-2 py-1 text-xs rounded-full ${user.enabled
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                          }`}>
                           {user.enabled ? t('admin.userManagement.table.status.active') : t('admin.userManagement.table.status.disabled')}
                         </span>
                       </td>
@@ -1060,7 +1085,7 @@ export default function AdminPanel() {
                 <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
                   {selectedUser ? t('admin.modal.editUser') : t('admin.modal.addUser')}
                 </h2>
-                <button 
+                <button
                   onClick={() => setShowUserModal(false)}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
                 >
@@ -1069,7 +1094,7 @@ export default function AdminPanel() {
                   </svg>
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1081,11 +1106,10 @@ export default function AdminPanel() {
                       value={userForm.firstName}
                       onChange={(e) => setUserForm(prev => ({ ...prev, firstName: e.target.value }))}
                       placeholder={t('admin.modal.placeholders.firstName')}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
                   </div>
 
@@ -1097,11 +1121,10 @@ export default function AdminPanel() {
                       value={userForm.lastName}
                       onChange={(e) => setUserForm(prev => ({ ...prev, lastName: e.target.value }))}
                       placeholder={t('admin.modal.placeholders.lastName')}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
                   </div>
                 </div>
@@ -1114,11 +1137,10 @@ export default function AdminPanel() {
                     value={userForm.email}
                     onChange={(e) => setUserForm(prev => ({ ...prev, email: e.target.value }))}
                     placeholder={t('admin.modal.placeholders.email')}
-                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   />
                 </div>
 
@@ -1130,11 +1152,10 @@ export default function AdminPanel() {
                     value={userForm.username}
                     onChange={(e) => setUserForm(prev => ({ ...prev, username: e.target.value }))}
                     placeholder={t('admin.modal.placeholders.username')}
-                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                      isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                    } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                      : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   />
                 </div>
 
@@ -1147,11 +1168,10 @@ export default function AdminPanel() {
                       value={userForm.password}
                       onChange={(e) => setUserForm(prev => ({ ...prev, password: e.target.value }))}
                       placeholder={t('admin.modal.placeholders.password')}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                        isDarkMode
-                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     />
                   </div>
                 )}
@@ -1162,27 +1182,25 @@ export default function AdminPanel() {
                     <button
                       type="button"
                       onClick={() => setShowUserRoleDropdown(!showUserRoleDropdown)}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 text-left ${
-                        isDarkMode
-                          ? 'bg-gray-700 border-gray-600 text-gray-100'
-                          : 'bg-white border-gray-300 text-gray-900'
-                      } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 text-left ${isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-gray-100'
+                        : 'bg-white border-gray-300 text-gray-900'
+                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                     >
                       {userForm.role === 'STUDENT' ? t('admin.modal.roles.student') :
-                       userForm.role === 'FACULTY' ? t('admin.modal.roles.faculty') : t('admin.modal.roles.admin')}
+                        userForm.role === 'FACULTY' ? t('admin.modal.roles.faculty') : t('admin.modal.roles.admin')}
                       <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
                     </button>
-                    
+
                     {showUserRoleDropdown && (
-                      <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
-                        isDarkMode 
-                          ? 'bg-gray-700 border-gray-600' 
-                          : 'bg-white border-gray-300'
-                      }`}>
+                      <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${isDarkMode
+                        ? 'bg-gray-700 border-gray-600'
+                        : 'bg-white border-gray-300'
+                        }`}>
                         {[
                           { value: 'STUDENT', label: t('admin.modal.roles.student') },
                           { value: 'FACULTY', label: t('admin.modal.roles.faculty') },
@@ -1195,9 +1213,8 @@ export default function AdminPanel() {
                               setUserForm(prev => ({ ...prev, role: option.value as 'STUDENT' | 'FACULTY' | 'ADMIN' }));
                               setShowUserRoleDropdown(false);
                             }}
-                            className={`w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${
-                              isDarkMode ? 'text-gray-100' : 'text-gray-900'
-                            }`}
+                            className={`w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 first:rounded-t-lg last:rounded-b-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                              }`}
                           >
                             {option.label}
                           </button>
@@ -1219,11 +1236,10 @@ export default function AdminPanel() {
                           value={userForm.studentId}
                           onChange={(e) => setUserForm(prev => ({ ...prev, studentId: e.target.value }))}
                           placeholder={t('admin.modal.placeholders.studentId')}
-                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                            isDarkMode
-                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                         />
                       </div>
 
@@ -1236,11 +1252,10 @@ export default function AdminPanel() {
                           value={userForm.year || ''}
                           onChange={(e) => setUserForm(prev => ({ ...prev, year: e.target.value ? parseInt(e.target.value) : undefined }))}
                           placeholder={t('admin.modal.placeholders.academicYear')}
-                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                            isDarkMode
-                              ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                          className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                            } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                         />
                       </div>
                     </div>
@@ -1251,11 +1266,10 @@ export default function AdminPanel() {
                         value={userForm.major}
                         onChange={(e) => setUserForm(prev => ({ ...prev, major: e.target.value }))}
                         placeholder={t('admin.modal.placeholders.major')}
-                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
-                          isDarkMode
-                            ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                       />
                     </div>
                   </div>
@@ -1279,11 +1293,10 @@ export default function AdminPanel() {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setShowUserModal(false)}
-                    className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                      isDarkMode
-                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                    }`}
+                    className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${isDarkMode
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      }`}
                   >
                     {t('admin.modal.buttons.cancel')}
                   </button>
