@@ -14,7 +14,7 @@ export interface LostFoundItem {
   imageUrl?: string;
   reward?: number;
   contactMethod: 'ANONYMOUS' | 'DIRECT';
-  status: 'ACTIVE' | 'RESOLVED' | 'EXPIRED';
+  status: 'PENDING' | 'ACTIVE' | 'RESOLVED' | 'EXPIRED' | 'REJECTED';
   postedBy: string;
   postedByUserId: number;
   priority?: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -180,6 +180,39 @@ class LostFoundService {
       return response.data;
     } catch (error) {
       console.error('Error fetching lost-found stats:', error);
+      throw error;
+    }
+  }
+
+  // Admin: Get pending items for review
+  async getPendingItems(adminId: number): Promise<LostFoundItem[]> {
+    try {
+      const response = await this.api.get(`/lost-found/admin/pending?adminId=${adminId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching pending items:', error);
+      throw error;
+    }
+  }
+
+  // Admin: Approve an item
+  async approveItem(itemId: number, adminId: number): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.post(`/lost-found/${itemId}/approve?adminId=${adminId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error approving item:', error);
+      throw error;
+    }
+  }
+
+  // Admin: Reject an item
+  async rejectItem(itemId: number, adminId: number): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.post(`/lost-found/${itemId}/reject?adminId=${adminId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error rejecting item:', error);
       throw error;
     }
   }
