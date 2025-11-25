@@ -17,7 +17,7 @@ const messages: Record<Locale, Messages> = {
 interface TranslationContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: (key: string, variables?: Record<string, string | number>) => string;
   messages: Messages;
 }
 
@@ -39,7 +39,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('app-locale', newLocale);
   };
 
-  const t = (key: string): string => {
+  const t = (key: string, variables?: Record<string, string | number>): string => {
     const keys = key.split('.');
     let value: unknown = messages[locale];
 
@@ -51,7 +51,16 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    return typeof value === 'string' ? value : key;
+    let result = typeof value === 'string' ? value : key;
+
+    // Replace variables like {{name}} with actual values
+    if (variables) {
+      Object.entries(variables).forEach(([varKey, varValue]) => {
+        result = result.replace(new RegExp(`{{${varKey}}}`, 'g'), String(varValue));
+      });
+    }
+
+    return result;
   };
 
   return (
