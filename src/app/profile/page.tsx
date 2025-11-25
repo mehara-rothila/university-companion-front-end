@@ -1,12 +1,14 @@
 // src/app/profile/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { useTranslation } from '@/contexts/TranslationContext';
+import axios from 'axios';
 
 // --- Interfaces ---
 interface UserProfile {
@@ -61,10 +63,17 @@ interface ActivityStats {
 export default function ProfilePage() {
   const { isDarkMode } = useDarkMode();
   const { t } = useTranslation();
+  const { user, token } = useAuth();
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error' | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(user?.image || null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   const [userProfile, setUserProfile] = useState<UserProfile>({
     personalInfo: {
@@ -141,6 +150,96 @@ export default function ProfilePage() {
     }, 1000);
   };
 
+  // Handle profile image upload
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setImageError('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError('Image size cannot exceed 5MB');
+      return;
+    }
+
+    setImageUploading(true);
+    setImageError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(`${API_BASE_URL}/api/user/profile/image`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      setProfileImage(response.data.imageUrl);
+      
+      // Update localStorage user data
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        userData.image = response.data.imageUrl;
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus(null), 2000);
+    } catch (error: any) {
+      console.error('Failed to upload profile image:', error);
+      setImageError(error.response?.data || 'Failed to upload image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  // Handle profile image delete
+  const handleImageDelete = async () => {
+    if (!profileImage) return;
+
+    setImageUploading(true);
+    setImageError(null);
+
+    try {
+      await axios.delete(`${API_BASE_URL}/api/user/profile/image`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setProfileImage(null);
+      
+      // Update localStorage user data
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        userData.image = null;
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus(null), 2000);
+    } catch (error: any) {
+      console.error('Failed to delete profile image:', error);
+      setImageError(error.response?.data || 'Failed to delete image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  // Trigger file input click
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   // Tab navigation
   const tabs = [
     { id: 'personal', name: t('profile.tabs.personal'), icon: '👤' },
@@ -164,16 +263,80 @@ export default function ProfilePage() {
           <div className="mb-8 animate-fade-in">
             <div className={`flex flex-col md:flex-row md:items-center md:justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
-                  {userProfile.personalInfo.name.split(' ').map(n => n[0]).join('')}
+                {/* Profile Image with Upload */}
+                <div className="relative group">
+                  {profileImage ? (
+                    <img
+                      src={profileImage.includes('amazonaws.com') 
+                        ? `${API_BASE_URL}/api/upload/image/serve?url=${encodeURIComponent(profileImage)}`
+                        : profileImage}
+                      alt="Profile"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-purple-500"
+                      onError={(e) => {
+                        console.error('Failed to load profile image:', profileImage);
+                        // Fallback to initials on error
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  <div className={`w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold ${profileImage ? 'hidden' : ''}`}>
+                    {userProfile.personalInfo.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  
+                  {/* Upload overlay */}
+                  <div 
+                    onClick={triggerFileInput}
+                    className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  >
+                    {imageUploading ? (
+                      <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {/* Hidden file input */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    aria-label="Upload profile picture"
+                  />
+
+                  {/* Delete button (show only if has custom image) */}
+                  {profileImage && profileImage.includes('amazonaws.com') && (
+                    <button
+                      onClick={handleImageDelete}
+                      disabled={imageUploading}
+                      className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-md transition-colors"
+                      title="Remove profile picture"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
-                <div>
+
+                <div className="ml-4">
                   <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1`}>
                     {userProfile.personalInfo.name}
                   </h1>
                   <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     {userProfile.personalInfo.major} • {userProfile.personalInfo.academicYear}
                   </p>
+                  {imageError && (
+                    <p className="text-red-500 text-sm mt-1">{imageError}</p>
+                  )}
                 </div>
               </div>
 

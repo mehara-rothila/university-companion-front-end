@@ -28,6 +28,16 @@ const nextConfig: NextConfig = {
         hostname: '*.mehara.io',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.amazonaws.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+        pathname: '/**',
+      },
     ],
   },
 };
