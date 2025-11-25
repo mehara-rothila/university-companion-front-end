@@ -57,6 +57,7 @@ export default function LostFoundPage() {
 
   // Backend state
   const [lostFoundItems, setLostFoundItems] = useState<LostFoundItem[]>([]);
+  const [myItems, setMyItems] = useState<LostFoundItem[]>([]);
   const [stats, setStats] = useState<LostFoundStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,6 +106,21 @@ export default function LostFoundPage() {
     }
   }, []);
 
+  const loadMyItems = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+      const items = await lostFoundService.getUserItems(user.id);
+      setMyItems(items);
+    } catch (err) {
+      console.error('Error loading my items:', err);
+      setError('Failed to load your items.');
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
   // Load data on component mount and when filters change
   useEffect(() => {
     loadItems();
@@ -114,6 +130,13 @@ export default function LostFoundPage() {
   useEffect(() => {
     loadStats();
   }, [loadStats]);
+
+  // Load user's items when switching to My Items tab
+  useEffect(() => {
+    if (activeTab === 'my-items' && user?.id) {
+      loadMyItems();
+    }
+  }, [activeTab, user, loadMyItems]);
 
   const categories: ItemCategory[] = [
     {
@@ -164,6 +187,7 @@ export default function LostFoundPage() {
       });
       await loadItems();
       await loadStats();
+      await loadMyItems(); // Reload user's items to show the new pending item
       setTimeout(() => setItemPosted(false), 5000);
     } catch (err) {
       setError('Failed to post item. Please try again.');
@@ -190,6 +214,7 @@ export default function LostFoundPage() {
       await lostFoundService.deleteItem(itemId);
       await loadItems();
       await loadStats();
+      await loadMyItems(); // Reload user's items after deletion
     } catch (err) {
       setError('Failed to delete item. Please try again.');
       console.error('Error deleting item:', err);
@@ -296,14 +321,19 @@ export default function LostFoundPage() {
 
           {/* Success Message */}
           {itemPosted && (
-            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} animate-fade-in`}>
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
-                  Item posted successfully! Others can now see your listing and contact you if they have information.
-                </p>
+                <div>
+                  <p className={`${isDarkMode ? 'text-blue-300' : 'text-blue-800'} font-medium`}>
+                    Item submitted successfully! Your item is pending admin approval.
+                  </p>
+                  <p className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} text-sm mt-1`}>
+                    You can view it in the "My Items" tab. It will be visible to others once approved.
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -592,8 +622,13 @@ export default function LostFoundPage() {
             {/* My Items Tab */}
             {activeTab === 'my-items' && (
               <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>My Items</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>My Items</h2>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+                      Track your submitted items. Pending items are awaiting admin approval.
+                    </p>
+                  </div>
                   <button
                     onClick={() => setShowPostModal(true)}
                     className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
@@ -605,60 +640,125 @@ export default function LostFoundPage() {
                   </button>
                 </div>
 
+                {/* Loading State */}
+                {loading && (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading your items...</p>
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {!loading && myItems.length === 0 && (
+                  <div className="text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>You haven't posted any items yet</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mt-2 mb-4`}>Report a lost or found item to get started</p>
+                    <button
+                      onClick={() => setShowPostModal(true)}
+                      className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Post Your First Item
+                    </button>
+                  </div>
+                )}
+
                 {/* User's Items */}
+                {!loading && myItems.length > 0 && (
                 <div className="space-y-4">
-                  {lostFoundItems.filter(item => item.postedByUserId === 1).map((item) => (
+                  {myItems.map((item) => (
                     <div key={item.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                              {item.title}
-                            </h3>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${item.type === 'LOST'
-                                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                              }`}>
-                              {item.type}
-                            </span>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${item.status === 'ACTIVE' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                              }`}>
-                              {item.status}
-                            </span>
+                      <div className="flex gap-4">
+                        {/* Item Image */}
+                        {item.imageUrl && (
+                          <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-600">
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`}
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const placeholder = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (placeholder) placeholder.style.display = 'flex';
+                              }}
+                            />
+                            <div className="hidden items-center justify-center text-center p-4">
+                              <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto mb-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p className="text-xs text-gray-500">Image attached</p>
+                              </div>
+                            </div>
                           </div>
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                            {item.description}
-                          </p>
-                          <div className="flex items-center space-x-4 text-sm">
-                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                              📍 {item.location}
-                            </span>
-                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                              {new Date(item.dateReported).toLocaleDateString()}
-                            </span>
-                            {item.reward && (
-                              <span className={`${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
-                                💰 Rs {item.reward} reward
-                              </span>
-                            )}
+                        )}
+
+                        {/* Item Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-3 mb-2">
+                                <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                  {item.title}
+                                </h3>
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${item.type === 'LOST'
+                                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                                    : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                  }`}>
+                                  {item.type}
+                                </span>
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                  item.status === 'ACTIVE'
+                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                    : item.status === 'PENDING'
+                                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                    : item.status === 'REJECTED'
+                                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                                    : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                                  }`}>
+                                  {item.status}
+                                </span>
+                              </div>
+                              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                                {item.description}
+                              </p>
+                              <div className="flex items-center space-x-4 text-sm">
+                                <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                  📍 {item.location}
+                                </span>
+                                <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  {new Date(item.dateReported).toLocaleDateString()}
+                                </span>
+                                {item.reward && (
+                                  <span className={`${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                                    💰 Rs {item.reward} reward
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2 ml-4">
+                              <button className={`px-4 py-2 text-sm ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg transition-all duration-200`}>
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteItem(item.id)}
+                                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button className={`px-4 py-2 text-sm ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg transition-all duration-200`}>
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteItem(item.id)}
-                            className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200"
-                          >
-                            Remove
-                          </button>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+                )}
               </div>
             )}
 
