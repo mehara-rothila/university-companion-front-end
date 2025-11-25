@@ -300,28 +300,36 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
   return (
     <div
-      className={`${
-        isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'
-      } rounded-2xl shadow-lg border backdrop-blur-sm h-[700px] flex flex-col`}
+      className={`relative ${
+        isDarkMode
+          ? 'bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-gray-800/95 border-purple-500/30'
+          : 'bg-gradient-to-br from-white/95 via-purple-50/30 to-white/95 border-purple-300/40'
+      } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[700px] flex flex-col overflow-hidden group hover:shadow-purple-500/20 transition-all duration-500`}
     >
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-blue-600/5 to-purple-600/5 animate-gradient-shift pointer-events-none"></div>
+
       {/* Header */}
-      <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+      <div className={`relative z-10 p-5 border-b-2 ${isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'} backdrop-blur-md`}>
         <div className="flex items-center">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
-            <span className="text-white font-bold text-lg">A</span>
+          <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+            <span className="text-white font-bold text-xl">A</span>
+            {/* Pulsing indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
           </div>
-          <div>
-            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+          <div className="flex-1">
+            <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Athena AI Assistant
             </h3>
-            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <p className={`text-xs font-medium ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} flex items-center gap-1`}>
+              <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               University of Moratuwa • Powered by Gemini 2.5 Pro
             </p>
           </div>
         </div>
 
         {/* Token Usage Display */}
-        <div className="mt-3">
+        <div className="mt-4">
           <TokenUsageDisplay compact={true} />
         </div>
       </div>
@@ -329,22 +337,24 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       {/* Messages */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className={`relative z-10 flex-1 overflow-y-auto p-6 space-y-5 ${
+          isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-purple-50/10'
+        }`}
         style={{ scrollBehavior: 'smooth' }}
       >
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-appear`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${
                 message.role === 'user'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                  ? 'bg-gradient-to-br from-purple-600 via-purple-500 to-blue-600 text-white shadow-purple-500/30'
                   : isDarkMode
-                  ? 'bg-gray-700 text-gray-100'
-                  : 'bg-gray-100 text-gray-900'
-              }`}
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-100 border border-gray-600/50 shadow-gray-900/50'
+                  : 'bg-gradient-to-br from-white to-gray-50 text-gray-900 border border-gray-200/50 shadow-gray-300/30'
+              } transition-all duration-300 hover:scale-[1.02]`}
             >
               {/* Attachments */}
               {message.attachments && message.attachments.length > 0 && (
@@ -391,15 +401,22 @@ You can also upload images or PDFs for me to analyze! What would you like help w
         ))}
 
         {isLoading && (
-          <div className="flex justify-start">
+          <div className="flex justify-start animate-appear">
             <div
-              className={`rounded-2xl px-4 py-3 ${
-                isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
-              }`}
+              className={`rounded-2xl px-5 py-4 ${
+                isDarkMode
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600/50'
+                  : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200/50'
+              } shadow-lg`}
             >
-              <div className="flex items-center space-x-2">
-                <Loader className="w-4 h-4 animate-spin text-purple-500" />
-                <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <Loader className="w-5 h-5 animate-spin text-purple-500" />
+                  <div className="absolute inset-0 w-5 h-5 animate-ping text-purple-500/30">
+                    <Loader className="w-5 h-5" />
+                  </div>
+                </div>
+                <span className={`font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
                   Thinking...
                 </span>
               </div>
@@ -410,26 +427,36 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
       {/* File Upload Preview */}
       {uploadedFiles.length > 0 && (
-        <div className={`px-4 py-2 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="flex flex-wrap gap-2">
+        <div className={`relative z-10 px-5 py-3 border-t-2 ${
+          isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'
+        } backdrop-blur-md`}>
+          <div className="flex flex-wrap gap-3">
             {uploadedFiles.map((file, index) => (
               <div
                 key={index}
-                className={`relative flex items-center gap-2 px-3 py-2 rounded-lg ${
-                  isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
-                }`}
+                className={`group relative flex items-center gap-2 px-4 py-2 rounded-xl ${
+                  isDarkMode
+                    ? 'bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600/50'
+                    : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200/50'
+                } shadow-md hover:shadow-lg transition-all duration-200`}
               >
                 {file.type === 'image' ? (
-                  <img src={file.preview} alt={file.file.name} className="w-8 h-8 rounded object-cover" />
+                  <img src={file.preview} alt={file.file.name} className="w-10 h-10 rounded-lg object-cover shadow-sm" />
                 ) : (
-                  <FileText className="w-6 h-6 text-red-500" />
+                  <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                    <FileText className="w-6 h-6 text-red-500" />
+                  </div>
                 )}
-                <span className={`text-xs truncate max-w-[120px] ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <span className={`text-xs font-medium truncate max-w-[120px] ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   {file.file.name}
                 </span>
                 <button
+                  type="button"
                   onClick={() => removeFile(index)}
-                  className="ml-2 text-red-500 hover:text-red-700"
+                  className="ml-2 p-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-600 transition-all"
+                  aria-label={`Remove ${file.file.name}`}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -440,8 +467,10 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       )}
 
       {/* Input */}
-      <div className={`p-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex items-end space-x-2">
+      <div className={`relative z-10 p-5 border-t-2 ${
+        isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'
+      } backdrop-blur-md`}>
+        <div className="flex items-end gap-3">
           <input
             type="file"
             ref={fileInputRef}
@@ -449,19 +478,21 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             accept="image/*,application/pdf"
             multiple
             className="hidden"
+            aria-label="Upload image or PDF file"
           />
 
           <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading || isUploading}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`group p-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg ${
               isDarkMode
-                ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-            } ${(isLoading || isUploading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                ? 'bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-purple-400 border border-gray-600/50'
+                : 'bg-gradient-to-br from-white to-gray-100 hover:from-purple-50 hover:to-purple-100 text-purple-600 border border-gray-300/50'
+            } ${(isLoading || isUploading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             title="Upload image or PDF"
           >
-            <Upload className="w-5 h-5" />
+            <Upload className="w-5 h-5 transition-transform group-hover:rotate-12" />
           </button>
 
           <textarea
@@ -471,20 +502,21 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             placeholder="Ask me anything or upload files..."
             disabled={isLoading}
             rows={1}
-            className={`flex-1 px-4 py-2 rounded-lg border resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            className={`flex-1 px-5 py-3 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 shadow-md ${
               isDarkMode
-                ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                ? 'bg-gray-800/80 border-gray-600/50 text-gray-100 placeholder-gray-400 focus:bg-gray-800/90 focus:border-purple-500/50'
+                : 'bg-white/80 border-gray-300/50 text-gray-900 placeholder-gray-500 focus:bg-white focus:border-purple-400/50'
             } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            style={{ minHeight: '40px', maxHeight: '120px' }}
+            style={{ minHeight: '48px', maxHeight: '120px' }}
           />
 
           <button
+            type="button"
             onClick={handleSendMessage}
             disabled={isLoading || (!inputMessage.trim() && uploadedFiles.length === 0)}
-            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="group px-6 py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 hover:from-purple-700 hover:via-purple-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-purple-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 disabled:hover:scale-100"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             Send
           </button>
         </div>

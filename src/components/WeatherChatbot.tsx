@@ -186,16 +186,21 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
 
   return (
     <div
-      className={`${
-        isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'
-      } rounded-2xl shadow-lg border backdrop-blur-sm h-[600px] flex flex-col`}
+      className={`relative ${
+        isDarkMode
+          ? 'bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-gray-800/95 border-blue-500/30'
+          : 'bg-gradient-to-br from-white/95 via-blue-50/30 to-white/95 border-blue-300/40'
+      } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[600px] flex flex-col overflow-hidden group hover:shadow-blue-500/20 transition-all duration-500`}
     >
+      {/* Animated gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-cyan-600/5 to-blue-600/5 animate-gradient-shift pointer-events-none"></div>
+
       {/* Header */}
-      <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+      <div className={`relative z-10 p-5 border-b-2 ${isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'} backdrop-blur-md`}>
         <div className="flex items-center">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center mr-3">
+          <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
             <svg
-              className="w-6 h-6 text-white"
+              className="w-7 h-7 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -207,13 +212,16 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
                 d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
               />
             </svg>
+            {/* Pulsing indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
           </div>
-          <div>
-            <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+          <div className="flex-1">
+            <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Weather Assistant
             </h3>
-            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Powered by AI
+            <p className={`text-xs font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1`}>
+              <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Powered by Gemini AI
             </p>
           </div>
         </div>
@@ -222,27 +230,33 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
       {/* Messages */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className={`relative z-10 flex-1 overflow-y-auto p-6 space-y-5 ${
+          isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-blue-50/10'
+        }`}
         style={{ scrollBehavior: 'smooth' }}
       >
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-appear`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+              className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-600 text-white shadow-blue-500/30'
                   : isDarkMode
-                  ? 'bg-gray-700 text-gray-100'
-                  : 'bg-gray-100 text-gray-900'
-              }`}
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-100 border border-gray-600/50 shadow-gray-900/50'
+                  : 'bg-gradient-to-br from-white to-gray-50 text-gray-900 border border-gray-200/50 shadow-gray-300/30'
+              } transition-all duration-300 hover:scale-[1.02]`}
             >
               <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               <p
                 className={`text-xs mt-1 ${
-                  message.role === 'user' ? 'text-blue-100' : isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  message.role === 'user'
+                    ? 'text-white/70'
+                    : isDarkMode
+                    ? 'text-gray-400'
+                    : 'text-gray-500'
                 }`}
               >
                 {message.timestamp.toLocaleTimeString('en-US', {
@@ -255,11 +269,13 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
         ))}
 
         {isLoading && (
-          <div className="flex justify-start">
+          <div className="flex justify-start animate-appear">
             <div
-              className={`rounded-2xl px-4 py-3 ${
-                isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
-              }`}
+              className={`rounded-2xl px-5 py-4 ${
+                isDarkMode
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600/50'
+                  : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200/50'
+              } shadow-lg`}
             >
               <div className="flex space-x-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
@@ -272,8 +288,10 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
       </div>
 
       {/* Input */}
-      <div className={`p-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-        <div className="flex space-x-2">
+      <div className={`relative z-10 p-5 border-t-2 ${
+        isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'
+      } backdrop-blur-md`}>
+        <div className="flex items-end gap-3">
           <input
             type="text"
             value={inputMessage}
@@ -281,17 +299,21 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
             onKeyPress={handleKeyPress}
             placeholder="Ask about the weather..."
             disabled={isLoading}
-            className={`flex-1 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`flex-1 px-5 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 shadow-md ${
               isDarkMode
-                ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                ? 'bg-gray-800/80 border-gray-600/50 text-gray-100 placeholder-gray-400 focus:bg-gray-800/90 focus:border-blue-500/50'
+                : 'bg-white/80 border-gray-300/50 text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-400/50'
             } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           />
           <button
+            type="button"
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 hover:from-blue-700 hover:via-blue-600 hover:to-cyan-700 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 disabled:hover:scale-100"
           >
+            <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
             Send
           </button>
         </div>
