@@ -91,52 +91,76 @@ export default function TokenUsageDisplay({ compact = false, showDetails = true,
   if (compact) {
     // Enhanced compact display with better styling
     return (
-      <div className={`px-4 py-2 rounded-lg backdrop-blur-sm transition-all ${
+      <div className={`relative px-5 py-3 rounded-xl border-2 backdrop-blur-md shadow-lg transition-all overflow-hidden ${
         isExceeded
-          ? `${isDarkMode ? 'bg-gradient-to-r from-red-900/40 to-red-800/40 border border-red-700/50' : 'bg-gradient-to-r from-red-100 to-red-50 border border-red-300'}`
+          ? `${isDarkMode ? 'bg-gradient-to-br from-red-900/60 to-red-800/50 border-red-600/40' : 'bg-gradient-to-br from-red-100 to-red-50 border-red-400/50'}`
           : isWarning
-          ? `${isDarkMode ? 'bg-gradient-to-r from-yellow-900/40 to-orange-900/40 border border-yellow-700/50' : 'bg-gradient-to-r from-yellow-100 to-orange-50 border border-yellow-300'}`
-          : `${isDarkMode ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-700/50' : 'bg-gradient-to-r from-blue-100 to-purple-50 border border-blue-300'}`
+          ? `${isDarkMode ? 'bg-gradient-to-br from-yellow-900/60 to-orange-900/50 border-yellow-600/40' : 'bg-gradient-to-br from-yellow-100 to-orange-50 border-yellow-400/50'}`
+          : `${isDarkMode ? 'bg-gradient-to-br from-purple-900/60 to-blue-900/50 border-purple-600/40' : 'bg-gradient-to-br from-purple-100 to-blue-50 border-purple-400/50'}`
       }`}>
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className={`p-1.5 rounded-full ${
-              isExceeded ? 'bg-red-500/20' : isWarning ? 'bg-yellow-500/20' : 'bg-blue-500/20'
+        {/* Animated background gradient */}
+        <div className={`absolute inset-0 opacity-30 ${
+          isExceeded
+            ? 'bg-gradient-to-r from-red-500/10 via-red-600/10 to-red-500/10'
+            : isWarning
+            ? 'bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-yellow-500/10'
+            : 'bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-purple-500/10'
+        } animate-gradient-shift`}></div>
+
+        <div className="relative z-10 flex items-center justify-between gap-4">
+          {/* Icon and Token Info */}
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-xl shadow-md ${
+              isExceeded
+                ? 'bg-gradient-to-br from-red-500 to-red-600'
+                : isWarning
+                ? 'bg-gradient-to-br from-yellow-500 to-orange-500'
+                : 'bg-gradient-to-br from-purple-500 to-blue-500'
             }`}>
-              <Zap className={`w-4 h-4 ${
-                isExceeded ? 'text-red-500' : isWarning ? 'text-yellow-500' : 'text-blue-500'
-              }`} />
+              <Zap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className={`text-xs font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <p className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 {tokensRemaining.toLocaleString()}
               </p>
-              <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                / {dailyLimit.toLocaleString()}
+              <p className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                / {dailyLimit.toLocaleString()} tokens
               </p>
             </div>
           </div>
 
-          {/* Mini progress bar */}
-          <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-300/30">
-            <div
-              className={`h-full transition-all duration-300 ${
-                isExceeded
-                  ? 'bg-gradient-to-r from-red-500 to-red-600'
-                  : isWarning
-                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-500'
-              }`}
-              style={{ width: `${Math.min(percentageUsed, 100)}%` }}
-            />
-          </div>
+          {/* Progress Bar Section */}
+          <div className="flex-1 flex items-center gap-3">
+            {/* Progress bar */}
+            <div className={`flex-1 h-2.5 rounded-full overflow-hidden shadow-inner ${
+              isDarkMode ? 'bg-gray-700/50' : 'bg-white/60'
+            }`}>
+              <div
+                className={`h-full transition-all duration-500 ease-out relative ${
+                  isExceeded
+                    ? 'bg-gradient-to-r from-red-500 via-red-600 to-red-700'
+                    : isWarning
+                    ? 'bg-gradient-to-r from-yellow-400 via-orange-500 to-orange-600'
+                    : 'bg-gradient-to-r from-purple-500 via-blue-500 to-purple-600'
+                }`}
+                style={{ width: `${Math.min(percentageUsed, 100)}%` }}
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+              </div>
+            </div>
 
-          {/* Percentage */}
-          <p className={`text-xs font-bold w-10 text-right ${
-            isExceeded ? 'text-red-600 dark:text-red-400' : isWarning ? 'text-yellow-600 dark:text-yellow-400' : 'text-blue-600 dark:text-blue-400'
-          }`}>
-            {percentageUsed.toFixed(0)}%
-          </p>
+            {/* Percentage Badge */}
+            <div className={`px-3 py-1 rounded-lg font-bold text-sm shadow-md ${
+              isExceeded
+                ? `${isDarkMode ? 'bg-red-900/60 text-red-300 border border-red-700/50' : 'bg-red-200 text-red-700 border border-red-400'}`
+                : isWarning
+                ? `${isDarkMode ? 'bg-yellow-900/60 text-yellow-300 border border-yellow-700/50' : 'bg-yellow-200 text-yellow-700 border border-yellow-400'}`
+                : `${isDarkMode ? 'bg-purple-900/60 text-purple-300 border border-purple-700/50' : 'bg-purple-200 text-purple-700 border border-purple-400'}`
+            }`}>
+              {percentageUsed.toFixed(0)}%
+            </div>
+          </div>
         </div>
       </div>
     );
