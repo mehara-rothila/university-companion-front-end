@@ -118,7 +118,7 @@ export default function Dashboard() {
   ]);
 
   // Active features list - Now includes AI Assistant, Library, Weather, Notifications, and Events
-  const activeFeatures = ['lost-found', 'financial-aid', 'profile', 'challenges', 'chatbot', 'library', 'notifications', 'weather', 'events'];
+  const activeFeatures = ['lost-found', 'financial-aid', 'challenges', 'chatbot', 'library', 'notifications', 'weather', 'events'];
 
 
   // Handle coming soon click
@@ -243,7 +243,7 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 {t('quickActions')}
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   {
                     titleKey: 'aiAssistant',
@@ -274,9 +274,9 @@ export default function Dashboard() {
                   {
                     titleKey: 'navigation',
                     url: '/navigation',
-                    color: 'from-purple-500/20 to-purple-600/20',
-                    borderColor: 'border-purple-400/30',
-                    iconColor: 'text-purple-400',
+                    color: 'from-fuchsia-500/20 to-fuchsia-600/20',
+                    borderColor: 'border-fuchsia-400/30',
+                    iconColor: 'text-fuchsia-400',
                     isActive: false,
                     icon: (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -353,7 +353,7 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 {t('universityServices')}
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
                 {[
                   {
                     titleKey: 'notifications',
@@ -366,10 +366,10 @@ export default function Dashboard() {
                   },
                   {
                     titleKey: 'socialEvents',
-                    url: '/events', 
-                    color: 'from-pink-500/20 to-pink-600/20',
-                    borderColor: 'border-pink-400/30',
-                    iconColor: 'text-pink-400',
+                    url: '/events',
+                    color: 'from-blue-500/20 to-blue-600/20',
+                    borderColor: 'border-blue-400/30',
+                    iconColor: 'text-blue-400',
                     isActive: true,
                     icon: (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -471,14 +471,14 @@ export default function Dashboard() {
               <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
                 {t('additionalServices')}
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                  { 
-                    title: t('careerServices'), 
-                    url: '/career', 
-                    color: 'from-violet-500/20 to-violet-600/20',
-                    borderColor: 'border-violet-400/30',
-                    iconColor: 'text-violet-400',
+                  {
+                    title: t('careerServices'),
+                    url: '/career',
+                    color: 'from-lime-500/20 to-lime-600/20',
+                    borderColor: 'border-lime-400/30',
+                    iconColor: 'text-lime-400',
                     isActive: false,
                     icon: (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -499,12 +499,12 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: t('challenges'), 
-                    url: '/challenges', 
-                    color: 'from-rose-500/20 to-rose-600/20',
-                    borderColor: 'border-rose-400/30',
-                    iconColor: 'text-rose-400',
+                  {
+                    title: t('challenges'),
+                    url: '/challenges',
+                    color: 'from-orange-500/20 to-orange-600/20',
+                    borderColor: 'border-orange-400/30',
+                    iconColor: 'text-orange-400',
                     isActive: true,
                     icon: (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -512,22 +512,9 @@ export default function Dashboard() {
                       </svg>
                     )
                   },
-                  { 
-                    title: t('profile'), 
-                    url: '/profile', 
-                    color: 'from-slate-500/20 to-slate-600/20',
-                    borderColor: 'border-slate-400/30',
-                    iconColor: 'text-slate-400',
-                    isActive: true,
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    )
-                  },
-                  { 
-                    title: t('helpSupport'), 
-                    url: '/help', 
+                  {
+                    title: t('helpSupport'),
+                    url: '/help',
                     color: 'from-cyan-500/20 to-cyan-600/20',
                     borderColor: 'border-cyan-400/30',
                     iconColor: 'text-cyan-400',
