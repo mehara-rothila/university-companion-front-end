@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
@@ -121,7 +121,7 @@ export default function AdminPanel() {
   });
 
   // Load dashboard stats
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const response = await axios.get(`${API_BASE}/admin/dashboard/stats`, {
         headers: getAuthHeaders()
@@ -131,10 +131,10 @@ export default function AdminPanel() {
       console.error('Failed to load stats:', error);
       setError('Failed to load dashboard statistics');
     }
-  };
+  }, []);
 
   // Load users
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -161,7 +161,7 @@ export default function AdminPanel() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, pageSize, searchTerm, roleFilter]);
 
   // Delete user
   const deleteUser = async (userId: number) => {
@@ -482,7 +482,7 @@ export default function AdminPanel() {
           </div>
 
           {/* Admin Navigation Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fade-in">
             {/* User Management */}
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-700/30' : 'bg-gradient-to-br from-blue-50/90 to-blue-100/90 border-blue-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
@@ -679,6 +679,39 @@ export default function AdminPanel() {
               </div>
             </Link>
 
+            {/* Achievements Management */}
+            <Link href="/admin/achievements">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-yellow-900/20 to-yellow-800/20 border-yellow-700/30' : 'bg-gradient-to-br from-yellow-50/90 to-yellow-100/90 border-yellow-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-yellow-800/50' : 'bg-yellow-100'} flex-shrink-0`}>
+                    <Trophy className={`w-8 h-8 ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'}`} />
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'} bg-gradient-to-r ${isDarkMode ? 'from-yellow-400 to-yellow-300' : 'from-yellow-600 to-yellow-500'} bg-clip-text text-transparent block`}>
+                      Active
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`}>
+                      Review Pending
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Achievements
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and approve student achievement submissions for the social feed
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'} flex items-center justify-end`}>
+                    Manage Achievements
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
             {/* System Settings */}
             <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border-purple-700/30' : 'bg-gradient-to-br from-purple-50/90 to-purple-100/90 border-purple-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer opacity-60 h-full flex flex-col`}>
               <div className="flex items-start justify-between mb-4">
@@ -817,25 +850,25 @@ export default function AdminPanel() {
                 </div>
 
                 {/* Role Filter */}
-                <div className="relative dropdown-container">
+                <div className="relative dropdown-container z-20">
                   <button
                     type="button"
                     onClick={() => setShowRoleFilterDropdown(!showRoleFilterDropdown)}
-                    className={`glass-input px-4 py-2 rounded-lg transition-all duration-200 text-left min-w-[120px] ${isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                    className={`glass-input px-4 py-2 pr-8 rounded-lg transition-all duration-200 text-left min-w-[120px] relative ${isDarkMode ? 'text-gray-100' : 'text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
                     {roleFilter === '' ? t('admin.userManagement.filters.allRoles') :
                       roleFilter === 'STUDENT' ? t('admin.userManagement.filters.students') :
                         roleFilter === 'FACULTY' ? t('admin.userManagement.filters.faculty') : t('admin.userManagement.filters.admins')}
-                    <div className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span className={`absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </div>
+                    </span>
                   </button>
 
                   {showRoleFilterDropdown && (
-                    <div className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${isDarkMode
+                    <div className={`absolute z-50 w-full mt-1 rounded-lg border shadow-xl ${isDarkMode
                       ? 'bg-gray-700 border-gray-600'
                       : 'bg-white border-gray-300'
                       }`}>
@@ -907,7 +940,7 @@ export default function AdminPanel() {
             {/* Users Table */}
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
+                <thead className={`sticky top-0 z-10 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
                   <tr className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                     <th className="text-left p-4">
                       <input
@@ -934,7 +967,11 @@ export default function AdminPanel() {
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+              </table>
+              {/* Scrollable table body container - max 5 users visible at once */}
+              <div className={`max-h-[400px] overflow-y-auto ${isDarkMode ? 'scrollbar-dark' : 'scrollbar-light'}`}>
+                <table className="w-full">
+                  <tbody>
                   {users?.users.map((user) => (
                     <tr
                       key={user.id}
@@ -1045,8 +1082,9 @@ export default function AdminPanel() {
                       </td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* Pagination */}
