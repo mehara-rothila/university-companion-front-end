@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,8 +79,16 @@ const Navigation = () => {
           {/* Dashboard - Only show when authenticated */}
           {isAuthenticated && (
             <Link href="/dashboard" className="nav-link text-sm font-medium" onClick={handleNavigation}>
-              <User className="inline h-4 w-4 mr-1.5" />
+              <LayoutDashboard className="inline h-4 w-4 mr-1.5" />
               {t('nav.dashboard')}
+            </Link>
+          )}
+
+          {/* Profile - Only show when authenticated */}
+          {isAuthenticated && (
+            <Link href="/profile" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+              <UserCircle className="inline h-4 w-4 mr-1.5" />
+              {t('nav.profile')}
             </Link>
           )}
 
@@ -221,7 +229,14 @@ const Navigation = () => {
             className="mobile-nav-link flex items-center"
             onClick={handleNavigation}
           >
-            <User className="inline h-5 w-5 mr-2"/> {t('nav.dashboard')}
+            <LayoutDashboard className="inline h-5 w-5 mr-2"/> {t('nav.dashboard')}
+          </Link>
+          <Link
+            href="/profile"
+            className="mobile-nav-link flex items-center"
+            onClick={handleNavigation}
+          >
+            <UserCircle className="inline h-5 w-5 mr-2"/> {t('nav.profile')}
           </Link>
           <Link
             href="/chatbot"
