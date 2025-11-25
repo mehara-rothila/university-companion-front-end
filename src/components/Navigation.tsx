@@ -151,9 +151,11 @@ const Navigation = () => {
               <div className="flex items-center space-x-2">
                 {user?.image && (
                   <img 
-                    src={user.image} 
+                    src={user.image.includes('amazonaws.com') 
+                      ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
+                      : user.image} 
                     alt="Profile" 
-                    className="w-8 h-8 rounded-full"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                 )}
                 <span className="text-gray-700 dark:text-gray-300">
@@ -325,9 +327,11 @@ const Navigation = () => {
                 <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center flex items-center justify-center space-x-2">
                   {user?.image && (
                     <img 
-                      src={user.image} 
+                      src={user.image.includes('amazonaws.com') 
+                        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
+                        : user.image} 
                       alt="Profile" 
-                      className="w-8 h-8 rounded-full"
+                      className="w-8 h-8 rounded-full object-cover"
                     />
                   )}
                   <span>Hi, {user?.firstName || user?.name?.split(' ')[0]}!</span>
