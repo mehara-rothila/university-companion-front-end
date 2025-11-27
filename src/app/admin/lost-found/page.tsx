@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import lostFoundService, { LostFoundItem } from '@/services/lostFoundService';
-import { Search, Check, X, MapPin, Calendar, Tag, DollarSign, AlertCircle, Filter } from 'lucide-react';
+import { Search, Check, X, MapPin, Calendar, Tag, DollarSign, AlertCircle, Filter, Trash2, User, ImageIcon } from 'lucide-react';
 
 export default function AdminLostFoundPage() {
     const { isDarkMode } = useDarkMode();
@@ -18,8 +18,9 @@ export default function AdminLostFoundPage() {
     const [selectedItem, setSelectedItem] = useState<LostFoundItem | null>(null);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showApproveModal, setShowApproveModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
-    const [filter, setFilter] = useState<'PENDING' | 'ALL'>('PENDING');
+    const [filter, setFilter] = useState<'PENDING' | 'ACTIVE' | 'RESOLVED' | 'ALL'>('PENDING');
 
     useEffect(() => {
         // Check if user is admin
@@ -41,8 +42,12 @@ export default function AdminLostFoundPage() {
                 // Use dedicated admin endpoint for pending items
                 const data = await lostFoundService.getPendingItems(user!.id);
                 setItems(data);
+            } else if (filter === 'ALL') {
+                // Fetch all items (no status filter)
+                const data = await lostFoundService.getItems({});
+                setItems(data);
             } else {
-                // For ALL filter, use general endpoint
+                // For specific status filters (ACTIVE, RESOLVED)
                 const data = await lostFoundService.getItems({ status: filter });
                 setItems(data);
             }
@@ -88,6 +93,23 @@ export default function AdminLostFoundPage() {
         }
     };
 
+    const handleDelete = async () => {
+        if (!selectedItem || !user) return;
+
+        try {
+            setActionLoading(true);
+            await lostFoundService.deleteItem(selectedItem.id);
+            setShowDeleteModal(false);
+            setSelectedItem(null);
+            loadItems();
+        } catch (error) {
+            console.error('Error deleting item:', error);
+            alert('Failed to delete item. Please check your admin privileges.');
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -125,24 +147,40 @@ export default function AdminLostFoundPage() {
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                                <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} flex-wrap gap-1`}>
                                     <button
                                         onClick={() => setFilter('PENDING')}
-                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${filter === 'PENDING'
-                                                ? 'bg-purple-600 text-white shadow-sm'
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'PENDING'
+                                                ? 'bg-yellow-600 text-white shadow-sm'
                                                 : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
                                             }`}
                                     >
                                         Pending
                                     </button>
                                     <button
-                                        onClick={() => setFilter('ALL')} // Note: Backend needs to support 'ALL' or we fetch multiple
-                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${filter === 'ALL'
+                                        onClick={() => setFilter('ACTIVE')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'ACTIVE'
+                                                ? 'bg-green-600 text-white shadow-sm'
+                                                : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        Active
+                                    </button>
+                                    <button
+                                        onClick={() => setFilter('RESOLVED')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'RESOLVED'
+                                                ? 'bg-blue-600 text-white shadow-sm'
+                                                : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        Resolved
+                                    </button>
+                                    <button
+                                        onClick={() => setFilter('ALL')}
+                                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'ALL'
                                                 ? 'bg-purple-600 text-white shadow-sm'
                                                 : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
                                             }`}
-                                        disabled // Disabling ALL for now as backend default is ACTIVE and we want to focus on review
-                                        title="Coming soon"
                                     >
                                         All Items
                                     </button>
@@ -167,12 +205,16 @@ export default function AdminLostFoundPage() {
                             </div>
                         ) : items.length === 0 ? (
                             <div className="text-center py-12">
-                                <Check className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-green-500/50' : 'text-green-400/50'}`} />
+                                <Search className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-500/50' : 'text-gray-400/50'}`} />
                                 <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                    No pending items
+                                    {filter === 'PENDING' ? 'No pending items' : 
+                                     filter === 'ACTIVE' ? 'No active items' :
+                                     filter === 'RESOLVED' ? 'No resolved items' :
+                                     'No items found'}
                                 </p>
                                 <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'} mt-2`}>
-                                    All submissions have been reviewed!
+                                    {filter === 'PENDING' ? 'All submissions have been reviewed!' : 
+                                     'No items match this filter.'}
                                 </p>
                             </div>
                         ) : (
@@ -180,22 +222,30 @@ export default function AdminLostFoundPage() {
                                 {items.map((item) => (
                                     <div
                                         key={item.id}
-                                        className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200 flex flex-col`}
+                                        className={`p-5 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600 hover:border-gray-500' : 'bg-gray-50 border border-gray-200 hover:border-gray-300'} transition-all duration-200 flex flex-col hover:shadow-md`}
                                     >
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className="flex items-center space-x-2">
+                                            <div className="flex items-center space-x-2 flex-wrap gap-1">
                                                 <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${item.type === 'LOST'
                                                         ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
                                                         : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                                                     }`}>
                                                     {item.type}
                                                 </span>
-                                                <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${item.priority === 'HIGH'
-                                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
-                                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                                                    }`}>
-                                                    {item.priority || 'NORMAL'}
+                                                <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${
+                                                    item.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                                    item.status === 'ACTIVE' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                                    item.status === 'RESOLVED' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                    item.status === 'REJECTED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                                                }`}>
+                                                    {item.status}
                                                 </span>
+                                                {item.priority === 'HIGH' && (
+                                                    <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                                                        HIGH
+                                                    </span>
+                                                )}
                                             </div>
                                             <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 {formatDate(item.createdAt)}
@@ -203,15 +253,23 @@ export default function AdminLostFoundPage() {
                                         </div>
 
                                         <div className="flex gap-4 mb-4">
-                                            {item.imageUrl && (
-                                                <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-600">
+                                            {/* Image or placeholder */}
+                                            <div className={`w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
+                                                {item.imageUrl ? (
                                                     <img
                                                         src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`}
                                                         alt={item.title}
                                                         className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            (e.target as HTMLImageElement).style.display = 'none';
+                                                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                                        }}
                                                     />
+                                                ) : null}
+                                                <div className={`${item.imageUrl ? 'hidden' : ''} w-full h-full flex items-center justify-center`}>
+                                                    <ImageIcon className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                                                 </div>
-                                            )}
+                                            </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3 className={`font-bold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1 truncate`}>
                                                     {item.title}
@@ -219,42 +277,64 @@ export default function AdminLostFoundPage() {
                                                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2 mb-2`}>
                                                     {item.description}
                                                 </p>
-                                                <div className="flex flex-wrap gap-2 text-xs">
+                                                <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                                                     <span className={`flex items-center ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                                         <Tag className="w-3 h-3 mr-1" /> {item.category}
                                                     </span>
                                                     <span className={`flex items-center ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                                         <MapPin className="w-3 h-3 mr-1" /> {item.location}
                                                     </span>
-                                                    {item.reward && (
+                                                    {item.reward && item.reward > 0 && (
                                                         <span className={`flex items-center ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>
                                                             <DollarSign className="w-3 h-3 mr-1" /> Rs {item.reward}
                                                         </span>
                                                     )}
                                                 </div>
+                                                {/* Posted by info */}
+                                                <div className={`flex items-center mt-2 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                    <User className="w-3 h-3 mr-1" />
+                                                    <span>Posted by: {item.postedBy || `User #${item.postedByUserId}`}</span>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className={`mt-auto pt-4 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} flex gap-3`}>
+                                        <div className={`mt-auto pt-4 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} flex gap-2`}>
+                                            {/* Show Approve button only for PENDING or REJECTED items */}
+                                            {(item.status === 'PENDING' || item.status === 'REJECTED') && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedItem(item);
+                                                        setShowApproveModal(true);
+                                                    }}
+                                                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+                                                >
+                                                    <Check className="w-4 h-4 mr-1" />
+                                                    Approve
+                                                </button>
+                                            )}
+                                            {/* Show Reject button only for PENDING or ACTIVE items */}
+                                            {(item.status === 'PENDING' || item.status === 'ACTIVE') && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedItem(item);
+                                                        setShowRejectModal(true);
+                                                    }}
+                                                    className="flex-1 px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+                                                >
+                                                    <X className="w-4 h-4 mr-1" />
+                                                    Reject
+                                                </button>
+                                            )}
+                                            {/* Delete button always visible for all items */}
                                             <button
                                                 onClick={() => {
                                                     setSelectedItem(item);
-                                                    setShowApproveModal(true);
+                                                    setShowDeleteModal(true);
                                                 }}
-                                                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
+                                                className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
                                             >
-                                                <Check className="w-4 h-4 mr-2" />
-                                                Approve
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedItem(item);
-                                                    setShowRejectModal(true);
-                                                }}
-                                                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center"
-                                            >
-                                                <X className="w-4 h-4 mr-2" />
-                                                Reject
+                                                <Trash2 className="w-4 h-4 mr-1" />
+                                                Delete
                                             </button>
                                         </div>
                                     </div>
@@ -268,11 +348,30 @@ export default function AdminLostFoundPage() {
                 {showApproveModal && selectedItem && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
-                            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
-                                Approve Item
-                            </h2>
+                            <div className="flex items-center mb-4">
+                                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4">
+                                    <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
+                                </div>
+                                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                    Approve Item
+                                </h2>
+                            </div>
+                            {/* Item preview */}
+                            <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                                {selectedItem.imageUrl && (
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedItem.imageUrl)}`}
+                                        alt={selectedItem.title}
+                                        className="w-12 h-12 rounded-lg object-cover"
+                                    />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedItem.title}</p>
+                                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedItem.category} • {selectedItem.location}</p>
+                                </div>
+                            </div>
                             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                                Are you sure you want to approve <strong>{selectedItem.title}</strong>? It will be visible to all users.
+                                This item will become visible to all users on the Lost & Found page.
                             </p>
                             <div className="flex space-x-3">
                                 <button
@@ -297,11 +396,30 @@ export default function AdminLostFoundPage() {
                 {showRejectModal && selectedItem && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
-                            <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
-                                Reject Item
-                            </h2>
+                            <div className="flex items-center mb-4">
+                                <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-4">
+                                    <X className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                                </div>
+                                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                    Reject Item
+                                </h2>
+                            </div>
+                            {/* Item preview */}
+                            <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                                {selectedItem.imageUrl && (
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedItem.imageUrl)}`}
+                                        alt={selectedItem.title}
+                                        className="w-12 h-12 rounded-lg object-cover"
+                                    />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedItem.title}</p>
+                                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedItem.category} • {selectedItem.location}</p>
+                                </div>
+                            </div>
                             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                                Are you sure you want to reject <strong>{selectedItem.title}</strong>? It will not be visible to users.
+                                This item will be hidden and not visible to users.
                             </p>
                             <div className="flex space-x-3">
                                 <button
@@ -313,9 +431,60 @@ export default function AdminLostFoundPage() {
                                 <button
                                     onClick={handleReject}
                                     disabled={actionLoading}
-                                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium"
+                                    className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium"
                                 >
                                     {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Delete Modal */}
+                {showDeleteModal && selectedItem && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+                            <div className="flex items-center mb-4">
+                                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                                    <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
+                                </div>
+                                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                    Delete Item Permanently
+                                </h2>
+                            </div>
+                            {/* Item preview */}
+                            <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                                {selectedItem.imageUrl && (
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedItem.imageUrl)}`}
+                                        alt={selectedItem.title}
+                                        className="w-12 h-12 rounded-lg object-cover"
+                                    />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedItem.title}</p>
+                                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedItem.category} • {selectedItem.location}</p>
+                                </div>
+                            </div>
+                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                                Are you sure you want to permanently delete this item?
+                            </p>
+                            <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6`}>
+                                ⚠️ This action cannot be undone. The item will be permanently removed from the database.
+                            </p>
+                            <div className="flex space-x-3">
+                                <button
+                                    onClick={() => setShowDeleteModal(false)}
+                                    className={`flex-1 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    disabled={actionLoading}
+                                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
+                                >
+                                    {actionLoading ? 'Deleting...' : 'Delete Permanently'}
                                 </button>
                             </div>
                         </div>
