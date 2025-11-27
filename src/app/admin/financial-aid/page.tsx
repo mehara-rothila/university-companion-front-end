@@ -7,6 +7,7 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard, AdminFinancialAidRequest } from '@/services/financialAidService';
 import { User } from '@/app/context/AuthContext';
+import { Trash2 } from 'lucide-react';
 
 export default function AdminFinancialAidPage() {
   const { isDarkMode } = useDarkMode();
@@ -22,6 +23,8 @@ export default function AdminFinancialAidPage() {
   const [error, setError] = useState<string | null>(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const [createSubmitted, setCreateSubmitted] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteSubmitted, setDeleteSubmitted] = useState(false);
 
   // Review form state
   const [reviewForm, setReviewForm] = useState<AdminReviewRequest>({
@@ -143,6 +146,27 @@ export default function AdminFinancialAidPage() {
     } catch (err) {
       setError('Failed to submit review. Please try again.');
       console.error('Error submitting review:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteApplication = async () => {
+    if (!selectedApplication) return;
+
+    try {
+      setLoading(true);
+      await financialAidService.deleteApplication(selectedApplication.id);
+      setDeleteSubmitted(true);
+      setShowDeleteModal(false);
+      setSelectedApplication(null);
+      await loadApplications();
+      await loadPendingApplications();
+      await loadDashboard();
+      setTimeout(() => setDeleteSubmitted(false), 5000);
+    } catch (err) {
+      setError('Failed to delete application. Please try again.');
+      console.error('Error deleting application:', err);
     } finally {
       setLoading(false);
     }
@@ -284,6 +308,19 @@ export default function AdminFinancialAidPage() {
             </div>
           )}
 
+          {deleteSubmitted && (
+            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} animate-fade-in`}>
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-800'} font-medium`}>
+                  Financial aid application deleted successfully!
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Error Message */}
           {error && (
             <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'} animate-fade-in`}>
@@ -377,12 +414,24 @@ export default function AdminFinancialAidPage() {
                                 </span>
                               </div>
                             </div>
-                            <button 
-                              onClick={() => handleReviewApplication(app)}
-                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
-                            >
-                              Review
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button 
+                                onClick={() => handleReviewApplication(app)}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                              >
+                                Review
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedApplication(app);
+                                  setShowDeleteModal(true);
+                                }}
+                                className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                                title="Delete Application"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -433,12 +482,25 @@ export default function AdminFinancialAidPage() {
                               </span>
                             </div>
                           </div>
-                          <button 
-                            onClick={() => handleReviewApplication(app)}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
-                          >
-                            Review Application
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => handleReviewApplication(app)}
+                              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                            >
+                              Review Application
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedApplication(app);
+                                setShowDeleteModal(true);
+                              }}
+                              className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center"
+                              title="Delete Application"
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -494,12 +556,25 @@ export default function AdminFinancialAidPage() {
                             </span>
                           </div>
                         </div>
-                        <button 
-                          onClick={() => handleReviewApplication(app)}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
-                        >
-                          {app.status === 'PENDING' ? 'Review' : 'View Details'}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => handleReviewApplication(app)}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                          >
+                            {app.status === 'PENDING' ? 'Review' : 'View Details'}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedApplication(app);
+                              setShowDeleteModal(true);
+                            }}
+                            className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center"
+                            title="Delete Application"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -521,6 +596,7 @@ export default function AdminFinancialAidPage() {
                 <button 
                   onClick={() => setShowReviewModal(false)}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                  title="Close modal"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -599,6 +675,7 @@ export default function AdminFinancialAidPage() {
                       <select 
                         value={reviewForm.status}
                         onChange={(e) => setReviewForm({...reviewForm, status: e.target.value as any})}
+                        title="Select application status"
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                           isDarkMode 
                             ? 'bg-gray-700 border-gray-600 text-gray-100' 
@@ -712,6 +789,7 @@ export default function AdminFinancialAidPage() {
                 <button 
                   onClick={() => setShowCreateModal(false)}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                  title="Close modal"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -731,6 +809,7 @@ export default function AdminFinancialAidPage() {
                       <select
                         value={createForm.applicantUserId}
                         onChange={(e) => setCreateForm({...createForm, applicantUserId: Number(e.target.value)})}
+                        title="Select applicant"
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                           isDarkMode 
                             ? 'bg-gray-700 border-gray-600 text-gray-100' 
@@ -774,6 +853,7 @@ export default function AdminFinancialAidPage() {
                       <select
                         value={createForm.aidType}
                         onChange={(e) => setCreateForm({...createForm, aidType: e.target.value as any})}
+                        title="Select aid type"
                         className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                           isDarkMode 
                             ? 'bg-gray-700 border-gray-600 text-gray-100' 
@@ -838,6 +918,7 @@ export default function AdminFinancialAidPage() {
                         <select
                           value={createForm.priority}
                           onChange={(e) => setCreateForm({...createForm, priority: e.target.value as any})}
+                          title="Select priority level"
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                             isDarkMode 
                               ? 'bg-gray-700 border-gray-600 text-gray-100' 
@@ -858,6 +939,7 @@ export default function AdminFinancialAidPage() {
                         <select
                           value={createForm.urgency}
                           onChange={(e) => setCreateForm({...createForm, urgency: e.target.value as any})}
+                          title="Select urgency level"
                           className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                             isDarkMode 
                               ? 'bg-gray-700 border-gray-600 text-gray-100' 
@@ -977,6 +1059,64 @@ export default function AdminFinancialAidPage() {
                   className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating...' : 'Create Application'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && selectedApplication && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 max-w-md w-full shadow-2xl`}>
+              <div className="flex items-center mb-4">
+                <div className="p-3 bg-red-100 rounded-full mr-4">
+                  <Trash2 className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  Delete Application
+                </h3>
+              </div>
+              
+              <div className={`p-4 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <p className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  {selectedApplication.title}
+                </p>
+                <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Category: {selectedApplication.category}
+                </p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Amount: Rs. {selectedApplication.requestedAmount?.toLocaleString() || 'N/A'}
+                </p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Status: {selectedApplication.status}
+                </p>
+              </div>
+              
+              <p className={`text-sm mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Are you sure you want to delete this application? This action cannot be undone and all associated data will be permanently removed.
+              </p>
+              
+              <div className="flex space-x-3">
+                <button 
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedApplication(null);
+                  }}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    isDarkMode 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => handleDeleteApplication(selectedApplication.id)}
+                  disabled={loading}
+                  className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  {loading ? 'Deleting...' : 'Delete Permanently'}
                 </button>
               </div>
             </div>
