@@ -821,5 +821,89 @@
       "event": "සිදුවීම",
       "events": "සිදුවීම්"
     }
+  },
+  "challenges": {
+    "title": "තරඟ සහ අභියෝග",
+    "subtitle": "ඉදිරි තරඟ සොයා බලන්න, ඔබේ දක්ෂතා පෙන්වන්න සහ දිනවන්න",
+    "createCompetition": "තරඟයක් සාදන්න",
+    "tabs": {
+      "explore": "සොයා බලන්න",
+      "myCompetitions": "මගේ තරඟ"
+    },
+    "buttons": {
+      "enrollNow": "දැන් ලියාපදිංචි වන්න",
+      "viewDetails": "විස්තර බලන්න"
+    },
+    "form": {
+      "title": "තරඟයක් සාදන්න",
+      "competitionTitle": "තරඟ මාතෘකාව",
+      "description": "විස්තර",
+      "category": "කාණ්ඩය",
+      "startDate": "ආරම්භ දිනය",
+      "endDate": "අවසන් දිනය",
+      "buttons": {
+        "create": "නිර්මාණය කරන්න",
+        "cancel": "අවලංගු කරන්න"
+      }
+    },
+    "messages": {
+      "noCompetitions": "තරඟ හමු නොවීය",
+      "loading": "තරඟ පූරණය වෙමින්..."
+    }
+  },
+  "lostFound": {
+    "title": "නැති වූ සහ සොයාගත්",
+    "subtitle": "නැති වූ අයිතම හිමියන් සමඟ සම්බන්ධ වීමට සහය වන ප්‍රජා වේදිකාව",
+    "reportItem": "අයිතමයක් වාර්තා කරන්න",
+    "tabs": {
+      "browse": "ඔබ්බන් බලන්න",
+      "myItems": "මගේ අයිතම",
+      "successStories": "සාර්ථක කථා"
+    },
+    "filters": {
+      "allItems": "සියලුම අයිතම",
+      "lost": "නැති",
+      "found": "සොයාගත්",
+      "searchPlaceholder": "අයිතම සෙවීම..."
+    },
+    "form": {
+      "title": "අයිතම වාර්තා කරන්න",
+      "itemStatus": "අයිතම තත්ත්වය",
+      "itemTitle": "අයිතම ශීර්ෂය",
+      "description": "විස්තර",
+      "location": "ස්ථානය",
+      "photoUpload": "ඡායාරූප උඩුගත කරන්න",
+      "buttons": {
+        "postItem": "පළ කරන්න",
+        "cancel": "අවලංගු කරන්න"
+      }
+    },
+    "messages": {
+      "itemSubmitted": "අයිතමය සාර්ථකව ඉදිරිපත් කරන ලදි!",
+      "noItemsFound": "සෙවුම් ප්‍රතිඵල නැත",
+      "loading": "අයිතම පූරණය වෙමින්..."
+    }
+  },
+  "financialAidPage": {
+    "title": "මූල්‍ය ආධාර සහ ප්‍රජා සහය",
+    "subtitle": "මූල්‍ය සහය, පරිපාලක සමාලෝචන සහ ප්‍රජා දායකත්ව මෙවලම්",
+    "buttons": {
+      "applyForAid": "ආධාරයට අයදුම් කරන්න",
+      "makeDonation": "දානයක් කරන්න"
+    },
+    "tabs": {
+      "dashboard": "පුවරුව",
+      "aidFinder": "ආධාර අවස්ථා",
+      "donations": "දායකත්ව",
+      "applications": "මගේ අයදුම්"
+    },
+    "messages": {
+      "applicationSubmitted": "අයදුම සාර්ථකව ඉදිරිපත් කරන ලදි",
+      "donationSuccess": "ඔබේ දානයට ස්තූතියි!"
+    },
+    "errors": {
+      "submitFailed": "අයදුම ඉදිරිපත් කිරීමට අසමත් විය",
+      "donationFailed": "දානයක් සැකසීමට අසමත් විය"
+    }
   }
 }

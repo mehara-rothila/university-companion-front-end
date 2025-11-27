@@ -821,5 +821,381 @@
       "event": "event",
       "events": "events"
     }
+  },
+  "challenges": {
+    "title": "Competitions & Challenges",
+    "subtitle": "Discover upcoming competitions, showcase your skills, and compete with peers",
+    "createCompetition": "Create Competition",
+    "tabs": {
+      "explore": "Explore Competitions",
+      "myCompetitions": "My Competitions"
+    },
+    "categories": {
+      "all": "All",
+      "sports": "Sports",
+      "academic": "Academic",
+      "tech": "Tech",
+      "cultural": "Cultural"
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "active": "Active",
+      "enrolled": "Enrolled",
+      "pending": "Pending Approval",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "details": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location",
+      "maxParticipants": "Max {{count}} participants",
+      "enrolled": "{{count}} enrolled",
+      "prizes": "Prizes"
+    },
+    "buttons": {
+      "enrollNow": "Enroll Now",
+      "register": "Register",
+      "viewDetails": "View Details"
+    },
+    "empty": {
+      "noCompetitions": "No competitions found",
+      "beFirst": "Be the first to create one!"
+    },
+    "loading": "Loading competitions...",
+    "myCompetitionsView": {
+      "title": "My Competitions",
+      "created": "Created",
+      "enrolled": "Enrolled",
+      "noCreated": "You haven't created any competitions yet",
+      "noEnrolled": "You haven't enrolled in any competitions yet",
+      "createFirst": "Create your first competition!",
+      "exploreCompetitions": "Explore competitions to join!"
+    },
+    "form": {
+      "title": "Create Competition",
+      "editTitle": "Edit Competition",
+      "competitionTitle": "Competition Title",
+      "description": "Description",
+      "category": "Category",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location",
+      "maxParticipants": "Maximum Participants",
+      "prizes": "Prizes",
+      "externalUrl": "External Registration URL",
+      "enableInternalEnrollment": "Enable internal enrollment",
+      "buttons": {
+        "create": "Create Competition",
+        "update": "Update Competition",
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "saving": "Saving..."
+      },
+      "placeholders": {
+        "title": "e.g., Annual Hackathon 2025",
+        "description": "Describe your competition...",
+        "location": "e.g., Main Auditorium",
+        "prizes": "e.g., 1st Place: Rs. 50,000"
+      }
+    },
+    "enrollment": {
+      "title": "Enroll in Competition",
+      "confirmEnrollment": "Confirm Enrollment",
+      "enrolling": "Enrolling...",
+      "success": "Successfully enrolled!",
+      "alreadyEnrolled": "You are already enrolled in this competition"
+    }
+  },
+  "lostFound": {
+    "title": "Lost & Found",
+    "subtitle": "Community platform to help reunite lost items with their owners. Post what you've lost or found to connect with others on campus.",
+    "reportItem": "Report Lost/Found Item",
+    "loginToReport": "Login to Report Items",
+    "universityMap": "University Map",
+    "tabs": {
+      "browse": "Browse Items",
+      "myItems": "My Items",
+      "successStories": "Success Stories"
+    },
+    "stats": {
+      "totalItems": "Total Items",
+      "lostItems": "Lost Items",
+      "foundItems": "Found Items",
+      "itemsReunited": "Items Reunited"
+    },
+    "filters": {
+      "allItems": "All Items",
+      "lost": "Lost",
+      "found": "Found",
+      "searchPlaceholder": "Search items...",
+      "allCategories": "All Categories",
+      "allLocations": "All Locations"
+    },
+    "categories": {
+      "electronics": "Electronics",
+      "bagsBackpacks": "Bags & Backpacks",
+      "keysAccessories": "Keys & Accessories",
+      "personalItems": "Personal Items",
+      "clothing": "Clothing",
+      "other": "Other"
+    },
+    "locations": {
+      "mainLibrary": "Main Library",
+      "studentUnion": "Student Union",
+      "engineeringBuilding": "Engineering Building",
+      "gymRecreation": "Gym & Recreation",
+      "diningAreas": "Dining Areas",
+      "parkingLots": "Parking Lots",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "resolved": "Resolved",
+      "expired": "Expired",
+      "pending": "Pending"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "form": {
+      "title": "Report Lost/Found Item",
+      "itemStatus": "Item Status",
+      "iLostSomething": "I Lost Something",
+      "iFoundSomething": "I Found Something",
+      "itemTitle": "Item Title",
+      "itemTitlePlaceholder": "e.g., Black iPhone 14 Pro",
+      "category": "Category",
+      "description": "Description",
+      "descriptionPlaceholder": "Provide detailed description including color, brand, distinctive features...",
+      "location": "Location",
+      "photoUpload": "Photo Upload",
+      "reward": "Reward (Optional)",
+      "rewardPlaceholder": "0",
+      "forSafeReturn": "for safe return",
+      "contactPreferences": "Contact Preferences",
+      "allowDirectContact": "Allow direct contact",
+      "anonymousContactOnly": "Anonymous contact only",
+      "buttons": {
+        "postItem": "Post Item",
+        "cancel": "Cancel"
+      }
+    },
+    "item": {
+      "reward": "Reward",
+      "contact": "Contact",
+      "postedBy": "Posted by",
+      "dateReported": "Reported"
+    },
+    "myItems": {
+      "title": "My Items",
+      "subtitle": "Track your submitted items. Pending items are awaiting admin approval.",
+      "postNewItem": "Post New Item",
+      "noItems": "You haven't posted any items yet",
+      "reportToStart": "Report a lost or found item to get started",
+      "postFirstItem": "Post Your First Item",
+      "edit": "Edit",
+      "remove": "Remove"
+    },
+    "contact": {
+      "title": "Contact Owner",
+      "anonymousMessage": "This user prefers anonymous contact. Your message will be forwarded securely.",
+      "directMessage": "Contact {{name}} directly about this item.",
+      "sendMessage": "Send Message",
+      "callDirectly": "Call Directly"
+    },
+    "successStories": {
+      "title": "Success Stories"
+    },
+    "messages": {
+      "itemSubmitted": "Item submitted successfully! Your item is pending admin approval.",
+      "pendingApproval": "You can view it in the \"My Items\" tab. It will be visible to others once approved.",
+      "loading": "Loading items...",
+      "noItemsFound": "No items found matching your criteria.",
+      "adjustFilters": "Try adjusting your filters or search terms.",
+      "confirmDelete": "Are you sure you want to delete this item?"
+    },
+    "errors": {
+      "loadFailed": "Failed to load items. Please try again.",
+      "postFailed": "Failed to post item. Please try again.",
+      "deleteFailed": "Failed to delete item. Please try again."
+    }
+  },
+  "financialAidPage": {
+    "title": "Financial Aid & Community Support",
+    "subtitle": "Comprehensive financial assistance platform with community support, eligibility tracking, and budget management tools.",
+    "buttons": {
+      "applyForAid": "Apply for Aid",
+      "makeDonation": "Make Donation",
+      "requestSupport": "Request Support"
+    },
+    "tabs": {
+      "dashboard": "Financial Dashboard",
+      "aidFinder": "Aid Opportunities",
+      "donations": "Community Support",
+      "budget": "Budget Tracker",
+      "applications": "My Applications"
+    },
+    "stats": {
+      "financialHealth": "Financial Health",
+      "availableAid": "Available Aid",
+      "aidOpportunities": "Aid Opportunities",
+      "communityRaised": "Community Raised"
+    },
+    "dashboard": {
+      "title": "Financial Overview",
+      "totalIncomeAid": "Total Income + Aid",
+      "totalExpenses": "Total Expenses",
+      "surplus": "Surplus",
+      "shortfall": "Shortfall",
+      "recentApplications": "Recent Applications"
+    },
+    "aidFinder": {
+      "title": "Available Aid Opportunities",
+      "renewableYears": "Renewable for {{count}} years",
+      "eligibilityRequirements": "Eligibility Requirements",
+      "provider": "Provider",
+      "deadline": "Deadline",
+      "applyNow": "Apply Now"
+    },
+    "donations": {
+      "title": "Community Support Network",
+      "requestSupport": "Request Support",
+      "progress": "Progress",
+      "supporters": "supporters",
+      "applied": "Applied",
+      "by": "By",
+      "contribute": "Contribute",
+      "noRequests": "No donation requests available at the moment.",
+      "checkBackLater": "Check back later for community support opportunities.",
+      "funded": "Funded",
+      "active": "Active",
+      "verified": "Verified"
+    },
+    "budget": {
+      "title": "Budget Tracker",
+      "categories": "Budget Categories",
+      "overBy": "Over by",
+      "remaining": "Remaining",
+      "spent": "Spent",
+      "budgeted": "Budget",
+      "summary": "Budget Summary",
+      "monthlyProgress": "Monthly Progress",
+      "trackingCategories": "You are tracking your budget in {{count}} categories this month.",
+      "onTrack": "On Track Categories",
+      "onTrackDesc": "{{count}} out of {{total}} categories are within budget limits.",
+      "budgetAlert": "Budget Alert",
+      "budgetAlertDesc": "Personal spending is over budget. Consider reducing discretionary purchases.",
+      "savingsTip": "Savings Tip",
+      "savingsTipDesc": "Consider purchasing used textbooks to save on education expenses."
+    },
+    "applications": {
+      "title": "My Applications",
+      "newApplication": "New Application",
+      "pleaseLogin": "Please log in to view your applications.",
+      "noApplications": "You haven't submitted any applications yet.",
+      "submitFirst": "Submit Your First Application",
+      "viewDetails": "View Details",
+      "donationEligible": "Donation Eligible",
+      "communitySupport": "Community Support",
+      "raisedBy": "raised by {{count}} supporters"
+    },
+    "form": {
+      "title": "Apply for Financial Aid",
+      "applicationTitle": "Application Title",
+      "applicationTitlePlaceholder": "e.g., Emergency Tuition Support",
+      "aidType": "Aid Type",
+      "category": "Category",
+      "requestedAmount": "Requested Amount (LKR)",
+      "description": "Description",
+      "descriptionPlaceholder": "Provide detailed description of your financial need...",
+      "personalStory": "Personal Story (Optional)",
+      "personalStoryPlaceholder": "Share your story to help reviewers understand your situation...",
+      "supportingDocuments": "Supporting Documents",
+      "priorityLevel": "Priority Level",
+      "urgency": "Urgency",
+      "privacySettings": "Privacy & Donation Settings",
+      "keepAnonymous": "Keep my identity anonymous",
+      "allowDonations": "Allow community donations if approved",
+      "buttons": {
+        "submit": "Submit Application",
+        "cancel": "Cancel",
+        "submitting": "Submitting..."
+      },
+      "aidTypes": {
+        "scholarship": "Scholarship",
+        "grant": "Grant",
+        "emergencyFund": "Emergency Fund",
+        "loan": "Loan",
+        "workStudy": "Work Study",
+        "custom": "Custom Request"
+      },
+      "categories": {
+        "tuition": "Tuition",
+        "books": "Books & Supplies",
+        "housing": "Housing",
+        "food": "Food & Meals",
+        "technology": "Technology",
+        "emergency": "Emergency",
+        "other": "Other"
+      },
+      "priorities": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      }
+    },
+    "donationModal": {
+      "title": "Make a Donation",
+      "supportStudents": "Support Fellow Students",
+      "description": "Your donation helps students in need cover essential expenses like textbooks, housing, and emergency costs.",
+      "customAmount": "Custom amount",
+      "donateNow": "Donate Now",
+      "makeAnonymous": "Make this donation anonymous"
+    },
+    "requestModal": {
+      "title": "Request Support",
+      "subtitle": "Request Community Support",
+      "description": "Create a verified support request to receive help from fellow students and community members.",
+      "createApplication": "Create Application",
+      "getGuidanceFirst": "Get Guidance First"
+    },
+    "detailsModal": {
+      "title": "Application Details",
+      "requestedAmount": "Requested Amount",
+      "approvedAmount": "Approved Amount",
+      "description": "Description",
+      "personalStory": "Personal Story",
+      "category": "Category",
+      "applicationType": "Application Type",
+      "appliedOn": "Applied On",
+      "lastUpdated": "Last Updated",
+      "communitySupport": "Community Support",
+      "adminReviewNotes": "Admin Review Notes",
+      "reviewedOn": "Reviewed on",
+      "rejectionReason": "Rejection Reason",
+      "supportingDocuments": "Supporting Documents",
+      "close": "Close"
+    },
+    "messages": {
+      "applicationSubmitted": "Application submitted successfully! You will be notified once it has been reviewed.",
+      "donationSuccess": "Thank you for your donation! Your support helps fellow students in need.",
+      "loadingData": "Loading your financial data..."
+    },
+    "errors": {
+      "submitFailed": "Failed to submit application. Please try again.",
+      "donationFailed": "Failed to process donation. Please try again."
+    },
+    "status": {
+      "approved": "Approved",
+      "submitted": "Submitted",
+      "inProgress": "In Progress",
+      "notStarted": "Not Started",
+      "rejected": "Rejected",
+      "pending": "Pending"
+    }
   }
 }
