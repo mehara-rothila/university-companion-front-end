@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
-import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff } from 'lucide-react';
+import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff, Trash2 } from 'lucide-react';
 
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
@@ -18,8 +18,10 @@ export default function AdminCompetitionsPage() {
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [filter, setFilter] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'>('PENDING');
 
   useEffect(() => {
     // Check if user is admin
@@ -30,20 +32,28 @@ export default function AdminCompetitionsPage() {
     }
 
     if (user?.id) {
-      loadPendingCompetitions();
+      loadCompetitions();
     }
-  }, [user, router]);
+  }, [user, router, filter]);
 
-  const loadPendingCompetitions = async () => {
+  const loadCompetitions = async () => {
     if (!user?.id) return;
 
     try {
       setLoading(true);
-      const data = await competitionService.getPendingCompetitions(user.id);
+      let data: Competition[];
+      if (filter === 'ALL') {
+        data = await competitionService.getAllCompetitions(user.id);
+      } else if (filter === 'PENDING') {
+        data = await competitionService.getPendingCompetitions(user.id);
+      } else {
+        const allData = await competitionService.getAllCompetitions(user.id);
+        data = allData.filter(c => c.status === filter);
+      }
       setCompetitions(data);
     } catch (error) {
-      console.error('Error loading pending competitions:', error);
-      alert('Failed to load pending competitions');
+      console.error('Error loading competitions:', error);
+      alert('Failed to load competitions');
     } finally {
       setLoading(false);
     }
@@ -58,7 +68,7 @@ export default function AdminCompetitionsPage() {
       alert('Competition approved successfully!');
       setShowApproveModal(false);
       setSelectedCompetition(null);
-      loadPendingCompetitions();
+      loadCompetitions();
     } catch (error) {
       console.error('Error approving competition:', error);
       alert('Failed to approve competition');
@@ -78,7 +88,7 @@ export default function AdminCompetitionsPage() {
       setActionLoading(true);
       await competitionService.hideCompetition(competitionId, user.id);
       alert('Competition hidden successfully!');
-      loadPendingCompetitions();
+      loadCompetitions();
     } catch (error) {
       console.error('Error hiding competition:', error);
       alert('Failed to hide competition');
@@ -102,12 +112,43 @@ export default function AdminCompetitionsPage() {
       setShowRejectModal(false);
       setRejectionReason('');
       setSelectedCompetition(null);
-      loadPendingCompetitions();
+      loadCompetitions();
     } catch (error) {
       console.error('Error rejecting competition:', error);
       alert('Failed to reject competition');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user?.id || !selectedCompetition) return;
+
+    try {
+      setActionLoading(true);
+      await competitionService.deleteCompetition(selectedCompetition.id, user.id);
+      alert('Competition deleted successfully!');
+      setShowDeleteModal(false);
+      setSelectedCompetition(null);
+      loadCompetitions();
+    } catch (error) {
+      console.error('Error deleting competition:', error);
+      alert('Failed to delete competition');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+      case 'REJECTED':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -141,7 +182,7 @@ export default function AdminCompetitionsPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading pending competitions...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading competitions...</p>
           </div>
         </main>
       </>
@@ -159,20 +200,74 @@ export default function AdminCompetitionsPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <div className={`flex items-center justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <div>
-                <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
-                  <Trophy className="h-10 w-10 mr-3 text-orange-500" />
-                  Admin - Competition Review
-                </h1>
-                <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Review and approve pending competition submissions
-                </p>
+            <div className={`flex flex-col p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
+                    <Trophy className="h-10 w-10 mr-3 text-orange-500" />
+                    Admin - Competition Review
+                  </h1>
+                  <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Review and manage competition submissions
+                  </p>
+                </div>
+                <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-orange-900/30 border border-orange-700/30' : 'bg-orange-100 border border-orange-200'}`}>
+                  <p className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>
+                    Showing: <span className="font-bold text-lg">{competitions.length}</span>
+                  </p>
+                </div>
               </div>
-              <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-orange-900/30 border border-orange-700/30' : 'bg-orange-100 border border-orange-200'}`}>
-                <p className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>
-                  Pending: <span className="font-bold text-lg">{competitions.length}</span>
-                </p>
+              
+              {/* Filter Tabs */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setFilter('PENDING')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    filter === 'PENDING'
+                      ? 'bg-yellow-500 text-white shadow-lg'
+                      : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  🕐 Pending
+                </button>
+                <button
+                  onClick={() => setFilter('APPROVED')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    filter === 'APPROVED'
+                      ? 'bg-green-500 text-white shadow-lg'
+                      : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  ✅ Approved
+                </button>
+                <button
+                  onClick={() => setFilter('REJECTED')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    filter === 'REJECTED'
+                      ? 'bg-red-500 text-white shadow-lg'
+                      : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  ❌ Rejected
+                </button>
+                <button
+                  onClick={() => setFilter('ALL')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                    filter === 'ALL'
+                      ? 'bg-purple-500 text-white shadow-lg'
+                      : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  📋 All Items
+                </button>
               </div>
             </div>
           </div>
@@ -184,10 +279,10 @@ export default function AdminCompetitionsPage() {
               <div className="text-center py-12">
                 <Trophy className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
                 <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  No pending competitions
+                  No {filter === 'ALL' ? '' : filter.toLowerCase()} competitions found
                 </p>
                 <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-500'} mt-2`}>
-                  All competitions have been reviewed!
+                  {filter === 'PENDING' ? 'All competitions have been reviewed!' : 'Try a different filter.'}
                 </p>
               </div>
             ) : (
@@ -197,6 +292,25 @@ export default function AdminCompetitionsPage() {
                     key={competition.id}
                     className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'} transition-all duration-200`}
                   >
+                    {/* Status Badge */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(competition.status)}`}>
+                        {competition.status}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setSelectedCompetition(competition);
+                          setShowDeleteModal(true);
+                        }}
+                        disabled={actionLoading}
+                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center disabled:opacity-50"
+                        title="Delete Competition"
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Delete
+                      </button>
+                    </div>
+
                     {/* Two Column Layout: Image and Details */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
                       {/* Competition Image - Left Side */}
@@ -361,39 +475,41 @@ export default function AdminCompetitionsPage() {
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <button
-                        onClick={() => {
-                          setSelectedCompetition(competition);
-                          setShowApproveModal(true);
-                        }}
-                        disabled={actionLoading}
-                        className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
-                      >
-                        <Check className="w-5 h-5 mr-2" />
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedCompetition(competition);
-                          setShowRejectModal(true);
-                        }}
-                        disabled={actionLoading}
-                        className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
-                      >
-                        <X className="w-5 h-5 mr-2" />
-                        Reject
-                      </button>
-                      <button
-                        onClick={() => handleHide(competition.id)}
-                        disabled={actionLoading}
-                        className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
-                      >
-                        <EyeOff className="w-5 h-5 mr-2" />
-                        Hide
-                      </button>
-                    </div>
+                    {/* Action Buttons - Show only for pending competitions */}
+                    {competition.status === 'PENDING' && (
+                      <div className="grid grid-cols-3 gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedCompetition(competition);
+                            setShowApproveModal(true);
+                          }}
+                          disabled={actionLoading}
+                          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                        >
+                          <Check className="w-5 h-5 mr-2" />
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedCompetition(competition);
+                            setShowRejectModal(true);
+                          }}
+                          disabled={actionLoading}
+                          className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                        >
+                          <X className="w-5 h-5 mr-2" />
+                          Reject
+                        </button>
+                        <button
+                          onClick={() => handleHide(competition.id)}
+                          disabled={actionLoading}
+                          className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+                        >
+                          <EyeOff className="w-5 h-5 mr-2" />
+                          Hide
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -415,6 +531,8 @@ export default function AdminCompetitionsPage() {
                     setSelectedCompetition(null);
                   }}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                  title="Close"
+                  aria-label="Close modal"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -479,6 +597,8 @@ export default function AdminCompetitionsPage() {
                     setSelectedCompetition(null);
                   }}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                  title="Close"
+                  aria-label="Close modal"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -519,6 +639,66 @@ export default function AdminCompetitionsPage() {
                   className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
                 >
                   {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Modal */}
+        {showDeleteModal && selectedCompetition && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                  <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  Delete Competition Permanently
+                </h2>
+              </div>
+
+              <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                {selectedCompetition.imageUrl && (
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedCompetition.imageUrl)}`}
+                    alt={selectedCompetition.title}
+                    className="w-12 h-12 rounded-lg object-cover"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedCompetition.title}</p>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedCompetition.category} • {selectedCompetition.location}</p>
+                </div>
+              </div>
+
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                Are you sure you want to permanently delete this competition?
+              </p>
+              <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
+                ⚠️ This action cannot be undone.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDelete}
+                  disabled={actionLoading}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
+                >
+                  {actionLoading ? 'Deleting...' : 'Delete Permanently'}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedCompetition(null);
+                  }}
+                  disabled={actionLoading}
+                  className={`px-4 py-2 ${
+                    isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  } rounded-lg font-medium transition-all duration-200`}
+                >
+                  Cancel
                 </button>
               </div>
             </div>
