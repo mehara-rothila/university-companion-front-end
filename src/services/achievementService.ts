@@ -72,6 +72,13 @@ export const achievementService = {
     return response.data;
   },
 
+  getAllAchievements: async (adminId: number): Promise<StudentAchievement[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/all`, {
+      params: { adminId },
+    });
+    return response.data;
+  },
+
   approveAchievement: async (achievementId: number, adminId: number): Promise<{ message: string }> => {
     const response = await axios.post(`${BASE_URL}/${achievementId}/approve`, null, {
       params: { adminId },

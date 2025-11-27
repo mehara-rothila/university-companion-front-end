@@ -257,4 +257,30 @@ export const competitionService = {
       throw error;
     }
   },
+
+  // Admin: Get all competitions (all statuses)
+  getAllCompetitions: async (adminId: number): Promise<Competition[]> => {
+    try {
+      const response = await axios.get(`${API_URL}/admin/all`, {
+        params: { adminId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching all competitions:', error);
+      throw error;
+    }
+  },
+
+  // Admin: Delete competition permanently
+  deleteCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+    try {
+      const response = await axios.delete(`${API_URL}/${competitionId}`, {
+        params: { adminId }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting competition:', error);
+      throw error;
+    }
+  },
 };

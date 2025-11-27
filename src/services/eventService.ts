@@ -25,6 +25,13 @@ export const eventService = {
     return response.data;
   },
 
+  getAllEvents: async (adminId: number): Promise<Event[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/all`, {
+      params: { adminId }
+    });
+    return response.data;
+  },
+
   getUpcomingEvents: async (): Promise<Event[]> => {
     const response = await axios.get(`${BASE_URL}/upcoming`);
     return response.data;
