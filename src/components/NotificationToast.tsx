@@ -7,6 +7,18 @@ import { X, CheckCircle, AlertTriangle, AlertCircle, Info, Bell, Wifi, WifiOff }
 const NotificationToast: React.FC = () => {
   const { toastNotifications, removeToastNotification, isConnected, connectionError } = useNotifications();
 
+  // Safe date formatting helper
+  const formatTime = (dateString?: string | null): string => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid time';
+      return date.toLocaleTimeString();
+    } catch {
+      return 'Invalid time';
+    }
+  };
+
   const getIcon = (type: string, priority: string) => {
     if (priority === 'URGENT') return <AlertCircle className="w-5 h-5" />;
     
@@ -68,7 +80,7 @@ const NotificationToast: React.FC = () => {
             </p>
             <div className="flex items-center justify-between mt-2">
               <p className="text-xs opacity-75">
-                {new Date(notification.timestamp).toLocaleTimeString()}
+                {formatTime(notification.timestamp)}
               </p>
               <span className={`text-xs px-2 py-1 rounded-full ${
                 notification.priority === 'URGENT' ? 'bg-red-700/50' :
