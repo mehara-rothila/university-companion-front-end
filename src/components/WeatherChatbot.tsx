@@ -113,21 +113,120 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
       return '🌤️ Weather data is currently unavailable. Please try again in a moment.';
     }
 
-    const { current } = weatherData;
+    const { current, daily } = weatherData;
+    const query = userQuery.toLowerCase();
+
+    // Handle yesterday/past weather queries
+    if (query.includes('yesterday') || query.includes('last week') || query.includes('last month') || 
+        query.includes('previous') || query.includes('past')) {
+      return `📅 I'm sorry, I don't have access to historical weather data. I can only provide current conditions and forecasts for the upcoming days.
+
+Would you like to know about today's weather or tomorrow's forecast instead?`;
+    }
+
+    // Handle tomorrow weather queries
+    if (query.includes('tomorrow')) {
+      if (daily && daily.length > 1) {
+        const tomorrow = daily[1]; // Index 1 is tomorrow
+        return `🌤️ Tomorrow's weather at University of Moratuwa:
+📍 ${tomorrow.day}
+🌡️ High: ${tomorrow.high}°C, Low: ${tomorrow.low}°C
+☁️ Condition: ${tomorrow.condition}
+🌧️ Rain chance: ${tomorrow.precipitation}%
+
+${tomorrow.precipitation > 50 ? '☔ Consider bringing an umbrella!' : '☀️ Looks like a good day!'}`;
+      }
+      return '🌤️ Tomorrow\'s forecast data is currently unavailable. Please try again later.';
+    }
+
+    // Handle day after tomorrow
+    if (query.includes('day after tomorrow') || query.includes('2 days')) {
+      if (daily && daily.length > 2) {
+        const dayAfter = daily[2];
+        return `🌤️ Weather for ${dayAfter.day} at University of Moratuwa:
+🌡️ High: ${dayAfter.high}°C, Low: ${dayAfter.low}°C
+☁️ Condition: ${dayAfter.condition}
+🌧️ Rain chance: ${dayAfter.precipitation}%`;
+      }
+    }
+
+    // Handle weekly forecast
+    if (query.includes('week') || query.includes('forecast') || query.includes('next few days')) {
+      if (daily && daily.length > 0) {
+        let forecast = '📅 7-Day Forecast for University of Moratuwa:\n\n';
+        daily.forEach((day, i) => {
+          const label = i === 0 ? '(Today)' : i === 1 ? '(Tomorrow)' : '';
+          forecast += `${day.day} ${label}: ${day.high}°C/${day.low}°C - ${day.condition} 🌧️${day.precipitation}%\n`;
+        });
+        return forecast;
+      }
+    }
 
     // Smart fallback based on user query
-    if (userQuery.toLowerCase().includes('umbrella')) {
+    if (query.includes('umbrella')) {
       if (current.condition.toLowerCase().includes('rain')) {
         return `🌧️ Yes, bring an umbrella! It's currently ${current.condition} with ${current.temperature}°C at UoM campus.`;
       }
       return `☀️ No need for an umbrella right now! It's ${current.condition} with ${current.temperature}°C at UoM campus.`;
     }
 
-    if (userQuery.toLowerCase().includes('hot') || userQuery.toLowerCase().includes('cold')) {
+    if (query.includes('hot') || query.includes('cold')) {
       return `🌡️ Current temperature at University of Moratuwa is ${current.temperature}°C (feels like ${current.feelsLike}°C). ${current.condition} conditions with ${current.humidity}% humidity.`;
     }
 
-    // Default response
+    // Handle general chatbot questions
+    if (query.includes('model') || query.includes('who are you') || query.includes('what are you') || 
+        query.includes('your name') || query.includes('about you')) {
+      return `🤖 I'm the University of Moratuwa Weather Assistant, powered by Gemini AI! 
+
+I can help you with:
+• Current weather conditions on campus
+• Weather forecasts for the next 7 days
+• Advice on whether to bring an umbrella
+• Best times for outdoor activities
+
+Try asking me about today's weather or tomorrow's forecast!`;
+    }
+
+    // Handle greetings
+    if (query.includes('hello') || query.includes('hi') || query.includes('hey') || query.includes('good morning') || query.includes('good evening')) {
+      return `👋 Hello! I'm your UoM Weather Assistant.
+
+Right now at campus it's ${current.temperature}°C with ${current.condition} conditions.
+
+What would you like to know about the weather?`;
+    }
+
+    // Handle thanks
+    if (query.includes('thank') || query.includes('thanks')) {
+      return `😊 You're welcome! Feel free to ask me about the weather anytime. Stay safe on campus!`;
+    }
+
+    // Check if the query is weather-related
+    const weatherKeywords = [
+      'weather', 'temperature', 'temp', 'rain', 'sunny', 'cloud', 'humid', 'wind', 
+      'forecast', 'hot', 'cold', 'warm', 'cool', 'degree', 'celsius', 'outside',
+      'today', 'now', 'current', 'climate', 'storm', 'thunder', 'lightning',
+      'uv', 'sunrise', 'sunset', 'visibility', 'pressure', 'feels like',
+      'morning', 'afternoon', 'evening', 'night', 'weekend', 'outdoor'
+    ];
+    
+    const isWeatherRelated = weatherKeywords.some(keyword => query.includes(keyword));
+
+    // If not weather-related, show out-of-scope message
+    if (!isWeatherRelated) {
+      return `🤖 I'm the UoM Weather Assistant and I can only help with weather-related questions!
+
+Try asking me things like:
+• "What's the weather today?"
+• "Will it rain tomorrow?"
+• "Should I bring an umbrella?"
+• "What's the forecast for this week?"
+
+Current conditions: ${current.temperature}°C, ${current.condition}`;
+    }
+
+    // Default response for weather-related queries - current weather
     return `🌤️ Current weather at University of Moratuwa:
 📍 ${current.temperature}°C, ${current.condition}
 💨 Wind: ${current.windSpeed} km/h
