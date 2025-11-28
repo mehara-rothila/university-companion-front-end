@@ -102,7 +102,9 @@ export default function NotificationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  
+  const [emergencyNotifications, setEmergencyNotifications] = useState<any[]>([]);
+  const [emergencyCount, setEmergencyCount] = useState(0);
+
   const [filters, setFilters] = useState<NotificationFilter>({
     type: 'all',
     priority: 'all',
@@ -234,10 +236,63 @@ export default function NotificationsPage() {
     }
   };
 
+  // Load emergency notifications
+  const loadEmergencyNotifications = async () => {
+    const token = localStorage.getItem('token');
+    if (!user?.id || !token) return;
+
+    try {
+      const response = await axios.get(`${API_BASE}/emergency/active`, {
+        headers: getAuthHeaders()
+      });
+
+      const activeEmergencies = response.data?.filter((e: any) => !e.currentUserDismissed) || [];
+      setEmergencyNotifications(activeEmergencies);
+      setEmergencyCount(activeEmergencies.length);
+    } catch (error) {
+      console.error('Failed to load emergency notifications:', error);
+      setEmergencyNotifications([]);
+      setEmergencyCount(0);
+    }
+  };
+
+  // Dismiss emergency notification
+  const dismissEmergency = async (emergencyId: number) => {
+    try {
+      const headers = getAuthHeaders();
+      await axios.post(`${API_BASE}/emergency/${emergencyId}/dismiss`, {}, { headers });
+
+      // Reload emergency notifications
+      await loadEmergencyNotifications();
+    } catch (error) {
+      console.error('Failed to dismiss emergency:', error);
+    }
+  };
+
+  // Dismiss all emergencies
+  const dismissAllEmergencies = async () => {
+    try {
+      const headers = getAuthHeaders();
+
+      // Dismiss each emergency
+      await Promise.all(
+        emergencyNotifications.map(emergency =>
+          axios.post(`${API_BASE}/emergency/${emergency.id}/dismiss`, {}, { headers })
+        )
+      );
+
+      // Reload emergency notifications
+      await loadEmergencyNotifications();
+    } catch (error) {
+      console.error('Failed to dismiss all emergencies:', error);
+    }
+  };
+
   // Initialize component
   useEffect(() => {
     if (user) {
       loadNotifications();
+      loadEmergencyNotifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, currentPage]);
@@ -450,7 +505,7 @@ export default function NotificationsPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-4 md:mt-0 flex space-x-3">
+              <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
                 <button
                   onClick={markAllAsRead}
                   disabled={unreadCount === 0}
@@ -461,6 +516,17 @@ export default function NotificationsPage() {
                   }`}
                 >
                   {t('notifications.buttons.markAllRead')}
+                </button>
+                <button
+                  onClick={dismissAllEmergencies}
+                  disabled={emergencyCount === 0}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                    emergencyCount > 0
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  Dismiss All Emergencies ({emergencyCount})
                 </button>
                 <button
                   onClick={() => setShowSettings(!showSettings)}
@@ -479,6 +545,50 @@ export default function NotificationsPage() {
               </div>
             </div>
           </div>
+
+          {/* Emergency Notifications Section */}
+          {emergencyCount > 0 && activeTab === 'all' && (
+            <div className={`mb-6 p-6 rounded-xl border-2 ${isDarkMode ? 'bg-red-900/20 border-red-700' : 'bg-red-50 border-red-200'} backdrop-blur-sm shadow-lg animate-fade-in`}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-red-300' : 'text-red-700'} flex items-center`}>
+                  🚨 Active Emergencies ({emergencyCount})
+                </h2>
+              </div>
+              <div className="space-y-3">
+                {emergencyNotifications.map((emergency) => (
+                  <div
+                    key={emergency.id}
+                    className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/30' : 'bg-white'} border ${isDarkMode ? 'border-red-800' : 'border-red-200'}`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className={`font-bold text-lg ${isDarkMode ? 'text-red-200' : 'text-red-800'} mb-2`}>
+                          {emergency.title}
+                        </h3>
+                        <p className={`${isDarkMode ? 'text-red-300' : 'text-red-700'} mb-2`}>
+                          {emergency.message}
+                        </p>
+                        <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                          {formatDate(emergency.createdAt)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => dismissEmergency(emergency.id)}
+                        className={`ml-4 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                          isDarkMode
+                            ? 'bg-red-800 text-red-200 hover:bg-red-700'
+                            : 'bg-red-600 text-white hover:bg-red-700'
+                        }`}
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Tab Navigation */}
           <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
