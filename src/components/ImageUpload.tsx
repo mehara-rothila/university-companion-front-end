@@ -77,11 +77,7 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
   };
 
   return (
-    <div className="space-y-4">
-      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-        Supporting Documents (Optional)
-      </label>
-      
+    <div className="space-y-2">
       {preview ? (
         <div className="relative">
           <img 

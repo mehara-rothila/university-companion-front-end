@@ -31,6 +31,16 @@ export default function EmergencyNotificationBanner() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
 
+  // Helper to check if token is a valid JWT (has 3 parts separated by dots)
+  const isValidJWT = (token: string | null): boolean => {
+    if (!token || token.trim() === '') return false;
+    // Check if it's a placeholder token
+    if (token === 'google-oauth-token' || token === 'null' || token === 'undefined') return false;
+    // Basic JWT format check: should have 3 parts separated by dots
+    const parts = token.split('.');
+    return parts.length === 3;
+  };
+
   const getAuthHeaders = () => ({
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
@@ -50,7 +60,7 @@ export default function EmergencyNotificationBanner() {
 
   // Request browser notification permission on mount
   useEffect(() => {
-    if (user && token) {
+    if (user && isValidJWT(token)) {
       // Request permission for browser notifications
       requestPermission().then(granted => {
         if (granted) {
@@ -64,7 +74,8 @@ export default function EmergencyNotificationBanner() {
 
   // Load active emergencies on mount
   useEffect(() => {
-    if (user && token) {
+    // Only load if we have both user and a valid JWT token
+    if (user && isValidJWT(token)) {
       loadActiveEmergencies();
       setupWebSocket();
     }
@@ -78,7 +89,7 @@ export default function EmergencyNotificationBanner() {
 
   // Mark emergencies as seen when they appear
   useEffect(() => {
-    if (user && token && emergencies.length > 0) {
+    if (user && isValidJWT(token) && emergencies.length > 0) {
       emergencies.forEach(emergency => {
         markEmergencyAsSeen(emergency.id);
       });
@@ -87,6 +98,11 @@ export default function EmergencyNotificationBanner() {
 
   const loadActiveEmergencies = async () => {
     try {
+      // Only attempt to load if we have a valid JWT token
+      if (!isValidJWT(token)) {
+        return;
+      }
+
       const response = await axios.get(`${API_BASE}/emergency/active`, {
         headers: getAuthHeaders()
       });
@@ -107,12 +123,22 @@ export default function EmergencyNotificationBanner() {
 
         setEmergencies(activeEmergencies);
       }
-    } catch (error) {
-      console.error('Failed to load emergencies:', error);
+    } catch (error: any) {
+      // Silently fail if it's an auth error (400/401/403)
+      if (error.response && [400, 401, 403].includes(error.response.status)) {
+        console.log('Emergency notifications not available for this user');
+      } else {
+        console.error('Failed to load emergencies:', error);
+      }
     }
   };
 
   const setupWebSocket = () => {
+    // Only setup WebSocket if we have a valid JWT token
+    if (!isValidJWT(token)) {
+      return;
+    }
+
     try {
       const client = new Client({
         webSocketFactory: () => {
@@ -265,8 +291,12 @@ export default function EmergencyNotificationBanner() {
       });
 
       setEmergencies(prev => prev.filter(e => e.id !== id));
-    } catch (error) {
-      console.error('Failed to dismiss emergency:', error);
+    } catch (error: any) {
+      if (error.response && [400, 401, 403].includes(error.response.status)) {
+        console.log('Unable to dismiss emergency - authentication issue');
+      } else {
+        console.error('Failed to dismiss emergency:', error);
+      }
     }
   };
 
@@ -282,8 +312,12 @@ export default function EmergencyNotificationBanner() {
           e.id === id ? { ...e, dismissed: true } : e
         )
       );
-    } catch (error) {
-      console.error('Failed to acknowledge emergency:', error);
+    } catch (error: any) {
+      if (error.response && [400, 401, 403].includes(error.response.status)) {
+        console.log('Unable to acknowledge emergency - authentication issue');
+      } else {
+        console.error('Failed to acknowledge emergency:', error);
+      }
     }
   };
 
@@ -292,8 +326,11 @@ export default function EmergencyNotificationBanner() {
       await axios.post(`${API_BASE}/emergency/${id}/seen`, {}, {
         headers: getAuthHeaders()
       });
-    } catch (error) {
-      console.error('Failed to mark emergency as seen:', error);
+    } catch (error: any) {
+      // Silently fail for "seen" tracking - not critical
+      if (error.response && ![400, 401, 403].includes(error.response.status)) {
+        console.error('Failed to mark emergency as seen:', error);
+      }
     }
   };
 
