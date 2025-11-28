@@ -21,7 +21,8 @@ import {
   Clock,
   Trophy,
   Calendar,
-  Search
+  Search,
+  BookOpen
 } from 'lucide-react';
 
 // Types
@@ -675,6 +676,39 @@ export default function AdminPanel() {
                 <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                   <span className={`text-sm font-medium ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} flex items-center justify-end`}>
                     Manage Items
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* Library Management */}
+            <Link href="/admin/library">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-indigo-900/20 to-indigo-800/20 border-indigo-700/30' : 'bg-gradient-to-br from-indigo-50/90 to-indigo-100/90 border-indigo-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-indigo-800/50' : 'bg-indigo-100'} flex-shrink-0`}>
+                    <BookOpen className={`w-8 h-8 ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}`} />
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 to-indigo-300' : 'from-indigo-600 to-indigo-500'} bg-clip-text text-transparent block`}>
+                      Active
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>
+                      Review Books
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Library
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Review and approve book submissions for the peer-to-peer library
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} flex items-center justify-end`}>
+                    Manage Books
                     <ChevronRight className="w-4 h-4 ml-1" />
                   </span>
                 </div>
