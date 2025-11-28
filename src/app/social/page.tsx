@@ -8,7 +8,7 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, Heart, MessageCircle, Share2, Calendar, Users, Newspaper, Search } from 'lucide-react';
+import { Trophy, Heart, MessageCircle, Share2, Calendar, Users, Newspaper, Search, Building2 } from 'lucide-react';
 import Image from 'next/image';
 
 type ActiveTab = 'achievements' | 'events' | 'clubs' | 'feed' | 'discover';
@@ -201,22 +201,22 @@ export default function SocialPage() {
           <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
             <div className="flex overflow-x-auto">
               {[
-                { id: 'achievements', label: 'Achievements', icon: '🏆', count: achievements.length },
-                { id: 'events', label: 'Events', icon: '📅', count: null },
-                { id: 'clubs', label: 'Clubs', icon: '🏛️', count: null },
-                { id: 'feed', label: 'Feed', icon: '📰', count: null },
-                { id: 'discover', label: 'Discover', icon: '🔍', count: null }
+                { id: 'achievements', label: 'Achievements', icon: Trophy, count: achievements.length, color: 'text-yellow-500' },
+                { id: 'events', label: 'Events', icon: Calendar, count: null, color: 'text-blue-500' },
+                { id: 'clubs', label: 'Clubs', icon: Building2, count: null, color: 'text-green-500' },
+                { id: 'feed', label: 'Feed', icon: Newspaper, count: null, color: 'text-orange-500' },
+                { id: 'discover', label: 'Discover', icon: Search, count: null, color: 'text-pink-500' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as ActiveTab)}
-                  className={`flex-1 px-6 py-4 font-medium transition-colors duration-200 whitespace-nowrap ${
+                  className={`flex-1 px-6 py-4 font-medium transition-colors duration-200 whitespace-nowrap flex items-center justify-center ${
                     activeTab === tab.id
                       ? `${isDarkMode ? 'text-purple-400 border-purple-400' : 'text-purple-600 border-purple-600'} border-b-2`
                       : `${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'}`
                   }`}
                 >
-                  <span className="mr-2">{tab.icon}</span>
+                  <tab.icon className={`w-4 h-4 mr-2 ${tab.color}`} />
                   {tab.label}
                   {tab.count !== null && (
                     <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
@@ -236,11 +236,13 @@ export default function SocialPage() {
           {activeTab === 'achievements' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {achievements.length === 0 ? (
-                <div className="col-span-full text-center py-12">
-                  <Trophy size={64} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
-                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                    No achievements yet. Be the first to share your accomplishments!
-                  </p>
+                <div className={`col-span-full ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm`}>
+                  <div className="text-center py-12">
+                    <Trophy size={64} className="mx-auto mb-4 text-yellow-500" />
+                    <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                      No achievements yet. Be the first to share your accomplishments!
+                    </p>
+                  </div>
                 </div>
               ) : (
                 achievements.map((achievement, index) => (
