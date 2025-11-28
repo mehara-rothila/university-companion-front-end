@@ -1023,6 +1023,75 @@
       "deleteFailed": "Failed to delete item. Please try again."
     }
   },
+  "homepage": {
+    "skipToMainContent": "Skip to main content",
+    "hero": {
+      "title": "Athena",
+      "subtitle": "Your Intelligent University Companion",
+      "description": "Experience the future of university life with AI-powered assistance, smart navigation, and seamless university integration designed to enhance your academic journey.",
+      "getStarted": "Get Started",
+      "createAccount": "Create Account",
+      "welcomeBack": "Welcome back, {{name}}!"
+    },
+    "features": {
+      "aiAssistant": {
+        "title": "AI Assistant",
+        "description": "Meet Athena, your intelligent university companion"
+      },
+      "smartNavigation": {
+        "title": "Smart Navigation",
+        "description": "Never get lost on university again"
+      },
+      "studySpaces": {
+        "title": "Study Spaces",
+        "description": "Find the perfect place to learn"
+      },
+      "lostFound": {
+        "title": "Lost & Found",
+        "description": "Reunite with your belongings"
+      }
+    },
+    "everythingYouNeed": {
+      "title": "Everything You Need",
+      "subtitle": "Athena brings together all essential university services in one intelligent platform"
+    },
+    "quickFeatures": {
+      "aiChat": {
+        "title": "AI Chat Assistant",
+        "description": "Get instant answers to any university question"
+      },
+      "interactiveMaps": {
+        "title": "Interactive Maps",
+        "description": "Navigate university with real-time directions"
+      },
+      "studyResources": {
+        "title": "Study Resources",
+        "description": "Find spaces, books, and study materials"
+      },
+      "lostFound": {
+        "title": "Lost & Found",
+        "description": "Report and recover lost belongings"
+      },
+      "wellnessHub": {
+        "title": "Wellness Hub",
+        "description": "Access mental health and wellness resources"
+      },
+      "community": {
+        "title": "Community",
+        "description": "Connect with students and faculty"
+      }
+    },
+    "stats": {
+      "studentSatisfaction": "Student Satisfaction",
+      "aiAssistance": "AI Assistance",
+      "responseTime": "Response Time"
+    },
+    "cta": {
+      "title": "Ready to Transform Your University Experience?",
+      "description": "Join thousands of students who are already experiencing the future of university life with Athena.",
+      "startJourney": "Start Your Journey"
+    }
+  },
   "financialAidPage": {
     "title": "Financial Aid & Community Support",
     "subtitle": "Comprehensive financial assistance platform with community support, eligibility tracking, and budget management tools.",
