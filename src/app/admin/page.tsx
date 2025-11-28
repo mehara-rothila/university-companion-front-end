@@ -52,6 +52,16 @@ interface DashboardStats {
   timestamp: string;
 }
 
+interface ModuleCounts {
+  pendingAchievements: number;
+  pendingFinancialAid: number;
+  activeNotifications: number;
+  pendingEvents: number;
+  pendingCompetitions: number;
+  activeLostFound: number;
+  pendingLibraryBooks: number;
+}
+
 interface PaginatedUsers {
   users: User[];
   currentPage: number;
@@ -66,6 +76,15 @@ export default function AdminPanel() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [moduleCounts, setModuleCounts] = useState<ModuleCounts>({
+    pendingAchievements: 0,
+    pendingFinancialAid: 0,
+    activeNotifications: 0,
+    pendingEvents: 0,
+    pendingCompetitions: 0,
+    activeLostFound: 0,
+    pendingLibraryBooks: 0
+  });
   const [users, setUsers] = useState<PaginatedUsers | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
@@ -93,6 +112,7 @@ export default function AdminPanel() {
   const [pageSize] = useState(10);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   // User form state
   const [userForm, setUserForm] = useState({
@@ -133,6 +153,84 @@ export default function AdminPanel() {
       setError('Failed to load dashboard statistics');
     }
   }, []);
+
+  // Load module counts
+  const loadModuleCounts = useCallback(async () => {
+    try {
+      // Load achievements count
+      try {
+        const achievementsRes = await axios.get(`${API_BASE}/achievements/pending/${user?.id}`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, pendingAchievements: achievementsRes.data?.length || 0 }));
+      } catch (err) {
+        console.log('Achievements count not available');
+      }
+
+      // Load financial aid count
+      try {
+        const financialAidRes = await axios.get(`${API_BASE}/financial-aid/admin/applications?status=PENDING&page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, pendingFinancialAid: financialAidRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Financial aid count not available');
+      }
+
+      // Load notifications count
+      try {
+        const notificationsRes = await axios.get(`${API_BASE}/notifications/admin/all?page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, activeNotifications: notificationsRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Notifications count not available');
+      }
+
+      // Load events count
+      try {
+        const eventsRes = await axios.get(`${API_BASE}/events/pending?page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, pendingEvents: eventsRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Events count not available');
+      }
+
+      // Load competitions count
+      try {
+        const competitionsRes = await axios.get(`${API_BASE}/competitions/pending?page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, pendingCompetitions: competitionsRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Competitions count not available');
+      }
+
+      // Load lost & found count
+      try {
+        const lostFoundRes = await axios.get(`${API_BASE}/lost-found/all?page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, activeLostFound: lostFoundRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Lost & Found count not available');
+      }
+
+      // Load library books count
+      try {
+        const libraryRes = await axios.get(`${API_BASE}/library/pending?page=0&size=1`, {
+          headers: getAuthHeaders()
+        });
+        setModuleCounts(prev => ({ ...prev, pendingLibraryBooks: libraryRes.data?.totalElements || 0 }));
+      } catch (err) {
+        console.log('Library count not available');
+      }
+
+    } catch (error) {
+      console.error('Failed to load module counts:', error);
+    }
+  }, [user]);
 
   // Load users
   const loadUsers = useCallback(async () => {
@@ -326,8 +424,9 @@ export default function AdminPanel() {
     if (user?.role === 'ADMIN') {
       loadStats();
       loadUsers();
+      loadModuleCounts();
     }
-  }, [currentPage, searchTerm, roleFilter, user, loadStats, loadUsers]);
+  }, [currentPage, searchTerm, roleFilter, user, loadStats, loadUsers, loadModuleCounts]);
 
   // Clear messages after 5 seconds
   useEffect(() => {
@@ -523,11 +622,11 @@ export default function AdminPanel() {
                     <DollarSign className={`w-8 h-8 ${isDarkMode ? 'text-green-300' : 'text-green-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-green-300' : 'text-green-600'} bg-gradient-to-r ${isDarkMode ? 'from-green-400 to-green-300' : 'from-green-600 to-green-500'} bg-clip-text text-transparent block`}>
-                      {t('admin.modules.financialAid.status')}
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-green-300' : 'text-green-600'} block`}>
+                      {moduleCounts.pendingFinancialAid}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-500'}`}>
-                      {t('admin.modules.financialAid.availability')}
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -556,11 +655,11 @@ export default function AdminPanel() {
                     <Bell className={`w-8 h-8 ${isDarkMode ? 'text-amber-300' : 'text-amber-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} bg-gradient-to-r ${isDarkMode ? 'from-amber-400 to-amber-300' : 'from-amber-600 to-amber-500'} bg-clip-text text-transparent block`}>
-                      {t('admin.modules.notifications.status')}
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-amber-300' : 'text-amber-600'} block`}>
+                      {moduleCounts.activeNotifications}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`}>
-                      {t('admin.modules.notifications.availability')}
+                      Active
                     </span>
                   </div>
                 </div>
@@ -587,7 +686,7 @@ export default function AdminPanel() {
                 <div className="flex items-start justify-between mb-4">
                   <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-red-800/50' : 'bg-red-100'} flex-shrink-0`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 ${isDarkMode ? 'text-red-300' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0 0v2m0-6h0m0 6h0M7.08 6.47a7 7 0 1 1 9.84 0M9.5 16.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5m0-4c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <div className="text-right">
@@ -624,11 +723,11 @@ export default function AdminPanel() {
                     <Trophy className={`w-8 h-8 ${isDarkMode ? 'text-orange-300' : 'text-orange-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} bg-gradient-to-r ${isDarkMode ? 'from-orange-400 to-orange-300' : 'from-orange-600 to-orange-500'} bg-clip-text text-transparent block`}>
-                      {t('admin.modules.competitions.status')}
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-orange-300' : 'text-orange-600'} block`}>
+                      {moduleCounts.pendingCompetitions}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-orange-400' : 'text-orange-500'}`}>
-                      {t('admin.modules.competitions.availability')}
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -657,11 +756,11 @@ export default function AdminPanel() {
                     <Search className={`w-8 h-8 ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} bg-gradient-to-r ${isDarkMode ? 'from-cyan-400 to-cyan-300' : 'from-cyan-600 to-cyan-500'} bg-clip-text text-transparent block`}>
-                      Active
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-cyan-300' : 'text-cyan-600'} block`}>
+                      {moduleCounts.activeLostFound}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-cyan-400' : 'text-cyan-500'}`}>
-                      Review Items
+                      Active Items
                     </span>
                   </div>
                 </div>
@@ -690,11 +789,11 @@ export default function AdminPanel() {
                     <BookOpen className={`w-8 h-8 ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} bg-gradient-to-r ${isDarkMode ? 'from-indigo-400 to-indigo-300' : 'from-indigo-600 to-indigo-500'} bg-clip-text text-transparent block`}>
-                      Active
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} block`}>
+                      {moduleCounts.pendingLibraryBooks}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>
-                      Review Books
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -723,11 +822,11 @@ export default function AdminPanel() {
                     <Calendar className={`w-8 h-8 ${isDarkMode ? 'text-pink-300' : 'text-pink-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-pink-300' : 'text-pink-600'} bg-gradient-to-r ${isDarkMode ? 'from-pink-400 to-pink-300' : 'from-pink-600 to-pink-500'} bg-clip-text text-transparent block`}>
-                      Active
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-pink-300' : 'text-pink-600'} block`}>
+                      {moduleCounts.pendingEvents}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-pink-400' : 'text-pink-500'}`}>
-                      Available Now
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -756,11 +855,11 @@ export default function AdminPanel() {
                     <Trophy className={`w-8 h-8 ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'}`} />
                   </div>
                   <div className="text-right">
-                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'} bg-gradient-to-r ${isDarkMode ? 'from-yellow-400 to-yellow-300' : 'from-yellow-600 to-yellow-500'} bg-clip-text text-transparent block`}>
-                      Active
+                    <span className={`text-2xl font-bold ${isDarkMode ? 'text-yellow-300' : 'text-yellow-600'} block`}>
+                      {moduleCounts.pendingAchievements}
                     </span>
                     <span className={`text-xs ${isDarkMode ? 'text-yellow-400' : 'text-yellow-500'}`}>
-                      Review Pending
+                      Pending
                     </span>
                   </div>
                 </div>
@@ -1056,15 +1155,20 @@ export default function AdminPanel() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          {user.imageUrl ? (
+                          {user.imageUrl && !failedImages.has(user.id) ? (
                             <img
-                              src={user.imageUrl}
+                              src={user.imageUrl.includes('amazonaws.com')
+                                ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.imageUrl)}`
+                                : user.imageUrl}
                               alt={`${user.firstName} ${user.lastName}`}
-                              className="w-10 h-10 rounded-full object-cover"
+                              className="w-10 h-10 rounded-full object-cover border-2 border-purple-500"
+                              onError={() => {
+                                setFailedImages(prev => new Set(prev).add(user.id));
+                              }}
                             />
                           ) : (
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                              <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 border-purple-500 ${isDarkMode ? 'bg-gradient-to-br from-purple-600 to-purple-500' : 'bg-gradient-to-br from-purple-600 to-purple-500'}`}>
+                              <span className="text-sm font-bold text-white">
                                 {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                               </span>
                             </div>

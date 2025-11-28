@@ -244,33 +244,35 @@ export default function AdminNotifications() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
           <div className="mb-8 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5v-13a3 3 0 016 0z" />
-                  </svg>
-                  Notification Management
-                </h1>
-                <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Create and manage notifications for students and faculty
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <Link href="/admin">
-                  <button className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
-                    Back to Admin
+            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mr-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h3.586a1 1 0 00.707-1.707L17 13V9a5 5 0 10-10 0v4l-2.293 2.293A1 1 0 005.414 17H9m6 0a3 3 0 11-6 0m6 0H9" />
+                    </svg>
+                    Notification Management
+                  </h1>
+                  <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Create and manage notifications for students and faculty
+                  </p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Link href="/admin">
+                    <button className={`px-4 py-2 rounded-lg transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
+                      Back to Admin
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                  >
+                    <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Create Notification
                   </button>
-                </Link>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
-                >
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Create Notification
-                </button>
+                </div>
               </div>
             </div>
           </div>
