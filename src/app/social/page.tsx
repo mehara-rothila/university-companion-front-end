@@ -8,8 +8,9 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, Heart, MessageCircle, Share2, Calendar, Users, Newspaper, Search, Building2 } from 'lucide-react';
+import { Trophy, Heart, MessageCircle, Share2, Calendar, Users, Newspaper, Search, Building2, ImagePlus, X } from 'lucide-react';
 import Image from 'next/image';
+import ImageUpload from '@/components/ImageUpload';
 
 type ActiveTab = 'achievements' | 'events' | 'clubs' | 'feed' | 'discover';
 
@@ -19,10 +20,12 @@ export default function SocialPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('achievements');
   const [isLoading, setIsLoading] = useState(true);
   const [showAchievementModal, setShowAchievementModal] = useState(false);
+  const [achievementImageUrl, setAchievementImageUrl] = useState<string | null>(null);
 
   // Achievements data from API
   const [achievements, setAchievements] = useState<StudentAchievement[]>([]);
   const [likedAchievements, setLikedAchievements] = useState<Set<number>>(new Set());
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
 
   // Initialize component
   useEffect(() => {
@@ -279,20 +282,22 @@ export default function SocialPage() {
                     <div className="p-6">
                       {/* Student Info */}
                       <div className="flex items-center mb-4">
-                        <div className={`w-10 h-10 rounded-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'} flex items-center justify-center mr-3 flex-shrink-0`}>
-                          {achievement.studentImageUrl ? (
-                            <Image
-                              src={achievement.studentImageUrl}
+                        <div className="relative w-10 h-10 flex-shrink-0 mr-3">
+                          {achievement.studentImageUrl && !failedImages.has(achievement.id) ? (
+                            <img
+                              src={achievement.studentImageUrl.includes('amazonaws.com')
+                                ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(achievement.studentImageUrl)}`
+                                : achievement.studentImageUrl}
                               alt={achievement.studentName || 'Student'}
-                              width={40}
-                              height={40}
-                              className="rounded-full"
-                              unoptimized
+                              className="w-10 h-10 rounded-full object-cover border-2 border-purple-500"
+                              onError={() => {
+                                setFailedImages(prev => new Set(prev).add(achievement.id));
+                              }}
                             />
                           ) : (
-                            <span className="text-lg font-bold">
-                              {achievement.studentName?.charAt(0) || 'S'}
-                            </span>
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-purple-500">
+                              {achievement.studentName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'S'}
+                            </div>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -428,19 +433,30 @@ export default function SocialPage() {
                   const formData = new FormData(e.currentTarget);
 
                   try {
+                    const dateValue = formData.get('achievementDate') as string;
+                    // Convert date string to ISO 8601 format with time for LocalDateTime
+                    let formattedDate = null;
+                    if (dateValue && dateValue.trim() !== '') {
+                      formattedDate = dateValue + 'T00:00:00';
+                    }
+
                     const achievementData = {
                       studentId: user.id,
                       title: formData.get('title') as string,
                       description: formData.get('description') as string,
                       category: formData.get('category') as string,
-                      achievementDate: formData.get('achievementDate') as string,
+                      achievementDate: formattedDate,
+                      imageUrl: achievementImageUrl || null,
                     };
 
+                    console.log('Submitting achievement:', achievementData);
                     await achievementService.createAchievement(achievementData);
                     alert('Achievement submitted successfully! It will be visible after admin approval.');
                     setShowAchievementModal(false);
+                    setAchievementImageUrl(null);
                     e.currentTarget.reset();
                   } catch (error: any) {
+                    console.error('Achievement submission error:', error.response?.data);
                     alert(error.response?.data?.error || 'Failed to submit achievement');
                   }
                 }}
@@ -503,6 +519,18 @@ export default function SocialPage() {
                     type="date"
                     name="achievementDate"
                     className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                  />
+                </div>
+
+                {/* Image Upload Section */}
+                <div>
+                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                    Achievement Image (Optional)
+                  </label>
+                  <ImageUpload
+                    onImageUpload={(url) => setAchievementImageUrl(url)}
+                    currentImage={achievementImageUrl || undefined}
+                    onImageRemove={() => setAchievementImageUrl(null)}
                   />
                 </div>
 
