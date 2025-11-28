@@ -11,6 +11,8 @@ import CreateCompetitionModal from '@/components/CreateCompetitionModal';
 import EnrollmentModal from '@/components/EnrollmentModal';
 import MyCompetitionsView from '@/components/MyCompetitionsView';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
 export default function ChallengesPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
@@ -237,9 +239,12 @@ export default function ChallengesPage() {
                       {competition.imageUrl && (
                         <div className="mb-4 rounded-lg overflow-hidden">
                           <img
-                            src={competition.imageUrl}
+                            src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(competition.imageUrl)}`}
                             alt={competition.title}
                             className="w-full h-48 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
                           />
                         </div>
                       )}
