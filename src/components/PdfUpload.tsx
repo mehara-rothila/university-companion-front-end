@@ -117,6 +117,7 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
               </div>
             </div>
             <button
+              type="button"
               onClick={handleRemovePdf}
               disabled={uploading}
               className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors duration-200 disabled:opacity-50"
