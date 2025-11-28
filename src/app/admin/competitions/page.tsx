@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
-import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff, Trash2 } from 'lucide-react';
+import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff, Trash2, AlertTriangle } from 'lucide-react';
 
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
@@ -200,80 +200,68 @@ export default function AdminCompetitionsPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <div className={`flex flex-col p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
-                    <Trophy className="h-10 w-10 mr-3 text-orange-500" />
-                    Admin - Competition Review
-                  </h1>
-                  <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Review and manage competition submissions
-                  </p>
+            <div className={`flex flex-col md:flex-row md:items-center justify-between p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg gap-4`}>
+              <div>
+                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
+                  <Trophy className="h-8 w-8 mr-3 text-orange-500" />
+                  Competition Review
+                </h1>
+                <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Review and moderate competition submissions
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} flex-wrap gap-1`}>
+                  <button
+                    onClick={() => setFilter('PENDING')}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'PENDING'
+                      ? 'bg-yellow-600 text-white shadow-sm'
+                      : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Pending
+                  </button>
+                  <button
+                    onClick={() => setFilter('APPROVED')}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'APPROVED'
+                      ? 'bg-green-600 text-white shadow-sm'
+                      : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Approved
+                  </button>
+                  <button
+                    onClick={() => setFilter('REJECTED')}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'REJECTED'
+                      ? 'bg-red-600 text-white shadow-sm'
+                      : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    Rejected
+                  </button>
+                  <button
+                    onClick={() => setFilter('ALL')}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${filter === 'ALL'
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    All
+                  </button>
                 </div>
+
                 <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-orange-900/30 border border-orange-700/30' : 'bg-orange-100 border border-orange-200'}`}>
                   <p className={`text-sm font-medium ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>
-                    Showing: <span className="font-bold text-lg">{competitions.length}</span>
+                    {loading ? '...' : competitions.length} Items
                   </p>
                 </div>
-              </div>
-              
-              {/* Filter Tabs */}
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setFilter('PENDING')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    filter === 'PENDING'
-                      ? 'bg-yellow-500 text-white shadow-lg'
-                      : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  🕐 Pending
-                </button>
-                <button
-                  onClick={() => setFilter('APPROVED')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    filter === 'APPROVED'
-                      ? 'bg-green-500 text-white shadow-lg'
-                      : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  ✅ Approved
-                </button>
-                <button
-                  onClick={() => setFilter('REJECTED')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    filter === 'REJECTED'
-                      ? 'bg-red-500 text-white shadow-lg'
-                      : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  ❌ Rejected
-                </button>
-                <button
-                  onClick={() => setFilter('ALL')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    filter === 'ALL'
-                      ? 'bg-purple-500 text-white shadow-lg'
-                      : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  📋 All Items
-                </button>
               </div>
             </div>
           </div>
 
           {/* Competitions List */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}>
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
 
             {competitions.length === 0 ? (
               <div className="text-center py-12">
@@ -675,8 +663,8 @@ export default function AdminCompetitionsPage() {
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
                 Are you sure you want to permanently delete this competition?
               </p>
-              <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
-                ⚠️ This action cannot be undone.
+              <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium flex items-center`}>
+                <AlertTriangle className="w-4 h-4 mr-1" /> This action cannot be undone.
               </p>
 
               <div className="flex gap-3">
