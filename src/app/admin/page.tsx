@@ -580,6 +580,41 @@ export default function AdminPanel() {
               </div>
             </Link>
 
+            {/* Emergency Alerts Management */}
+            <Link href="/admin/emergency">
+              <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-red-900/20 to-red-800/20 border-red-700/30' : 'bg-gradient-to-br from-red-50/90 to-red-100/90 border-red-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-red-800/50' : 'bg-red-100'} flex-shrink-0`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 ${isDarkMode ? 'text-red-300' : 'text-red-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0 0v2m0-6h0m0 6h0M7.08 6.47a7 7 0 1 1 9.84 0M9.5 16.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5m0-4c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-semibold ${isDarkMode ? 'text-red-300' : 'text-red-600'} bg-gradient-to-r ${isDarkMode ? 'from-red-400 to-red-300' : 'from-red-600 to-red-500'} bg-clip-text text-transparent block`}>
+                      URGENT
+                    </span>
+                    <span className={`text-xs ${isDarkMode ? 'text-red-400' : 'text-red-500'}`}>
+                      Real-time alerts
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                    Emergency Alerts
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}>
+                    Send urgent emergency notifications to all students or specific users with real-time delivery and acknowledgment tracking
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-600'} flex items-center justify-end`}>
+                    Send Emergency Alert
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
             {/* Competition Management */}
             <Link href="/admin/competitions">
               <div className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-orange-900/20 to-orange-800/20 border-orange-700/30' : 'bg-gradient-to-br from-orange-50/90 to-orange-100/90 border-orange-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}>
