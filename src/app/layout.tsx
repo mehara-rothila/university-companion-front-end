@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import NotificationToast from "../components/NotificationToast";
+import EmergencyNotificationBanner from "../components/EmergencyNotificationBanner";
 import ConsoleFilter from "../components/ConsoleFilter";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -42,6 +43,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ConsoleFilter />
         <Providers>
+          <EmergencyNotificationBanner />
           {children}
           <NotificationToast />
         </Providers>
