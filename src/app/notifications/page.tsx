@@ -168,6 +168,18 @@ export default function NotificationsPage() {
     };
   };
 
+  // Safe date formatting helper
+  const formatDate = (dateString?: string | null): string => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch {
+      return 'Invalid date';
+    }
+  };
+
   const loadNotifications = async () => {
     // Check for both user and token
     const token = localStorage.getItem('token');
@@ -837,9 +849,9 @@ export default function NotificationsPage() {
                           
                           {/* Additional Info */}
                           <div className={`mb-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            <span className="mr-4">📅 {new Date(notification.createdAt).toLocaleDateString()}</span>
+                            <span className="mr-4">📅 {formatDate(notification.createdAt)}</span>
                             {notification.expiresAt && (
-                              <span className="mr-4">⏰ {t('notifications.timeLabels.expires')}: {new Date(notification.expiresAt).toLocaleDateString()}</span>
+                              <span className="mr-4">⏰ {t('notifications.timeLabels.expires')}: {formatDate(notification.expiresAt)}</span>
                             )}
                             <span className={`px-2 py-1 rounded text-xs ${notification.target === 'ALL_STUDENTS' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'}`}>
                               {notification.target === 'ALL_STUDENTS' ? t('notifications.target.allStudents') : t('notifications.target.targeted')}
