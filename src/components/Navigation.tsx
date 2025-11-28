@@ -6,14 +6,19 @@ import { useState, useEffect } from 'react';
 // import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle } from 'lucide-react';
+import axios from 'axios';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [emergencyCount, setEmergencyCount] = useState(0);
   const isDarkMode = false;
   const { user, isAuthenticated, logout } = useAuth();
   const { locale, setLocale, t } = useTranslation();
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const API_BASE = `${API_BASE_URL}/api`;
 
   // Language options
   const languages = [
@@ -25,6 +30,43 @@ const Navigation = () => {
   const getCurrentLanguage = () => {
     return languages.find(lang => lang.code === locale) || languages[1];
   };
+
+  // Fetch active emergency count
+  const fetchEmergencyCount = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await axios.get(`${API_BASE}/emergency/active`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // Count non-dismissed emergencies
+      const activeCount = response.data?.filter((e: any) => !e.currentUserDismissed).length || 0;
+      setEmergencyCount(activeCount);
+    } catch (error) {
+      console.error('Failed to fetch emergency count:', error);
+      setEmergencyCount(0);
+    }
+  };
+
+  // Fetch emergency count on mount and when user changes
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetchEmergencyCount();
+
+      // Poll every 30 seconds to update count
+      const interval = setInterval(fetchEmergencyCount, 30000);
+      return () => clearInterval(interval);
+    } else {
+      setEmergencyCount(0);
+    }
+  }, [isAuthenticated, user]);
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -89,6 +131,23 @@ const Navigation = () => {
             <Link href="/profile" className="nav-link text-sm font-medium" onClick={handleNavigation}>
               <UserCircle className="inline h-4 w-4 mr-1.5" />
               {t('nav.profile')}
+            </Link>
+          )}
+
+          {/* Emergency Notifications Badge - Only show when authenticated */}
+          {isAuthenticated && (
+            <Link
+              href="/notifications"
+              className="relative nav-link text-sm font-medium flex items-center"
+              onClick={handleNavigation}
+              title="Emergency Notifications"
+            >
+              <Bell className="h-5 w-5" />
+              {emergencyCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 animate-pulse shadow-lg">
+                  {emergencyCount}
+                </span>
+              )}
             </Link>
           )}
 
@@ -185,6 +244,20 @@ const Navigation = () => {
 
         {/* Mobile Hamburger button area */}
         <div className="lg:hidden flex items-center space-x-3">
+          {/* Emergency Badge - Mobile Icon */}
+          {isAuthenticated && emergencyCount > 0 && (
+            <Link
+              href="/notifications"
+              className="relative p-2"
+              title="Emergency Notifications"
+            >
+              <Bell className="h-6 w-6 text-purple-700 dark:text-purple-400" />
+              <span className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse">
+                {emergencyCount}
+              </span>
+            </Link>
+          )}
+
           {/* Hamburger Button */}
           <button
             type="button"
@@ -240,6 +313,26 @@ const Navigation = () => {
           >
             <UserCircle className="inline h-5 w-5 mr-2"/> {t('nav.profile')}
           </Link>
+
+          {/* Emergency Notifications - Mobile */}
+          {isAuthenticated && (
+            <Link
+              href="/notifications"
+              className="mobile-nav-link flex items-center justify-between"
+              onClick={handleNavigation}
+            >
+              <div className="flex items-center">
+                <Bell className="inline h-5 w-5 mr-2" />
+                <span>Emergency Notifications</span>
+              </div>
+              {emergencyCount > 0 && (
+                <span className="bg-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-2 animate-pulse">
+                  {emergencyCount}
+                </span>
+              )}
+            </Link>
+          )}
+
           <Link
             href="/chatbot"
             className="mobile-nav-link flex items-center"
