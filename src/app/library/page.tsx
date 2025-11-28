@@ -37,6 +37,7 @@ interface Book {
   ownerRating?: number;
   uploadDate: string;
   totalRequests: number;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
 interface BookRequest {
@@ -76,6 +77,22 @@ export default function LibraryPage() {
   const [myBooks, setMyBooks] = useState<Book[]>([]);
   const [requests, setRequests] = useState<BookRequest[]>([]);
   const [showRequestModal, setShowRequestModal] = useState<{show: boolean, book?: Book}>({ show: false });
+  const [showEditModal, setShowEditModal] = useState<{show: boolean, book?: Book}>({ show: false });
+  const [editBook, setEditBook] = useState<{
+    id: number;
+    bookType: 'PHYSICAL' | 'DIGITAL';
+    title: string;
+    author: string;
+    isbn: string;
+    description: string;
+    bookCondition: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+    category: 'TEXTBOOK' | 'REFERENCE' | 'PROGRAMMING' | 'ENGINEERING' | 'OTHER';
+    lendingType: 'FREE' | 'SELL' | 'TRADE';
+    price: number;
+    photoUrl: string;
+    pdfUrl: string;
+    fileSize: number;
+  } | null>(null);
 
   // New book upload form state
   const [newBook, setNewBook] = useState<{
@@ -129,6 +146,7 @@ export default function LibraryPage() {
   const fetchBooks = async () => {
     if (!user) return;
     try {
+      // Fetch approved books (for browsing)
       const response = await fetch(`${API_URL}/api/books`, {
         headers: getAuthHeaders()
       });
@@ -141,8 +159,14 @@ export default function LibraryPage() {
           }
         });
         setBooks(data);
-        // Filter my books
-        const myBooksData = data.filter((book: Book) => book.ownerId === user.id);
+      }
+
+      // Fetch user's own books (including pending/rejected)
+      const myBooksResponse = await fetch(`${API_URL}/api/books/owner/${user.id}`, {
+        headers: getAuthHeaders()
+      });
+      if (myBooksResponse.ok) {
+        const myBooksData = await myBooksResponse.json();
         setMyBooks(myBooksData);
       }
     } catch (error) {
@@ -190,16 +214,47 @@ export default function LibraryPage() {
       book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Category/condition filters
-    const matchesFilters = selectedFilters.length === 0 ||
-      selectedFilters.includes(book.category) ||
-      (book.bookCondition && selectedFilters.includes(book.bookCondition)) ||
-      (book.lendingType && selectedFilters.includes(book.lendingType)) ||
-      (selectedFilters.includes('available') && book.availableForLending) ||
-      (selectedFilters.includes('unavailable') && !book.availableForLending);
+    if (!matchesSearch) return false;
 
-    return matchesSearch && matchesFilters;
+    // If no filters selected, show all remaining books
+    if (selectedFilters.length === 0) return true;
+
+    // Separate filters by type
+    const categoryFilters = selectedFilters.filter(f => ['PROGRAMMING', 'ENGINEERING', 'TEXTBOOK', 'REFERENCE', 'OTHER'].includes(f));
+    const conditionFilters = selectedFilters.filter(f => ['EXCELLENT', 'GOOD', 'FAIR', 'POOR'].includes(f));
+    const lendingFilters = selectedFilters.filter(f => ['FREE', 'SELL', 'TRADE'].includes(f));
+    const availabilityFilters = selectedFilters.filter(f => ['available', 'unavailable'].includes(f));
+
+    // Category filter - if any category filters are selected, book must match at least one
+    const matchesCategory = categoryFilters.length === 0 || categoryFilters.includes(book.category);
+    
+    // Condition filter - if any condition filters are selected, book must match at least one
+    const matchesCondition = conditionFilters.length === 0 || 
+      (book.bookCondition && conditionFilters.includes(book.bookCondition));
+    
+    // Lending type filter - if any lending filters are selected, book must match at least one
+    const matchesLending = lendingFilters.length === 0 || 
+      (book.lendingType && lendingFilters.includes(book.lendingType));
+    
+    // Availability filter - if any availability filters are selected, book must match at least one
+    const matchesAvailability = availabilityFilters.length === 0 ||
+      (availabilityFilters.includes('available') && book.availableForLending) ||
+      (availabilityFilters.includes('unavailable') && !book.availableForLending);
+
+    // All filter types must match (AND between different types, OR within same type)
+    return matchesCategory && matchesCondition && matchesLending && matchesAvailability;
   });
+
+  // Debug: Log filter state when it changes
+  useEffect(() => {
+    console.log('=== Filter Debug ===');
+    console.log('Book Type Filter:', bookTypeFilter);
+    console.log('Search Query:', searchQuery);
+    console.log('Selected Filters:', selectedFilters);
+    console.log('Total Books:', books.length);
+    console.log('Filtered Books:', filteredBooks.length);
+    console.log('Filtered Books:', filteredBooks.map(b => ({ title: b.title, category: b.category, condition: b.bookCondition, available: b.availableForLending })));
+  }, [bookTypeFilter, searchQuery, selectedFilters, books, filteredBooks]);
 
   // Helper functions
   const getConditionColor = (condition?: string) => {
@@ -340,7 +395,18 @@ export default function LibraryPage() {
     }
 
     const bookData = {
-      ...newBook,
+      bookType: newBook.bookType,
+      title: newBook.title,
+      author: newBook.author,
+      isbn: newBook.isbn || null,
+      description: newBook.description,
+      bookCondition: newBook.bookCondition,
+      category: newBook.category,
+      lendingType: newBook.lendingType,
+      price: newBook.price || 0,
+      photoUrl: newBook.photoUrl || null,
+      pdfUrl: newBook.pdfUrl || null,
+      fileSize: newBook.fileSize || 0,
       ownerId: user.id,
       ownerName: `${user.firstName} ${user.lastName}`,
       ownerEmail: user.email,
@@ -360,7 +426,7 @@ export default function LibraryPage() {
       });
 
       if (response.ok) {
-        alert('Book uploaded successfully!');
+        alert('Book uploaded successfully! Your book is pending admin approval and will be visible to other users once approved.');
         setNewBook({
           bookType: 'PHYSICAL',
           title: '',
@@ -410,6 +476,71 @@ export default function LibraryPage() {
     } catch (error) {
       console.error('Error deleting book:', error);
       alert('Failed to delete book. Please try again.');
+    }
+  };
+
+  // Open edit modal for pending book
+  const openEditModal = (book: Book) => {
+    setEditBook({
+      id: book.id,
+      bookType: book.bookType,
+      title: book.title,
+      author: book.author,
+      isbn: book.isbn || '',
+      description: book.description,
+      bookCondition: book.bookCondition,
+      category: book.category,
+      lendingType: book.lendingType,
+      price: book.price || 0,
+      photoUrl: book.photoUrl || '',
+      pdfUrl: book.pdfUrl || '',
+      fileSize: book.fileSize || 0
+    });
+    setShowEditModal({ show: true, book });
+  };
+
+  // Handle edit book submission
+  const handleEditBook = async () => {
+    if (!editBook) return;
+
+    const payload = {
+      title: editBook.title,
+      author: editBook.author,
+      isbn: editBook.isbn || null,
+      description: editBook.description,
+      bookCondition: editBook.bookCondition,
+      category: editBook.category,
+      lendingType: editBook.lendingType,
+      price: editBook.price || 0,
+      photoUrl: editBook.photoUrl || null,
+      pdfUrl: editBook.pdfUrl || null,
+      fileSize: editBook.fileSize || 0
+    };
+    
+    console.log('=== Updating book ===');
+    console.log('Book ID:', editBook.id);
+    console.log('Payload:', JSON.stringify(payload, null, 2));
+    console.log('photoUrl value:', editBook.photoUrl);
+
+    try {
+      const response = await fetch(`${API_URL}/api/books/${editBook.id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert('Book updated successfully!');
+        setShowEditModal({ show: false });
+        setEditBook(null);
+        fetchBooks();
+      } else {
+        const errorData = await response.json().catch(() => null);
+        alert(`Failed to update book: ${errorData?.message || response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error updating book:', error);
+      alert('Failed to update book. Please try again.');
     }
   };
 
@@ -560,7 +691,7 @@ export default function LibraryPage() {
 
               {/* Search and Filters */}
               <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col gap-4">
                   {/* Search */}
                   <div className="flex-1">
                     <div className="relative">
@@ -577,23 +708,96 @@ export default function LibraryPage() {
                     </div>
                   </div>
 
-                  {/* Filter Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {['PROGRAMMING', 'ENGINEERING', 'TEXTBOOK', 'EXCELLENT', 'GOOD', 'available'].map((filter) => (
+                  {/* Filter Tags - Grouped by Type */}
+                  <div className="space-y-3">
+                    {/* Category Filters */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Category:</span>
+                      {['PROGRAMMING', 'ENGINEERING', 'TEXTBOOK', 'REFERENCE'].map((filter) => (
+                        <button
+                          key={filter}
+                          type="button"
+                          onClick={() => toggleFilter(filter)}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                            selectedFilters.includes(filter)
+                              ? 'bg-purple-600 text-white'
+                              : isDarkMode
+                              ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {filter.charAt(0) + filter.slice(1).toLowerCase()}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Condition Filters (for physical books) */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Condition:</span>
+                      {['EXCELLENT', 'GOOD', 'FAIR', 'POOR'].map((filter) => (
+                        <button
+                          key={filter}
+                          type="button"
+                          onClick={() => toggleFilter(filter)}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                            selectedFilters.includes(filter)
+                              ? 'bg-green-600 text-white'
+                              : isDarkMode
+                              ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {filter.charAt(0) + filter.slice(1).toLowerCase()}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Availability Filter */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`text-xs font-semibold uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Status:</span>
                       <button
-                        key={filter}
-                        onClick={() => toggleFilter(filter)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 capitalize ${
-                          selectedFilters.includes(filter)
-                            ? 'bg-purple-600 text-white'
+                        type="button"
+                        onClick={() => toggleFilter('available')}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                          selectedFilters.includes('available')
+                            ? 'bg-blue-600 text-white'
                             : isDarkMode
                             ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {filter.toLowerCase()}
+                        ✅ Available
                       </button>
-                    ))}
+                      <button
+                        type="button"
+                        onClick={() => toggleFilter('unavailable')}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                          selectedFilters.includes('unavailable')
+                            ? 'bg-orange-600 text-white'
+                            : isDarkMode
+                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        ⏳ Unavailable
+                      </button>
+                    </div>
+
+                    {/* Clear Filters & Results Count */}
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Showing <strong className="text-purple-600">{filteredBooks.length}</strong> of {books.filter(b => user && b.ownerId !== user.id).length} books
+                      </span>
+                      {selectedFilters.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFilters([])}
+                          className="text-sm text-red-500 hover:text-red-600 font-medium"
+                        >
+                          ✕ Clear all filters ({selectedFilters.length})
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -606,28 +810,52 @@ export default function LibraryPage() {
               {filteredBooks.map((book, index) => (
                 <div
                   key={book.id}
-                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in`}
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in flex flex-col h-full`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  {/* Book Image for Physical Books */}
-                  {book.bookType === 'PHYSICAL' && book.photoUrl && (
-                    <div className="h-48 overflow-hidden bg-gray-200 dark:bg-gray-700">
-                      <img
-                        src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(book.photoUrl)}`}
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          console.error('Failed to load image:', book.photoUrl);
-                          e.currentTarget.style.display = 'none';
-                        }}
-                        onLoad={() => console.log('Image loaded successfully:', book.photoUrl)}
-                      />
-                    </div>
-                  )}
+                  {/* Book Image - Fixed height for all cards */}
+                  <div className="h-48 overflow-hidden bg-gray-200 dark:bg-gray-700 relative flex-shrink-0">
+                    {book.photoUrl ? (
+                      <>
+                        <img
+                          src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(book.photoUrl)}`}
+                          alt={book.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        {book.bookType === 'DIGITAL' && (
+                          <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                            📄 PDF
+                          </div>
+                        )}
+                      </>
+                    ) : book.bookType === 'DIGITAL' ? (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span className="text-sm font-medium">Digital PDF</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          <span className="text-sm font-medium">Physical Book</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-                  <div className="p-6">
+                  {/* Card Content - Flex grow to fill space */}
+                  <div className="p-6 flex flex-col flex-grow">
                     {/* Book Header */}
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className={`text-xs px-2 py-1 rounded-full ${
@@ -638,30 +866,30 @@ export default function LibraryPage() {
                             {book.bookType === 'DIGITAL' ? '💾 Digital' : '📖 Physical'}
                           </span>
                         </div>
-                        <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 line-clamp-2`}>
+                        <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1 line-clamp-2`}>
                           {book.title}
                         </h3>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           by {book.author}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-2 ml-4">
+                      <div className="flex flex-col gap-2 ml-4 flex-shrink-0">
                         <span className={`text-xs px-2 py-1 rounded-full capitalize ${getCategoryColor(book.category)}`}>
                           {book.category.toLowerCase()}
                         </span>
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 line-clamp-3`}>
+                    {/* Description - Fixed height */}
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 line-clamp-3 min-h-[3.75rem]`}>
                       {book.description}
                     </p>
 
-                    {/* Book Info */}
-                    <div className="space-y-2 mb-4">
+                    {/* Book Info - Flex grow area */}
+                    <div className="space-y-2 mb-4 flex-grow">
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                           <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -674,15 +902,15 @@ export default function LibraryPage() {
                       {book.bookType === 'PHYSICAL' && (
                         <>
                           <div className="flex items-center text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
-                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} truncate`}>
                               {book.preferredPickupLocation}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center justify-between text-sm flex-wrap gap-1">
                             <span className={`text-xs px-2 py-1 rounded-full capitalize ${getConditionColor(book.bookCondition)}`}>
                               {book.bookCondition?.toLowerCase()} condition
                             </span>
@@ -697,7 +925,7 @@ export default function LibraryPage() {
                       {book.bookType === 'DIGITAL' && (
                         <div className="flex items-center justify-between text-sm">
                           <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
                             </svg>
                             <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -711,10 +939,11 @@ export default function LibraryPage() {
                       )}
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex space-x-2">
+                    {/* Actions - Always at bottom */}
+                    <div className="flex space-x-2 mt-auto">
                       {book.bookType === 'DIGITAL' ? (
                         <button
+                          type="button"
                           onClick={() => handleDownload(book)}
                           className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center"
                         >
@@ -727,6 +956,7 @@ export default function LibraryPage() {
                         <>
                           {book.availableForLending ? (
                             <button
+                              type="button"
                               onClick={() => handleBookRequest(book)}
                               className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                             >
@@ -763,89 +993,143 @@ export default function LibraryPage() {
               {myBooks.map((book, index) => (
                 <div
                   key={book.id}
-                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in`}
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in flex flex-col h-full`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  {/* Book Image for Physical Books */}
-                  {book.bookType === 'PHYSICAL' && book.photoUrl && (
-                    <div className="h-48 overflow-hidden bg-gray-200 dark:bg-gray-700">
-                      <img
-                        src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(book.photoUrl)}`}
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          console.error('Failed to load image:', book.photoUrl);
-                          e.currentTarget.style.display = 'none';
-                        }}
-                        onLoad={() => console.log('Image loaded successfully:', book.photoUrl)}
-                      />
-                    </div>
-                  )}
-
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            book.bookType === 'DIGITAL'
-                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                              : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                          }`}>
-                            {book.bookType === 'DIGITAL' ? '💾 Digital' : '📖 Physical'}
-                          </span>
+                  {/* Book Image - Fixed height for all cards */}
+                  <div className="h-48 overflow-hidden bg-gray-200 dark:bg-gray-700 relative flex-shrink-0">
+                    {book.photoUrl ? (
+                      <>
+                        <img
+                          src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(book.photoUrl)}`}
+                          alt={book.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            console.error('Failed to load image:', book.photoUrl);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        {book.bookType === 'DIGITAL' && (
+                          <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                            📄 PDF
+                          </div>
+                        )}
+                      </>
+                    ) : book.bookType === 'DIGITAL' ? (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span className="text-sm font-medium">Digital PDF</span>
                         </div>
-                        <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                          {book.title}
-                        </h3>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          by {book.author}
-                        </p>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          <span className="text-sm font-medium">Physical Book</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                        <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {book.totalRequests} total requests
+                  {/* Card Content - Flex grow to fill space */}
+                  <div className="p-6 flex flex-col flex-grow">
+                    {/* Book Info */}
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          book.bookType === 'DIGITAL'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                            : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                        }`}>
+                          {book.bookType === 'DIGITAL' ? '💾 Digital' : '📖 Physical'}
                         </span>
+                        {book.status && (
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            book.status === 'APPROVED'
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                              : book.status === 'PENDING'
+                                ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                          }`}>
+                            {book.status === 'APPROVED' ? '✓ Approved' : book.status === 'PENDING' ? '⏳ Pending' : '✗ Rejected'}
+                          </span>
+                        )}
                       </div>
+                      
+                      <h3 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1 line-clamp-2`}>
+                        {book.title}
+                      </h3>
+                      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
+                        by {book.author}
+                      </p>
 
-                      {book.bookType === 'DIGITAL' && (
+                      <div className="space-y-1 mb-4">
                         <div className="flex items-center text-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                           <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            {book.downloadCount} downloads • {formatFileSize(book.fileSize)}
+                            {book.totalRequests} total requests
                           </span>
                         </div>
-                      )}
 
-                      {book.bookType === 'PHYSICAL' && !book.availableForLending && book.expectedReturnDate && (
-                        <div className="flex items-center text-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4" />
-                          </svg>
-                          <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Lent to {book.currentlyLentTo}
-                          </span>
-                        </div>
-                      )}
+                        {book.bookType === 'DIGITAL' && (
+                          <div className="flex items-center text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                            </svg>
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {book.downloadCount} downloads • {formatFileSize(book.fileSize)}
+                            </span>
+                          </div>
+                        )}
+
+                        {book.bookType === 'PHYSICAL' && !book.availableForLending && book.expectedReturnDate && (
+                          <div className="flex items-center text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4" />
+                            </svg>
+                            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              Lent to {book.currentlyLentTo}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDeleteBook(book.id, book.title)}
-                      className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      Delete Book
-                    </button>
+                    {/* Action Buttons - Always at bottom */}
+                    <div className="space-y-2 mt-auto">
+                      {/* Edit Button - Only for pending books */}
+                      {(!book.status || book.status === 'PENDING') && (
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(book)}
+                          className={`w-full px-4 py-2 ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center`}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Edit Book
+                        </button>
+                      )}
+                      
+                      {/* Delete Button */}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteBook(book.id, book.title)}
+                        className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete Book
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1102,11 +1386,26 @@ export default function LibraryPage() {
 
                 {/* Digital Book Options */}
                 {newBook.bookType === 'DIGITAL' && (
-                  <PdfUpload
-                    onPdfUpload={(url, size) => setNewBook({ ...newBook, pdfUrl: url, fileSize: size })}
-                    currentPdf={newBook.pdfUrl}
-                    onPdfRemove={() => setNewBook({ ...newBook, pdfUrl: '', fileSize: 0 })}
-                  />
+                  <>
+                    {/* Cover Image for Digital Book (Optional) */}
+                    <div>
+                      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Cover Image (Optional)
+                      </label>
+                      <ImageUpload
+                        onImageUpload={(url) => setNewBook({ ...newBook, photoUrl: url })}
+                        currentImage={newBook.photoUrl}
+                        onImageRemove={() => setNewBook({ ...newBook, photoUrl: '' })}
+                      />
+                    </div>
+
+                    {/* PDF Upload */}
+                    <PdfUpload
+                      onPdfUpload={(url, size) => setNewBook({ ...newBook, pdfUrl: url, fileSize: size })}
+                      currentPdf={newBook.pdfUrl}
+                      onPdfRemove={() => setNewBook({ ...newBook, pdfUrl: '', fileSize: 0 })}
+                    />
+                  </>
                 )}
 
                 {/* Submit Buttons */}
@@ -1262,6 +1561,239 @@ export default function LibraryPage() {
                   >
                     Cancel
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Book Modal */}
+        {showEditModal.show && editBook && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+            onClick={() => { setShowEditModal({ show: false }); setEditBook(null); }}
+          >
+            <div 
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    Edit Book
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => { setShowEditModal({ show: false }); setEditBook(null); }}
+                    className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Book Type Badge */}
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    editBook.bookType === 'DIGITAL'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                      : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                  }`}>
+                    {editBook.bookType === 'DIGITAL' ? '💾 Digital PDF' : '📖 Physical Book'}
+                  </div>
+
+                  {/* Title */}
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={editBook.title}
+                      onChange={(e) => setEditBook({ ...editBook, title: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    />
+                  </div>
+
+                  {/* Author */}
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Author *
+                    </label>
+                    <input
+                      type="text"
+                      value={editBook.author}
+                      onChange={(e) => setEditBook({ ...editBook, author: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    />
+                  </div>
+
+                  {/* ISBN */}
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      ISBN (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={editBook.isbn}
+                      onChange={(e) => setEditBook({ ...editBook, isbn: e.target.value })}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Description *
+                    </label>
+                    <textarea
+                      value={editBook.description}
+                      onChange={(e) => setEditBook({ ...editBook, description: e.target.value })}
+                      rows={4}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                      Category
+                    </label>
+                    <select
+                      value={editBook.category}
+                      onChange={(e) => setEditBook({ ...editBook, category: e.target.value as typeof editBook.category })}
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                      title="Select book category"
+                    >
+                      <option value="PROGRAMMING">Programming</option>
+                      <option value="ENGINEERING">Engineering</option>
+                      <option value="TEXTBOOK">Textbook</option>
+                      <option value="REFERENCE">Reference</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+
+                  {/* Physical Book Options */}
+                  {editBook.bookType === 'PHYSICAL' && (
+                    <>
+                      {/* Condition */}
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                          Condition
+                        </label>
+                        <select
+                          value={editBook.bookCondition}
+                          onChange={(e) => setEditBook({ ...editBook, bookCondition: e.target.value as typeof editBook.bookCondition })}
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                          title="Select book condition"
+                        >
+                          <option value="EXCELLENT">Excellent</option>
+                          <option value="GOOD">Good</option>
+                          <option value="FAIR">Fair</option>
+                          <option value="POOR">Poor</option>
+                        </select>
+                      </div>
+
+                      {/* Lending Type */}
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                          Lending Type
+                        </label>
+                        <select
+                          value={editBook.lendingType}
+                          onChange={(e) => setEditBook({ ...editBook, lendingType: e.target.value as typeof editBook.lendingType })}
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                          title="Select lending type"
+                        >
+                          <option value="FREE">Free to Borrow</option>
+                          <option value="SELL">For Sale</option>
+                          <option value="TRADE">Trade Only</option>
+                        </select>
+                      </div>
+
+                      {/* Price if selling */}
+                      {editBook.lendingType === 'SELL' && (
+                        <div>
+                          <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                            Price (Rs.)
+                          </label>
+                          <input
+                            type="number"
+                            value={editBook.price}
+                            onChange={(e) => setEditBook({ ...editBook, price: parseInt(e.target.value) || 0 })}
+                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+                            min="0"
+                          />
+                        </div>
+                      )}
+
+                      {/* Cover Image Upload */}
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                          Cover Image
+                        </label>
+                        <ImageUpload
+                          onImageUpload={(url) => setEditBook({ ...editBook, photoUrl: url })}
+                          currentImage={editBook.photoUrl}
+                          onImageRemove={() => setEditBook({ ...editBook, photoUrl: '' })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Digital Book Options */}
+                  {editBook.bookType === 'DIGITAL' && (
+                    <>
+                      {/* Cover Image Upload (Optional for digital) */}
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                          Cover Image (Optional)
+                        </label>
+                        <ImageUpload
+                          onImageUpload={(url) => setEditBook({ ...editBook, photoUrl: url })}
+                          currentImage={editBook.photoUrl}
+                          onImageRemove={() => setEditBook({ ...editBook, photoUrl: '' })}
+                        />
+                      </div>
+
+                      {/* PDF Upload */}
+                      <div>
+                        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
+                          PDF File
+                        </label>
+                        <PdfUpload
+                          onPdfUpload={(url, size) => setEditBook({ ...editBook, pdfUrl: url, fileSize: size })}
+                          currentPdf={editBook.pdfUrl}
+                          onPdfRemove={() => setEditBook({ ...editBook, pdfUrl: '', fileSize: 0 })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={handleEditBook}
+                      disabled={!editBook.title || !editBook.author || !editBook.description}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Save Changes
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setShowEditModal({ show: false }); setEditBook(null); }}
+                      className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+                        isDarkMode
+                          ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
