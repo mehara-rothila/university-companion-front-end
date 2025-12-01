@@ -117,8 +117,8 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
     const query = userQuery.toLowerCase();
 
     // Handle yesterday/past weather queries
-    if (query.includes('yesterday') || query.includes('last week') || query.includes('last month') || 
-        query.includes('previous') || query.includes('past')) {
+    if (query.includes('yesterday') || query.includes('last week') || query.includes('last month') ||
+      query.includes('previous') || query.includes('past')) {
       return `📅 I'm sorry, I don't have access to historical weather data. I can only provide current conditions and forecasts for the upcoming days.
 
 Would you like to know about today's weather or tomorrow's forecast instead?`;
@@ -175,8 +175,8 @@ ${tomorrow.precipitation > 50 ? '☔ Consider bringing an umbrella!' : '☀️ L
     }
 
     // Handle general chatbot questions
-    if (query.includes('model') || query.includes('who are you') || query.includes('what are you') || 
-        query.includes('your name') || query.includes('about you')) {
+    if (query.includes('model') || query.includes('who are you') || query.includes('what are you') ||
+      query.includes('your name') || query.includes('about you')) {
       return `🤖 I'm the University of Moratuwa Weather Assistant, powered by Gemini AI! 
 
 I can help you with:
@@ -204,13 +204,13 @@ What would you like to know about the weather?`;
 
     // Check if the query is weather-related
     const weatherKeywords = [
-      'weather', 'temperature', 'temp', 'rain', 'sunny', 'cloud', 'humid', 'wind', 
+      'weather', 'temperature', 'temp', 'rain', 'sunny', 'cloud', 'humid', 'wind',
       'forecast', 'hot', 'cold', 'warm', 'cool', 'degree', 'celsius', 'outside',
       'today', 'now', 'current', 'climate', 'storm', 'thunder', 'lightning',
       'uv', 'sunrise', 'sunset', 'visibility', 'pressure', 'feels like',
       'morning', 'afternoon', 'evening', 'night', 'weekend', 'outdoor'
     ];
-    
+
     const isWeatherRelated = weatherKeywords.some(keyword => query.includes(keyword));
 
     // If not weather-related, show out-of-scope message
@@ -285,17 +285,16 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
 
   return (
     <div
-      className={`relative ${
-        isDarkMode
+      className={`relative ${isDarkMode
           ? 'bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-gray-800/95 border-blue-500/30'
           : 'bg-gradient-to-br from-white/95 via-blue-50/30 to-white/95 border-blue-300/40'
-      } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[600px] flex flex-col overflow-hidden group hover:shadow-blue-500/20 transition-all duration-500`}
+        } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[calc(100vh-180px)] md:h-[600px] flex flex-col overflow-hidden group hover:shadow-blue-500/20 transition-all duration-500`}
     >
       {/* Animated gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-cyan-600/5 to-blue-600/5 animate-gradient-shift pointer-events-none"></div>
 
       {/* Header */}
-      <div className={`relative z-10 p-5 border-b-2 ${isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'} backdrop-blur-md`}>
+      <div className={`relative z-10 p-3 md:p-5 border-b-2 ${isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'} backdrop-blur-md`}>
         <div className="flex items-center">
           <div className="relative w-12 h-12 bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
             <svg
@@ -329,9 +328,8 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
       {/* Messages */}
       <div
         ref={chatContainerRef}
-        className={`relative z-10 flex-1 overflow-y-auto p-6 space-y-5 ${
-          isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-blue-50/10'
-        }`}
+        className={`relative z-10 flex-1 overflow-y-auto p-6 space-y-5 ${isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-blue-50/10'
+          }`}
         style={{ scrollBehavior: 'smooth' }}
       >
         {messages.map((message) => (
@@ -340,23 +338,21 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-appear`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${
-                message.role === 'user'
+              className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${message.role === 'user'
                   ? 'bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-600 text-white shadow-blue-500/30'
                   : isDarkMode
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-100 border border-gray-600/50 shadow-gray-900/50'
-                  : 'bg-gradient-to-br from-white to-gray-50 text-gray-900 border border-gray-200/50 shadow-gray-300/30'
-              } transition-all duration-300 hover:scale-[1.02]`}
+                    ? 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-100 border border-gray-600/50 shadow-gray-900/50'
+                    : 'bg-gradient-to-br from-white to-gray-50 text-gray-900 border border-gray-200/50 shadow-gray-300/30'
+                } transition-all duration-300 hover:scale-[1.02]`}
             >
               <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               <p
-                className={`text-xs mt-1 ${
-                  message.role === 'user'
+                className={`text-xs mt-1 ${message.role === 'user'
                     ? 'text-white/70'
                     : isDarkMode
-                    ? 'text-gray-400'
-                    : 'text-gray-500'
-                }`}
+                      ? 'text-gray-400'
+                      : 'text-gray-500'
+                  }`}
               >
                 {message.timestamp.toLocaleTimeString('en-US', {
                   hour: 'numeric',
@@ -370,11 +366,10 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
         {isLoading && (
           <div className="flex justify-start animate-appear">
             <div
-              className={`rounded-2xl px-5 py-4 ${
-                isDarkMode
+              className={`rounded-2xl px-5 py-4 ${isDarkMode
                   ? 'bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600/50'
                   : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200/50'
-              } shadow-lg`}
+                } shadow-lg`}
             >
               <div className="flex space-x-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
@@ -387,9 +382,8 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
       </div>
 
       {/* Input */}
-      <div className={`relative z-10 p-5 border-t-2 ${
-        isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'
-      } backdrop-blur-md`}>
+      <div className={`relative z-10 p-3 md:p-5 border-t-2 ${isDarkMode ? 'border-blue-500/30 bg-gray-900/50' : 'border-blue-300/40 bg-white/50'
+        } backdrop-blur-md`}>
         <div className="flex items-end gap-3">
           <input
             type="text"
@@ -398,17 +392,16 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
             onKeyPress={handleKeyPress}
             placeholder="Ask about the weather..."
             disabled={isLoading}
-            className={`flex-1 px-5 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 shadow-md ${
-              isDarkMode
+            className={`flex-1 px-3 py-2 md:px-5 md:py-3 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 shadow-md ${isDarkMode
                 ? 'bg-gray-800/80 border-gray-600/50 text-gray-100 placeholder-gray-400 focus:bg-gray-800/90 focus:border-blue-500/50'
                 : 'bg-white/80 border-gray-300/50 text-gray-900 placeholder-gray-500 focus:bg-white focus:border-blue-400/50'
-            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           />
           <button
             type="button"
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
-            className="group px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 hover:from-blue-700 hover:via-blue-600 hover:to-cyan-700 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 disabled:hover:scale-100"
+            className="group px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 hover:from-blue-700 hover:via-blue-600 hover:to-cyan-700 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 disabled:hover:scale-100"
           >
             <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

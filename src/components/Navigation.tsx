@@ -8,6 +8,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
+import MobileMenuContent from './MobileMenuContent';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,8 +72,8 @@ const Navigation = () => {
   // Effect to close mobile menu on resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) { 
-        setIsOpen(false); 
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
       }
     };
     window.addEventListener('resize', handleResize);
@@ -90,14 +91,14 @@ const Navigation = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  function handleToggle() { 
-    setIsOpen(!isOpen); 
+  function handleToggle() {
+    setIsOpen(!isOpen);
   }
-  
-  const handleNavigation = () => { 
-    if (isOpen) { 
-      setIsOpen(false); 
-    } 
+
+  const handleNavigation = () => {
+    if (isOpen) {
+      setIsOpen(false);
+    }
   };
 
   return (
@@ -105,9 +106,9 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
         {/* Logo */}
         <div className="flex items-center">
-          <Link 
-            href="/" 
-            className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300" 
+          <Link
+            href="/"
+            className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600 dark:from-purple-400 dark:to-purple-300"
             onClick={handleNavigation}
           >
             <span className="hidden sm:block">{t('nav.brandName')}</span>
@@ -181,11 +182,10 @@ const Navigation = () => {
                       setLocale(language.code as 'en' | 'si' | 'ta');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
-                      locale === language.code
-                        ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
-                    }`}
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${locale === language.code
+                      ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
+                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{language.name}</span>
@@ -209,11 +209,11 @@ const Navigation = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 {user?.image && (
-                  <img 
-                    src={user.image.includes('amazonaws.com') 
+                  <img
+                    src={user.image.includes('amazonaws.com')
                       ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
-                      : user.image} 
-                    alt="Profile" 
+                      : user.image}
+                    alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 )}
@@ -279,186 +279,17 @@ const Navigation = () => {
 
       {/* Mobile menu flyout */}
       <div
-        className={`lg:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${
-          isOpen 
-            ? 'opacity-100 translate-y-0 max-h-[1000px]' 
-            : 'opacity-0 -translate-y-4 pointer-events-none max-h-0'
-        }`}
-        style={{ 
-          overflow: 'hidden', 
-          transitionProperty: 'transform, opacity, max-height' 
+        className={`lg:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${isOpen
+          ? 'opacity-100 translate-y-0 max-h-[1000px]'
+          : 'opacity-0 -translate-y-4 pointer-events-none max-h-0'
+          }`}
+        style={{
+          overflow: 'hidden',
+          transitionProperty: 'transform, opacity, max-height'
         }}
         aria-hidden={!isOpen}
       >
-        <div className="p-5 space-y-3 border-t border-gray-100 dark:border-gray-700">
-          {/* Mobile Smart University Navigation Links */}
-          <Link
-            href="/"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Home className="inline h-5 w-5 mr-2"/> {t('nav.home')}
-          </Link>
-          <Link
-            href="/dashboard"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <LayoutDashboard className="inline h-5 w-5 mr-2"/> {t('nav.dashboard')}
-          </Link>
-          <Link
-            href="/profile"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <UserCircle className="inline h-5 w-5 mr-2"/> {t('nav.profile')}
-          </Link>
-
-          {/* Emergency Notifications - Mobile */}
-          {isAuthenticated && (
-            <Link
-              href="/notifications"
-              className="mobile-nav-link flex items-center justify-between"
-              onClick={handleNavigation}
-            >
-              <div className="flex items-center">
-                <Bell className="inline h-5 w-5 mr-2" />
-                <span>Emergency Notifications</span>
-              </div>
-              {emergencyCount > 0 && (
-                <span className="bg-red-600 text-white text-xs font-bold rounded-full min-w-[24px] h-6 flex items-center justify-center px-2 animate-pulse">
-                  {emergencyCount}
-                </span>
-              )}
-            </Link>
-          )}
-
-          <Link
-            href="/chatbot"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Bot className="inline h-5 w-5 mr-2"/> {t('nav.aiAssistant')}
-          </Link>
-          <Link
-            href="/navigation"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <MapPin className="inline h-5 w-5 mr-2"/> {t('nav.universityNavigation')}
-          </Link>
-          <Link
-            href="/study-spaces"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <BookOpen className="inline h-5 w-5 mr-2"/> {t('nav.studySpaces')}
-          </Link>
-          <Link
-            href="/academic"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Calendar className="inline h-5 w-5 mr-2"/> {t('nav.academicHub')}
-          </Link>
-          <Link
-            href="/events"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Calendar className="inline h-5 w-5 mr-2"/> Events & Socials
-          </Link>
-          <Link
-            href="/wellness"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Heart className="inline h-5 w-5 mr-2"/> {t('nav.healthWellness')}
-          </Link>
-          <Link
-            href="/weather"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <Cloud className="inline h-5 w-5 mr-2"/> {t('nav.weather')}
-          </Link>
-
-          {/* Mobile My Uploads Link - Only show for authenticated users */}
-          {isAuthenticated && (
-            <Link
-              href="/my-uploads"
-              className="mobile-nav-link flex items-center"
-              onClick={handleNavigation}
-            >
-              <FolderOpen className="inline h-5 w-5 mr-2"/> {t('nav.myUploads')}
-            </Link>
-          )}
-
-          <Link
-            href="/help"
-            className="mobile-nav-link flex items-center"
-            onClick={handleNavigation}
-          >
-            <HelpCircle className="inline h-5 w-5 mr-2"/> {t('nav.helpSupport')}
-          </Link>
-
-          {/* Mobile Admin Panel Link - Only show for admin users */}
-          {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link
-              href="/admin"
-              className="mobile-nav-link flex items-center"
-              onClick={handleNavigation}
-            >
-              <Settings className="inline h-5 w-5 mr-2"/> {t('nav.adminPanel')}
-            </Link>
-          )}
-
-          {/* Mobile Auth Buttons */}
-          <div className="pt-3 space-y-3">
-            {isAuthenticated ? (
-              <div className="space-y-3">
-                <div className="text-gray-700 dark:text-gray-300 px-3 py-2 text-center flex items-center justify-center space-x-2">
-                  {user?.image && (
-                    <img 
-                      src={user.image.includes('amazonaws.com') 
-                        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
-                        : user.image} 
-                      alt="Profile" 
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  )}
-                  <span>Hi, {user?.firstName || user?.name?.split(' ')[0]}!</span>
-                </div>
-                <button
-                  onClick={() => {
-                    logout();
-                    handleNavigation();
-                  }}
-                  className="mobile-login-button w-full flex items-center justify-center bg-red-600 hover:bg-red-700"
-                >
-                  <LogOut className="inline h-5 w-5 mr-2" /> {t('nav.logout')}
-                </button>
-              </div>
-            ) : (
-              <>
-                <Link
-                  href="/onboarding"
-                  className="mobile-nav-link flex items-center"
-                  onClick={handleNavigation}
-                >
-                  <UserPlus className="inline h-5 w-5 mr-2"/> {t('nav.getStarted')}
-                </Link>
-                <Link
-                  href="/login"
-                  className="mobile-login-button w-full flex items-center justify-center"
-                  onClick={handleNavigation}
-                >
-                  <LogIn className="inline h-5 w-5 mr-2" /> {t('nav.signIn')}
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+        <MobileMenuContent closeMenu={handleNavigation} emergencyCount={emergencyCount} />
       </div>
     </header>
   );

@@ -164,7 +164,7 @@ export default function WeatherPage() {
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
                       {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                     </p>
-                    <h2 className={`text-7xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    <h2 className={`text-5xl sm:text-7xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
                       {Math.round(currentWeather.temperature)}°
                     </h2>
                     <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mt-2`}>
@@ -301,7 +301,7 @@ export default function WeatherPage() {
 
           {/* Weather Chatbot */}
           <div className="mb-8">
-            <h3 className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+            <h3 className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-100 bg-gray-800/90' : 'text-gray-900 bg-white/90'} px-6 py-3 rounded-2xl shadow-sm inline-block mb-4 backdrop-blur-sm`}>
               Ask About the Weather
             </h3>
             <WeatherChatbot weatherData={fullWeatherData} isDarkMode={isDarkMode} />
@@ -316,10 +316,10 @@ export default function WeatherPage() {
               {dailyForecast.map((day, index) => (
                 <div
                   key={index}
-                  className={`flex items-center justify-between ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} rounded-xl p-4`}
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50'} rounded-xl p-4`}
                 >
                   {/* Day & Condition */}
-                  <div className="flex items-center space-x-4 flex-1">
+                  <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto space-x-4">
                     <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} w-24`}>
                       {day.day}
                     </p>
@@ -332,7 +332,7 @@ export default function WeatherPage() {
                   </div>
 
                   {/* Weather Info */}
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-6">
                     {/* Rain Chance */}
                     <div className="flex items-center space-x-1">
                       <Droplets className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
