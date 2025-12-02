@@ -1266,5 +1266,32 @@
       "rejected": "Rejected",
       "pending": "Pending"
     }
+  },
+  "weatherPage": {
+    "title": "University Weather",
+    "subtitle": "University of Moratuwa Weather Forecast",
+    "loading": "Loading weather data...",
+    "feelsLike": "Feels like",
+    "humidity": "Humidity",
+    "windSpeed": "Wind Speed",
+    "uvIndex": "UV Index",
+    "visibility": "Visibility",
+    "pressure": "Pressure",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset",
+    "location": "Location",
+    "hourlyForecast": "Hourly Forecast",
+    "temperature": "Temperature",
+    "rainChance": "Rain Chance",
+    "askAboutWeather": "Ask About the Weather",
+    "sevenDayForecast": "7-Day Forecast",
+    "rain": "Rain",
+    "high": "High",
+    "low": "Low",
+    "uvLow": "Low",
+    "uvModerate": "Moderate",
+    "uvHigh": "High",
+    "uvVeryHigh": "Very High",
+    "uvExtreme": "Extreme"
   }
 }
