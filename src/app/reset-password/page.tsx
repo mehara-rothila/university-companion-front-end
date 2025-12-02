@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useTranslation } from '@/contexts/TranslationContext'
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isDarkMode } = useDarkMode()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const emailParam = searchParams.get('email')

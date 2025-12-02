@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -71,6 +72,7 @@ type ActiveTab = 'calendar' | 'assignments' | 'courses' | 'analytics';
 
 export default function AcademicPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendar');
   const [isLoading, setIsLoading] = useState(true);
   const [showAddEventModal, setShowAddEventModal] = useState(false);

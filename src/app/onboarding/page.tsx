@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Link from 'next/link';
 
@@ -36,6 +37,7 @@ interface OnboardingData {
 export default function OnboardingFlow() {
   const router = useRouter();
   useDarkMode(); // Hook is called for its effects, but isDarkMode is not directly used.
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const [isLoading, setIsLoading] = useState(false);

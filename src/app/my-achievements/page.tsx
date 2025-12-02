@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
@@ -17,6 +18,7 @@ type FilterStatus = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
 export default function MyAchievementsPage() {
   const { isDarkMode } = useDarkMode();
   const { user, token } = useAuth();
+  const { t } = useTranslation();
 
   const [achievements, setAchievements] = useState<StudentAchievement[]>([]);
   const [filteredAchievements, setFilteredAchievements] = useState<StudentAchievement[]>([]);
