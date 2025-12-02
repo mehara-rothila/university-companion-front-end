@@ -974,5 +974,32 @@
       "submitFailed": "අයදුම ඉදිරිපත් කිරීමට අසමත් විය",
       "donationFailed": "දානයක් සැකසීමට අසමත් විය"
     }
+  },
+  "weatherPage": {
+    "title": "විශ්වවිද්‍යාල කාලගුණය",
+    "subtitle": "මොරටුව විශ්වවිද්‍යාල කාලගුණ අනාවැකිය",
+    "loading": "කාලගුණ දත්ත පූරණය වෙමින්...",
+    "feelsLike": "දැනෙන්නේ",
+    "humidity": "ආර්ද්‍රතාව",
+    "windSpeed": "සුළං වේගය",
+    "uvIndex": "UV දර්ශකය",
+    "visibility": "දෘශ්‍යතාව",
+    "pressure": "පීඩනය",
+    "sunrise": "හිරු උදාව",
+    "sunset": "හිරු බැසීම",
+    "location": "ස්ථානය",
+    "hourlyForecast": "පැය අනාවැකිය",
+    "temperature": "උෂ්ණත්වය",
+    "rainChance": "වැසි සම්භාවිතාව",
+    "askAboutWeather": "කාලගුණය ගැන අසන්න",
+    "sevenDayForecast": "දින 7 අනාවැකිය",
+    "rain": "වැස්ස",
+    "high": "උපරිම",
+    "low": "අවම",
+    "uvLow": "අඩු",
+    "uvModerate": "මධ්‍යම",
+    "uvHigh": "ඉහළ",
+    "uvVeryHigh": "ඉතා ඉහළ",
+    "uvExtreme": "අධික"
   }
 }

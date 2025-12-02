@@ -974,5 +974,32 @@
       "submitFailed": "விண்ணப்பம் சமர்ப்பிக்க தோல்வி",
       "donationFailed": "தானம் செயலாக்க தோல்வி"
     }
+  },
+  "weatherPage": {
+    "title": "பல்கலைக்கழக வானிலை",
+    "subtitle": "மொரட்டுவை பல்கலைக்கழக வானிலை முன்னறிவிப்பு",
+    "loading": "வானிலை தரவு ஏற்றுகிறது...",
+    "feelsLike": "உணரும் வெப்பநிலை",
+    "humidity": "ஈரப்பதம்",
+    "windSpeed": "காற்று வேகம்",
+    "uvIndex": "UV குறியீடு",
+    "visibility": "தெரிவுநிலை",
+    "pressure": "அழுத்தம்",
+    "sunrise": "சூரிய உதயம்",
+    "sunset": "சூரிய அஸ்தமனம்",
+    "location": "இடம்",
+    "hourlyForecast": "மணிநேர முன்னறிவிப்பு",
+    "temperature": "வெப்பநிலை",
+    "rainChance": "மழை வாய்ப்பு",
+    "askAboutWeather": "வானிலை பற்றி கேளுங்கள்",
+    "sevenDayForecast": "7 நாள் முன்னறிவிப்பு",
+    "rain": "மழை",
+    "high": "அதிகபட்சம்",
+    "low": "குறைந்தபட்சம்",
+    "uvLow": "குறைவு",
+    "uvModerate": "மிதமான",
+    "uvHigh": "அதிகம்",
+    "uvVeryHigh": "மிக அதிகம்",
+    "uvExtreme": "தீவிரம்"
   }
 }
