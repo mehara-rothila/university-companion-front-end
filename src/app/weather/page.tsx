@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { CloudRain, Wind, Droplets, Eye, Sun, CloudSun, Cloud, CloudDrizzle } from 'lucide-react';
@@ -38,6 +39,7 @@ interface DailyForecast {
 
 export default function WeatherPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [currentWeather, setCurrentWeather] = useState<WeatherData>({
     temperature: 0,

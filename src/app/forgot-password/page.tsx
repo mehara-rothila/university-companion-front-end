@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AnimatedBackground from '../../components/AnimatedBackground'
 import { useDarkMode } from '../context/DarkModeContext'
+import { useTranslation } from '@/contexts/TranslationContext'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -13,6 +14,7 @@ export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState('')
   const router = useRouter()
   const { isDarkMode } = useDarkMode()
+  const { t } = useTranslation()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

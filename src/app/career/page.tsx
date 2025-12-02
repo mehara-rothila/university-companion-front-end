@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -121,6 +122,7 @@ type ActiveTab = 'dashboard' | 'jobs' | 'career-paths' | 'profile' | 'interview-
 
 export default function CareerPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

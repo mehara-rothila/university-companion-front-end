@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
@@ -68,6 +69,7 @@ const PHYSICAL_BOOK_PLACEHOLDER = 'Describe the book condition, course usage, an
 export default function LibraryPage() {
   const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated, token } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ActiveTab>('browse');
   const [bookTypeFilter, setBookTypeFilter] = useState<BookTypeFilter>('ALL');
   const [isLoading, setIsLoading] = useState(true);

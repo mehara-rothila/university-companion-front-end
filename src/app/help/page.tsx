@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -39,6 +40,7 @@ interface ContactMethod {
 
 export default function HelpSupportPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState('faq');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');

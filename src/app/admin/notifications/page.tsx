@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
@@ -42,6 +43,7 @@ interface NotificationForm {
 export default function AdminNotifications() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);

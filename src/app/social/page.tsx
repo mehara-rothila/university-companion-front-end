@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { achievementService } from '@/services/achievementService';
@@ -17,6 +18,7 @@ type ActiveTab = 'achievements' | 'events' | 'clubs' | 'feed' | 'discover';
 export default function SocialPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ActiveTab>('achievements');
   const [isLoading, setIsLoading] = useState(true);
   const [showAchievementModal, setShowAchievementModal] = useState(false);

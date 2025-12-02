@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { BookOpen, Check, X, User, Calendar, Tag, DollarSign, Trash2, Image as ImageIcon, FileText, Download } from 'lucide-react';
@@ -39,6 +40,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 export default function AdminLibraryPage() {
     const { isDarkMode } = useDarkMode();
     const { user, token } = useAuth();
+    const { t } = useTranslation();
     const router = useRouter();
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);

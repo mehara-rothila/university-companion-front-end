@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -109,6 +110,7 @@ interface TransparencyReport {
 
 export default function AIEthicsPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showDecisionModal, setShowDecisionModal] = useState(false);
   const [showAppealModal, setShowAppealModal] = useState(false);

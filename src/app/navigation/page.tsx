@@ -4,10 +4,12 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
   // Removed unused isDarkMode variable
   useDarkMode();
 

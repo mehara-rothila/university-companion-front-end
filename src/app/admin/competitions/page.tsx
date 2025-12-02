@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
@@ -12,6 +13,7 @@ import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as Image
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);

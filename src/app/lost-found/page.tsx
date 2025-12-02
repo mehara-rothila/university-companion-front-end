@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
@@ -30,6 +31,7 @@ interface LocationArea {
 export default function LostFoundPage() {
   const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('browse');
   const [viewMode, setViewMode] = useState<'lost' | 'found' | 'all'>('all');
   const [selectedCategory, setSelectedCategory] = useState('all');

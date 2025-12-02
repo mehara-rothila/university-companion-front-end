@@ -4,12 +4,14 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useDarkMode } from '../../context/DarkModeContext'
+import { useTranslation } from '@/contexts/TranslationContext'
 import AnimatedBackground from '../../../components/AnimatedBackground'
 
 export default function AuthCallbackPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { isDarkMode } = useDarkMode()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (status === 'loading') return // Still loading

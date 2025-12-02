@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
@@ -73,6 +74,7 @@ interface FinancialProfile {
 export default function FinancialAidPage() {
   const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [showDonationModal, setShowDonationModal] = useState(false);

@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 
@@ -65,6 +66,7 @@ type ViewMode = 'grid' | 'list' | 'map';
 
 export default function StudySpacesPage() {
   const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('ai-score');
