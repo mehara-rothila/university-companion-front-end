@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
@@ -14,6 +15,7 @@ import Image from 'next/image';
 export default function AdminAchievementsPage() {
   const { isDarkMode } = useDarkMode();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [achievements, setAchievements] = useState<StudentAchievement[]>([]);
   const [loading, setLoading] = useState(true);

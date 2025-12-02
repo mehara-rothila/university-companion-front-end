@@ -4,12 +4,14 @@ import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useDarkMode } from '../../context/DarkModeContext'
+import { useTranslation } from '@/contexts/TranslationContext'
 import AnimatedBackground from '../../../components/AnimatedBackground'
 
 function AuthErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
   const { isDarkMode } = useDarkMode()
+  const { t } = useTranslation()
 
   const getErrorMessage = (error: string | null) => {
     switch (error) {

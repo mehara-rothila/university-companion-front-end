@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import lostFoundService, { LostFoundItem } from '@/services/lostFoundService';
@@ -12,6 +13,7 @@ import { Search, Check, X, MapPin, Calendar, Tag, DollarSign, AlertCircle, Filte
 export default function AdminLostFoundPage() {
     const { isDarkMode } = useDarkMode();
     const { user } = useAuth();
+    const { t } = useTranslation();
     const router = useRouter();
     const [items, setItems] = useState<LostFoundItem[]>([]);
     const [loading, setLoading] = useState(true);

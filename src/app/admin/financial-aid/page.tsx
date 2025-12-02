@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard, AdminFinancialAidRequest } from '@/services/financialAidService';
@@ -12,6 +13,7 @@ import { Trash2 } from 'lucide-react';
 export default function AdminFinancialAidPage() {
   const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated, token } = useAuth();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [applications, setApplications] = useState<FinancialAidApplication[]>([]);
   const [pendingApplications, setPendingApplications] = useState<FinancialAidApplication[]>([]);

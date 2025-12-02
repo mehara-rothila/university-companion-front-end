@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
@@ -46,6 +47,7 @@ interface EmergencyForm {
 export default function AdminEmergency() {
   const { isDarkMode } = useDarkMode();
   const { user, token } = useAuth();
+  const { t } = useTranslation();
   const [emergencies, setEmergencies] = useState<EmergencyNotification[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
