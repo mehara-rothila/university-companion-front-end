@@ -7,7 +7,8 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import { BookOpen, Check, X, User, Calendar, Tag, DollarSign, Trash2, Image as ImageIcon, FileText, Download } from 'lucide-react';
+import { BookOpen, Check, X, User, Calendar, Tag, DollarSign, Trash2, Image as ImageIcon, FileText, Download, Pencil } from 'lucide-react';
+import ImageEditModal from '@/components/ImageEditModal';
 
 interface Book {
     id: number;
@@ -48,6 +49,7 @@ export default function AdminLibraryPage() {
     const [showApproveModal, setShowApproveModal] = useState(false);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showImageEditModal, setShowImageEditModal] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
     const [filter, setFilter] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'>('PENDING');
     const [stats, setStats] = useState<{ pending: number; approved: number; rejected: number; total: number } | null>(null);
@@ -180,6 +182,24 @@ export default function AdminLibraryPage() {
         } finally {
             setActionLoading(false);
         }
+    };
+
+    const handleImageSave = async (imageUrl: string) => {
+        if (!selectedBook) return;
+
+        const response = await fetch(`${API_URL}/api/books/${selectedBook.id}/image`, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ photoUrl: imageUrl }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update book image');
+        }
+
+        setShowImageEditModal(false);
+        setSelectedBook(null);
+        loadBooks();
     };
 
     const formatDate = (dateString: string) => {
@@ -359,7 +379,7 @@ export default function AdminLibraryPage() {
 
                                         <div className="flex gap-4 mb-4">
                                             {/* Image or placeholder */}
-                                            <div className={`w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
+                                            <div className={`w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden relative group ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
                                                 {book.bookType === 'PHYSICAL' && book.photoUrl ? (
                                                     <img
                                                         src={`${API_URL}/api/upload/image/serve?url=${encodeURIComponent(book.photoUrl)}`}
@@ -378,6 +398,20 @@ export default function AdminLibraryPage() {
                                                         <ImageIcon className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                                                     )}
                                                 </div>
+                                                {/* Edit Image Button - Only for physical books */}
+                                                {book.bookType === 'PHYSICAL' && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setSelectedBook(book);
+                                                            setShowImageEditModal(true);
+                                                        }}
+                                                        className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        title="Edit Image"
+                                                    >
+                                                        <Pencil className="w-5 h-5 text-white" />
+                                                    </button>
+                                                )}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h3 className={`font-bold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1 truncate`}>
@@ -616,6 +650,19 @@ export default function AdminLibraryPage() {
                         </div>
                     </div>
                 )}
+
+                {/* Image Edit Modal */}
+                <ImageEditModal
+                    isOpen={showImageEditModal}
+                    onClose={() => {
+                        setShowImageEditModal(false);
+                        setSelectedBook(null);
+                    }}
+                    title="Upload a new image for this book"
+                    currentImage={selectedBook?.photoUrl}
+                    onSave={handleImageSave}
+                    entityType="book"
+                />
 
             </main>
         </>

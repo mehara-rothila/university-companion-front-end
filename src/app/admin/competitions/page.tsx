@@ -8,7 +8,8 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { competitionService, Competition } from '@/services/competitionService';
-import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff, Trash2, AlertTriangle } from 'lucide-react';
+import { Trophy, Check, X, Calendar, MapPin, Users, ExternalLink, Image as ImageIcon, User, Mail, EyeOff, Trash2, AlertTriangle, Pencil } from 'lucide-react';
+import ImageEditModal from '@/components/ImageEditModal';
 
 export default function AdminCompetitionsPage() {
   const { isDarkMode } = useDarkMode();
@@ -21,6 +22,7 @@ export default function AdminCompetitionsPage() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageEditModal, setShowImageEditModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [filter, setFilter] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'ALL'>('PENDING');
@@ -139,6 +141,27 @@ export default function AdminCompetitionsPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleImageSave = async (imageUrl: string) => {
+    if (!selectedCompetition) return;
+
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const response = await fetch(`${API_URL}/api/competitions/${selectedCompetition.id}/image`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageUrl }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update competition image');
+    }
+
+    setShowImageEditModal(false);
+    setSelectedCompetition(null);
+    loadCompetitions();
   };
 
   const getStatusColor = (status: string) => {
@@ -305,7 +328,7 @@ export default function AdminCompetitionsPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
                       {/* Competition Image - Left Side */}
                       <div className="lg:col-span-1">
-                        <div className="rounded-lg overflow-hidden h-full">
+                        <div className="rounded-lg overflow-hidden h-full relative group">
                           {competition.imageUrl ? (
                             <img
                               src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(competition.imageUrl)}`}
@@ -327,6 +350,18 @@ export default function AdminCompetitionsPage() {
                               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
                             </div>
                           </div>
+                          {/* Edit Image Button */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedCompetition(competition);
+                              setShowImageEditModal(true);
+                            }}
+                            className="absolute bottom-3 right-3 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center opacity-0 group-hover:opacity-100 shadow-lg"
+                          >
+                            <Pencil className="w-4 h-4 mr-1.5" />
+                            Edit Image
+                          </button>
                         </div>
                       </div>
 
@@ -694,6 +729,19 @@ export default function AdminCompetitionsPage() {
             </div>
           </div>
         )}
+
+        {/* Image Edit Modal */}
+        <ImageEditModal
+          isOpen={showImageEditModal}
+          onClose={() => {
+            setShowImageEditModal(false);
+            setSelectedCompetition(null);
+          }}
+          title="Upload a new image for this competition"
+          currentImage={selectedCompetition?.imageUrl}
+          onSave={handleImageSave}
+          entityType="competition"
+        />
       </main>
     </>
   );
