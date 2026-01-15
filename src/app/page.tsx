@@ -189,64 +189,70 @@ export default function Home() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 {
-                  icon: <Bot className="h-8 w-8" />,
+                  icon: <Bot className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.aiChat.title'),
                   description: t('homepage.quickFeatures.aiChat.description'),
-                  color: "from-purple-500/20 to-blue-500/20",
-                  borderColor: "border-purple-400/30"
+                  iconBg: "bg-purple-100 dark:bg-purple-900/40",
+                  iconColor: "text-purple-600 dark:text-purple-400",
+                  hoverBorder: "hover:border-purple-300 dark:hover:border-purple-600"
                 },
                 {
-                  icon: <MapPin className="h-8 w-8" />,
+                  icon: <MapPin className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.interactiveMaps.title'),
                   description: t('homepage.quickFeatures.interactiveMaps.description'),
-                  color: "from-blue-500/20 to-cyan-500/20",
-                  borderColor: "border-blue-400/30"
+                  iconBg: "bg-emerald-100 dark:bg-emerald-900/40",
+                  iconColor: "text-emerald-600 dark:text-emerald-400",
+                  hoverBorder: "hover:border-emerald-300 dark:hover:border-emerald-600"
                 },
                 {
-                  icon: <BookOpen className="h-8 w-8" />,
+                  icon: <BookOpen className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.studyResources.title'),
                   description: t('homepage.quickFeatures.studyResources.description'),
-                  color: "from-cyan-500/20 to-teal-500/20",
-                  borderColor: "border-cyan-400/30"
+                  iconBg: "bg-cyan-100 dark:bg-cyan-900/40",
+                  iconColor: "text-cyan-600 dark:text-cyan-400",
+                  hoverBorder: "hover:border-cyan-300 dark:hover:border-cyan-600"
                 },
                 {
-                  icon: <Search className="h-8 w-8" />,
+                  icon: <Search className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.lostFound.title'),
                   description: t('homepage.quickFeatures.lostFound.description'),
-                  color: "from-teal-500/20 to-emerald-500/20",
-                  borderColor: "border-teal-400/30"
+                  iconBg: "bg-slate-100 dark:bg-slate-800/60",
+                  iconColor: "text-slate-600 dark:text-slate-400",
+                  hoverBorder: "hover:border-slate-300 dark:hover:border-slate-600"
                 },
                 {
-                  icon: <Heart className="h-8 w-8" />,
+                  icon: <Heart className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.wellnessHub.title'),
                   description: t('homepage.quickFeatures.wellnessHub.description'),
-                  color: "from-emerald-500/20 to-green-500/20",
-                  borderColor: "border-emerald-400/30"
+                  iconBg: "bg-green-100 dark:bg-green-900/40",
+                  iconColor: "text-green-600 dark:text-green-400",
+                  hoverBorder: "hover:border-green-300 dark:hover:border-green-600"
                 },
                 {
-                  icon: <Users className="h-8 w-8" />,
+                  icon: <Users className="h-7 w-7" />,
                   title: t('homepage.quickFeatures.community.title'),
                   description: t('homepage.quickFeatures.community.description'),
-                  color: "from-green-500/20 to-yellow-500/20",
-                  borderColor: "border-green-400/30"
+                  iconBg: "bg-amber-100 dark:bg-amber-900/40",
+                  iconColor: "text-amber-600 dark:text-amber-400",
+                  hoverBorder: "hover:border-amber-300 dark:hover:border-amber-600"
                 }
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className={`glass-card bg-gradient-to-br ${feature.color} backdrop-blur-lg border ${feature.borderColor} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1`}
+                  className={`group relative ${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200'} ${feature.hoverBorder} p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
                 >
-                  <div className={`flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} border ${feature.borderColor} mb-4`}>
-                    <div className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${feature.iconBg} mb-5 transition-transform duration-300 group-hover:scale-110`}>
+                    <div className={feature.iconColor}>
                       {feature.icon}
                     </div>
                   </div>
-                  <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-3`}>
+                  <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
                     {feature.title}
                   </h3>
-                  <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
                     {feature.description}
                   </p>
                 </div>
@@ -257,22 +263,45 @@ export default function Home() {
 
         {/* Stats Section */}
         <section className="py-20" aria-label="Platform statistics and achievements">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`glass-card backdrop-blur-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} rounded-3xl p-12 shadow-2xl`}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200'} rounded-2xl p-8 sm:p-10 shadow-lg`}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
                 {[
-                  { icon: <Star className="h-8 w-8" />, number: "99%", label: t('homepage.stats.studentSatisfaction') },
-                  { icon: <Shield className="h-8 w-8" />, number: "24/7", label: t('homepage.stats.aiAssistance') },
-                  { icon: <Zap className="h-8 w-8" />, number: "<1s", label: t('homepage.stats.responseTime') }
+                  {
+                    icon: <Star className="h-6 w-6" />,
+                    number: "99%",
+                    label: t('homepage.stats.studentSatisfaction'),
+                    iconBg: "bg-amber-100 dark:bg-amber-900/40",
+                    iconColor: "text-amber-600 dark:text-amber-400",
+                    numberColor: "text-amber-600 dark:text-amber-400"
+                  },
+                  {
+                    icon: <Shield className="h-6 w-6" />,
+                    number: "24/7",
+                    label: t('homepage.stats.aiAssistance'),
+                    iconBg: "bg-purple-100 dark:bg-purple-900/40",
+                    iconColor: "text-purple-600 dark:text-purple-400",
+                    numberColor: "text-purple-600 dark:text-purple-400"
+                  },
+                  {
+                    icon: <Zap className="h-6 w-6" />,
+                    number: "<1s",
+                    label: t('homepage.stats.responseTime'),
+                    iconBg: "bg-emerald-100 dark:bg-emerald-900/40",
+                    iconColor: "text-emerald-600 dark:text-emerald-400",
+                    numberColor: "text-emerald-600 dark:text-emerald-400"
+                  }
                 ].map((stat, index) => (
-                  <div key={index} className="space-y-4">
-                    <div className={`flex justify-center ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                      {stat.icon}
+                  <div key={index} className="flex flex-col items-center text-center space-y-3">
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${stat.iconBg}`}>
+                      <div className={stat.iconColor}>
+                        {stat.icon}
+                      </div>
                     </div>
-                    <div className={`text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent`}>
+                    <div className={`text-3xl sm:text-4xl font-bold ${stat.numberColor}`}>
                       {stat.number}
                     </div>
-                    <div className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       {stat.label}
                     </div>
                   </div>
