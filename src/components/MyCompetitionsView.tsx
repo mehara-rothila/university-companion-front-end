@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { competitionService, Competition, Enrollment } from '@/services/competitionService';
-import { Calendar, MapPin, Users, Download, Eye, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Download, Eye, Trash2, Pencil, Image as ImageIcon } from 'lucide-react';
+import ImageEditModal from './ImageEditModal';
 
 interface MyCompetitionsViewProps {
   userId: number;
@@ -15,6 +16,7 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [showEnrollmentsModal, setShowEnrollmentsModal] = useState(false);
+  const [showImageEditModal, setShowImageEditModal] = useState(false);
 
   useEffect(() => {
     loadMyCompetitions();
@@ -51,6 +53,27 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
       console.error('Error downloading enrollments:', error);
       alert('Failed to download enrollments');
     }
+  };
+
+  const handleImageSave = async (imageUrl: string) => {
+    if (!selectedCompetition) return;
+
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const response = await fetch(`${API_URL}/api/competitions/${selectedCompetition.id}/image`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageUrl }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update competition image');
+    }
+
+    setShowImageEditModal(false);
+    setSelectedCompetition(null);
+    loadMyCompetitions();
   };
 
   const getStatusColor = (status: string) => {
@@ -110,15 +133,30 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                 className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}
               >
                 <div className="flex gap-4 mb-4">
-                  {competition.imageUrl && (
-                    <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 relative group">
+                    {competition.imageUrl ? (
                       <img
                         src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(competition.imageUrl)}`}
                         alt={competition.title}
                         className="w-32 h-32 rounded-lg object-contain bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700"
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className={`w-32 h-32 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                        <ImageIcon className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedCompetition(competition);
+                        setShowImageEditModal(true);
+                      }}
+                      className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                      title="Edit Image"
+                    >
+                      <Pencil className="w-6 h-6 text-white" />
+                    </button>
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <h3 className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
@@ -208,6 +246,19 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
           </div>
         )}
       </div>
+
+      {/* Image Edit Modal */}
+      <ImageEditModal
+        isOpen={showImageEditModal}
+        onClose={() => {
+          setShowImageEditModal(false);
+          setSelectedCompetition(null);
+        }}
+        title="Upload a new image for this competition"
+        currentImage={selectedCompetition?.imageUrl}
+        onSave={handleImageSave}
+        entityType="competition"
+      />
 
       {/* Enrollments Modal */}
       {showEnrollmentsModal && selectedCompetition && (
