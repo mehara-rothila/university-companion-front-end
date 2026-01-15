@@ -463,8 +463,8 @@ export default function AdminLibraryPage() {
                                         </div>
 
                                         <div className={`mt-auto pt-4 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} flex gap-2`}>
-                                            {/* Show Approve button only for PENDING or REJECTED items */}
-                                            {(book.status === 'PENDING' || book.status === 'REJECTED') && (
+                                            {/* Show Approve button only for PENDING items */}
+                                            {book.status === 'PENDING' && (
                                                 <button
                                                     onClick={() => {
                                                         setSelectedBook(book);
@@ -476,8 +476,8 @@ export default function AdminLibraryPage() {
                                                     Approve
                                                 </button>
                                             )}
-                                            {/* Show Reject button only for PENDING or APPROVED items */}
-                                            {(book.status === 'PENDING' || book.status === 'APPROVED') && (
+                                            {/* Show Reject button only for PENDING items */}
+                                            {book.status === 'PENDING' && (
                                                 <button
                                                     onClick={() => {
                                                         setSelectedBook(book);
