@@ -87,8 +87,8 @@ export default function Home() {
             <div className="text-center">
               {/* Logo/Icon */}
               <div className="flex justify-center mb-8">
-                <div className={`p-6 rounded-3xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-lg border ${isDarkMode ? 'border-purple-400/30' : 'border-purple-400/40'} shadow-2xl`}>
-                  <Brain className={`h-16 w-16 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                <div className={`p-5 rounded-2xl ${isDarkMode ? 'bg-purple-900/40' : 'bg-purple-100'}`}>
+                  <Brain className={`h-14 w-14 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
                 </div>
               </div>
 
@@ -141,20 +141,32 @@ export default function Home() {
               </div>
 
               {/* Rotating Feature Showcase */}
-              <div className="max-w-2xl mx-auto">
-                <div className={`glass-card backdrop-blur-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} rounded-3xl p-8 shadow-2xl`}>
-                  <div className="flex items-center justify-center mb-6">
-                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${features[currentFeature].color} text-white shadow-lg transform transition-all duration-500`}>
-                      {features[currentFeature].icon}
+              <div className="max-w-xl mx-auto">
+                <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200'} rounded-2xl p-8 shadow-lg`}>
+                  <div className="flex items-center justify-center mb-5">
+                    <div className={`p-4 rounded-xl transition-all duration-500 ${
+                      currentFeature === 0 ? 'bg-purple-100 dark:bg-purple-900/40' :
+                      currentFeature === 1 ? 'bg-blue-100 dark:bg-blue-900/40' :
+                      currentFeature === 2 ? 'bg-cyan-100 dark:bg-cyan-900/40' :
+                      'bg-teal-100 dark:bg-teal-900/40'
+                    }`}>
+                      <div className={`transition-all duration-500 ${
+                        currentFeature === 0 ? 'text-purple-600 dark:text-purple-400' :
+                        currentFeature === 1 ? 'text-blue-600 dark:text-blue-400' :
+                        currentFeature === 2 ? 'text-cyan-600 dark:text-cyan-400' :
+                        'text-teal-600 dark:text-teal-400'
+                      }`}>
+                        {features[currentFeature].icon}
+                      </div>
                     </div>
                   </div>
-                  <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 transition-all duration-500`}>
+                  <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-3 transition-all duration-500`}>
                     {features[currentFeature].title}
                   </h3>
-                  <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} transition-all duration-500`}>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed transition-all duration-500`}>
                     {features[currentFeature].description}
                   </p>
-                  
+
                   {/* Feature Dots */}
                   <div className="flex justify-center mt-6 space-x-2">
                     {features.map((_, index) => (
@@ -163,9 +175,9 @@ export default function Home() {
                         type="button"
                         aria-label={`View feature ${index + 1}`}
                         onClick={() => setCurrentFeature(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                           index === currentFeature
-                            ? 'bg-gradient-to-r from-purple-500 to-blue-500 scale-125'
+                            ? 'bg-purple-500 dark:bg-purple-400 scale-125'
                             : isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-300 hover:bg-gray-400'
                         }`}
                       />
@@ -313,22 +325,24 @@ export default function Home() {
 
         {/* Footer CTA */}
         <section className="py-20" aria-label="Final call-to-action to join the platform">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className={`glass-card bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-lg border ${isDarkMode ? 'border-purple-400/30' : 'border-purple-400/40'} rounded-3xl p-12 shadow-2xl`}>
-              <Sparkles className={`h-16 w-16 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mx-auto mb-6`} />
-              <h2 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200'} rounded-2xl p-10 sm:p-12 shadow-lg`}>
+              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-xl ${isDarkMode ? 'bg-purple-900/40' : 'bg-purple-100'} mb-6`}>
+                <Sparkles className={`h-8 w-8 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+              </div>
+              <h2 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
                 {t('homepage.cta.title')}
               </h2>
-              <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 max-w-2xl mx-auto`}>
+              <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-8 max-w-xl mx-auto leading-relaxed`}>
                 {t('homepage.cta.description')}
               </p>
               {!isAuthenticated && (
                 <Link
                   href="/signup"
-                  className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   {t('homepage.cta.startJourney')}
-                  <Sparkles className="ml-2 h-5 w-5" />
+                  <Sparkles className="ml-2 h-4 w-4" />
                 </Link>
               )}
             </div>
