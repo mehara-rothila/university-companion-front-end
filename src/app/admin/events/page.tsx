@@ -9,7 +9,8 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event } from '@/types/event';
-import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Eye, AlertCircle, Trash2, Filter, User } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Eye, AlertCircle, Trash2, Filter, User, ImageIcon } from 'lucide-react';
+import ImageEditModal from '@/components/ImageEditModal';
 import Image from 'next/image';
 
 export default function AdminEventsPage() {
@@ -25,6 +26,7 @@ export default function AdminEventsPage() {
   // Modal states
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageEditModal, setShowImageEditModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
@@ -129,6 +131,31 @@ export default function AdminEventsPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const openImageEditModal = (event: Event) => {
+    setSelectedEvent(event);
+    setShowImageEditModal(true);
+  };
+
+  const handleImageSave = async (imageUrl: string) => {
+    if (!selectedEvent) throw new Error('No event selected');
+
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const response = await fetch(`${API_URL}/api/events/${selectedEvent.id}/image`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageUrl })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to update image');
+    }
+
+    setShowImageEditModal(false);
+    setSelectedEvent(null);
+    await loadEvents();
   };
 
   const formatDate = (dateString: string) => {
@@ -431,6 +458,16 @@ export default function AdminEventsPage() {
                               View
                             </a>
 
+                            <button
+                              type="button"
+                              onClick={() => openImageEditModal(event)}
+                              disabled={actionLoading}
+                              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg text-sm transition-colors"
+                            >
+                              <ImageIcon size={16} />
+                              Edit Image
+                            </button>
+
                             {(event.status === 'PENDING' || event.status === 'REJECTED') && (
                               <button
                                 onClick={() => handleApprove(event.id)}
@@ -601,6 +638,19 @@ export default function AdminEventsPage() {
               </div>
             </div>
           )}
+
+          {/* Image Edit Modal */}
+          <ImageEditModal
+            isOpen={showImageEditModal}
+            onClose={() => {
+              setShowImageEditModal(false);
+              setSelectedEvent(null);
+            }}
+            title={selectedEvent?.title || ''}
+            currentImage={selectedEvent?.imageUrl}
+            onSave={handleImageSave}
+            entityType="event"
+          />
         </div>
       </main>
     </AuthGuard>
