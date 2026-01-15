@@ -184,10 +184,10 @@ class LostFoundService {
     }
   }
 
-  // Admin: Get pending items for review
-  async getPendingItems(adminId: number): Promise<LostFoundItem[]> {
+  // Admin: Get pending items for review (authorization via JWT token in header)
+  async getPendingItems(): Promise<LostFoundItem[]> {
     try {
-      const response = await this.api.get(`/lost-found/admin/pending?adminId=${adminId}`);
+      const response = await this.api.get(`/lost-found/admin/pending`);
       return response.data;
     } catch (error) {
       console.error('Error fetching pending items:', error);
@@ -196,9 +196,9 @@ class LostFoundService {
   }
 
   // Admin: Approve an item
-  async approveItem(itemId: number, adminId: number): Promise<LostFoundItem> {
+  async approveItem(itemId: number): Promise<LostFoundItem> {
     try {
-      const response = await this.api.post(`/lost-found/${itemId}/approve?adminId=${adminId}`);
+      const response = await this.api.post(`/lost-found/${itemId}/approve`);
       return response.data;
     } catch (error) {
       console.error('Error approving item:', error);
@@ -207,9 +207,9 @@ class LostFoundService {
   }
 
   // Admin: Reject an item
-  async rejectItem(itemId: number, adminId: number): Promise<LostFoundItem> {
+  async rejectItem(itemId: number): Promise<LostFoundItem> {
     try {
-      const response = await this.api.post(`/lost-found/${itemId}/reject?adminId=${adminId}`);
+      const response = await this.api.post(`/lost-found/${itemId}/reject`);
       return response.data;
     } catch (error) {
       console.error('Error rejecting item:', error);

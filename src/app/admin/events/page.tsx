@@ -43,20 +43,20 @@ export default function AdminEventsPage() {
     try {
       setLoading(true);
       setError('');
-      
+
       let data: Event[];
       if (filter === 'PENDING') {
-        data = await eventService.getPendingEvents(user.id);
+        data = await eventService.getPendingEvents();
       } else {
         // Try to get all events, fallback to approved + pending
         try {
-          data = await eventService.getAllEvents(user.id);
+          data = await eventService.getAllEvents();
           if (filter !== 'ALL') {
             data = data.filter(event => event.status === filter);
           }
         } catch {
           const approved = await eventService.getApprovedEvents();
-          const pending = await eventService.getPendingEvents(user.id);
+          const pending = await eventService.getPendingEvents();
           data = [...approved, ...pending];
           if (filter !== 'ALL') {
             data = data.filter(event => event.status === filter);
@@ -77,7 +77,7 @@ export default function AdminEventsPage() {
 
     try {
       setActionLoading(true);
-      await eventService.approveEvent(eventId, user.id);
+      await eventService.approveEvent(eventId);
       await loadEvents();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to approve event');
@@ -100,7 +100,7 @@ export default function AdminEventsPage() {
 
     try {
       setActionLoading(true);
-      await eventService.rejectEvent(selectedEvent.id, user.id, { reason: rejectionReason });
+      await eventService.rejectEvent(selectedEvent.id, { reason: rejectionReason });
       setShowRejectModal(false);
       setSelectedEvent(null);
       setRejectionReason('');

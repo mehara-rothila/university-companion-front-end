@@ -47,11 +47,11 @@ export default function AdminCompetitionsPage() {
       setLoading(true);
       let data: Competition[];
       if (filter === 'ALL') {
-        data = await competitionService.getAllCompetitions(user.id);
+        data = await competitionService.getAllCompetitions();
       } else if (filter === 'PENDING') {
-        data = await competitionService.getPendingCompetitions(user.id);
+        data = await competitionService.getPendingCompetitions();
       } else {
-        const allData = await competitionService.getAllCompetitions(user.id);
+        const allData = await competitionService.getAllCompetitions();
         data = allData.filter(c => c.status === filter);
       }
       setCompetitions(data);
@@ -68,7 +68,7 @@ export default function AdminCompetitionsPage() {
 
     try {
       setActionLoading(true);
-      await competitionService.approveCompetition(selectedCompetition.id, user.id);
+      await competitionService.approveCompetition(selectedCompetition.id);
       alert('Competition approved successfully!');
       setShowApproveModal(false);
       setSelectedCompetition(null);
@@ -90,7 +90,7 @@ export default function AdminCompetitionsPage() {
 
     try {
       setActionLoading(true);
-      await competitionService.hideCompetition(competitionId, user.id);
+      await competitionService.hideCompetition(competitionId);
       alert('Competition hidden successfully!');
       loadCompetitions();
     } catch (error) {
@@ -111,7 +111,7 @@ export default function AdminCompetitionsPage() {
 
     try {
       setActionLoading(true);
-      await competitionService.rejectCompetition(selectedCompetition.id, user.id, rejectionReason);
+      await competitionService.rejectCompetition(selectedCompetition.id, rejectionReason);
       alert('Competition rejected');
       setShowRejectModal(false);
       setRejectionReason('');
@@ -130,7 +130,7 @@ export default function AdminCompetitionsPage() {
 
     try {
       setActionLoading(true);
-      await competitionService.deleteCompetition(selectedCompetition.id, user.id);
+      await competitionService.deleteCompetition(selectedCompetition.id);
       alert('Competition deleted successfully!');
       setShowDeleteModal(false);
       setSelectedCompetition(null);

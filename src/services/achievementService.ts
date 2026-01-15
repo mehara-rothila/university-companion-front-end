@@ -64,50 +64,37 @@ export const achievementService = {
     return response.data;
   },
 
-  // Admin operations
-  getPendingAchievements: async (adminId: number): Promise<StudentAchievement[]> => {
-    const response = await axios.get(`${BASE_URL}/admin/pending`, {
-      params: { adminId },
-    });
+  // Admin operations (authorization via JWT token in header)
+  getPendingAchievements: async (): Promise<StudentAchievement[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/pending`);
     return response.data;
   },
 
-  getAllAchievements: async (adminId: number): Promise<StudentAchievement[]> => {
-    const response = await axios.get(`${BASE_URL}/admin/all`, {
-      params: { adminId },
-    });
+  getAllAchievements: async (): Promise<StudentAchievement[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/all`);
     return response.data;
   },
 
-  approveAchievement: async (achievementId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${achievementId}/approve`, null, {
-      params: { adminId },
-    });
+  approveAchievement: async (achievementId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${achievementId}/approve`);
     return response.data;
   },
 
   rejectAchievement: async (
     achievementId: number,
-    adminId: number,
     data: { reason: string }
   ): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${achievementId}/reject`, data, {
-      params: { adminId },
-    });
+    const response = await axios.post(`${BASE_URL}/${achievementId}/reject`, data);
     return response.data;
   },
 
-  hideAchievement: async (achievementId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${achievementId}/hide`, null, {
-      params: { adminId },
-    });
+  hideAchievement: async (achievementId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${achievementId}/hide`);
     return response.data;
   },
 
-  unhideAchievement: async (achievementId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${achievementId}/unhide`, null, {
-      params: { adminId },
-    });
+  unhideAchievement: async (achievementId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${achievementId}/unhide`);
     return response.data;
   },
 

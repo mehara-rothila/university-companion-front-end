@@ -192,12 +192,10 @@ export const competitionService = {
     }
   },
 
-  // Admin: Get pending competitions
-  getPendingCompetitions: async (adminId: number): Promise<Competition[]> => {
+  // Admin: Get pending competitions (authorization via JWT token in header)
+  getPendingCompetitions: async (): Promise<Competition[]> => {
     try {
-      const response = await axios.get(`${API_URL}/admin/pending`, {
-        params: { adminId }
-      });
+      const response = await axios.get(`${API_URL}/admin/pending`);
       return response.data;
     } catch (error) {
       console.error('Error fetching pending competitions:', error);
@@ -206,11 +204,9 @@ export const competitionService = {
   },
 
   // Admin: Approve competition
-  approveCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+  approveCompetition: async (competitionId: number): Promise<{ message: string }> => {
     try {
-      const response = await axios.post(`${API_URL}/${competitionId}/approve`, null, {
-        params: { adminId }
-      });
+      const response = await axios.post(`${API_URL}/${competitionId}/approve`);
       return response.data;
     } catch (error) {
       console.error('Error approving competition:', error);
@@ -219,12 +215,9 @@ export const competitionService = {
   },
 
   // Admin: Reject competition
-  rejectCompetition: async (competitionId: number, adminId: number, reason: string): Promise<{ message: string }> => {
+  rejectCompetition: async (competitionId: number, reason: string): Promise<{ message: string }> => {
     try {
-      const response = await axios.post(`${API_URL}/${competitionId}/reject`,
-        { reason },
-        { params: { adminId } }
-      );
+      const response = await axios.post(`${API_URL}/${competitionId}/reject`, { reason });
       return response.data;
     } catch (error) {
       console.error('Error rejecting competition:', error);
@@ -233,11 +226,9 @@ export const competitionService = {
   },
 
   // Admin: Hide competition
-  hideCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+  hideCompetition: async (competitionId: number): Promise<{ message: string }> => {
     try {
-      const response = await axios.post(`${API_URL}/${competitionId}/hide`, null, {
-        params: { adminId }
-      });
+      const response = await axios.post(`${API_URL}/${competitionId}/hide`);
       return response.data;
     } catch (error) {
       console.error('Error hiding competition:', error);
@@ -246,11 +237,9 @@ export const competitionService = {
   },
 
   // Admin: Unhide competition
-  unhideCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+  unhideCompetition: async (competitionId: number): Promise<{ message: string }> => {
     try {
-      const response = await axios.post(`${API_URL}/${competitionId}/unhide`, null, {
-        params: { adminId }
-      });
+      const response = await axios.post(`${API_URL}/${competitionId}/unhide`);
       return response.data;
     } catch (error) {
       console.error('Error unhiding competition:', error);
@@ -259,11 +248,9 @@ export const competitionService = {
   },
 
   // Admin: Get all competitions (all statuses)
-  getAllCompetitions: async (adminId: number): Promise<Competition[]> => {
+  getAllCompetitions: async (): Promise<Competition[]> => {
     try {
-      const response = await axios.get(`${API_URL}/admin/all`, {
-        params: { adminId }
-      });
+      const response = await axios.get(`${API_URL}/admin/all`);
       return response.data;
     } catch (error) {
       console.error('Error fetching all competitions:', error);
@@ -272,11 +259,9 @@ export const competitionService = {
   },
 
   // Admin: Delete competition permanently
-  deleteCompetition: async (competitionId: number, adminId: number): Promise<{ message: string }> => {
+  deleteCompetition: async (competitionId: number): Promise<{ message: string }> => {
     try {
-      const response = await axios.delete(`${API_URL}/${competitionId}`, {
-        params: { adminId }
-      });
+      const response = await axios.delete(`${API_URL}/${competitionId}`);
       return response.data;
     } catch (error) {
       console.error('Error deleting competition:', error);

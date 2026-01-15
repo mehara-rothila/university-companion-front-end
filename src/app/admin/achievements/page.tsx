@@ -41,20 +41,20 @@ export default function AdminAchievementsPage() {
     try {
       setLoading(true);
       setError('');
-      
+
       let data: StudentAchievement[];
       if (filter === 'PENDING') {
-        data = await achievementService.getPendingAchievements(user.id);
+        data = await achievementService.getPendingAchievements();
       } else {
         // Try to get all achievements, fallback to approved + pending
         try {
-          data = await achievementService.getAllAchievements(user.id);
+          data = await achievementService.getAllAchievements();
           if (filter !== 'ALL') {
             data = data.filter(achievement => achievement.status === filter);
           }
         } catch {
           const approved = await achievementService.getApprovedAchievements();
-          const pending = await achievementService.getPendingAchievements(user.id);
+          const pending = await achievementService.getPendingAchievements();
           data = [...approved, ...pending];
           if (filter !== 'ALL') {
             data = data.filter(achievement => achievement.status === filter);
@@ -75,7 +75,7 @@ export default function AdminAchievementsPage() {
 
     try {
       setActionLoading(true);
-      await achievementService.approveAchievement(achievementId, user.id);
+      await achievementService.approveAchievement(achievementId);
       await loadAchievements();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to approve achievement');
@@ -98,7 +98,7 @@ export default function AdminAchievementsPage() {
 
     try {
       setActionLoading(true);
-      await achievementService.rejectAchievement(selectedAchievement.id, user.id, { reason: rejectionReason });
+      await achievementService.rejectAchievement(selectedAchievement.id, { reason: rejectionReason });
       setShowRejectModal(false);
       setSelectedAchievement(null);
       setRejectionReason('');

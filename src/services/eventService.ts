@@ -25,10 +25,8 @@ export const eventService = {
     return response.data;
   },
 
-  getAllEvents: async (adminId: number): Promise<Event[]> => {
-    const response = await axios.get(`${BASE_URL}/admin/all`, {
-      params: { adminId }
-    });
+  getAllEvents: async (): Promise<Event[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/all`);
     return response.data;
   },
 
@@ -132,43 +130,32 @@ export const eventService = {
     return response.data;
   },
 
-  // Admin operations
-  getPendingEvents: async (adminId: number): Promise<Event[]> => {
-    const response = await axios.get(`${BASE_URL}/admin/pending`, {
-      params: { adminId },
-    });
+  // Admin operations (authorization via JWT token in header)
+  getPendingEvents: async (): Promise<Event[]> => {
+    const response = await axios.get(`${BASE_URL}/admin/pending`);
     return response.data;
   },
 
-  approveEvent: async (eventId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${eventId}/approve`, null, {
-      params: { adminId },
-    });
+  approveEvent: async (eventId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${eventId}/approve`);
     return response.data;
   },
 
   rejectEvent: async (
     eventId: number,
-    adminId: number,
     data: RejectEventRequest
   ): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${eventId}/reject`, data, {
-      params: { adminId },
-    });
+    const response = await axios.post(`${BASE_URL}/${eventId}/reject`, data);
     return response.data;
   },
 
-  hideEvent: async (eventId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${eventId}/hide`, null, {
-      params: { adminId },
-    });
+  hideEvent: async (eventId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${eventId}/hide`);
     return response.data;
   },
 
-  unhideEvent: async (eventId: number, adminId: number): Promise<{ message: string }> => {
-    const response = await axios.post(`${BASE_URL}/${eventId}/unhide`, null, {
-      params: { adminId },
-    });
+  unhideEvent: async (eventId: number): Promise<{ message: string }> => {
+    const response = await axios.post(`${BASE_URL}/${eventId}/unhide`);
     return response.data;
   },
 };

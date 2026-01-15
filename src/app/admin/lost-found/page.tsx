@@ -42,7 +42,7 @@ export default function AdminLostFoundPage() {
             setLoading(true);
             if (filter === 'PENDING') {
                 // Use dedicated admin endpoint for pending items
-                const data = await lostFoundService.getPendingItems(user!.id);
+                const data = await lostFoundService.getPendingItems();
                 setItems(data);
             } else if (filter === 'ALL') {
                 // Fetch all items (no status filter)
@@ -66,7 +66,7 @@ export default function AdminLostFoundPage() {
 
         try {
             setActionLoading(true);
-            await lostFoundService.approveItem(selectedItem.id, user.id);
+            await lostFoundService.approveItem(selectedItem.id);
             setShowApproveModal(false);
             setSelectedItem(null);
             loadItems();
@@ -83,7 +83,7 @@ export default function AdminLostFoundPage() {
 
         try {
             setActionLoading(true);
-            await lostFoundService.rejectItem(selectedItem.id, user.id);
+            await lostFoundService.rejectItem(selectedItem.id);
             setShowRejectModal(false);
             setSelectedItem(null);
             loadItems();
