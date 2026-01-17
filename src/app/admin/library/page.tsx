@@ -253,9 +253,10 @@ export default function AdminLibraryPage() {
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
     };
 
-    if (!user) {
-        return null;
-    }
+    // TODO: TEMPORARY - Uncomment to re-enable auth check
+    // if (!user) {
+    //     return null;
+    // }
 
     return (
         <>

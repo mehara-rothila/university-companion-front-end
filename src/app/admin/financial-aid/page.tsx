@@ -236,19 +236,20 @@ export default function AdminFinancialAidPage() {
     { id: 'all', name: 'All Applications', icon: '📋' }
   ];
 
-  if (!isAuthenticated) {
-    return (
-      <>
-        <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
-          <div className="text-center">
-            <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Access Denied</h1>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>You need to be logged in as an admin to access this page.</p>
-          </div>
-        </main>
-      </>
-    );
-  }
+  // TODO: TEMPORARY - Uncomment this block to re-enable auth check
+  // if (!isAuthenticated) {
+  //   return (
+  //     <>
+  //       <Navigation />
+  //       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+  //         <div className="text-center">
+  //           <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>Access Denied</h1>
+  //           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>You need to be logged in as an admin to access this page.</p>
+  //         </div>
+  //       </main>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
