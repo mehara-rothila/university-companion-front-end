@@ -9,8 +9,9 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, CheckCircle, XCircle, AlertCircle, Calendar, Trash2, Filter, User } from 'lucide-react';
+import { Trophy, CheckCircle, XCircle, AlertCircle, Calendar, Trash2, Filter, User, Pencil, Upload, ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import { fileUploadService } from '@/services/fileUploadService';
 
 export default function AdminAchievementsPage() {
   const { isDarkMode } = useDarkMode();
@@ -25,9 +26,11 @@ export default function AdminAchievementsPage() {
   // Modal states
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState<StudentAchievement | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
     if (user?.id && user?.role === 'ADMIN') {
@@ -128,6 +131,45 @@ export default function AdminAchievementsPage() {
       alert(err.response?.data?.error || 'Failed to delete achievement');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const openImageModal = (achievement: StudentAchievement) => {
+    setSelectedAchievement(achievement);
+    setShowImageModal(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!selectedAchievement || !e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0];
+    try {
+      setImageUploading(true);
+      const result = await fileUploadService.uploadImage(file, 'achievements');
+      await achievementService.updateAchievementImage(selectedAchievement.id, result.fileUrl);
+      setShowImageModal(false);
+      setSelectedAchievement(null);
+      await loadAchievements();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to upload image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (!selectedAchievement) return;
+
+    try {
+      setImageUploading(true);
+      await achievementService.updateAchievementImage(selectedAchievement.id, null);
+      setShowImageModal(false);
+      setSelectedAchievement(null);
+      await loadAchievements();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to remove image');
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -402,6 +444,15 @@ export default function AdminAchievementsPage() {
 
                           {/* Action Buttons */}
                           <div className="flex flex-wrap gap-3">
+                            <button
+                              onClick={() => openImageModal(achievement)}
+                              disabled={actionLoading}
+                              className={`flex items-center gap-2 px-4 py-2 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} disabled:bg-gray-400 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} rounded-lg text-sm transition-colors font-medium`}
+                            >
+                              <Pencil size={16} />
+                              Edit Image
+                            </button>
+
                             {(achievement.status === 'PENDING' || achievement.status === 'REJECTED') && (
                               <button
                                 onClick={() => handleApprove(achievement.id)}
@@ -544,11 +595,12 @@ export default function AdminAchievementsPage() {
                   Are you sure you want to permanently delete this achievement?
                 </p>
                 <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
-                  ⚠️ This action cannot be undone.
+                  This action cannot be undone.
                 </p>
 
                 <div className="flex gap-3">
                   <button
+                    type="button"
                     onClick={handleDelete}
                     disabled={actionLoading}
                     className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
@@ -557,6 +609,7 @@ export default function AdminAchievementsPage() {
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => {
                       setShowDeleteModal(false);
                       setSelectedAchievement(null);
@@ -568,6 +621,87 @@ export default function AdminAchievementsPage() {
                   >
                     Cancel
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Image Edit Modal */}
+          {showImageModal && selectedAchievement && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-4">
+                    <ImageIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    Edit Achievement Image
+                  </h2>
+                </div>
+
+                {/* Current Image Preview */}
+                <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                  <p className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Current Image:
+                  </p>
+                  <div className={`w-full h-40 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} flex items-center justify-center`}>
+                    {selectedAchievement.imageUrl ? (
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedAchievement.imageUrl)}`}
+                        alt={selectedAchievement.title}
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <div className="text-center">
+                        <Trophy className={`w-12 h-12 mx-auto ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Upload New Image */}
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Upload New Image:
+                  </label>
+                  <label className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isDarkMode ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
+                    <Upload className={`w-5 h-5 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {imageUploading ? 'Uploading...' : 'Click to upload image'}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={imageUploading}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowImageModal(false);
+                      setSelectedAchievement(null);
+                    }}
+                    disabled={imageUploading}
+                    className={`flex-1 px-4 py-2 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200`}
+                  >
+                    Cancel
+                  </button>
+                  {selectedAchievement.imageUrl && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      disabled={imageUploading}
+                      className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
+                    >
+                      {imageUploading ? 'Removing...' : 'Remove Image'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

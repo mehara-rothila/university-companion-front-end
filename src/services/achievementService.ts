@@ -98,6 +98,11 @@ export const achievementService = {
     return response.data;
   },
 
+  updateAchievementImage: async (achievementId: number, imageUrl: string | null): Promise<{ message: string }> => {
+    const response = await axios.put(`${BASE_URL}/${achievementId}/image`, { imageUrl });
+    return response.data;
+  },
+
   // Engagement operations
   likeAchievement: async (achievementId: number): Promise<{ message: string }> => {
     const response = await axios.post(`${BASE_URL}/${achievementId}/like`);
