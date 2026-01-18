@@ -8,7 +8,8 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import lostFoundService, { LostFoundItem } from '@/services/lostFoundService';
-import { Search, Check, X, MapPin, Calendar, Tag, DollarSign, AlertCircle, Filter, Trash2, User, ImageIcon } from 'lucide-react';
+import { Search, Check, X, MapPin, Tag, DollarSign, Trash2, User, ImageIcon, Upload, Pencil } from 'lucide-react';
+import { fileUploadService } from '@/services/fileUploadService';
 
 export default function AdminLostFoundPage() {
     const { isDarkMode } = useDarkMode();
@@ -21,7 +22,9 @@ export default function AdminLostFoundPage() {
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showApproveModal, setShowApproveModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [imageUploading, setImageUploading] = useState(false);
     const [filter, setFilter] = useState<'PENDING' | 'ACTIVE' | 'RESOLVED' | 'ALL'>('PENDING');
 
     useEffect(() => {
@@ -109,6 +112,42 @@ export default function AdminLostFoundPage() {
             alert('Failed to delete item. Please check your admin privileges.');
         } finally {
             setActionLoading(false);
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!selectedItem || !e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        try {
+            setImageUploading(true);
+            const result = await fileUploadService.uploadImage(file, 'lost-found');
+            await lostFoundService.updateItemImage(selectedItem.id, result.fileUrl);
+            setShowImageModal(false);
+            setSelectedItem(null);
+            loadItems();
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image.');
+        } finally {
+            setImageUploading(false);
+        }
+    };
+
+    const handleRemoveImage = async () => {
+        if (!selectedItem) return;
+
+        try {
+            setImageUploading(true);
+            await lostFoundService.updateItemImage(selectedItem.id, null);
+            setShowImageModal(false);
+            setSelectedItem(null);
+            loadItems();
+        } catch (error) {
+            console.error('Error removing image:', error);
+            alert('Failed to remove image.');
+        } finally {
+            setImageUploading(false);
         }
     };
 
@@ -301,10 +340,23 @@ export default function AdminLostFoundPage() {
                                             </div>
                                         </div>
 
-                                        <div className={`mt-auto pt-4 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} flex gap-2`}>
+                                        <div className={`mt-auto pt-4 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'} flex gap-2 flex-wrap`}>
+                                            {/* Edit Image button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedItem(item);
+                                                    setShowImageModal(true);
+                                                }}
+                                                className={`flex-1 px-3 py-2 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded-lg text-sm font-medium transition-colors flex items-center justify-center ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}
+                                            >
+                                                <Pencil className="w-4 h-4 mr-1" />
+                                                Edit Image
+                                            </button>
                                             {/* Show Approve button only for PENDING or REJECTED items */}
                                             {(item.status === 'PENDING' || item.status === 'REJECTED') && (
                                                 <button
+                                                    type="button"
                                                     onClick={() => {
                                                         setSelectedItem(item);
                                                         setShowApproveModal(true);
@@ -318,6 +370,7 @@ export default function AdminLostFoundPage() {
                                             {/* Show Reject button only for PENDING or ACTIVE items */}
                                             {(item.status === 'PENDING' || item.status === 'ACTIVE') && (
                                                 <button
+                                                    type="button"
                                                     onClick={() => {
                                                         setSelectedItem(item);
                                                         setShowRejectModal(true);
@@ -330,6 +383,7 @@ export default function AdminLostFoundPage() {
                                             )}
                                             {/* Delete button always visible for all items */}
                                             <button
+                                                type="button"
                                                 onClick={() => {
                                                     setSelectedItem(item);
                                                     setShowDeleteModal(true);
@@ -473,22 +527,102 @@ export default function AdminLostFoundPage() {
                                 Are you sure you want to permanently delete this item?
                             </p>
                             <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6`}>
-                                ⚠️ This action cannot be undone. The item will be permanently removed from the database.
+                                This action cannot be undone. The item will be permanently removed from the database.
                             </p>
                             <div className="flex space-x-3">
                                 <button
+                                    type="button"
                                     onClick={() => setShowDeleteModal(false)}
                                     className={`flex-1 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}
                                 >
                                     Cancel
                                 </button>
                                 <button
+                                    type="button"
                                     onClick={handleDelete}
                                     disabled={actionLoading}
                                     className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
                                 >
                                     {actionLoading ? 'Deleting...' : 'Delete Permanently'}
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Image Edit Modal */}
+                {showImageModal && selectedItem && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+                            <div className="flex items-center mb-4">
+                                <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-4">
+                                    <ImageIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                                </div>
+                                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                    Edit Item Image
+                                </h2>
+                            </div>
+
+                            {/* Current Image Preview */}
+                            <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                                <p className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Current Image:
+                                </p>
+                                <div className={`w-full h-40 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} flex items-center justify-center`}>
+                                    {selectedItem.imageUrl ? (
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedItem.imageUrl)}`}
+                                            alt={selectedItem.title}
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <div className="text-center">
+                                            <ImageIcon className={`w-12 h-12 mx-auto ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                                            <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Upload New Image */}
+                            <div className="mb-4">
+                                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                    Upload New Image:
+                                </label>
+                                <label className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isDarkMode ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
+                                    <Upload className={`w-5 h-5 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                        {imageUploading ? 'Uploading...' : 'Click to upload image'}
+                                    </span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={imageUploading}
+                                        className="hidden"
+                                    />
+                                </label>
+                            </div>
+
+                            <div className="flex space-x-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowImageModal(false)}
+                                    disabled={imageUploading}
+                                    className={`flex-1 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}
+                                >
+                                    Cancel
+                                </button>
+                                {selectedItem.imageUrl && (
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        disabled={imageUploading}
+                                        className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
+                                    >
+                                        {imageUploading ? 'Removing...' : 'Remove Image'}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

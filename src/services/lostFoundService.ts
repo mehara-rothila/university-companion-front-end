@@ -216,6 +216,17 @@ class LostFoundService {
       throw error;
     }
   }
+
+  // Admin: Update item image
+  async updateItemImage(itemId: number, imageUrl: string | null): Promise<LostFoundItem> {
+    try {
+      const response = await this.api.put(`/lost-found/items/${itemId}/image`, { imageUrl });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating item image:', error);
+      throw error;
+    }
+  }
 }
 
 const lostFoundService = new LostFoundService();
