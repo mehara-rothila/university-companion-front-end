@@ -9,7 +9,10 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
+import LostFoundContactModal from '@/components/LostFoundContactModal';
+import LostFoundInbox from '@/components/LostFoundInbox';
 import lostFoundService, { LostFoundItem, LostFoundStats, LostFoundItemRequest } from '@/services/lostFoundService';
+import lostFoundMessageService, { Conversation, UnreadCounts } from '@/services/lostFoundMessageService';
 
 // --- Local Interfaces ---
 
@@ -39,10 +42,13 @@ export default function LostFoundPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({ unreadMessages: 0, pendingRequests: 0, total: 0 });
 
   // Prevent body scroll when modals are open
   useEffect(() => {
-    if (showPostModal || showContactModal) {
+    if (showPostModal || showContactModal || showInbox) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -52,7 +58,22 @@ export default function LostFoundPage() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [showPostModal, showContactModal]);
+  }, [showPostModal, showContactModal, showInbox]);
+
+  // Load unread message counts
+  const loadUnreadCounts = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const counts = await lostFoundMessageService.getUnreadCount();
+      setUnreadCounts(counts);
+    } catch (err) {
+      console.error('Error loading unread counts:', err);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    loadUnreadCounts();
+  }, [loadUnreadCounts]);
   const [selectedItem, setSelectedItem] = useState<LostFoundItem | null>(null);
   const [itemPosted, setItemPosted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -277,15 +298,31 @@ export default function LostFoundPage() {
               {/* Quick Actions */}
               <div className="flex flex-wrap justify-center gap-4">
                 {isAuthenticated ? (
-                  <button
-                    onClick={() => setShowPostModal(true)}
-                    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Report Lost/Found Item
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setShowPostModal(true)}
+                      className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      {t('lostFound.reportItem')}
+                    </button>
+                    <button
+                      onClick={() => setShowInbox(true)}
+                      className={`relative px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-white hover:bg-gray-100 text-gray-700'} rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center border ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      {t('lostFound.messages.inbox')}
+                      {unreadCounts.total > 0 && (
+                        <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                          {unreadCounts.total > 9 ? '9+' : unreadCounts.total}
+                        </span>
+                      )}
+                    </button>
+                  </>
                 ) : (
                   <Link
                     href="/login"
@@ -1022,56 +1059,54 @@ export default function LostFoundPage() {
 
         {/* Contact Modal */}
         {showContactModal && selectedItem && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Contact Owner</h2>
-                <button
-                  onClick={() => setShowContactModal(false)}
-                  className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+          <LostFoundContactModal
+            item={selectedItem}
+            existingConversation={selectedConversation}
+            onClose={() => {
+              setShowContactModal(false);
+              setSelectedItem(null);
+              setSelectedConversation(null);
+              loadUnreadCounts();
+            }}
+            onConversationCreated={(conv) => {
+              setSelectedConversation(conv);
+              loadUnreadCounts();
+            }}
+          />
+        )}
 
-              <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-                  {selectedItem.title}
-                </h3>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                  {selectedItem.contactMethod === 'ANONYMOUS'
-                    ? 'This user prefers anonymous contact. Your message will be forwarded securely.'
-                    : `Contact ${selectedItem.postedBy} directly about this item.`
-                  }
-                </p>
-
-                <div className="space-y-3">
-                  <button className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    Send Message
-                  </button>
-
-                  {selectedItem.contactMethod === 'DIRECT' && (
-                    <button className={`w-full px-6 py-3 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200 flex items-center justify-center`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      Call Directly
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Inbox Modal */}
+        {showInbox && (
+          <LostFoundInbox
+            onSelectConversation={(conv) => {
+              setSelectedConversation(conv);
+              // Find the item from the conversation
+              const mockItem: LostFoundItem = {
+                id: conv.item.id,
+                type: conv.item.type,
+                title: conv.item.title,
+                description: '',
+                category: conv.item.category,
+                location: conv.item.location,
+                dateReported: conv.createdAt,
+                imageUrl: conv.item.imageUrl,
+                contactMethod: conv.item.contactMethod as 'ANONYMOUS' | 'DIRECT',
+                status: 'ACTIVE',
+                postedBy: conv.owner.fullName || conv.owner.username,
+                postedByUserId: conv.owner.id,
+                tags: [],
+                createdAt: conv.createdAt,
+                updatedAt: conv.updatedAt
+              };
+              setSelectedItem(mockItem);
+              setShowInbox(false);
+              setShowContactModal(true);
+            }}
+            onClose={() => {
+              setShowInbox(false);
+              loadUnreadCounts();
+            }}
+          />
         )}
       </main>
     </>
