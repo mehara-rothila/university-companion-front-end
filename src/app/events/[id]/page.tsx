@@ -129,7 +129,7 @@ export default function EventDetailPage() {
   const handleCancelRegistration = async () => {
     if (!eventId || !user?.id) return;
 
-    if (!confirm('Are you sure you want to cancel your registration?')) return;
+    if (!confirm(t('events.confirmations.cancelRegistration'))) return;
 
     setRegistrationLoading(true);
     setRegistrationError('');
@@ -177,7 +177,7 @@ export default function EventDetailPage() {
   const handleDeleteComment = async (commentId: number) => {
     if (!eventId || !user?.id) return;
 
-    if (!confirm('Are you sure you want to delete this comment?')) return;
+    if (!confirm(t('events.confirmations.deleteComment'))) return;
 
     try {
       await eventService.deleteEventComment(eventId, commentId, user.id);

@@ -183,7 +183,7 @@ export default function EditEventPage() {
   const handleDelete = async () => {
     if (!user?.id || !eventId) return;
 
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+    if (!confirm(t('events.confirmations.deleteEvent'))) {
       return;
     }
 
@@ -193,7 +193,7 @@ export default function EditEventPage() {
       await eventService.deleteEvent(eventId, user.id);
       router.push('/events');
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete event');
+      alert(err.response?.data?.error || t('events.errors.deleteFailed'));
     } finally {
       setDeleting(false);
     }
