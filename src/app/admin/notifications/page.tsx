@@ -208,23 +208,22 @@ export default function AdminNotifications() {
     }
   }, [error, successMessage]);
 
-  // TODO: TEMPORARY - Uncomment this block to re-enable admin role check
-  // if (user?.role !== 'ADMIN') {
-  //   return (
-  //     <>
-  //       <Navigation />
-  //       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-  //         <AnimatedBackground variant="dashboard" />
-  //         <div className="flex items-center justify-center h-screen">
-  //           <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-  //             <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-  //             <p>You need admin privileges to access this page.</p>
-  //           </div>
-  //         </div>
-  //       </main>
-  //     </>
-  //   );
-  // }
+  if (user?.role !== 'ADMIN') {
+    return (
+      <>
+        <Navigation />
+        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+          <AnimatedBackground variant="dashboard" />
+          <div className="flex items-center justify-center h-screen">
+            <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+              <p>You need admin privileges to access this page.</p>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

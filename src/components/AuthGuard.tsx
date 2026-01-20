@@ -22,9 +22,6 @@ export default function AuthGuard({
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    // TODO: TEMPORARY - Remove this line and uncomment below to re-enable auth
-    setIsAuthorized(true); return;
-
     if (loading) return;
 
     // Check authentication

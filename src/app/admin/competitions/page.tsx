@@ -187,19 +187,18 @@ export default function AdminCompetitionsPage() {
     });
   };
 
-  // TODO: TEMPORARY - Uncomment this block to re-enable auth check
-  // if (!user) {
-  //   return (
-  //     <>
-  //       <Navigation />
-  //       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
-  //         <div className="text-center">
-  //           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Please log in to continue</p>
-  //         </div>
-  //       </main>
-  //     </>
-  //   );
-  // }
+  if (!user) {
+    return (
+      <>
+        <Navigation />
+        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+          <div className="text-center">
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Please log in to continue</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   if (loading) {
     return (

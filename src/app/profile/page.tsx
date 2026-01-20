@@ -9,6 +9,7 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { useTranslation } from '@/contexts/TranslationContext';
 import axios from 'axios';
+import AuthGuard from '@/components/AuthGuard';
 
 // --- Interfaces ---
 interface UserProfile {
@@ -250,7 +251,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <>
+    <AuthGuard>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         
@@ -879,6 +880,6 @@ export default function ProfilePage() {
           </div>
         )}
       </main>
-    </>
+    </AuthGuard>
   );
 }

@@ -8,6 +8,7 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { fileManagementService, UserFile, FileStats } from '@/services/fileManagementService';
 import { Trash2, Download, Image, FileText, HardDrive, FolderOpen, Video } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function MyUploadsPage() {
   const { isDarkMode } = useDarkMode();
@@ -98,8 +99,9 @@ export default function MyUploadsPage() {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-      <AnimatedBackground />
+    <AuthGuard>
+      <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
+        <AnimatedBackground />
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
@@ -342,7 +344,8 @@ export default function MyUploadsPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

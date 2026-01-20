@@ -161,10 +161,9 @@ export default function AdminLostFoundPage() {
         });
     };
 
-    // TODO: TEMPORARY - Uncomment to re-enable auth check
-    // if (!user) {
-    //     return null; // Or loading spinner handled by AuthGuard/Context usually
-    // }
+    if (!user) {
+        return null;
+    }
 
     return (
         <>
