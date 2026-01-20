@@ -207,7 +207,7 @@ export default function LostFoundPage() {
 
   // Handle delete item
   const handleDeleteItem = async (itemId: number) => {
-    if (!confirm('Are you sure you want to delete this item?')) {
+    if (!confirm(t('lostFound.messages.confirmDelete'))) {
       return;
     }
 
@@ -218,7 +218,7 @@ export default function LostFoundPage() {
       await loadStats();
       await loadMyItems(); // Reload user's items after deletion
     } catch (err) {
-      setError('Failed to delete item. Please try again.');
+      setError(t('lostFound.errors.deleteFailed'));
       console.error('Error deleting item:', err);
     } finally {
       setLoading(false);
