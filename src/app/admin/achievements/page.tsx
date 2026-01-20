@@ -66,7 +66,7 @@ export default function AdminAchievementsPage() {
       }
       setAchievements(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load achievements');
+      setError(err.response?.data?.error || t('admin.achievements.failedToLoad'));
       console.error('Error fetching achievements:', err);
     } finally {
       setLoading(false);
@@ -74,14 +74,14 @@ export default function AdminAchievementsPage() {
   };
 
   const handleApprove = async (achievementId: number) => {
-    if (!user?.id || !confirm('Are you sure you want to approve this achievement?')) return;
+    if (!user?.id || !confirm(t('admin.achievements.confirmApprove'))) return;
 
     try {
       setActionLoading(true);
       await achievementService.approveAchievement(achievementId);
       await loadAchievements();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to approve achievement');
+      alert(err.response?.data?.error || t('admin.achievements.failedToApprove'));
     } finally {
       setActionLoading(false);
     }
@@ -95,7 +95,7 @@ export default function AdminAchievementsPage() {
 
   const handleReject = async () => {
     if (!user?.id || !selectedAchievement || !rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      alert(t('admin.achievements.provideRejectionReason'));
       return;
     }
 
@@ -107,7 +107,7 @@ export default function AdminAchievementsPage() {
       setRejectionReason('');
       await loadAchievements();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to reject achievement');
+      alert(err.response?.data?.error || t('admin.achievements.failedToReject'));
     } finally {
       setActionLoading(false);
     }
@@ -128,7 +128,7 @@ export default function AdminAchievementsPage() {
       setSelectedAchievement(null);
       await loadAchievements();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete achievement');
+      alert(err.response?.data?.error || t('admin.achievements.failedToDelete'));
     } finally {
       setActionLoading(false);
     }
@@ -151,7 +151,7 @@ export default function AdminAchievementsPage() {
       setSelectedAchievement(null);
       await loadAchievements();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to upload image');
+      alert(err.response?.data?.error || t('admin.achievements.failedToUpload'));
     } finally {
       setImageUploading(false);
     }
@@ -167,7 +167,7 @@ export default function AdminAchievementsPage() {
       setSelectedAchievement(null);
       await loadAchievements();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to remove image');
+      alert(err.response?.data?.error || t('admin.achievements.failedToRemove'));
     } finally {
       setImageUploading(false);
     }
@@ -200,11 +200,11 @@ export default function AdminAchievementsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Approved</span>;
+        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">{t('admin.achievements.approved')}</span>;
       case 'PENDING':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">Pending</span>;
+        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">{t('admin.achievements.pending')}</span>;
       case 'REJECTED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">Rejected</span>;
+        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">{t('admin.achievements.rejected')}</span>;
       default:
         return <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">{status}</span>;
     }
@@ -223,7 +223,7 @@ export default function AdminAchievementsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
-                  Access denied. Admin privileges required.
+                  {t('admin.common.accessDeniedMessage')}
                 </p>
               </div>
             </div>
@@ -247,10 +247,10 @@ export default function AdminAchievementsPage() {
             <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
               <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
                 <Trophy className="h-10 w-10 mr-3 text-yellow-500" />
-                Achievement Management
+                {t('admin.achievements.title')}
               </h1>
               <p className={`text-lg md:text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Review, approve, and manage student achievements
+                {t('admin.achievements.subtitle')}
               </p>
             </div>
           </div>
@@ -259,7 +259,7 @@ export default function AdminAchievementsPage() {
           <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-4 mb-8`}>
             <div className="flex items-center gap-2 mb-4">
               <Filter className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Filter by Status:</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('admin.achievements.filterByStatus')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -272,7 +272,7 @@ export default function AdminAchievementsPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-yellow-100 hover:text-yellow-700'
                 }`}
               >
-                Pending
+                {t('admin.achievements.pending')}
               </button>
               <button
                 onClick={() => setFilter('APPROVED')}
@@ -284,7 +284,7 @@ export default function AdminAchievementsPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700'
                 }`}
               >
-                Approved
+                {t('admin.achievements.approved')}
               </button>
               <button
                 onClick={() => setFilter('REJECTED')}
@@ -296,7 +296,7 @@ export default function AdminAchievementsPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-700'
                 }`}
               >
-                Rejected
+                {t('admin.achievements.rejected')}
               </button>
               <button
                 onClick={() => setFilter('ALL')}
@@ -308,7 +308,7 @@ export default function AdminAchievementsPage() {
                       : 'bg-gray-100 text-gray-700 hover:bg-purple-100 hover:text-purple-700'
                 }`}
               >
-                All Achievements
+                {t('admin.achievements.allAchievements')}
               </button>
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function AdminAchievementsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {filter === 'ALL' ? 'Total Achievements' : `${filter} Achievements`}
+                  {filter === 'ALL' ? t('admin.achievements.totalAchievements') : `${t(`admin.achievements.${filter.toLowerCase()}`)} ${t('achievements')}`}
                 </p>
                 <p className="text-3xl font-bold text-yellow-500">{achievements.length}</p>
               </div>
@@ -330,7 +330,7 @@ export default function AdminAchievementsPage() {
           {loading && (
             <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}>
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Loading achievements...</p>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('admin.achievements.loading')}</p>
             </div>
           )}
 
@@ -354,9 +354,9 @@ export default function AdminAchievementsPage() {
               {achievements.length === 0 ? (
                 <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
                   <CheckCircle size={64} className="mx-auto mb-4 text-green-500" />
-                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>No achievements found</h3>
+                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('admin.achievements.noAchievements')}</h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                    No achievements match the current filter.
+                    {t('admin.achievements.noAchievementsMatch')}
                   </p>
                 </div>
               ) : (
@@ -409,7 +409,7 @@ export default function AdminAchievementsPage() {
                               <div className="flex items-center gap-2 text-sm">
                                 <Calendar size={16} className="text-yellow-500" />
                                 <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                  Achieved: {formatDate(achievement.achievementDate)}
+                                  {t('admin.achievements.achieved')} {formatDate(achievement.achievementDate)}
                                 </span>
                               </div>
                             )}
@@ -418,7 +418,7 @@ export default function AdminAchievementsPage() {
                             <div className="flex items-center gap-2 text-sm">
                               <Calendar size={16} className="text-blue-500" />
                               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                Submitted: {formatDate(achievement.createdAt)}
+                                {t('admin.achievements.submitted')} {formatDate(achievement.createdAt)}
                               </span>
                             </div>
                           </div>
@@ -428,15 +428,15 @@ export default function AdminAchievementsPage() {
                             <div className="flex items-center gap-2 mb-2">
                               <User size={14} className="text-yellow-500" />
                               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                <strong>Student:</strong> {achievement.studentName}
+                                <strong>{t('admin.achievements.student')}</strong> {achievement.studentName}
                               </span>
                             </div>
                             <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                              Email: {achievement.studentEmail}
+                              {t('admin.achievements.email')} {achievement.studentEmail}
                             </p>
                             {achievement.studentMajor && (
                               <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-                                Major: {achievement.studentMajor}
+                                {t('admin.achievements.major')} {achievement.studentMajor}
                                 {achievement.studentYear && ` (Year ${achievement.studentYear})`}
                               </p>
                             )}
@@ -450,7 +450,7 @@ export default function AdminAchievementsPage() {
                               className={`flex items-center gap-2 px-4 py-2 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} disabled:bg-gray-400 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} rounded-lg text-sm transition-colors font-medium`}
                             >
                               <Pencil size={16} />
-                              Edit Image
+                              {t('admin.achievements.editImage')}
                             </button>
 
                             {(achievement.status === 'PENDING' || achievement.status === 'REJECTED') && (
@@ -460,7 +460,7 @@ export default function AdminAchievementsPage() {
                                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg text-sm transition-colors font-medium"
                               >
                                 <CheckCircle size={16} />
-                                Approve
+                                {t('admin.achievements.approve')}
                               </button>
                             )}
 
@@ -471,7 +471,7 @@ export default function AdminAchievementsPage() {
                                 className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg text-sm transition-colors font-medium"
                               >
                                 <XCircle size={16} />
-                                Reject
+                                {t('admin.achievements.reject')}
                               </button>
                             )}
 
@@ -481,7 +481,7 @@ export default function AdminAchievementsPage() {
                               className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg text-sm transition-colors font-medium"
                             >
                               <Trash2 size={16} />
-                              Delete
+                              {t('admin.achievements.delete')}
                             </button>
                           </div>
                         </div>
@@ -502,7 +502,7 @@ export default function AdminAchievementsPage() {
                     <XCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                   </div>
                   <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Reject Achievement
+                    {t('admin.achievements.rejectAchievement')}
                   </h2>
                 </div>
 
@@ -522,7 +522,7 @@ export default function AdminAchievementsPage() {
 
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Rejection Reason *
+                    {t('admin.achievements.rejectionReason')}
                   </label>
                   <textarea
                     value={rejectionReason}
@@ -533,7 +533,7 @@ export default function AdminAchievementsPage() {
                         ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
                     } focus:ring-2 focus:ring-orange-500 focus:border-transparent`}
-                    placeholder="Please provide a clear reason for rejection..."
+                    placeholder={t('admin.achievements.rejectionPlaceholder')}
                   />
                 </div>
 
@@ -543,7 +543,7 @@ export default function AdminAchievementsPage() {
                     disabled={actionLoading || !rejectionReason.trim()}
                     className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                   >
-                    {actionLoading ? 'Rejecting...' : 'Confirm Reject'}
+                    {actionLoading ? t('admin.achievements.rejecting') : t('admin.achievements.confirmReject')}
                   </button>
 
                   <button
@@ -557,7 +557,7 @@ export default function AdminAchievementsPage() {
                       isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
-                    Cancel
+                    {t('admin.achievements.cancel')}
                   </button>
                 </div>
               </div>
@@ -573,7 +573,7 @@ export default function AdminAchievementsPage() {
                     <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
                   <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Delete Achievement Permanently
+                    {t('admin.achievements.deleteAchievement')}
                   </h2>
                 </div>
 
@@ -592,10 +592,10 @@ export default function AdminAchievementsPage() {
                 </div>
 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                  Are you sure you want to permanently delete this achievement?
+                  {t('admin.achievements.deleteConfirm')}
                 </p>
                 <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
-                  This action cannot be undone.
+                  {t('admin.achievements.deleteWarning')}
                 </p>
 
                 <div className="flex gap-3">
@@ -605,7 +605,7 @@ export default function AdminAchievementsPage() {
                     disabled={actionLoading}
                     className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                   >
-                    {actionLoading ? 'Deleting...' : 'Delete Permanently'}
+                    {actionLoading ? t('admin.achievements.deleting') : t('admin.achievements.deletePermanently')}
                   </button>
 
                   <button
@@ -619,7 +619,7 @@ export default function AdminAchievementsPage() {
                       isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
-                    Cancel
+                    {t('admin.achievements.cancel')}
                   </button>
                 </div>
               </div>
@@ -635,14 +635,14 @@ export default function AdminAchievementsPage() {
                     <ImageIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    Edit Achievement Image
+                    {t('admin.achievements.editAchievementImage')}
                   </h2>
                 </div>
 
                 {/* Current Image Preview */}
                 <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
                   <p className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Current Image:
+                    {t('admin.achievements.currentImage')}
                   </p>
                   <div className={`w-full h-40 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} flex items-center justify-center`}>
                     {selectedAchievement.imageUrl ? (
@@ -654,7 +654,7 @@ export default function AdminAchievementsPage() {
                     ) : (
                       <div className="text-center">
                         <Trophy className={`w-12 h-12 mx-auto ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No image</p>
+                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('admin.achievements.noImage')}</p>
                       </div>
                     )}
                   </div>
@@ -663,12 +663,12 @@ export default function AdminAchievementsPage() {
                 {/* Upload New Image */}
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Upload New Image:
+                    {t('admin.achievements.uploadNewImage')}
                   </label>
                   <label className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isDarkMode ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
                     <Upload className={`w-5 h-5 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
                     <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {imageUploading ? 'Uploading...' : 'Click to upload image'}
+                      {imageUploading ? t('admin.achievements.uploading') : t('admin.achievements.clickToUpload')}
                     </span>
                     <input
                       type="file"
@@ -690,7 +690,7 @@ export default function AdminAchievementsPage() {
                     disabled={imageUploading}
                     className={`flex-1 px-4 py-2 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} rounded-lg font-medium transition-all duration-200`}
                   >
-                    Cancel
+                    {t('admin.achievements.cancel')}
                   </button>
                   {selectedAchievement.imageUrl && (
                     <button
@@ -699,7 +699,7 @@ export default function AdminAchievementsPage() {
                       disabled={imageUploading}
                       className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                     >
-                      {imageUploading ? 'Removing...' : 'Remove Image'}
+                      {imageUploading ? t('admin.achievements.removing') : t('admin.achievements.removeImage')}
                     </button>
                   )}
                 </div>

@@ -30,7 +30,7 @@ export default function AdminCompetitionsPage() {
   useEffect(() => {
     // Check if user is admin
     if (user && user.role !== 'ADMIN') {
-      alert('Access denied. Admin privileges required.');
+      alert(t('admin.competitions.accessDenied'));
       router.push('/dashboard');
       return;
     }
@@ -57,7 +57,7 @@ export default function AdminCompetitionsPage() {
       setCompetitions(data);
     } catch (error) {
       console.error('Error loading competitions:', error);
-      alert('Failed to load competitions');
+      alert(t('admin.competitions.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -69,13 +69,13 @@ export default function AdminCompetitionsPage() {
     try {
       setActionLoading(true);
       await competitionService.approveCompetition(selectedCompetition.id);
-      alert('Competition approved successfully!');
+      alert(t('admin.competitions.approvedSuccess'));
       setShowApproveModal(false);
       setSelectedCompetition(null);
       loadCompetitions();
     } catch (error) {
       console.error('Error approving competition:', error);
-      alert('Failed to approve competition');
+      alert(t('admin.competitions.failedToApprove'));
     } finally {
       setActionLoading(false);
     }
@@ -84,18 +84,18 @@ export default function AdminCompetitionsPage() {
   const handleHide = async (competitionId: number) => {
     if (!user?.id) return;
 
-    if (!confirm('Are you sure you want to hide this competition? It will be removed from public view.')) {
+    if (!confirm(t('admin.competitions.confirmHide'))) {
       return;
     }
 
     try {
       setActionLoading(true);
       await competitionService.hideCompetition(competitionId);
-      alert('Competition hidden successfully!');
+      alert(t('admin.competitions.hiddenSuccess'));
       loadCompetitions();
     } catch (error) {
       console.error('Error hiding competition:', error);
-      alert('Failed to hide competition');
+      alert(t('admin.competitions.failedToHide'));
     } finally {
       setActionLoading(false);
     }
@@ -105,21 +105,21 @@ export default function AdminCompetitionsPage() {
     if (!user?.id || !selectedCompetition) return;
 
     if (!rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      alert(t('admin.competitions.provideRejectionReason'));
       return;
     }
 
     try {
       setActionLoading(true);
       await competitionService.rejectCompetition(selectedCompetition.id, rejectionReason);
-      alert('Competition rejected');
+      alert(t('challenges.status.rejected'));
       setShowRejectModal(false);
       setRejectionReason('');
       setSelectedCompetition(null);
       loadCompetitions();
     } catch (error) {
       console.error('Error rejecting competition:', error);
-      alert('Failed to reject competition');
+      alert(t('admin.competitions.failedToReject'));
     } finally {
       setActionLoading(false);
     }
@@ -131,13 +131,13 @@ export default function AdminCompetitionsPage() {
     try {
       setActionLoading(true);
       await competitionService.deleteCompetition(selectedCompetition.id);
-      alert('Competition deleted successfully!');
+      alert(t('admin.competitions.deletedSuccess'));
       setShowDeleteModal(false);
       setSelectedCompetition(null);
       loadCompetitions();
     } catch (error) {
       console.error('Error deleting competition:', error);
-      alert('Failed to delete competition');
+      alert(t('admin.competitions.failedToDelete'));
     } finally {
       setActionLoading(false);
     }
@@ -193,7 +193,7 @@ export default function AdminCompetitionsPage() {
         <Navigation />
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Please log in to continue</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('admin.common.pleaseLogin')}</p>
           </div>
         </main>
       </>
@@ -207,7 +207,7 @@ export default function AdminCompetitionsPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading competitions...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('challenges.loading')}</p>
           </div>
         </main>
       </>

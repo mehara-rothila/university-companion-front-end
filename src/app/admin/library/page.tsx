@@ -57,7 +57,7 @@ export default function AdminLibraryPage() {
     useEffect(() => {
         // Check if user is admin
         if (user && user.role !== 'ADMIN') {
-            alert('Access denied. Admin privileges required.');
+            alert(t('admin.library.accessDenied'));
             router.push('/dashboard');
             return;
         }
@@ -103,7 +103,7 @@ export default function AdminLibraryPage() {
             }
         } catch (error) {
             console.error('Error loading books:', error);
-            alert('Failed to load books. Please check if you have admin access.');
+            alert(t('admin.library.failedToLoad'));
         } finally {
             setLoading(false);
         }
@@ -124,11 +124,11 @@ export default function AdminLibraryPage() {
                 loadBooks();
                 loadStats();
             } else {
-                alert('Failed to approve book');
+                alert(t('admin.library.failedToApprove'));
             }
         } catch (error) {
             console.error('Error approving book:', error);
-            alert('Failed to approve book. Please check your admin privileges.');
+            alert(t('admin.library.failedToApprove'));
         } finally {
             setActionLoading(false);
         }
@@ -149,11 +149,11 @@ export default function AdminLibraryPage() {
                 loadBooks();
                 loadStats();
             } else {
-                alert('Failed to reject book');
+                alert(t('admin.library.failedToReject'));
             }
         } catch (error) {
             console.error('Error rejecting book:', error);
-            alert('Failed to reject book. Please check your admin privileges.');
+            alert(t('admin.library.failedToReject'));
         } finally {
             setActionLoading(false);
         }
@@ -174,11 +174,11 @@ export default function AdminLibraryPage() {
                 loadBooks();
                 loadStats();
             } else {
-                alert('Failed to delete book');
+                alert(t('admin.library.failedToDelete'));
             }
         } catch (error) {
             console.error('Error deleting book:', error);
-            alert('Failed to delete book. Please check your admin privileges.');
+            alert(t('admin.library.failedToDelete'));
         } finally {
             setActionLoading(false);
         }

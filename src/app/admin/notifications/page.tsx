@@ -139,17 +139,17 @@ export default function AdminNotifications() {
   };
 
   const deleteNotification = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this notification?')) return;
+    if (!confirm(t('admin.notifications.confirmDelete'))) return;
 
     try {
       await axios.delete(`${API_BASE}/notifications/admin/${id}`, {
         headers: getAuthHeaders()
       });
-      setSuccessMessage('Notification deleted successfully');
+      setSuccessMessage(t('admin.notifications.deleteSuccess'));
       loadNotifications();
     } catch (error) {
       console.error('Failed to delete notification:', error);
-      setError('Failed to delete notification');
+      setError(t('admin.notifications.failedToDelete'));
     }
   };
 

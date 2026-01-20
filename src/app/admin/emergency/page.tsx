@@ -174,17 +174,17 @@ export default function AdminEmergency() {
   };
 
   const deleteEmergency = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this emergency alert?')) return;
+    if (!confirm(t('admin.emergency.confirmDelete'))) return;
 
     try {
       await axios.delete(`${API_BASE}/emergency/${id}`, {
         headers: getAuthHeaders()
       });
-      setSuccessMessage('Emergency alert deleted successfully');
+      setSuccessMessage(t('admin.emergency.deleteSuccess'));
       loadEmergencies();
     } catch (error) {
       console.error('Failed to delete emergency:', error);
-      setError('Failed to delete emergency alert');
+      setError(t('admin.emergency.failedToDelete'));
     }
   };
 

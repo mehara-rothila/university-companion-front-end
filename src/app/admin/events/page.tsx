@@ -73,14 +73,14 @@ export default function AdminEventsPage() {
   };
 
   const handleApprove = async (eventId: number) => {
-    if (!user?.id || !confirm('Are you sure you want to approve this event?')) return;
+    if (!user?.id || !confirm(t('events.confirmations.approveEvent'))) return;
 
     try {
       setActionLoading(true);
       await eventService.approveEvent(eventId);
       await loadEvents();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to approve event');
+      alert(err.response?.data?.error || t('events.errors.approveFailed'));
     } finally {
       setActionLoading(false);
     }
@@ -94,7 +94,7 @@ export default function AdminEventsPage() {
 
   const handleReject = async () => {
     if (!user?.id || !selectedEvent || !rejectionReason.trim()) {
-      alert('Please provide a rejection reason');
+      alert(t('events.errors.rejectionReasonRequired'));
       return;
     }
 
@@ -106,7 +106,7 @@ export default function AdminEventsPage() {
       setRejectionReason('');
       await loadEvents();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to reject event');
+      alert(err.response?.data?.error || t('events.errors.rejectFailed'));
     } finally {
       setActionLoading(false);
     }
@@ -127,7 +127,7 @@ export default function AdminEventsPage() {
       setSelectedEvent(null);
       await loadEvents();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete event');
+      alert(err.response?.data?.error || t('events.errors.deleteFailed'));
     } finally {
       setActionLoading(false);
     }

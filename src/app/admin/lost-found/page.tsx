@@ -30,7 +30,7 @@ export default function AdminLostFoundPage() {
     useEffect(() => {
         // Check if user is admin
         if (user && user.role !== 'ADMIN') {
-            alert('Access denied. Admin privileges required.');
+            alert(t('admin.lostFound.accessDenied'));
             router.push('/dashboard');
             return;
         }
@@ -58,7 +58,7 @@ export default function AdminLostFoundPage() {
             }
         } catch (error) {
             console.error('Error loading items:', error);
-            alert('Failed to load items. Please check if you have admin access.');
+            alert(t('admin.lostFound.failedToLoad'));
         } finally {
             setLoading(false);
         }
@@ -75,7 +75,7 @@ export default function AdminLostFoundPage() {
             loadItems();
         } catch (error) {
             console.error('Error approving item:', error);
-            alert('Failed to approve item. Please check your admin privileges.');
+            alert(t('admin.lostFound.failedToApprove'));
         } finally {
             setActionLoading(false);
         }
@@ -92,7 +92,7 @@ export default function AdminLostFoundPage() {
             loadItems();
         } catch (error) {
             console.error('Error rejecting item:', error);
-            alert('Failed to reject item. Please check your admin privileges.');
+            alert(t('admin.lostFound.failedToReject'));
         } finally {
             setActionLoading(false);
         }
@@ -109,7 +109,7 @@ export default function AdminLostFoundPage() {
             loadItems();
         } catch (error) {
             console.error('Error deleting item:', error);
-            alert('Failed to delete item. Please check your admin privileges.');
+            alert(t('admin.lostFound.failedToDelete'));
         } finally {
             setActionLoading(false);
         }
@@ -128,7 +128,7 @@ export default function AdminLostFoundPage() {
             loadItems();
         } catch (error) {
             console.error('Error uploading image:', error);
-            alert('Failed to upload image.');
+            alert(t('admin.lostFound.failedToUpload'));
         } finally {
             setImageUploading(false);
         }
@@ -145,7 +145,7 @@ export default function AdminLostFoundPage() {
             loadItems();
         } catch (error) {
             console.error('Error removing image:', error);
-            alert('Failed to remove image.');
+            alert(t('admin.lostFound.failedToRemove'));
         } finally {
             setImageUploading(false);
         }
