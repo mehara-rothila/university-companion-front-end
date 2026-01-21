@@ -288,7 +288,7 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
       className={`relative ${isDarkMode
           ? 'bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-gray-800/95 border-blue-500/30'
           : 'bg-gradient-to-br from-white/95 via-blue-50/30 to-white/95 border-blue-300/40'
-        } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[calc(100vh-180px)] md:h-[600px] flex flex-col overflow-hidden group hover:shadow-blue-500/20 transition-all duration-500`}
+        } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[calc(100vh-180px)] md:h-[700px] flex flex-col overflow-hidden group hover:shadow-blue-500/20 transition-all duration-500`}
     >
       {/* Animated gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-cyan-600/5 to-blue-600/5 animate-gradient-shift pointer-events-none"></div>
