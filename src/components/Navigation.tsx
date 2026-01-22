@@ -9,6 +9,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
 import MobileMenuContent from './MobileMenuContent';
+import { getThumbnailUrl } from '@/utils/imageUtils';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -211,7 +212,7 @@ const Navigation = () => {
                 {user?.image && (
                   <img
                     src={user.image.includes('amazonaws.com')
-                      ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
+                      ? getThumbnailUrl(user.image, 64)
                       : user.image}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
