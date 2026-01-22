@@ -140,7 +140,7 @@ export default function LostFoundContactModal({
   // Request a new conversation
   const handleRequestContact = async () => {
     if (!isAuthenticated || !user) {
-      setError(t('lostFound.messages.loginRequired'));
+      setError(t('lostFoundPage.messages.loginRequired'));
       return;
     }
 
@@ -157,7 +157,7 @@ export default function LostFoundContactModal({
       setConversation(newConversation);
       onConversationCreated?.(newConversation);
     } catch (err: any) {
-      const errorMsg = err.response?.data?.error || t('lostFound.messages.requestFailed');
+      const errorMsg = err.response?.data?.error || t('lostFoundPage.messages.requestFailed');
       setError(errorMsg);
     } finally {
       setLoading(false);
@@ -186,7 +186,7 @@ export default function LostFoundContactModal({
       setNewMessage('');
       inputRef.current?.focus();
     } catch (err: any) {
-      setError(err.response?.data?.error || t('lostFound.messages.sendFailed'));
+      setError(err.response?.data?.error || t('lostFoundPage.messages.sendFailed'));
     } finally {
       setSendingMessage(false);
     }
@@ -285,9 +285,9 @@ export default function LostFoundContactModal({
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return t('lostFound.messages.today');
+      return t('lostFoundPage.messages.today');
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return t('lostFound.messages.yesterday');
+      return t('lostFoundPage.messages.yesterday');
     }
     return date.toLocaleDateString();
   };
@@ -347,10 +347,10 @@ export default function LostFoundContactModal({
             </svg>
           </div>
           <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-            {t('lostFound.messages.loginRequired')}
+            {t('lostFoundPage.messages.loginRequired')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {t('lostFound.messages.loginToContact')}
+            {t('lostFoundPage.messages.loginToContact')}
           </p>
         </div>
       );
@@ -367,25 +367,25 @@ export default function LostFoundContactModal({
               </svg>
             </div>
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-              {t('lostFound.messages.contactAbout')} {item.title}
+              {t('lostFoundPage.messages.contactAbout')} {item.title}
             </h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
               {item.contactMethod === 'ANONYMOUS'
-                ? t('lostFound.messages.anonymousNote')
-                : t('lostFound.messages.directNote')
+                ? t('lostFoundPage.messages.anonymousNote')
+                : t('lostFoundPage.messages.directNote')
               }
             </p>
           </div>
 
           <div>
             <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-              {t('lostFound.messages.yourMessage')} ({t('lostFound.messages.optional')})
+              {t('lostFoundPage.messages.yourMessage')} ({t('lostFoundPage.messages.optional')})
             </label>
             <textarea
               value={initialMessage}
               onChange={(e) => setInitialMessage(e.target.value)}
               rows={4}
-              placeholder={t('lostFound.messages.messagePlaceholder')}
+              placeholder={t('lostFoundPage.messages.messagePlaceholder')}
               className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${
                 isDarkMode
                   ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
@@ -405,7 +405,7 @@ export default function LostFoundContactModal({
             disabled={loading}
             className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
           >
-            {loading ? t('lostFound.messages.sending') : t('lostFound.messages.sendRequest')}
+            {loading ? t('lostFoundPage.messages.sending') : t('lostFoundPage.messages.sendRequest')}
           </button>
         </div>
       );
@@ -421,15 +421,15 @@ export default function LostFoundContactModal({
             </svg>
           </div>
           <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-            {t('lostFound.messages.requestPending')}
+            {t('lostFoundPage.messages.requestPending')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {t('lostFound.messages.waitingForApproval')}
+            {t('lostFoundPage.messages.waitingForApproval')}
           </p>
           {conversation.initialMessage && (
             <div className={`mt-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'} text-left`}>
               <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>
-                {t('lostFound.messages.yourMessage')}:
+                {t('lostFoundPage.messages.yourMessage')}:
               </p>
               <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 {conversation.initialMessage}
@@ -450,10 +450,10 @@ export default function LostFoundContactModal({
             </svg>
           </div>
           <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-            {t('lostFound.messages.requestRejected')}
+            {t('lostFoundPage.messages.requestRejected')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {t('lostFound.messages.ownerDeclined')}
+            {t('lostFoundPage.messages.ownerDeclined')}
           </p>
         </div>
       );
@@ -469,10 +469,10 @@ export default function LostFoundContactModal({
             </svg>
           </div>
           <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
-            {t('lostFound.messages.conversationClosed')}
+            {t('lostFoundPage.messages.conversationClosed')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {t('lostFound.messages.closedDescription')}
+            {t('lostFoundPage.messages.closedDescription')}
           </p>
         </div>
       );
@@ -518,7 +518,7 @@ export default function LostFoundContactModal({
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                {t('lostFound.messages.noMessages')}
+                {t('lostFoundPage.messages.noMessages')}
               </p>
             </div>
           ) : (
@@ -618,7 +618,7 @@ export default function LostFoundContactModal({
             onChange={handleMessageChange}
             onKeyPress={handleKeyPress}
             rows={1}
-            placeholder={t('lostFound.messages.typeMessage')}
+            placeholder={t('lostFoundPage.messages.typeMessage')}
             className={`flex-1 px-4 py-2 rounded-lg border resize-none transition-all duration-200 ${
               isDarkMode
                 ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
@@ -705,7 +705,7 @@ export default function LostFoundContactModal({
                       {item.title}
                     </h2>
                     <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {item.type === 'LOST' ? t('lostFound.lost') : t('lostFound.found')} • {item.category}
+                      {item.type === 'LOST' ? t('lostFoundPage.lost') : t('lostFoundPage.found')} • {item.category}
                     </p>
                   </div>
                 </>
@@ -919,3 +919,4 @@ export default function LostFoundContactModal({
     </>
   );
 }
+
