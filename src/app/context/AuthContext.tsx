@@ -18,7 +18,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<boolean | { error: string; email?: string }>;
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [token]);
 
-  const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean | { error: string; email?: string }> => {
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${API_URL}/api/auth/signin`, {
@@ -120,8 +120,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('user', JSON.stringify(userData));
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
+
+      // Check for EMAIL_NOT_VERIFIED error
+      if (error.response?.status === 403 && error.response?.data?.error === 'EMAIL_NOT_VERIFIED') {
+        return {
+          error: 'EMAIL_NOT_VERIFIED',
+          email: error.response.data.email
+        };
+      }
+
       return false;
     }
   }, []);
