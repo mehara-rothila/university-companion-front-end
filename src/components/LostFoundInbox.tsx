@@ -64,7 +64,7 @@ export default function LostFoundInbox({
   };
 
   const handleReject = async (conversationId: number) => {
-    if (!confirm(t('lostFound.messages.confirmReject'))) return;
+    if (!confirm(t('lostFoundPage.messages.confirmReject'))) return;
 
     try {
       setActionLoading(conversationId);
@@ -85,7 +85,7 @@ export default function LostFoundInbox({
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return t('lostFound.messages.justNow');
+    if (diffMins < 1) return t('lostFoundPage.messages.justNow');
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays < 7) return `${diffDays}d`;
@@ -102,7 +102,7 @@ export default function LostFoundInbox({
         {/* Header */}
         <div className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-            {t('lostFound.messages.inbox')}
+            {t('lostFoundPage.messages.inbox')}
           </h2>
           <button
             onClick={onClose}
@@ -124,7 +124,7 @@ export default function LostFoundInbox({
                 : `${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'}`
             }`}
           >
-            {t('lostFound.messages.conversations')}
+            {t('lostFoundPage.messages.conversations')}
             {unreadCounts.unreadMessages > 0 && (
               <span className="ml-2 px-2 py-0.5 text-xs bg-purple-600 text-white rounded-full">
                 {unreadCounts.unreadMessages}
@@ -139,7 +139,7 @@ export default function LostFoundInbox({
                 : `${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'}`
             }`}
           >
-            {t('lostFound.messages.requests')}
+            {t('lostFoundPage.messages.requests')}
             {unreadCounts.pendingRequests > 0 && (
               <span className="ml-2 px-2 py-0.5 text-xs bg-yellow-500 text-white rounded-full">
                 {unreadCounts.pendingRequests}
@@ -162,10 +162,10 @@ export default function LostFoundInbox({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <p className={`text-lg font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {t('lostFound.messages.noConversations')}
+                  {t('lostFoundPage.messages.noConversations')}
                 </p>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mt-1`}>
-                  {t('lostFound.messages.startByContacting')}
+                  {t('lostFoundPage.messages.startByContacting')}
                 </p>
               </div>
             ) : (
@@ -240,10 +240,10 @@ export default function LostFoundInbox({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className={`text-lg font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {t('lostFound.messages.noPendingRequests')}
+                  {t('lostFoundPage.messages.noPendingRequests')}
                 </p>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mt-1`}>
-                  {t('lostFound.messages.allCaughtUp')}
+                  {t('lostFoundPage.messages.allCaughtUp')}
                 </p>
               </div>
             ) : (
@@ -282,7 +282,7 @@ export default function LostFoundInbox({
                           </span>
                         </div>
                         <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-2`}>
-                          {t('lostFound.messages.wantsToContactAbout')} <span className="font-medium">{request.item.title}</span>
+                          {t('lostFoundPage.messages.wantsToContactAbout')} <span className="font-medium">{request.item.title}</span>
                         </p>
                         {request.initialMessage && (
                           <div className={`p-2 rounded-lg mb-3 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
@@ -307,7 +307,7 @@ export default function LostFoundInbox({
                                 </svg>
                               </span>
                             ) : (
-                              t('lostFound.messages.approve')
+                              t('lostFoundPage.messages.approve')
                             )}
                           </button>
                           <button
@@ -319,7 +319,7 @@ export default function LostFoundInbox({
                                 : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                             } disabled:opacity-50`}
                           >
-                            {t('lostFound.messages.decline')}
+                            {t('lostFoundPage.messages.decline')}
                           </button>
                         </div>
                       </div>
@@ -334,3 +334,4 @@ export default function LostFoundInbox({
     </div>
   );
 }
+
