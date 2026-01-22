@@ -317,9 +317,6 @@ export default function Dashboard() {
                             {t(action.titleKey)}
                           </span>
                         </div>
-                        <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border border-green-400/30 font-medium">
-                          ✓
-                        </div>
                       </Link>
                     );
                   }
@@ -448,9 +445,6 @@ export default function Dashboard() {
                             {t(action.titleKey)}
                           </span>
                         </div>
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border border-green-400/30 font-medium">
-                          ✓
-                        </div>
                       </Link>
                     );
                   }
@@ -556,9 +550,6 @@ export default function Dashboard() {
                           <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} leading-tight`}>
                             {action.title}
                           </span>
-                        </div>
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border border-green-400/30 font-medium">
-                          ✓
                         </div>
                       </Link>
                     );
