@@ -77,9 +77,9 @@ export default function EditEventPage() {
         return;
       }
 
-      // Check if event can be edited (only PENDING events)
-      if (data.status !== 'PENDING') {
-        setError('Only pending events can be edited');
+      // Check if event can be edited (PENDING or REJECTED events)
+      if (data.status !== 'PENDING' && data.status !== 'REJECTED') {
+        setError('Only pending or rejected events can be edited');
         return;
       }
 
