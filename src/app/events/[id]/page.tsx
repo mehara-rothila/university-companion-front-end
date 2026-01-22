@@ -9,7 +9,6 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event, EventComment } from '@/types/event';
 import {
@@ -43,6 +42,7 @@ export default function EventDetailPage() {
   // Registration states
   const [isRegistered, setIsRegistered] = useState(false);
   const [isWaitlisted, setIsWaitlisted] = useState(false);
+  const [waitlistPosition, setWaitlistPosition] = useState<number | null>(null);
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState('');
@@ -53,7 +53,7 @@ export default function EventDetailPage() {
   const [commentError, setCommentError] = useState('');
 
   const isCreator = user && event && user.id === event.creatorId;
-  const canEdit = isCreator && event && event.status === 'PENDING';
+  const canEdit = isCreator && event && (event.status === 'PENDING' || event.status === 'REJECTED');
 
   useEffect(() => {
     if (eventId) {
@@ -97,6 +97,7 @@ export default function EventDetailPage() {
       const data = await eventService.isUserRegistered(eventId, user.id);
       setIsRegistered(data.isRegistered);
       setIsWaitlisted(data.isWaitlisted);
+      setWaitlistPosition(data.waitlistPosition || null);
     } catch (err: any) {
       console.error('Error checking registration status:', err);
     }
@@ -222,43 +223,39 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-          <AnimatedBackground variant="dashboard" />
-          <Navigation />
-          <div className="flex items-center justify-center h-screen relative z-10">
-            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}>
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-            </div>
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <AnimatedBackground variant="dashboard" />
+        <Navigation />
+        <div className="flex items-center justify-center h-screen relative z-10">
+          <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
           </div>
         </div>
-      </AuthGuard>
+      </div>
     );
   }
 
   if (error || !event) {
     return (
-      <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-          <AnimatedBackground variant="dashboard" />
-          <Navigation />
-          <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                {error || 'Event not found'}
-              </div>
-              <Link href="/events" className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
-                ← Back to Events
-              </Link>
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <AnimatedBackground variant="dashboard" />
+        <Navigation />
+        <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
+          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+              {error || 'Event not found'}
             </div>
+            <Link href="/events" className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+              ← Back to Events
+            </Link>
           </div>
         </div>
-      </AuthGuard>
+      </div>
     );
   }
 
   return (
-    <AuthGuard>
+    <>
       <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         <AnimatedBackground variant="dashboard" />
         <Navigation />
@@ -301,7 +298,7 @@ export default function EventDetailPage() {
 
             {/* Status Badge (for creator) */}
             {isCreator && (
-              <div className="absolute top-4 left-4">
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
                 <span
                   className={`px-4 py-2 backdrop-blur-sm font-medium rounded-full ${
                     event.status === 'PENDING'
@@ -313,6 +310,17 @@ export default function EventDetailPage() {
                 >
                   {event.status}
                 </span>
+
+                {/* Faculty Auto-Approval Badge */}
+                {event.status === 'APPROVED' &&
+                 event.approvedBy &&
+                 event.creatorId === event.approvedBy &&
+                 event.creatorRole === 'FACULTY' && (
+                  <span className="px-4 py-2 bg-emerald-600/90 backdrop-blur-sm text-white font-medium rounded-full text-sm flex items-center gap-1">
+                    <CheckCircle size={16} />
+                    Faculty Verified
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -354,30 +362,38 @@ export default function EventDetailPage() {
                 </h2>
 
                 {/* Add Comment Form */}
-                <form onSubmit={handleAddComment} className="mb-6">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Add a comment..."
-                      className={`flex-1 px-4 py-2 rounded-lg border ${
-                        isDarkMode
-                          ? 'bg-gray-700 border-gray-600 text-white'
-                          : 'bg-white border-gray-300 text-gray-900'
-                      }`}
-                    />
-                    <button
-                      type="submit"
-                      disabled={commentLoading || !newComment.trim()}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg flex items-center gap-2"
-                    >
-                      <Send size={16} />
-                      Post
-                    </button>
+                {user ? (
+                  <form onSubmit={handleAddComment} className="mb-6">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        className={`flex-1 px-4 py-2 rounded-lg border ${
+                          isDarkMode
+                            ? 'bg-gray-700 border-gray-600 text-white'
+                            : 'bg-white border-gray-300 text-gray-900'
+                        }`}
+                      />
+                      <button
+                        type="submit"
+                        disabled={commentLoading || !newComment.trim()}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg flex items-center gap-2"
+                      >
+                        <Send size={16} />
+                        Post
+                      </button>
+                    </div>
+                    {commentError && <p className="text-red-500 text-sm mt-2">{commentError}</p>}
+                  </form>
+                ) : (
+                  <div className="mb-6 p-4 bg-blue-50 border border-blue-200 text-blue-700 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300 rounded-lg text-center">
+                    <Link href="/login" className="font-medium hover:underline">
+                      Login to add comments
+                    </Link>
                   </div>
-                  {commentError && <p className="text-red-500 text-sm mt-2">{commentError}</p>}
-                </form>
+                )}
 
                 {/* Comments List */}
                 <div className="space-y-4">
@@ -443,11 +459,22 @@ export default function EventDetailPage() {
                 {isWaitlisted && (
                   <div className="mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded-lg flex items-center gap-2">
                     <AlertCircle size={20} />
-                    <span>You're on the waitlist</span>
+                    <span>
+                      {waitlistPosition
+                        ? `You're #${waitlistPosition} on the waitlist`
+                        : "You're on the waitlist"}
+                    </span>
                   </div>
                 )}
 
-                {!isRegistered && !isWaitlisted && (
+                {!user ? (
+                  <Link
+                    href="/login"
+                    className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium mb-4 text-center block"
+                  >
+                    Login to Register
+                  </Link>
+                ) : !isRegistered && !isWaitlisted ? (
                   <button
                     onClick={handleRegister}
                     disabled={registrationLoading}
@@ -455,9 +482,9 @@ export default function EventDetailPage() {
                   >
                     {registrationLoading ? 'Processing...' : 'Register for Event'}
                   </button>
-                )}
+                ) : null}
 
-                {(isRegistered || isWaitlisted) && (
+                {user && (isRegistered || isWaitlisted) && (
                   <button
                     onClick={handleCancelRegistration}
                     disabled={registrationLoading}
@@ -556,6 +583,6 @@ export default function EventDetailPage() {
           </div>
         </main>
       </div>
-    </AuthGuard>
+    </>
   );
 }
