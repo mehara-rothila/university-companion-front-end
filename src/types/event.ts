@@ -49,6 +49,9 @@ export interface Event {
   spotsAvailable?: number;
   creatorName?: string;
   creatorEmail?: string;
+  creatorRole?: string; // STUDENT, FACULTY, ADMIN
+  approvedBy?: number; // User ID who approved (null if not approved)
+  approvedAt?: string; // Timestamp when approved
 }
 
 export interface EventRegistration {
@@ -60,6 +63,7 @@ export interface EventRegistration {
   cancelledAt?: string;
   movedToWaitlistAt?: string;
   movedFromWaitlistAt?: string;
+  waitlistPosition?: number; // Position in waitlist (1-based, null if not waitlisted)
   // Additional fields from API response
   userName?: string;
   userEmail?: string;
