@@ -54,11 +54,11 @@ export default function SignupPage() {
       })
 
       if (response.ok) {
-        setSuccess(t('auth.signup.successMessage'))
-        setTimeout(() => router.push('/login'), 2000)
+        setSuccess('Account created! Please check your email for the verification code.')
+        setTimeout(() => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`), 2000)
       } else {
-        const errorText = await response.text()
-        setError(errorText || t('auth.signup.errorRegistrationFailed'))
+        const errorData = await response.json().catch(() => null)
+        setError(errorData?.message || t('auth.signup.errorRegistrationFailed'))
       }
     } catch (err) {
       setError(t('auth.signup.errorConnection'))
