@@ -10,6 +10,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import { useTranslation } from '@/contexts/TranslationContext';
 import axios from 'axios';
 import AuthGuard from '@/components/AuthGuard';
+import { getPreviewUrl } from '@/utils/imageUtils';
 
 // --- Interfaces ---
 interface UserProfile {
@@ -269,7 +270,7 @@ export default function ProfilePage() {
                   {profileImage ? (
                     <img
                       src={profileImage.includes('amazonaws.com') 
-                        ? `${API_BASE_URL}/api/upload/image/serve?url=${encodeURIComponent(profileImage)}`
+                        ? getPreviewUrl(profileImage, 200)
                         : profileImage}
                       alt="Profile"
                       className="w-16 h-16 rounded-full object-cover border-2 border-purple-500"
