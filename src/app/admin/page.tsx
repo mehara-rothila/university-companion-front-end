@@ -303,13 +303,9 @@ export default function AdminPanel() {
         });
         setSuccessMessage('User updated successfully');
       } else {
-        // Create user - we'll use the signup endpoint for now
-        const signupData = {
-          ...userForm,
-          preferences: []
-        };
-        await axios.post(`${API_BASE}/auth/signup`, signupData, {
-          headers: { 'Content-Type': 'application/json' }
+        // Create user via admin endpoint (allows any role, pre-verified)
+        await axios.post(`${API_BASE}/admin/users`, userForm, {
+          headers: getAuthHeaders()
         });
         setSuccessMessage('User created successfully');
       }
@@ -320,7 +316,8 @@ export default function AdminPanel() {
       loadStats();
     } catch (error: unknown) {
       console.error('Failed to save user:', error);
-      setError((error as any)?.response?.data || 'Failed to save user');
+      const errorMessage = (error as any)?.response?.data?.error || (error as any)?.response?.data?.message || 'Failed to save user';
+      setError(errorMessage);
     }
   };
 
