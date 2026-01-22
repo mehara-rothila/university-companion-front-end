@@ -8,10 +8,10 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event, EventCategory } from '@/types/event';
 import { Calendar, MapPin, Users, Clock, Plus, Filter, Search } from 'lucide-react';
+import { getPreviewUrl } from '@/utils/imageUtils';
 
 export default function EventsPage() {
   const { isDarkMode } = useDarkMode();
@@ -141,7 +141,7 @@ export default function EventsPage() {
   };
 
   return (
-    <AuthGuard>
+    <>
       <Navigation />
       <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         <AnimatedBackground variant="dashboard" />
@@ -343,7 +343,7 @@ export default function EventsPage() {
                       <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
                         {event.imageUrl ? (
                           <Image
-                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(event.imageUrl)}`}
+                            src={getPreviewUrl(event.imageUrl, 500)}
                             alt={event.title}
                             fill
                             className="object-cover"
@@ -465,7 +465,7 @@ export default function EventsPage() {
                       <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600">
                         {event.imageUrl ? (
                           <Image
-                            src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(event.imageUrl)}`}
+                            src={getPreviewUrl(event.imageUrl, 500)}
                             alt={event.title}
                             fill
                             className="object-cover"
@@ -576,6 +576,6 @@ export default function EventsPage() {
           )}
         </div>
       </main>
-    </AuthGuard>
+    </>
   );
 }
