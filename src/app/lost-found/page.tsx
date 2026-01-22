@@ -13,6 +13,7 @@ import LostFoundContactModal from '@/components/LostFoundContactModal';
 import LostFoundInbox from '@/components/LostFoundInbox';
 import lostFoundService, { LostFoundItem, LostFoundStats, LostFoundItemRequest } from '@/services/lostFoundService';
 import lostFoundMessageService, { Conversation, UnreadCounts } from '@/services/lostFoundMessageService';
+import { getPreviewUrl } from '@/utils/imageUtils';
 
 // --- Local Interfaces ---
 
@@ -228,7 +229,7 @@ export default function LostFoundPage() {
 
   // Handle delete item
   const handleDeleteItem = async (itemId: number) => {
-    if (!confirm(t('lostFound.messages.confirmDelete'))) {
+    if (!confirm(t('lostFoundPage.messages.confirmDelete'))) {
       return;
     }
 
@@ -239,7 +240,7 @@ export default function LostFoundPage() {
       await loadStats();
       await loadMyItems(); // Reload user's items after deletion
     } catch (err) {
-      setError(t('lostFound.errors.deleteFailed'));
+      setError(t('lostFoundPage.errors.deleteFailed'));
       console.error('Error deleting item:', err);
     } finally {
       setLoading(false);
@@ -306,7 +307,7 @@ export default function LostFoundPage() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
-                      {t('lostFound.reportItem')}
+                      {t('lostFoundPage.reportItem')}
                     </button>
                     <button
                       onClick={() => setShowInbox(true)}
@@ -315,7 +316,7 @@ export default function LostFoundPage() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
-                      {t('lostFound.messages.inbox')}
+                      {t('lostFoundPage.messages.inbox')}
                       {unreadCounts.total > 0 && (
                         <span className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
                           {unreadCounts.total > 9 ? '9+' : unreadCounts.total}
@@ -555,7 +556,7 @@ export default function LostFoundPage() {
                         {item.imageUrl && (
                           <div className="w-full h-40 rounded-lg mb-4 overflow-hidden bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                             <img
-                              src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`}
+                              src={getPreviewUrl(item.imageUrl, 400)}
                               alt={item.title}
                               className="w-full h-full object-cover"
                               onError={(e) => {
@@ -717,7 +718,7 @@ export default function LostFoundPage() {
                         {item.imageUrl && (
                           <div className="w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-600">
                             <img
-                              src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(item.imageUrl)}`}
+                              src={getPreviewUrl(item.imageUrl, 300)}
                               alt={item.title}
                               className="w-full h-full object-cover"
                               onError={(e) => {
