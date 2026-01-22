@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle, ChevronDown, ChevronUp, GraduationCap, Library } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { getThumbnailUrl } from '@/utils/imageUtils';
 
 interface MobileMenuContentProps {
     closeMenu: () => void;
@@ -155,7 +156,7 @@ const MobileMenuContent = ({ closeMenu, emergencyCount }: MobileMenuContentProps
                             {user?.image && (
                                 <img
                                     src={user.image.includes('amazonaws.com')
-                                        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(user.image)}`
+                                        ? getThumbnailUrl(user.image, 64)
                                         : user.image}
                                     alt="Profile"
                                     className="w-8 h-8 rounded-full object-cover"
