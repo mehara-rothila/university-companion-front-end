@@ -35,12 +35,15 @@ function LoginForm() {
     setError('')
 
     try {
-      const success = await login(formData.usernameOrEmail, formData.password)
+      const result = await login(formData.usernameOrEmail, formData.password)
 
-      if (success) {
+      if (result === true) {
         // Redirect to the page they were trying to access, or dashboard
         const from = searchParams.get('from') || '/dashboard';
         router.push(from);
+      } else if (typeof result === 'object' && result.error === 'EMAIL_NOT_VERIFIED') {
+        // Redirect to email verification page
+        router.push(`/verify-email?email=${encodeURIComponent(result.email || formData.usernameOrEmail)}`);
       } else {
         setError(t('auth.login.errorInvalidCredentials'));
       }
