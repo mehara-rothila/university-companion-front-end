@@ -112,7 +112,7 @@ export default function AdminCompetitionsPage() {
     try {
       setActionLoading(true);
       await competitionService.rejectCompetition(selectedCompetition.id, rejectionReason);
-      alert(t('challenges.status.rejected'));
+      alert(t('challengesPage.status.rejected'));
       setShowRejectModal(false);
       setRejectionReason('');
       setSelectedCompetition(null);
@@ -207,7 +207,7 @@ export default function AdminCompetitionsPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('challenges.loading')}</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('challengesPage.loading')}</p>
           </div>
         </main>
       </>
@@ -746,3 +746,4 @@ export default function AdminCompetitionsPage() {
     </>
   );
 }
+
