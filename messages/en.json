@@ -270,7 +270,7 @@
       "confirm": "Delete Account"
     }
   },
-  "notifications": {
+  "notificationsPage": {
     "title": "Notifications",
     "subtitle": "Stay updated with smart notifications and AI-powered prioritization",
     "buttons": {
@@ -960,7 +960,7 @@
       "events": "events"
     }
   },
-  "challenges": {
+  "challengesPage": {
     "title": "Competitions & Challenges",
     "subtitle": "Discover upcoming competitions, showcase your skills, and compete with peers",
     "createCompetition": "Create Competition",
@@ -1045,7 +1045,7 @@
       "alreadyEnrolled": "You are already enrolled in this competition"
     }
   },
-  "lostFound": {
+  "lostFoundPage": {
     "title": "Lost & Found",
     "subtitle": "Community platform to help reunite lost items with their owners. Post what you've lost or found to connect with others on campus.",
     "reportItem": "Report Lost/Found Item",
