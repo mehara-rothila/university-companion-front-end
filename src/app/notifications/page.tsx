@@ -450,7 +450,7 @@ export default function NotificationsPage() {
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notifications.messages.loading')}</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notificationsPage.messages.loading')}</p>
           </div>
         </main>
       </>
@@ -463,7 +463,7 @@ export default function NotificationsPage() {
         <Navigation />
         <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
           <div className="text-center">
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notifications.messages.pleaseLogin')}</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('notificationsPage.messages.pleaseLogin')}</p>
           </div>
         </main>
       </>
@@ -493,7 +493,7 @@ export default function NotificationsPage() {
               <div>
                 <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
                   <Bell className="h-6 w-6 sm:h-8 sm:w-8 mr-2 sm:mr-3 text-purple-500" />
-                  {t('notifications.title')}
+                  {t('notificationsPage.title')}
                   {unreadCount > 0 && (
                     <span className="ml-2 sm:ml-3 px-2 py-1 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-full">
                       {unreadCount}
@@ -501,7 +501,7 @@ export default function NotificationsPage() {
                   )}
                 </h1>
                 <p className={`text-base sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {t('notifications.subtitle')}
+                  {t('notificationsPage.subtitle')}
                 </p>
               </div>
 
@@ -515,7 +515,7 @@ export default function NotificationsPage() {
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-600 dark:text-gray-400'
                     }`}
                 >
-                  {t('notifications.buttons.markAllRead')}
+                  {t('notificationsPage.buttons.markAllRead')}
                 </button>
                 <button
                   onClick={dismissAllEmergencies}
@@ -538,7 +538,7 @@ export default function NotificationsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  {t('notifications.buttons.settings')}
+                  {t('notificationsPage.buttons.settings')}
                 </button>
               </div>
             </div>
@@ -591,10 +591,10 @@ export default function NotificationsPage() {
           <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
             <div className="flex overflow-x-auto">
               {[
-                { id: 'all', label: t('notifications.tabs.all'), count: notifications.filter(n => !n.isArchived).length },
-                { id: 'unread', label: t('notifications.tabs.unread'), count: unreadCount },
-                { id: 'archived', label: t('notifications.tabs.archived'), count: notifications.filter(n => n.isArchived).length },
-                { id: 'settings', label: t('notifications.tabs.settings'), count: null }
+                { id: 'all', label: t('notificationsPage.tabs.all'), count: notifications.filter(n => !n.isArchived).length },
+                { id: 'unread', label: t('notificationsPage.tabs.unread'), count: unreadCount },
+                { id: 'archived', label: t('notificationsPage.tabs.archived'), count: notifications.filter(n => n.isArchived).length },
+                { id: 'settings', label: t('notificationsPage.tabs.settings'), count: null }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -622,14 +622,14 @@ export default function NotificationsPage() {
           {(showSettings || activeTab === 'settings') && (
             <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}>
               <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                {t('notifications.settings.title')}
+                {t('notificationsPage.settings.title')}
               </h3>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Notification Categories */}
                 <div>
                   <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                    {t('notifications.settings.categories')}
+                    {t('notificationsPage.settings.categories')}
                   </h4>
 
                   <div className="space-y-4">
@@ -689,7 +689,7 @@ export default function NotificationsPage() {
                   {/* Delivery Methods */}
                   <div>
                     <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                      {t('notifications.settings.deliveryMethods')}
+                      {t('notificationsPage.settings.deliveryMethods')}
                     </h4>
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} space-y-3`}>
                       {Object.entries(settings.delivery).map(([method, enabled]) => (
@@ -714,12 +714,12 @@ export default function NotificationsPage() {
                   {/* Quiet Hours */}
                   <div>
                     <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
-                      {t('notifications.settings.schedule')}
+                      {t('notificationsPage.settings.schedule')}
                     </h4>
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} space-y-4`}>
                       <label className="flex items-center justify-between">
                         <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {t('notifications.settings.scheduleOptions.enableQuietHours')}
+                          {t('notificationsPage.settings.scheduleOptions.enableQuietHours')}
                         </span>
                         <input
                           type="checkbox"
@@ -739,7 +739,7 @@ export default function NotificationsPage() {
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className={`block text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                              {t('notifications.settings.scheduleOptions.startTime')}
+                              {t('notificationsPage.settings.scheduleOptions.startTime')}
                             </label>
                             <input
                               type="time"
@@ -759,7 +759,7 @@ export default function NotificationsPage() {
                           </div>
                           <div>
                             <label className={`block text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
-                              {t('notifications.settings.scheduleOptions.endTime')}
+                              {t('notificationsPage.settings.scheduleOptions.endTime')}
                             </label>
                             <input
                               type="time"
@@ -782,7 +782,7 @@ export default function NotificationsPage() {
 
                       <label className="flex items-center justify-between">
                         <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {t('notifications.settings.scheduleOptions.reduceWeekends')}
+                          {t('notificationsPage.settings.scheduleOptions.reduceWeekends')}
                         </span>
                         <input
                           type="checkbox"
@@ -800,12 +800,12 @@ export default function NotificationsPage() {
                   {/* Save Button */}
                   <button
                     onClick={() => {
-                      alert(t('notifications.messages.settingsSaved'));
+                      alert(t('notificationsPage.messages.settingsSaved'));
                       setShowSettings(false);
                     }}
                     className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
                   >
-                    {t('notifications.buttons.saveSettings')}
+                    {t('notificationsPage.buttons.saveSettings')}
                   </button>
                 </div>
               </div>
@@ -819,7 +819,7 @@ export default function NotificationsPage() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
                   <label className={`block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    {t('notifications.filters.type')}
+                    {t('notificationsPage.filters.type')}
                   </label>
                   <select
                     value={filters.type}
@@ -829,22 +829,22 @@ export default function NotificationsPage() {
                       : 'bg-white border-gray-300 text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">{t('notifications.filterOptions.allTypes')}</option>
-                    <option value="GENERAL">{t('notifications.types.general')}</option>
-                    <option value="ACADEMIC">{t('notifications.types.academic')}</option>
-                    <option value="SOCIAL">{t('notifications.types.social')}</option>
-                    <option value="WELLNESS">{t('notifications.types.wellness')}</option>
-                    <option value="SYSTEM">{t('notifications.types.system')}</option>
-                    <option value="FINANCIAL_AID">{t('notifications.types.financialAid')}</option>
-                    <option value="DINING">{t('notifications.types.dining')}</option>
-                    <option value="LIBRARY">{t('notifications.types.library')}</option>
-                    <option value="LOST_FOUND">{t('notifications.types.lostFound')}</option>
+                    <option value="all">{t('notificationsPage.filterOptions.allTypes')}</option>
+                    <option value="GENERAL">{t('notificationsPage.types.general')}</option>
+                    <option value="ACADEMIC">{t('notificationsPage.types.academic')}</option>
+                    <option value="SOCIAL">{t('notificationsPage.types.social')}</option>
+                    <option value="WELLNESS">{t('notificationsPage.types.wellness')}</option>
+                    <option value="SYSTEM">{t('notificationsPage.types.system')}</option>
+                    <option value="FINANCIAL_AID">{t('notificationsPage.types.financialAid')}</option>
+                    <option value="DINING">{t('notificationsPage.types.dining')}</option>
+                    <option value="LIBRARY">{t('notificationsPage.types.library')}</option>
+                    <option value="LOST_FOUND">{t('notificationsPage.types.lostFound')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    {t('notifications.filters.priority')}
+                    {t('notificationsPage.filters.priority')}
                   </label>
                   <select
                     value={filters.priority}
@@ -854,17 +854,17 @@ export default function NotificationsPage() {
                       : 'bg-white border-gray-300 text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">{t('notifications.filterOptions.allPriorities')}</option>
-                    <option value="URGENT">{t('notifications.priorities.urgent')}</option>
-                    <option value="HIGH">{t('notifications.priorities.high')}</option>
-                    <option value="MEDIUM">{t('notifications.priorities.medium')}</option>
-                    <option value="LOW">{t('notifications.priorities.low')}</option>
+                    <option value="all">{t('notificationsPage.filterOptions.allPriorities')}</option>
+                    <option value="URGENT">{t('notificationsPage.priorities.urgent')}</option>
+                    <option value="HIGH">{t('notificationsPage.priorities.high')}</option>
+                    <option value="MEDIUM">{t('notificationsPage.priorities.medium')}</option>
+                    <option value="LOW">{t('notificationsPage.priorities.low')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    {t('notifications.filters.time')}
+                    {t('notificationsPage.filters.time')}
                   </label>
                   <select
                     value={filters.timeframe}
@@ -874,16 +874,16 @@ export default function NotificationsPage() {
                       : 'bg-white border-gray-300 text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">{t('notifications.filterOptions.allTime')}</option>
-                    <option value="today">{t('notifications.filterOptions.today')}</option>
-                    <option value="week">{t('notifications.filterOptions.week')}</option>
-                    <option value="month">{t('notifications.filterOptions.month')}</option>
+                    <option value="all">{t('notificationsPage.filterOptions.allTime')}</option>
+                    <option value="today">{t('notificationsPage.filterOptions.today')}</option>
+                    <option value="week">{t('notificationsPage.filterOptions.week')}</option>
+                    <option value="month">{t('notificationsPage.filterOptions.month')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className={`block text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
-                    {t('notifications.filters.status')}
+                    {t('notificationsPage.filters.status')}
                   </label>
                   <select
                     value={filters.readStatus}
@@ -893,9 +893,9 @@ export default function NotificationsPage() {
                       : 'bg-white border-gray-300 text-gray-900'
                       } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
                   >
-                    <option value="all">{t('notifications.filterOptions.all')}</option>
-                    <option value="read">{t('notifications.filterOptions.read')}</option>
-                    <option value="unread">{t('notifications.filterOptions.unread')}</option>
+                    <option value="all">{t('notificationsPage.filterOptions.all')}</option>
+                    <option value="read">{t('notificationsPage.filterOptions.read')}</option>
+                    <option value="unread">{t('notificationsPage.filterOptions.unread')}</option>
                   </select>
                 </div>
               </div>
@@ -985,7 +985,7 @@ export default function NotificationsPage() {
                               {notification.expiresAt && (
                                 <span className={`flex items-center gap-1.5 ${isDarkMode ? 'text-red-300' : 'text-red-600'} bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md`}>
                                   <AlertTriangle className="w-3.5 h-3.5" />
-                                  {t('notifications.timeLabels.expires')}: {formatDate(notification.expiresAt)}
+                                  {t('notificationsPage.timeLabels.expires')}: {formatDate(notification.expiresAt)}
                                 </span>
                               )}
                             </div>
@@ -1001,10 +1001,10 @@ export default function NotificationsPage() {
                                     ? 'bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 border border-purple-500/20'
                                     : 'bg-white text-purple-600 hover:bg-purple-50 border border-purple-100'
                                     }`}
-                                  title={t('notifications.actions.markAsRead')}
+                                  title={t('notificationsPage.actions.markAsRead')}
                                 >
                                   <Check className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
-                                  <span className="">{t('notifications.actions.markAsRead')}</span>
+                                  <span className="">{t('notificationsPage.actions.markAsRead')}</span>
                                 </button>
                               )}
 
@@ -1017,10 +1017,10 @@ export default function NotificationsPage() {
                                   ? 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200 border border-gray-700'
                                   : 'bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200'
                                   }`}
-                                title={t('notifications.actions.archive')}
+                                title={t('notificationsPage.actions.archive')}
                               >
                                 <Archive className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
-                                <span className="">{t('notifications.actions.archive')}</span>
+                                <span className="">{t('notificationsPage.actions.archive')}</span>
                               </button>
                             </div>
                           </div>
@@ -1035,10 +1035,10 @@ export default function NotificationsPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1m14 0V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1" />
                   </svg>
                   <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                    {t('notifications.messages.noNotifications')}
+                    {t('notificationsPage.messages.noNotifications')}
                   </h3>
                   <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {activeTab === 'unread' ? t('notifications.messages.allCaughtUp') : t('notifications.messages.adjustFilters')}
+                    {activeTab === 'unread' ? t('notificationsPage.messages.allCaughtUp') : t('notificationsPage.messages.adjustFilters')}
                   </p>
                 </div>
               )}
@@ -1054,17 +1054,17 @@ export default function NotificationsPage() {
                   onClick={() => setCurrentPage(prev => prev - 1)}
                   className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  {t('notifications.pagination.previous')}
+                  {t('notificationsPage.pagination.previous')}
                 </button>
                 <span className={`px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {t('notifications.pagination.page')} {currentPage + 1} {t('notifications.pagination.of')} {totalPages}
+                  {t('notificationsPage.pagination.page')} {currentPage + 1} {t('notificationsPage.pagination.of')} {totalPages}
                 </span>
                 <button
                   disabled={currentPage >= totalPages - 1}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   className="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  {t('notifications.pagination.next')}
+                  {t('notificationsPage.pagination.next')}
                 </button>
               </div>
             )
