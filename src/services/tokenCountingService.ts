@@ -10,13 +10,17 @@ export interface TokenUsage {
   percentageUsed: number;
 }
 
+// TransactionType enum values (matches backend: CHAT, IMAGE_ANALYSIS, PDF_ANALYSIS, RATE_LIMIT_EXCEEDED, MANUAL_RESET, DAILY_RESET)
+// Frontend uses lowercase, backend uses uppercase
+export type TransactionType = 'chat' | 'image_analysis' | 'pdf_analysis' | 'rate_limit_exceeded' | 'manual_reset' | 'daily_reset';
+
 export interface TokenTransaction {
   id: string;
   timestamp: Date;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
-  operation: 'chat' | 'image_analysis' | 'pdf_processing' | 'file_upload';
+  operation: TransactionType;
   userId?: string;
 }
 
@@ -52,13 +56,15 @@ class TokenCountingService {
       }
 
       const data = await response.json();
+      const dailyLimit = data.dailyLimit || this.DAILY_LIMIT;
+      const tokensUsed = data.tokensUsed || 0;
       return {
-        used: data.tokensUsed || 0,
-        limit: data.dailyLimit || this.DAILY_LIMIT,
+        used: tokensUsed,
+        limit: dailyLimit,
         resetTime: this.getNextResetTime(),
         sessionsToday: 0, // Not provided by backend, but we can track locally
         remainingTokens: data.tokensRemaining || this.DAILY_LIMIT,
-        percentageUsed: (data.tokensUsed / data.dailyLimit) * 100 || 0
+        percentageUsed: dailyLimit > 0 ? (tokensUsed / dailyLimit) * 100 : 0
       };
     } catch (error) {
       console.error('Error fetching token usage from backend:', error);
