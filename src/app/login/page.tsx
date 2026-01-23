@@ -19,18 +19,32 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isDarkMode } = useDarkMode()
-  const { login, loginWithGoogle } = useAuth()
+  const { login, loginWithGoogle, isOnline } = useAuth()
   const { t } = useTranslation()
 
   useEffect(() => {
     const errorParam = searchParams.get('error')
     if (errorParam) {
-      setError(errorParam)
+      if (errorParam === 'session_expired') {
+        setError(t('auth.login.sessionExpired') || 'Your session has expired. Please log in again.')
+      } else {
+        setError(errorParam)
+      }
     }
-  }, [searchParams])
+  }, [searchParams, t])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Prevent double submission
+    if (isLoading) return;
+
+    // Check if online
+    if (!isOnline) {
+      setError(t('common.offlineError') || 'You are offline. Please check your internet connection.');
+      return;
+    }
+
     setIsLoading(true)
     setError('')
 
@@ -62,6 +76,15 @@ function LoginForm() {
   }
 
   const handleGoogleLogin = async () => {
+    // Prevent double submission
+    if (isLoading) return;
+
+    // Check if online
+    if (!isOnline) {
+      setError(t('common.offlineError') || 'You are offline. Please check your internet connection.');
+      return;
+    }
+
     try {
       setIsLoading(true)
       setError('')
