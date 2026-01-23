@@ -5,6 +5,7 @@ import { tokenCountingService } from './tokenCountingService';
 
 const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent';
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 class AthenaService {
   private context: UniversityContext | null = null;
@@ -424,7 +425,7 @@ Remember: You represent ${context.university} and should embody the values of ac
     fileType: string;
     fileSize?: number;
   }): Promise<void> {
-    const response = await fetch('http://localhost:8080/api/chatbot/uploads', {
+    const response = await fetch(`${BACKEND_API_URL}/api/chatbot/uploads`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

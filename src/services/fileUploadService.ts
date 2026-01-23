@@ -158,7 +158,7 @@ class FileUploadService {
   private async getImageAsBase64(imageUrl: string): Promise<string> {
     try {
       // Use backend API to serve the image to avoid CORS issues
-      const apiUrl = `http://localhost:8080/api/upload/image/serve?url=${encodeURIComponent(imageUrl)}`;
+      const apiUrl = `${this.API_URL}/api/upload/image/serve?url=${encodeURIComponent(imageUrl)}`;
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
