@@ -1093,8 +1093,8 @@ export default function LostFoundPage() {
                 imageUrl: conv.item.imageUrl,
                 contactMethod: conv.item.contactMethod as 'ANONYMOUS' | 'DIRECT',
                 status: 'ACTIVE',
-                postedBy: conv.owner.fullName || conv.owner.username,
-                postedByUserId: conv.owner.id,
+                postedBy: conv.owner?.fullName || conv.owner?.username || 'Unknown',
+                postedByUserId: conv.owner?.id || 0,
                 tags: [],
                 createdAt: conv.createdAt,
                 updatedAt: conv.updatedAt
