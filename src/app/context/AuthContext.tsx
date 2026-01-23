@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback, useRef } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import axios from 'axios';
 
@@ -23,6 +23,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
+  isOnline: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,7 +36,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
   const { data: session, status } = useSession();
+  const interceptorRef = useRef<number | null>(null);
+
+  // Track online/offline status
+  useEffect(() => {
+    // Set initial online status
+    setIsOnline(navigator.onLine);
+
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Sync auth state across browser tabs
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token') {
+        if (e.newValue === null) {
+          // User logged out in another tab
+          setUser(null);
+          setToken(null);
+        } else if (e.newValue !== token) {
+          // Token changed in another tab
+          setToken(e.newValue);
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
+        }
+      }
+      if (e.key === 'user' && e.newValue) {
+        setUser(JSON.parse(e.newValue));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [token]);
 
   useEffect(() => {
     if (status === 'loading') {
@@ -100,6 +146,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } else {
       delete axios.defaults.headers.common['Authorization'];
     }
+
+    // Remove previous interceptor if exists
+    if (interceptorRef.current !== null) {
+      axios.interceptors.response.eject(interceptorRef.current);
+    }
+
+    // Add 401 response interceptor for expired token handling
+    interceptorRef.current = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Token expired or invalid - logout user
+          console.warn('Session expired. Logging out...');
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // Redirect to login page
+          if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+            window.location.href = '/login?error=session_expired';
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      if (interceptorRef.current !== null) {
+        axios.interceptors.response.eject(interceptorRef.current);
+      }
+    };
   }, [token]);
 
   const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean | { error: string; email?: string }> => {
@@ -164,8 +241,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loginWithGoogle,
     logout,
     isAuthenticated: !!user,
-    loading
-  }), [user, token, login, loginWithGoogle, logout, loading]);
+    loading,
+    isOnline
+  }), [user, token, login, loginWithGoogle, logout, loading, isOnline]);
 
   return (
     <AuthContext.Provider value={value}>
