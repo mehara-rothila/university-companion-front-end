@@ -18,8 +18,12 @@ export interface QuickAction {
   icon?: React.ReactNode;
 }
 
+// FileType enum values (matches backend: IMAGE, PDF, VIDEO)
+// Frontend uses lowercase, converts to uppercase when sending to backend
+export type FileType = 'image' | 'pdf' | 'video';
+
 export interface ChatAttachment {
-  type: 'image' | 'file' | 'pdf' | 'video';
+  type: FileType;
   name: string;
   size: number;
   content: string;
