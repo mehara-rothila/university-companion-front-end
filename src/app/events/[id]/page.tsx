@@ -56,12 +56,56 @@ export default function EventDetailPage() {
   const canEdit = isCreator && event && (event.status === 'PENDING' || event.status === 'REJECTED');
 
   useEffect(() => {
-    if (eventId) {
-      fetchEvent();
-      fetchComments();
-      checkRegistrationStatus();
-    }
-  }, [eventId]);
+    let isMounted = true; // Track if component is mounted
+
+    const loadData = async () => {
+      if (!eventId) return;
+
+      // Fetch event
+      try {
+        setLoading(true);
+        setError('');
+        const data = await eventService.getEventById(eventId);
+        if (isMounted) setEvent(data);
+      } catch (err: any) {
+        if (isMounted) {
+          setError(err.response?.data?.error || 'Failed to load event');
+          console.error('Error fetching event:', err);
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+
+      // Fetch comments
+      try {
+        const data = await eventService.getEventComments(eventId);
+        if (isMounted) setComments(data);
+      } catch (err: any) {
+        console.error('Error fetching comments:', err);
+      }
+
+      // Check registration status
+      if (user?.id) {
+        try {
+          const data = await eventService.isUserRegistered(eventId, user.id);
+          if (isMounted) {
+            setIsRegistered(data.isRegistered);
+            setIsWaitlisted(data.isWaitlisted);
+            setWaitlistPosition(data.waitlistPosition || null);
+          }
+        } catch (err: any) {
+          console.error('Error checking registration status:', err);
+        }
+      }
+    };
+
+    loadData();
+
+    // Cleanup function - runs when component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, [eventId, user?.id]);
 
   const fetchEvent = async () => {
     if (!eventId) return;
@@ -106,6 +150,27 @@ export default function EventDetailPage() {
   const handleRegister = async () => {
     if (!eventId || !user?.id) return;
 
+    // Prevent double submission
+    if (registrationLoading) return;
+
+    // Check if registration deadline has passed
+    if (event?.registrationDeadline) {
+      const deadline = new Date(event.registrationDeadline);
+      if (deadline < new Date()) {
+        setRegistrationError(t('events.errors.deadlinePassed') || 'Registration deadline has passed');
+        return;
+      }
+    }
+
+    // Check if event date has passed
+    if (event?.eventDate && event?.eventTime) {
+      const eventDateTime = new Date(`${event.eventDate}T${event.eventTime}`);
+      if (eventDateTime < new Date()) {
+        setRegistrationError(t('events.errors.eventPassed') || 'This event has already occurred');
+        return;
+      }
+    }
+
     setRegistrationLoading(true);
     setRegistrationError('');
     setRegistrationSuccess('');
@@ -129,6 +194,9 @@ export default function EventDetailPage() {
 
   const handleCancelRegistration = async () => {
     if (!eventId || !user?.id) return;
+
+    // Prevent double submission
+    if (registrationLoading) return;
 
     if (!confirm(t('events.confirmations.cancelRegistration'))) return;
 
