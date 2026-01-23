@@ -16,7 +16,7 @@ import Link from 'next/link';
 
 export default function CreateEventPage() {
   const { isDarkMode } = useDarkMode();
-  const { user } = useAuth();
+  const { user, isOnline } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -86,6 +86,15 @@ export default function CreateEventPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent double submission
+    if (loading) return;
+
+    // Check if online
+    if (!isOnline) {
+      setError(t('common.offlineError') || 'You are offline. Please check your internet connection.');
+      return;
+    }
+
     if (!user?.id) {
       setError(t('events.errors.mustBeLoggedIn'));
       return;
@@ -108,6 +117,19 @@ export default function CreateEventPage() {
       const registrationDeadlineDateTime = formData.registrationDeadline
         ? new Date(formData.registrationDeadline)
         : undefined;
+
+      // Validation: Check for invalid date parsing
+      if (isNaN(eventDateTime.getTime()) || isNaN(endDateTime.getTime())) {
+        setError(t('events.errors.invalidDateTime') || 'Invalid date or time format');
+        setLoading(false);
+        return;
+      }
+
+      if (registrationDeadlineDateTime && isNaN(registrationDeadlineDateTime.getTime())) {
+        setError(t('events.errors.invalidDeadlineFormat') || 'Invalid registration deadline format');
+        setLoading(false);
+        return;
+      }
 
       // Validation: Check if end time is after start time (backend safety check)
       if (endDateTime <= eventDateTime) {
