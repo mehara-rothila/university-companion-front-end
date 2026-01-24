@@ -11,6 +11,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
 import financialAidService, { FinancialAidApplication, FinancialAidRequest, DonationRequest as ServiceDonationRequest, FinancialAidStats } from '@/services/financialAidService';
 import paymentService from '@/services/paymentService';
+import payhereService from '@/services/payhereService';
 
 // --- Interfaces ---
 interface FinancialAidOpportunity {
@@ -231,45 +232,57 @@ export default function FinancialAidPage() {
     }
   };
 
-  // Handle donation submission via payment gateway
+  // Handle donation submission via PayHere JS SDK
   const handleSubmitDonation = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Initiate payment through Athena payment gateway
-      const paymentResponse = await paymentService.initiatePayment({
-        financialAidId: donationForm.financialAidId,
-        amount: donationForm.amount,
-        isAnonymous: donationForm.isAnonymous,
-        message: donationForm.message,
-        donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}` : undefined,
-        donorEmail: user?.email
-      });
+      // Use PayHere JS SDK for payment (opens popup, no redirect needed)
+      await payhereService.startPayment(
+        {
+          financialAidId: donationForm.financialAidId,
+          amount: donationForm.amount,
+          isAnonymous: donationForm.isAnonymous,
+          message: donationForm.message,
+          donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Anonymous Donor',
+          donorEmail: user?.email || undefined
+        },
+        // Success callback
+        async (paymentResult) => {
+          console.log('Payment successful:', paymentResult);
+          setShowDonationModal(false);
+          setDonationForm({
+            financialAidId: 0,
+            amount: 0,
+            isAnonymous: false,
+            message: ''
+          });
 
-      if (paymentResponse.success && paymentResponse.paymentUrl) {
-        // Close modal and redirect to payment gateway
-        setShowDonationModal(false);
-        setDonationForm({
-          financialAidId: 0,
-          amount: 0,
-          isAnonymous: false,
-          message: ''
-        });
+          // Reload data to show updated donation
+          await loadApplications();
+          await loadStats();
 
-        // Submit payment via form POST (required by PayHere)
-        if (paymentResponse.formData) {
-          paymentService.submitPaymentForm(paymentResponse.paymentUrl, paymentResponse.formData);
-        } else {
-          paymentService.redirectToPayment(paymentResponse.paymentUrl);
+          // Show success message
+          alert(`Payment successful! Thank you for your donation of Rs. ${paymentResult.amount.toLocaleString()}`);
+          setIsLoading(false);
+        },
+        // Error callback
+        (errorMessage) => {
+          console.error('Payment error:', errorMessage);
+          setError(errorMessage || 'Payment failed. Please try again.');
+          setIsLoading(false);
+        },
+        // Cancel callback
+        () => {
+          console.log('Payment cancelled');
+          setIsLoading(false);
         }
-      } else {
-        setError(paymentResponse.message || 'Failed to initiate payment. Please try again.');
-      }
+      );
+
     } catch (err) {
       setError('Failed to process donation. Please try again.');
       console.error('Error processing donation:', err);
-    } finally {
       setIsLoading(false);
     }
   };
