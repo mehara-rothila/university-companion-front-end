@@ -19,6 +19,7 @@ export interface PaymentInitiateResponse {
   transactionRef?: string;
   message: string;
   errorCode?: string;
+  formData?: Record<string, string>;
 }
 
 export interface PaymentStatus {
@@ -81,6 +82,24 @@ class PaymentService {
 
   redirectToPayment(paymentUrl: string): void {
     window.location.href = paymentUrl;
+  }
+
+  // Submit payment via form POST (required by PayHere)
+  submitPaymentForm(paymentUrl: string, formData: Record<string, string>): void {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = paymentUrl;
+
+    Object.entries(formData).forEach(([key, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
   }
 
   openPaymentInNewTab(paymentUrl: string): Window | null {
