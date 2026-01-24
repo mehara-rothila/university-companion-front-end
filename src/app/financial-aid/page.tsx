@@ -257,8 +257,12 @@ export default function FinancialAidPage() {
           message: ''
         });
 
-        // Redirect to payment gateway
-        paymentService.redirectToPayment(paymentResponse.paymentUrl);
+        // Submit payment via form POST (required by PayHere)
+        if (paymentResponse.formData) {
+          paymentService.submitPaymentForm(paymentResponse.paymentUrl, paymentResponse.formData);
+        } else {
+          paymentService.redirectToPayment(paymentResponse.paymentUrl);
+        }
       } else {
         setError(paymentResponse.message || 'Failed to initiate payment. Please try again.');
       }
