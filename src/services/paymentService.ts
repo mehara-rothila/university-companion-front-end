@@ -84,22 +84,24 @@ class PaymentService {
     window.location.href = paymentUrl;
   }
 
-  // Submit payment via form POST (required by PayHere)
+  // Submit payment via backend proxy (to avoid subdomain issues with PayHere)
   submitPaymentForm(paymentUrl: string, formData: Record<string, string>): void {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = paymentUrl;
+    // Build query string from form data
+    const params = new URLSearchParams();
+    params.append('orderId', formData.order_id || '');
+    params.append('paymentUrl', paymentUrl);
 
+    // Add all form fields as query params
     Object.entries(formData).forEach(([key, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
+      if (key !== 'order_id') { // order_id already added as orderId
+        params.append(key, value);
+      }
     });
 
-    document.body.appendChild(form);
-    form.submit();
+    // Redirect to backend checkout endpoint which will auto-submit the form
+    const checkoutUrl = `${API_BASE_URL}/api/payment/checkout?${params.toString()}`;
+    console.log('Redirecting to backend checkout:', checkoutUrl);
+    window.location.href = checkoutUrl;
   }
 
   openPaymentInNewTab(paymentUrl: string): Window | null {
