@@ -11,7 +11,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
 import financialAidService, { FinancialAidApplication, FinancialAidRequest, DonationRequest as ServiceDonationRequest, FinancialAidStats } from '@/services/financialAidService';
 import paymentService from '@/services/paymentService';
-import payhereService from '@/services/payhereService';
+import stripeService from '@/services/stripeService';
 
 // --- Interfaces ---
 interface FinancialAidOpportunity {
@@ -232,7 +232,7 @@ export default function FinancialAidPage() {
     }
   };
 
-  // Handle donation submission via PayHere form redirect
+  // Handle donation submission via Stripe
   const handleSubmitDonation = async () => {
     try {
       setIsLoading(true);
@@ -241,29 +241,20 @@ export default function FinancialAidPage() {
       // Close modal before redirect
       setShowDonationModal(false);
 
-      // Use PayHere form redirect (user will be redirected to PayHere checkout)
-      await payhereService.startPayment(
-        {
-          financialAidId: donationForm.financialAidId,
-          amount: donationForm.amount,
-          isAnonymous: donationForm.isAnonymous,
-          message: donationForm.message,
-          donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Anonymous Donor',
-          donorEmail: user?.email || undefined
-        },
-        // These callbacks won't be called for redirect approach
-        () => {}, // Success - handled by callback page
-        (errorMessage) => {
-          console.error('Payment error:', errorMessage);
-          setError(errorMessage || 'Payment failed. Please try again.');
-          setIsLoading(false);
-          setShowDonationModal(true); // Reopen modal on error
-        },
-        () => {} // Cancel - handled by cancel page
-      );
+      // Use Stripe Checkout (user will be redirected to Stripe)
+      await stripeService.startPayment({
+        financialAidId: donationForm.financialAidId,
+        amount: donationForm.amount,
+        isAnonymous: donationForm.isAnonymous,
+        message: donationForm.message,
+        donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Anonymous Donor',
+        donorEmail: user?.email || undefined
+      });
 
-    } catch (err) {
-      setError('Failed to process donation. Please try again.');
+      // User will be redirected to Stripe, so we won't reach here
+
+    } catch (err: any) {
+      setError(err?.message || 'Failed to process donation. Please try again.');
       console.error('Error processing donation:', err);
       setIsLoading(false);
       setShowDonationModal(true); // Reopen modal on error
