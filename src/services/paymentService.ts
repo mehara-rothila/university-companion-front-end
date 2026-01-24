@@ -15,11 +15,10 @@ export interface PaymentInitiateRequest {
 export interface PaymentInitiateResponse {
   success: boolean;
   paymentUrl?: string;
-  orderId?: string;
+  sessionId?: string;
   transactionRef?: string;
   message: string;
   errorCode?: string;
-  formData?: Record<string, string>;
 }
 
 export interface PaymentStatus {
@@ -27,8 +26,7 @@ export interface PaymentStatus {
   amount?: number;
   donationId?: number;
   financialAidId?: number;
-  order_id?: string;
-  payment_status?: string;
+  sessionId?: string;
   message?: string;
 }
 
@@ -50,26 +48,25 @@ class PaymentService {
     });
   }
 
-  async initiatePayment(request: PaymentInitiateRequest): Promise<PaymentInitiateResponse> {
+  // Confirm Stripe payment with backend (called from callback page)
+  async confirmStripePayment(sessionId: string): Promise<PaymentStatus> {
     try {
-      const response = await this.api.post<PaymentInitiateResponse>('/payment/initiate', request);
+      const response = await this.api.post<PaymentStatus>('/payment/stripe/confirm', {
+        sessionId
+      });
       return response.data;
     } catch (error: any) {
-      console.error('Error initiating payment:', error);
-      if (error.response?.data) {
-        return error.response.data;
-      }
+      console.error('Error confirming payment:', error);
       return {
-        success: false,
-        message: 'Failed to initiate payment. Please try again.',
-        errorCode: 'NETWORK_ERROR'
+        status: 'ERROR',
+        message: error.response?.data?.message || 'Failed to confirm payment'
       };
     }
   }
 
-  async getPaymentStatus(orderId: string): Promise<PaymentStatus> {
+  async getPaymentStatus(sessionId: string): Promise<PaymentStatus> {
     try {
-      const response = await this.api.get<PaymentStatus>(`/payment/status/${orderId}`);
+      const response = await this.api.get<PaymentStatus>(`/payment/status/${sessionId}`);
       return response.data;
     } catch (error) {
       console.error('Error getting payment status:', error);
@@ -84,42 +81,13 @@ class PaymentService {
     window.location.href = paymentUrl;
   }
 
-  // Submit payment via backend proxy (to avoid subdomain issues with PayHere)
-  submitPaymentForm(paymentUrl: string, formData: Record<string, string>): void {
-    // Build query string from form data
-    const params = new URLSearchParams();
-    params.append('orderId', formData.order_id || '');
-    params.append('paymentUrl', paymentUrl);
-
-    // Add all form fields as query params
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key !== 'order_id') { // order_id already added as orderId
-        params.append(key, value);
-      }
-    });
-
-    // Redirect to backend checkout endpoint which will auto-submit the form
-    const checkoutUrl = `${API_BASE_URL}/api/payment/checkout?${params.toString()}`;
-    console.log('Redirecting to backend checkout:', checkoutUrl);
-    window.location.href = checkoutUrl;
-  }
-
-  openPaymentInNewTab(paymentUrl: string): Window | null {
-    return window.open(paymentUrl, '_blank', 'noopener,noreferrer');
-  }
-
-  async handlePaymentCallback(orderId: string): Promise<PaymentStatus> {
-    return this.getPaymentStatus(orderId);
-  }
-
-  parseCallbackParams(): { orderId?: string; status?: string; paymentId?: string } {
+  parseCallbackParams(): { sessionId?: string; status?: string } {
     if (typeof window === 'undefined') return {};
 
     const params = new URLSearchParams(window.location.search);
     return {
-      orderId: params.get('order_id') || undefined,
+      sessionId: params.get('session_id') || undefined,
       status: params.get('status') || undefined,
-      paymentId: params.get('payment_id') || undefined,
     };
   }
 }

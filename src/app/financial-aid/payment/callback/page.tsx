@@ -15,7 +15,6 @@ function PaymentCallbackContent() {
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
-      // Stripe uses session_id, fallback to order_id for legacy support
       const sessionId = searchParams.get('session_id');
       const paymentStatus = searchParams.get('status');
 
@@ -24,13 +23,26 @@ function PaymentCallbackContent() {
         return;
       }
 
-      // If status=success in URL, payment was successful at Stripe
-      if (paymentStatus === 'success') {
-        setStatus('success');
-        return;
-      }
-
       try {
+        // If status=success, confirm the payment with backend to update database
+        if (paymentStatus === 'success') {
+          console.log('Confirming Stripe payment with backend...');
+          const details = await paymentService.confirmStripePayment(sessionId);
+          setPaymentDetails(details);
+
+          if (details.status === 'COMPLETED' || details.status === 'SUCCESS') {
+            setStatus('success');
+          } else if (details.status === 'ERROR') {
+            // Payment confirmed at Stripe but backend had an issue - still show success to user
+            console.warn('Backend confirmation had issues, but Stripe confirmed success');
+            setStatus('success');
+          } else {
+            setStatus('success');
+          }
+          return;
+        }
+
+        // Otherwise check payment status
         const details = await paymentService.getPaymentStatus(sessionId);
         setPaymentDetails(details);
 
