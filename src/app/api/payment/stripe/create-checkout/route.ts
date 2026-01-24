@@ -2,9 +2,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
+// Create Stripe instance lazily to avoid build-time errors
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY is not configured');
+  }
+  return new Stripe(key, {
+    apiVersion: '2024-12-18.acacia',
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +27,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = request.headers.get('origin') || 'https://athena.mehara.io';
 
     // Create Stripe Checkout Session
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
