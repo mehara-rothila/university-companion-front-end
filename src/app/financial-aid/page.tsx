@@ -10,6 +10,7 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import ImageUpload from '@/components/ImageUpload';
 import financialAidService, { FinancialAidApplication, FinancialAidRequest, DonationRequest as ServiceDonationRequest, FinancialAidStats } from '@/services/financialAidService';
+import paymentService from '@/services/paymentService';
 
 // --- Interfaces ---
 interface FinancialAidOpportunity {
@@ -220,22 +221,37 @@ export default function FinancialAidPage() {
     }
   };
 
-  // Handle donation submission
+  // Handle donation submission via payment gateway
   const handleSubmitDonation = async () => {
     try {
       setIsLoading(true);
-      await financialAidService.makeDonation(donationForm);
-      setDonationSubmitted(true);
-      setShowDonationModal(false);
-      setDonationForm({
-        financialAidId: 0,
-        amount: 0,
-        isAnonymous: false,
-        message: ''
+      setError(null);
+
+      // Initiate payment through Athena payment gateway
+      const paymentResponse = await paymentService.initiatePayment({
+        financialAidId: donationForm.financialAidId,
+        amount: donationForm.amount,
+        isAnonymous: donationForm.isAnonymous,
+        message: donationForm.message,
+        donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}` : undefined,
+        donorEmail: user?.email
       });
-      await loadDonationEligibleApplications();
-      await loadStats();
-      setTimeout(() => setDonationSubmitted(false), 5000);
+
+      if (paymentResponse.success && paymentResponse.paymentUrl) {
+        // Close modal and redirect to payment gateway
+        setShowDonationModal(false);
+        setDonationForm({
+          financialAidId: 0,
+          amount: 0,
+          isAnonymous: false,
+          message: ''
+        });
+
+        // Redirect to payment gateway
+        paymentService.redirectToPayment(paymentResponse.paymentUrl);
+      } else {
+        setError(paymentResponse.message || 'Failed to initiate payment. Please try again.');
+      }
     } catch (err) {
       setError('Failed to process donation. Please try again.');
       console.error('Error processing donation:', err);
@@ -284,6 +300,9 @@ export default function FinancialAidPage() {
   // Calculate financial health score
   const calculateFinancialHealth = () => {
     const income = financialProfile.totalIncome + financialProfile.availableAid;
+    if (financialProfile.totalExpenses === 0) {
+      return income > 0 ? 100 : 0;
+    }
     const ratio = income / financialProfile.totalExpenses;
     return Math.min(ratio * 100, 100);
   };
@@ -434,7 +453,7 @@ export default function FinancialAidPage() {
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                Rs. 450,000
+                Rs. {(realStats?.totalRaisedAmount || 0).toLocaleString()}
               </div>
               <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Community Raised</div>
             </div>
@@ -530,33 +549,48 @@ export default function FinancialAidPage() {
                     <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
                       Recent Applications
                     </h3>
-                    
+
                     <div className="space-y-4">
-                      {aidOpportunities.filter(aid => aid.applicationStatus && aid.applicationStatus !== 'not-started').map((aid) => (
-                        <div key={aid.id} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                              {aid.title}
-                            </h4>
-                            <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(aid.applicationStatus!)}`}>
-                              {aid.applicationStatus?.replace('-', ' ')}
-                            </span>
+                      {userApplications.length === 0 ? (
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          No applications yet. Apply for financial aid to get started.
+                        </p>
+                      ) : (
+                        userApplications.slice(0, 5).map((app) => (
+                          <div key={app.id} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                {app.title}
+                              </h4>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                app.status === 'APPROVED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
+                                app.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                app.status === 'REJECTED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
+                                'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                              }`}>
+                                {app.status}
+                              </span>
+                            </div>
+
+                            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                              Rs. {app.requestedAmount.toLocaleString()} • {app.category}
+                            </p>
+
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400`}>
+                                {app.aidType}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => { setSelectedApplication(app); setShowDetailsModal(true); }}
+                                className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                              >
+                                View Details
+                              </button>
+                            </div>
                           </div>
-                          
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                            Rs. {aid.amount.toLocaleString()} • Due: {aid.deadline.toLocaleDateString()}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className={`text-xs px-2 py-1 rounded-full ${getCategoryColor(aid.type)}`}>
-                              {aid.type}
-                            </span>
-                            <button className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                              View Details
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
@@ -886,6 +920,20 @@ export default function FinancialAidPage() {
                     >
                       Log In
                     </Link>
+                  </div>
+                ) : userApplications.length === 0 ? (
+                  <div className="text-center py-12">
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-4`}>You haven't submitted any applications yet.</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowApplicationModal(true)}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200"
+                    >
+                      Apply for Financial Aid
+                    </button>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -1368,29 +1416,69 @@ export default function FinancialAidPage() {
 
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-2">
-                    <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
+                    <button
+                      type="button"
+                      onClick={() => setDonationForm({...donationForm, amount: 5000})}
+                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                        donationForm.amount === 5000
+                          ? 'border-green-600 bg-green-600 text-white'
+                          : 'border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+                      }`}
+                    >
                       Rs. 5,000
                     </button>
-                    <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
+                    <button
+                      type="button"
+                      onClick={() => setDonationForm({...donationForm, amount: 10000})}
+                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                        donationForm.amount === 10000
+                          ? 'border-green-600 bg-green-600 text-white'
+                          : 'border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+                      }`}
+                    >
                       Rs. 10,000
                     </button>
-                    <button className="px-4 py-2 border border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20">
+                    <button
+                      type="button"
+                      onClick={() => setDonationForm({...donationForm, amount: 20000})}
+                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                        donationForm.amount === 20000
+                          ? 'border-green-600 bg-green-600 text-white'
+                          : 'border-green-300 text-green-700 dark:border-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'
+                      }`}
+                    >
                       Rs. 20,000
                     </button>
                   </div>
-                  
-                  <input 
+
+                  <input
                     type="number"
                     placeholder="Custom amount"
+                    value={donationForm.amount || ''}
+                    onChange={(e) => setDonationForm({...donationForm, amount: Number(e.target.value)})}
                     className={`w-full px-4 py-3 border rounded-lg ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
                   />
-                  
-                  <button className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    Donate Now
+
+                  <button
+                    type="button"
+                    onClick={handleSubmitDonation}
+                    disabled={!donationForm.amount || donationForm.amount <= 0 || isLoading}
+                    className={`w-full px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg ${
+                      !donationForm.amount || donationForm.amount <= 0 || isLoading
+                        ? 'bg-gray-400 cursor-not-allowed text-gray-200'
+                        : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
+                  >
+                    {isLoading ? 'Processing...' : `Donate Rs. ${donationForm.amount?.toLocaleString() || 0}`}
                   </button>
-                  
-                  <label className="flex items-center text-sm">
-                    <input type="checkbox" className="mr-2" />
+
+                  <label className="flex items-center text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={donationForm.isAnonymous}
+                      onChange={(e) => setDonationForm({...donationForm, isAnonymous: e.target.checked})}
+                      className="mr-2 w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                    />
                     <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Make this donation anonymous</span>
                   </label>
                 </div>
