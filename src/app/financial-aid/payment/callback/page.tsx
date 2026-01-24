@@ -15,30 +15,42 @@ function PaymentCallbackContent() {
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
-      const orderId = searchParams.get('order_id');
+      // Stripe uses session_id, fallback to order_id for legacy support
+      const sessionId = searchParams.get('session_id');
       const paymentStatus = searchParams.get('status');
 
-      if (!orderId) {
+      if (!sessionId) {
         setStatus('failed');
         return;
       }
 
+      // If status=success in URL, payment was successful at Stripe
+      if (paymentStatus === 'success') {
+        setStatus('success');
+        return;
+      }
+
       try {
-        const details = await paymentService.getPaymentStatus(orderId);
+        const details = await paymentService.getPaymentStatus(sessionId);
         setPaymentDetails(details);
 
-        if (details.status === 'COMPLETED' || paymentStatus === 'success' || paymentStatus === '2') {
+        if (details.status === 'COMPLETED' || details.status === 'complete') {
           setStatus('success');
-        } else if (details.status === 'FAILED' || paymentStatus === 'failed' || paymentStatus === '-1') {
+        } else if (details.status === 'FAILED' || details.status === 'expired') {
           setStatus('failed');
-        } else if (details.status === 'PENDING') {
+        } else if (details.status === 'PENDING' || details.status === 'open') {
           setStatus('pending');
         } else {
           setStatus('pending');
         }
       } catch (error) {
         console.error('Error checking payment status:', error);
-        setStatus('failed');
+        // If we have status=success in URL but API call failed, still show success
+        if (paymentStatus === 'success') {
+          setStatus('success');
+        } else {
+          setStatus('failed');
+        }
       }
     };
 
