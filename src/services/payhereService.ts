@@ -1,4 +1,4 @@
-// services/payhereService.ts - PayHere JS SDK Integration
+// services/payhereService.ts - PayHere Form Redirect Integration
 
 interface PayHerePayment {
   sandbox: boolean;
@@ -44,22 +44,10 @@ interface PaymentResult {
   reference: string;
 }
 
-declare global {
-  interface Window {
-    payhere: {
-      startPayment: (payment: PayHerePayment) => void;
-      onCompleted: (paymentId: string) => void;
-      onDismissed: () => void;
-      onError: (error: string) => void;
-    };
-  }
-}
-
 class PayHereService {
   private merchantId: string;
   private isSandbox: boolean;
   private notifyUrl: string;
-  private sdkLoaded: boolean = false;
 
   constructor() {
     this.merchantId = process.env.NEXT_PUBLIC_PAYHERE_MERCHANT_ID || '';
@@ -71,56 +59,6 @@ class PayHereService {
       merchantId: this.merchantId ? `${this.merchantId.substring(0, 4)}...` : 'Not set',
       isSandbox: this.isSandbox,
       notifyUrl: this.notifyUrl
-    });
-  }
-
-  // Load PayHere JS SDK
-  loadPayHereScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (typeof window === 'undefined') {
-        reject(new Error('Window not available'));
-        return;
-      }
-
-      if (window.payhere && this.sdkLoaded) {
-        console.log('PayHere SDK already loaded');
-        resolve();
-        return;
-      }
-
-      // Check if script already exists
-      const existingScript = document.querySelector('script[src*="payhere.js"]');
-      if (existingScript) {
-        // Wait for it to load
-        if (window.payhere) {
-          this.sdkLoaded = true;
-          resolve();
-          return;
-        }
-        existingScript.addEventListener('load', () => {
-          this.sdkLoaded = true;
-          resolve();
-        });
-        existingScript.addEventListener('error', () => reject(new Error('Failed to load PayHere SDK')));
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://www.payhere.lk/lib/payhere.js';
-      script.async = true;
-
-      script.onload = () => {
-        console.log('PayHere JS SDK loaded successfully');
-        this.sdkLoaded = true;
-        resolve();
-      };
-
-      script.onerror = () => {
-        console.error('Failed to load PayHere SDK');
-        reject(new Error('Failed to load PayHere SDK'));
-      };
-
-      document.head.appendChild(script);
     });
   }
 
@@ -188,7 +126,7 @@ class PayHereService {
     };
   }
 
-  // Start payment with PayHere JS SDK
+  // Start payment with form redirect (bypasses domain restrictions)
   async startPayment(
     donationData: DonationData,
     onSuccess: (result: PaymentResult) => void,
@@ -196,11 +134,8 @@ class PayHereService {
     onCancel: () => void
   ): Promise<void> {
     try {
-      console.log('Starting PayHere payment...');
+      console.log('Starting PayHere payment (form redirect)...');
       console.log('Donation data:', donationData);
-
-      // Load SDK
-      await this.loadPayHereScript();
 
       // Generate unique order ID
       const orderId = `DON_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
@@ -215,36 +150,17 @@ class PayHereService {
         sandbox: payment.sandbox
       });
 
-      // Setup PayHere callbacks
-      window.payhere.onCompleted = function(paymentId: string) {
-        console.log('Payment completed:', paymentId);
-        onSuccess({
-          paymentId,
+      // Store order info for callback handling
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('pendingPayment', JSON.stringify({
           orderId,
-          transactionId: paymentId,
-          method: 'payhere',
-          status: 'completed',
           amount: donationData.amount,
-          currency: 'LKR',
-          paidAt: new Date().toISOString(),
-          gateway: 'payhere',
-          reference: orderId
-        });
-      };
+          financialAidId: donationData.financialAidId
+        }));
+      }
 
-      window.payhere.onDismissed = function() {
-        console.log('Payment dismissed/cancelled');
-        onCancel();
-      };
-
-      window.payhere.onError = function(error: string) {
-        console.error('PayHere error:', error);
-        onError(`Payment error: ${error}`);
-      };
-
-      // Start PayHere payment popup
-      console.log('Starting PayHere payment popup...');
-      window.payhere.startPayment(payment);
+      // Create and submit form to PayHere
+      this.submitPaymentForm(payment);
 
     } catch (error) {
       console.error('Payment initialization error:', error);
@@ -252,9 +168,88 @@ class PayHereService {
     }
   }
 
-  // Check if SDK is loaded
-  isReady(): boolean {
-    return typeof window !== 'undefined' && !!window.payhere && this.sdkLoaded;
+  // Submit payment via form POST to PayHere
+  private submitPaymentForm(payment: PayHerePayment): void {
+    const checkoutUrl = payment.sandbox
+      ? 'https://sandbox.payhere.lk/pay/checkout'
+      : 'https://www.payhere.lk/pay/checkout';
+
+    console.log('Submitting payment form to:', checkoutUrl);
+
+    // Create form element
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = checkoutUrl;
+    form.style.display = 'none';
+
+    // Add all payment fields
+    const fields: Record<string, string> = {
+      merchant_id: payment.merchant_id,
+      return_url: payment.return_url,
+      cancel_url: payment.cancel_url,
+      notify_url: payment.notify_url,
+      order_id: payment.order_id,
+      items: payment.items,
+      currency: payment.currency,
+      amount: payment.amount,
+      first_name: payment.first_name,
+      last_name: payment.last_name,
+      email: payment.email,
+      phone: payment.phone,
+      address: payment.address,
+      city: payment.city,
+      country: payment.country,
+      hash: payment.hash
+    };
+
+    if (payment.custom_1) fields.custom_1 = payment.custom_1;
+    if (payment.custom_2) fields.custom_2 = payment.custom_2;
+
+    // Create hidden inputs
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+
+    // Append form and submit
+    document.body.appendChild(form);
+    console.log('Form created, submitting...');
+    form.submit();
+  }
+
+  // Check payment status from callback
+  static getCallbackParams(): { orderId?: string; status?: string } {
+    if (typeof window === 'undefined') return {};
+
+    const params = new URLSearchParams(window.location.search);
+    return {
+      orderId: params.get('order_id') || undefined,
+      status: params.get('status') || undefined
+    };
+  }
+
+  // Get pending payment from session storage
+  static getPendingPayment(): { orderId: string; amount: number; financialAidId: number } | null {
+    if (typeof window === 'undefined') return null;
+
+    const data = sessionStorage.getItem('pendingPayment');
+    if (!data) return null;
+
+    try {
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
+  }
+
+  // Clear pending payment
+  static clearPendingPayment(): void {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('pendingPayment');
+    }
   }
 }
 

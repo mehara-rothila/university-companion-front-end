@@ -232,13 +232,16 @@ export default function FinancialAidPage() {
     }
   };
 
-  // Handle donation submission via PayHere JS SDK
+  // Handle donation submission via PayHere form redirect
   const handleSubmitDonation = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Use PayHere JS SDK for payment (opens popup, no redirect needed)
+      // Close modal before redirect
+      setShowDonationModal(false);
+
+      // Use PayHere form redirect (user will be redirected to PayHere checkout)
       await payhereService.startPayment(
         {
           financialAidId: donationForm.financialAidId,
@@ -248,42 +251,22 @@ export default function FinancialAidPage() {
           donorName: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Anonymous Donor',
           donorEmail: user?.email || undefined
         },
-        // Success callback
-        async (paymentResult) => {
-          console.log('Payment successful:', paymentResult);
-          setShowDonationModal(false);
-          setDonationForm({
-            financialAidId: 0,
-            amount: 0,
-            isAnonymous: false,
-            message: ''
-          });
-
-          // Reload data to show updated donation
-          await loadApplications();
-          await loadStats();
-
-          // Show success message
-          alert(`Payment successful! Thank you for your donation of Rs. ${paymentResult.amount.toLocaleString()}`);
-          setIsLoading(false);
-        },
-        // Error callback
+        // These callbacks won't be called for redirect approach
+        () => {}, // Success - handled by callback page
         (errorMessage) => {
           console.error('Payment error:', errorMessage);
           setError(errorMessage || 'Payment failed. Please try again.');
           setIsLoading(false);
+          setShowDonationModal(true); // Reopen modal on error
         },
-        // Cancel callback
-        () => {
-          console.log('Payment cancelled');
-          setIsLoading(false);
-        }
+        () => {} // Cancel - handled by cancel page
       );
 
     } catch (err) {
       setError('Failed to process donation. Please try again.');
       console.error('Error processing donation:', err);
       setIsLoading(false);
+      setShowDonationModal(true); // Reopen modal on error
     }
   };
 
