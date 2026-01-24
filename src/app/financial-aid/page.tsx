@@ -187,6 +187,16 @@ export default function FinancialAidPage() {
       setRealStats(data);
     } catch (err) {
       console.error('Error loading stats:', err);
+      // Set default stats on error to prevent NaN displays
+      setRealStats({
+        totalApplications: 0,
+        pendingApplications: 0,
+        approvedApplications: 0,
+        rejectedApplications: 0,
+        totalApprovedAmount: 0,
+        totalRaisedAmount: 0,
+        categories: []
+      });
     }
   };
 
