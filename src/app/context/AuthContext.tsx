@@ -199,13 +199,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return true;
     } catch (error: any) {
       console.error('Login failed:', error);
+      console.log('Error response:', error.response);
+      console.log('Error response data:', error.response?.data);
 
-      // Check for EMAIL_NOT_VERIFIED error
-      if (error.response?.status === 403 && error.response?.data?.error === 'EMAIL_NOT_VERIFIED') {
-        return {
-          error: 'EMAIL_NOT_VERIFIED',
-          email: error.response.data.email
-        };
+      // Check for EMAIL_NOT_VERIFIED error (handle both object and string response)
+      if (error.response?.status === 403) {
+        const responseData = error.response?.data;
+
+        // Handle case where data is the error object directly
+        if (responseData?.error === 'EMAIL_NOT_VERIFIED') {
+          return {
+            error: 'EMAIL_NOT_VERIFIED',
+            email: responseData.email
+          };
+        }
+
+        // Handle case where email might be in the username field (if user logged in with email)
+        if (typeof responseData === 'object') {
+          return {
+            error: 'EMAIL_NOT_VERIFIED',
+            email: responseData.email || usernameOrEmail
+          };
+        }
       }
 
       return false;
