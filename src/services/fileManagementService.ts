@@ -2,6 +2,25 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+// Create axios instance with interceptor for authentication
+const api = axios.create({
+  baseURL: `${API_URL}/api/files`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add request interceptor to include auth token
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 export interface UserFile {
   id: number;
   fileUrl: string;
@@ -36,7 +55,7 @@ export const fileManagementService = {
   // Get all files for a user
   getUserFiles: async (userId: number): Promise<UserFile[]> => {
     try {
-      const response = await axios.get(`${API_URL}/api/files/user/${userId}`);
+      const response = await api.get(`/user/${userId}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user files:', error);
@@ -47,7 +66,7 @@ export const fileManagementService = {
   // Get file statistics for a user
   getUserFileStats: async (userId: number): Promise<FileStats> => {
     try {
-      const response = await axios.get(`${API_URL}/api/files/user/${userId}/stats`);
+      const response = await api.get(`/user/${userId}/stats`);
       return response.data;
     } catch (error) {
       console.error('Error fetching file stats:', error);
@@ -58,7 +77,7 @@ export const fileManagementService = {
   // Delete a lost & found image
   deleteLostFoundImage: async (itemId: number, userId: number): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/files/lost-found/${itemId}/image`, {
+      await api.delete(`/lost-found/${itemId}/image`, {
         params: { userId }
       });
     } catch (error) {
@@ -70,7 +89,7 @@ export const fileManagementService = {
   // Delete a book photo
   deleteBookPhoto: async (bookId: number, userId: number): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/files/book/${bookId}/photo`, {
+      await api.delete(`/book/${bookId}/photo`, {
         params: { userId }
       });
     } catch (error) {
@@ -82,7 +101,7 @@ export const fileManagementService = {
   // Delete a book PDF
   deleteBookPdf: async (bookId: number, userId: number): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/files/book/${bookId}/pdf`, {
+      await api.delete(`/book/${bookId}/pdf`, {
         params: { userId }
       });
     } catch (error) {
@@ -94,7 +113,7 @@ export const fileManagementService = {
   // Delete a chatbot upload
   deleteChatbotUpload: async (uploadId: number, userId: number): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/files/chatbot-upload/${uploadId}`, {
+      await api.delete(`/chatbot-upload/${uploadId}`, {
         params: { userId }
       });
     } catch (error) {
