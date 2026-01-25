@@ -225,6 +225,8 @@ export default function NotificationsPage() {
       console.error('Failed to load notifications:', error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         setError('Please log in to view notifications');
+      } else if (axios.isAxiosError(error) && error.response?.status === 403) {
+        setError('Session expired. Please log out and log in again.');
       } else if (axios.isAxiosError(error) && error.response?.status === 400) {
         setError('Invalid request. Please try logging in again.');
       } else {
@@ -1030,7 +1032,7 @@ export default function NotificationsPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-12">
+                <div className={`text-center py-12 rounded-2xl ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} border backdrop-blur-sm shadow-lg`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className={`h-16 w-16 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'} mx-auto mb-4`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1m14 0V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1" />
                   </svg>
