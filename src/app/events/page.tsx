@@ -88,7 +88,11 @@ export default function EventsPage() {
       const data = await eventService.getMyEvents(user.id);
       setMyEvents(data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load your events');
+      if (err.response?.status === 403) {
+        setError('Session expired. Please log out and log in again.');
+      } else {
+        setError(err.response?.data?.error || 'Failed to load your events');
+      }
       console.error('Error fetching my events:', err);
     } finally {
       setLoading(false);
