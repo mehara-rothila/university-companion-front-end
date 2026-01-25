@@ -67,14 +67,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Skip to main content link for accessibility - only visible when focused via keyboard */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-purple-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400"
-      >
-        {t('homepage.skipToMainContent')}
-      </a>
-      
       <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
         <ScrollProgress />
         <AnimatedBackground />
@@ -168,16 +160,16 @@ export default function Home() {
                   </p>
 
                   {/* Feature Dots */}
-                  <div className="flex justify-center mt-6 space-x-2">
+                  <div className="flex justify-center mt-6 space-x-3">
                     {features.map((_, index) => (
                       <button
                         key={index}
                         type="button"
                         aria-label={`View feature ${index + 1}`}
                         onClick={() => setCurrentFeature(index)}
-                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        className={`w-2 h-2 min-w-0 min-h-0 p-0 rounded-full transition-all duration-300 appearance-none border-0 ${
                           index === currentFeature
-                            ? 'bg-purple-500 dark:bg-purple-400 scale-125'
+                            ? 'bg-purple-500 dark:bg-purple-400 scale-150'
                             : isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-300 hover:bg-gray-400'
                         }`}
                       />
