@@ -49,7 +49,14 @@ class TokenCountingService {
   // Get token usage from backend (async - preferred method)
   async getTokenUsageFromBackend(userId: number | string): Promise<TokenUsage> {
     try {
-      const response = await fetch(`${this.API_URL}/api/tokens/usage/${userId}`);
+      // Get auth token from localStorage
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      
+      const response = await fetch(`${this.API_URL}/api/tokens/usage/${userId}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      });
       if (!response.ok) {
         console.warn('Failed to fetch token usage from backend, using local storage');
         return this.getTokenUsage();
