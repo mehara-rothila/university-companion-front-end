@@ -23,7 +23,7 @@ export default function ChatbotPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
         {/* Header */}
         <div className="mb-8 animate-appear">
-          <div className={`relative p-8 rounded-2xl overflow-hidden ${
+          <div className={`relative p-4 sm:p-6 md:p-8 rounded-2xl overflow-hidden ${
             isDarkMode
               ? 'bg-gradient-to-br from-gray-900/90 to-gray-800/90 border border-purple-500/20'
               : 'bg-gradient-to-br from-white/95 to-purple-50/80 border border-purple-200/50'
@@ -35,10 +35,10 @@ export default function ChatbotPage() {
 
             {/* Content */}
             <div className="relative z-10">
-              <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-500 bg-clip-text text-transparent mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-500 bg-clip-text text-transparent mb-4">
                 {t('chatbot.title')}
               </h1>
-              <p className={`text-2xl font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>
+              <p className={`text-base sm:text-xl md:text-2xl font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-3`}>
                 {t('chatbot.subtitle')}
               </p>
               {user && (
@@ -55,7 +55,7 @@ export default function ChatbotPage() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="hidden sm:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className={`group p-5 rounded-xl ${
             isDarkMode
               ? 'bg-gradient-to-br from-gray-800/60 to-gray-900/60 border border-purple-500/30'
@@ -138,7 +138,7 @@ export default function ChatbotPage() {
         </div>
 
         {/* Usage Tips */}
-        <div className={`mb-8 p-7 rounded-2xl relative overflow-hidden ${
+        <div className={`hidden sm:block mb-8 p-4 sm:p-5 md:p-7 rounded-2xl relative overflow-hidden ${
           isDarkMode
             ? 'bg-gradient-to-br from-purple-900/40 via-blue-900/40 to-purple-900/40 border border-purple-500/40'
             : 'bg-gradient-to-br from-purple-50 via-blue-50 to-purple-50 border border-purple-300/50'
@@ -179,11 +179,11 @@ export default function ChatbotPage() {
         </div>
 
         {/* Footer Info */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+        <div className={`mt-8 text-center py-4 px-4 rounded-xl ${isDarkMode ? 'bg-gray-900/60' : 'bg-white/70'} backdrop-blur-sm`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             {t('chatbot.footer.poweredBy')}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+          <p className={`text-xs mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             {t('chatbot.footer.security')}
           </p>
         </div>
