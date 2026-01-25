@@ -224,10 +224,14 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       const imageUrls = uploadedFiles.filter(f => f.type === 'image').map(f => f.url).filter(Boolean);
       const pdfUrls = uploadedFiles.filter(f => f.type === 'pdf').map(f => f.url).filter(Boolean);
 
+      // Get auth token from localStorage
+      const token = localStorage.getItem('token');
+      
       const response = await fetch(`${backendUrl}/api/chatbot/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
         },
         body: JSON.stringify({
           message: inputMessage || 'Please analyze the uploaded files.',
@@ -320,9 +324,9 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             <h3 className={`font-bold text-base md:text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Athena AI Assistant
             </h3>
-            <p className={`text-xs font-medium ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} flex items-center gap-1`}>
-              <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              University of Moratuwa • Powered by Gemini 2.5 Pro
+            <p className={`text-[10px] md:text-xs font-medium ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} flex items-center gap-1`}>
+              <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
+              <span className="truncate">University of Moratuwa • Gemini 2.5 Pro</span>
             </p>
           </div>
         </div>
@@ -336,7 +340,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       {/* Messages */}
       <div
         ref={chatContainerRef}
-        className={`relative z-10 flex-1 overflow-y-auto p-6 space-y-5 ${isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-purple-50/10'
+        className={`relative z-10 flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-5 ${isDarkMode ? 'bg-gradient-to-b from-transparent to-gray-900/20' : 'bg-gradient-to-b from-transparent to-purple-50/10'
           }`}
         style={{ scrollBehavior: 'smooth' }}
       >
@@ -346,7 +350,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-appear`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-lg ${message.role === 'user'
+              className={`max-w-[90%] md:max-w-[85%] rounded-2xl px-3 py-3 md:px-5 md:py-4 shadow-lg ${message.role === 'user'
                 ? 'bg-gradient-to-br from-purple-600 via-purple-500 to-blue-600 text-white shadow-purple-500/30'
                 : isDarkMode
                   ? 'bg-gradient-to-br from-gray-700 to-gray-800 text-gray-100 border border-gray-600/50 shadow-gray-900/50'
@@ -377,7 +381,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
                 </div>
               )}
 
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <p className="text-xs md:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
               <p
                 className={`text-xs mt-1 ${message.role === 'user'
                   ? 'text-white/70'
@@ -458,9 +462,9 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       )}
 
       {/* Input */}
-      <div className={`relative z-10 p-3 md:p-5 border-t-2 ${isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'
-        } backdrop-blur-md`}>
-        <div className="flex items-end gap-3">
+      <div className={`relative z-10 p-3 md:p-5 border-t-2 ${isDarkMode ? 'border-purple-500/30 bg-gray-900/80' : 'border-purple-300/40 bg-white/90'
+        } backdrop-blur-xl`}>
+        <div className="flex items-end gap-2 md:gap-3">
           <input
             type="file"
             ref={fileInputRef}
@@ -475,13 +479,13 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading || isUploading}
-            className={`group p-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg ${isDarkMode
+            className={`group p-2.5 md:p-3 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg flex-shrink-0 ${isDarkMode
               ? 'bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-purple-400 border border-gray-600/50'
               : 'bg-gradient-to-br from-white to-gray-100 hover:from-purple-50 hover:to-purple-100 text-purple-600 border border-gray-300/50'
               } ${(isLoading || isUploading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             title="Upload image or PDF"
           >
-            <Upload className="w-5 h-5 transition-transform group-hover:rotate-12" />
+            <Upload className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:rotate-12" />
           </button>
 
           <textarea
@@ -491,21 +495,21 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             placeholder="Ask me anything or upload files..."
             disabled={isLoading}
             rows={1}
-            className={`flex-1 px-3 py-2 md:px-5 md:py-3 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 shadow-md ${isDarkMode
-              ? 'bg-gray-800/80 border-gray-600/50 text-gray-100 placeholder-gray-400 focus:bg-gray-800/90 focus:border-purple-500/50'
-              : 'bg-white/80 border-gray-300/50 text-gray-900 placeholder-gray-500 focus:bg-white focus:border-purple-400/50'
+            className={`flex-1 min-w-0 px-3 py-2.5 md:px-5 md:py-3 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 shadow-md text-sm md:text-base ${isDarkMode
+              ? 'bg-gray-800 border-gray-600/50 text-gray-100 placeholder-gray-400 focus:bg-gray-800 focus:border-purple-500/50'
+              : 'bg-white border-gray-300/50 text-gray-900 placeholder-gray-500 focus:bg-white focus:border-purple-400/50'
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            style={{ minHeight: '48px', maxHeight: '120px' }}
+            style={{ minHeight: '44px', maxHeight: '120px' }}
           />
 
           <button
             type="button"
             onClick={handleSendMessage}
             disabled={isLoading || (!inputMessage.trim() && uploadedFiles.length === 0)}
-            className="group px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 hover:from-purple-700 hover:via-purple-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-purple-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 disabled:hover:scale-100"
+            className="group px-3 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-purple-600 via-purple-500 to-blue-600 hover:from-purple-700 hover:via-purple-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-purple-500/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 md:gap-2 hover:scale-105 disabled:hover:scale-100 flex-shrink-0"
           >
-            <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            Send
+            <Send className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
+            <span className="hidden sm:inline">Send</span>
           </button>
         </div>
       </div>
