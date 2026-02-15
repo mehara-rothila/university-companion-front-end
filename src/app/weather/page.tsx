@@ -209,8 +209,8 @@ export default function WeatherPage() {
                     <Sun className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.uvIndex')}</p>
                   </div>
-                  <p className={`text-2xl font-bold ${getUVIndexColor(currentWeather.uvIndex)}`}>
-                    {currentWeather.uvIndex} - {getUVIndexLabel(currentWeather.uvIndex)}
+                  <p className={`text-2xl font-bold ${currentWeather.uvIndex >= 0 ? getUVIndexColor(currentWeather.uvIndex) : (isDarkMode ? 'text-gray-400' : 'text-gray-500')}`}>
+                    {currentWeather.uvIndex >= 0 ? `${currentWeather.uvIndex} - ${getUVIndexLabel(currentWeather.uvIndex)}` : 'N/A'}
                   </p>
                 </div>
 

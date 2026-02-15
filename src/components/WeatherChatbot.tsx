@@ -237,8 +237,9 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    let msgCounter = 0;
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${msgCounter++}`,
       role: 'user',
       content: inputMessage,
       timestamp: new Date(),
@@ -253,7 +254,7 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
       const aiResponse = await callGeminiAI(inputMessage);
 
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `${Date.now()}-${msgCounter++}`,
         role: 'assistant',
         content: aiResponse,
         timestamp: new Date(),
@@ -263,7 +264,7 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
     } catch (error) {
       // Fallback to smart response
       const fallbackMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `${Date.now()}-fallback`,
         role: 'assistant',
         content: generateFallbackResponse(inputMessage),
         timestamp: new Date(),
