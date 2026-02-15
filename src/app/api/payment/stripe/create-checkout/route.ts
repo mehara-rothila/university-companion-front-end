@@ -18,9 +18,9 @@ function getStripe() {
 export async function POST(request: NextRequest) {
   try {
     // Verify user is authenticated
-    const session = await getServerSession(authOptions);
+    const authSession = await getServerSession(authOptions);
     const authHeader = request.headers.get('Authorization');
-    if (!session && !authHeader) {
+    if (!authSession && !authHeader) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
