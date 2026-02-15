@@ -288,4 +288,36 @@ export const competitionService = {
       throw error;
     }
   },
+
+  // Admin: Get enrollments for a competition (no organizerId needed)
+  getEnrollmentsAsAdmin: async (competitionId: number): Promise<Enrollment[]> => {
+    try {
+      const response = await api.get(`/${competitionId}/enrollments`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching enrollments as admin:', error);
+      throw error;
+    }
+  },
+
+  // Admin: Export enrollments as CSV (no organizerId needed)
+  exportEnrollmentsAsAdmin: async (competitionId: number): Promise<void> => {
+    try {
+      const response = await api.get(`/${competitionId}/enrollments/export`, {
+        responseType: 'blob'
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `enrollments_${competitionId}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting enrollments as admin:', error);
+      throw error;
+    }
+  },
 };
