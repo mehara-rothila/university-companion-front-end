@@ -6,7 +6,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard, AdminFinancialAidRequest } from '@/services/financialAidService';
+import financialAidService, { FinancialAidApplication, AdminReviewRequest, AdminDashboard, AdminFinancialAidRequest, DonationAnalytics } from '@/services/financialAidService';
 import { User } from '@/app/context/AuthContext';
 import { Trash2 } from 'lucide-react';
 
@@ -27,6 +27,8 @@ export default function AdminFinancialAidPage() {
   const [createSubmitted, setCreateSubmitted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteSubmitted, setDeleteSubmitted] = useState(false);
+  const [donationAnalytics, setDonationAnalytics] = useState<DonationAnalytics | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   // Review form state
   const [reviewForm, setReviewForm] = useState<AdminReviewRequest>({
@@ -117,6 +119,24 @@ export default function AdminFinancialAidPage() {
       ]);
     }
   };
+
+  const loadDonationAnalytics = async () => {
+    try {
+      setAnalyticsLoading(true);
+      const data = await financialAidService.getDonationAnalytics();
+      setDonationAnalytics(data);
+    } catch (err) {
+      console.error('Error loading donation analytics:', err);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'analytics' && !donationAnalytics && isAuthenticated) {
+      loadDonationAnalytics();
+    }
+  }, [activeTab, isAuthenticated]);
 
   const handleReviewApplication = (application: FinancialAidApplication) => {
     setSelectedApplication(application);
@@ -233,7 +253,8 @@ export default function AdminFinancialAidPage() {
   const tabs = [
     { id: 'dashboard', name: 'Dashboard', icon: '📊' },
     { id: 'pending', name: 'Pending Review', icon: '⏳' },
-    { id: 'all', name: 'All Applications', icon: '📋' }
+    { id: 'all', name: 'All Applications', icon: '📋' },
+    { id: 'analytics', name: 'Donation Analytics', icon: '💰' }
   ];
 
   if (!isAuthenticated) {
@@ -526,7 +547,7 @@ export default function AdminFinancialAidPage() {
                 <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
                   All Applications
                 </h2>
-                
+
                 <div className="space-y-4">
                   {applications.map((app) => (
                     <div key={app.id} className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
@@ -559,7 +580,7 @@ export default function AdminFinancialAidPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button 
+                          <button
                             onClick={() => handleReviewApplication(app)}
                             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200"
                           >
@@ -581,6 +602,263 @@ export default function AdminFinancialAidPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Donation Analytics Tab */}
+            {activeTab === 'analytics' && (
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    Donation Analytics
+                  </h2>
+                  <button
+                    onClick={loadDonationAnalytics}
+                    disabled={analyticsLoading}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg text-sm font-medium transition-all duration-200"
+                  >
+                    {analyticsLoading ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                </div>
+
+                {analyticsLoading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Loading analytics...</p>
+                  </div>
+                ) : donationAnalytics ? (
+                  <div className="space-y-8">
+
+                    {/* Summary Stats Cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
+                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                          Rs. {donationAnalytics.totalDonated?.toLocaleString() || '0'}
+                        </div>
+                        <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Total Donated</div>
+                      </div>
+                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          Rs. {donationAnalytics.averageDonation?.toLocaleString() || '0'}
+                        </div>
+                        <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Average Donation</div>
+                      </div>
+                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'}`}>
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                          {donationAnalytics.uniqueDonorCount || 0}
+                        </div>
+                        <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Unique Donors</div>
+                      </div>
+                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'}`}>
+                        <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                          {donationAnalytics.totalDonationCount || 0}
+                        </div>
+                        <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Total Donations</div>
+                      </div>
+                    </div>
+
+                    {/* Two-column: Top Donors + Recent Donations */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                      {/* Top Donors */}
+                      <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                        <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                          Top Donors
+                        </h3>
+                        {donationAnalytics.topDonors && donationAnalytics.topDonors.length > 0 ? (
+                          <div className="space-y-3">
+                            {donationAnalytics.topDonors.map((donor, index) => (
+                              <div key={donor.donorId} className={`flex items-center justify-between p-3 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white border border-gray-100'}`}>
+                                <div className="flex items-center space-x-3">
+                                  <span className={`w-8 h-8 flex items-center justify-center rounded-full font-bold text-sm ${
+                                    index === 0 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                    index === 1 ? 'bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300' :
+                                    index === 2 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' :
+                                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                  }`}>
+                                    {index + 1}
+                                  </span>
+                                  <div>
+                                    <p className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{donor.donorName}</p>
+                                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{donor.donationCount} donation{donor.donationCount !== 1 ? 's' : ''}</p>
+                                  </div>
+                                </div>
+                                <span className={`font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                                  Rs. {donor.totalAmount?.toLocaleString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No donor data available yet.</p>
+                        )}
+                      </div>
+
+                      {/* Recent Donations */}
+                      <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                        <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                          Recent Donations
+                        </h3>
+                        {donationAnalytics.recentDonations && donationAnalytics.recentDonations.length > 0 ? (
+                          <div className="space-y-3 max-h-96 overflow-y-auto">
+                            {donationAnalytics.recentDonations.map((donation) => (
+                              <div key={donation.donationId} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white border border-gray-100'}`}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{donation.donorName}</span>
+                                  <span className={`font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>Rs. {donation.amount?.toLocaleString()}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    to: {donation.applicationTitle}
+                                  </span>
+                                  <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    {donation.createdAt ? new Date(donation.createdAt).toLocaleDateString() : ''}
+                                  </span>
+                                </div>
+                                {donation.message && (
+                                  <p className={`text-xs mt-1 italic ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    &quot;{donation.message}&quot;
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No recent donations.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Donations by Category */}
+                    <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                      <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                        Donations by Category
+                      </h3>
+                      {donationAnalytics.donationsByCategory && donationAnalytics.donationsByCategory.length > 0 ? (
+                        <div className="space-y-3">
+                          {donationAnalytics.donationsByCategory.map((cat) => {
+                            const maxAmount = Math.max(...donationAnalytics.donationsByCategory.map(c => c.totalAmount || 0));
+                            const widthPercent = maxAmount > 0 ? ((cat.totalAmount || 0) / maxAmount) * 100 : 0;
+                            return (
+                              <div key={cat.category}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{cat.category}</span>
+                                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    Rs. {cat.totalAmount?.toLocaleString()} ({cat.donationCount} donation{cat.donationCount !== 1 ? 's' : ''})
+                                  </span>
+                                </div>
+                                <div className={`w-full h-3 rounded-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}>
+                                  <div
+                                    className="h-3 rounded-full bg-blue-500 transition-all duration-500"
+                                    style={{ width: `${widthPercent}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No category data available.</p>
+                      )}
+                    </div>
+
+                    {/* Donations by Aid Type */}
+                    <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                      <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                        Donations by Aid Type
+                      </h3>
+                      {donationAnalytics.donationsByAidType && donationAnalytics.donationsByAidType.length > 0 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {donationAnalytics.donationsByAidType.map((aidType) => (
+                            <div key={aidType.aidType} className={`p-4 rounded-lg text-center ${isDarkMode ? 'bg-gray-600/50' : 'bg-white border border-gray-100'}`}>
+                              <div className={`text-lg font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                                Rs. {aidType.totalAmount?.toLocaleString()}
+                              </div>
+                              <div className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                {aidType.aidType.replace(/_/g, ' ')}
+                              </div>
+                              <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {aidType.donationCount} donation{aidType.donationCount !== 1 ? 's' : ''}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No aid type data available.</p>
+                      )}
+                    </div>
+
+                    {/* Fundraising Progress */}
+                    <div className={`p-6 rounded-lg ${isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gray-50 border border-gray-200'}`}>
+                      <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-4`}>
+                        Fundraising Progress
+                      </h3>
+                      {donationAnalytics.fundraisingProgress && donationAnalytics.fundraisingProgress.length > 0 ? (
+                        <div className="space-y-4">
+                          {donationAnalytics.fundraisingProgress.map((item) => (
+                            <div key={item.applicationId} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white border border-gray-100'}`}>
+                              <div className="flex items-center justify-between mb-2">
+                                <div>
+                                  <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{item.title}</h4>
+                                  <div className="flex items-center space-x-2 mt-1">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                                      {item.aidType.replace(/_/g, ' ')}
+                                    </span>
+                                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      {item.category}
+                                    </span>
+                                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                      {item.supporterCount} supporter{item.supporterCount !== 1 ? 's' : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <span className={`text-sm font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                                    Rs. {item.raisedAmount?.toLocaleString()}
+                                  </span>
+                                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    {' '}/ Rs. {item.requestedAmount?.toLocaleString()}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className={`w-full h-3 rounded-full ${isDarkMode ? 'bg-gray-500' : 'bg-gray-200'}`}>
+                                <div
+                                  className={`h-3 rounded-full transition-all duration-500 ${
+                                    item.progressPercent >= 100 ? 'bg-green-500' :
+                                    item.progressPercent >= 75 ? 'bg-blue-500' :
+                                    item.progressPercent >= 50 ? 'bg-yellow-500' :
+                                    'bg-orange-500'
+                                  }`}
+                                  style={{ width: `${Math.min(item.progressPercent, 100)}%` }}
+                                />
+                              </div>
+                              <div className="mt-1">
+                                <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  {item.progressPercent.toFixed(1)}% funded
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No donation-eligible applications found.</p>
+                      )}
+                    </div>
+
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Unable to load donation analytics. Please try again.
+                    </p>
+                    <button
+                      onClick={loadDonationAnalytics}
+                      className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-200"
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
