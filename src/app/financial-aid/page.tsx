@@ -497,11 +497,40 @@ export default function FinancialAidPage() {
 
           {/* Financial Health Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} text-center animate-fade-in`}>
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                {Math.round(calculateFinancialHealth())}%
-              </div>
-              <div className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Financial Health</div>
+            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'} text-center animate-fade-in group relative`}>
+              {(() => {
+                const healthScore = calculateFinancialHealth();
+                const approved = userApplications.filter(a => a.status === 'APPROVED' || a.status === 'FUNDED').length;
+                const totalRequested = userApplications.reduce((sum, a) => sum + (a.requestedAmount || 0), 0);
+                const totalRaised = userApplications.reduce((sum, a) => sum + (a.raisedAmount || 0) + (a.approvedAmount || 0), 0);
+                const approvalPct = userApplications.length > 0 ? Math.round((approved / userApplications.length) * 50) : 0;
+                const fundingPct = totalRequested > 0 ? Math.round(Math.min((totalRaised / totalRequested) * 50, 50)) : 0;
+                return (
+                  <>
+                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                      {Math.round(healthScore)}%
+                    </div>
+                    <div className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-700'} mb-2`}>Financial Health</div>
+                    {/* Progress bar */}
+                    <div className={`w-full h-2 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-blue-100'} overflow-hidden mb-2`}>
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${healthScore >= 75 ? 'bg-green-500' : healthScore >= 40 ? 'bg-blue-500' : 'bg-orange-500'}`}
+                        style={{ width: `${healthScore}%` }}
+                      />
+                    </div>
+                    {/* Breakdown */}
+                    <div className={`text-xs space-y-1 ${isDarkMode ? 'text-blue-400/70' : 'text-blue-600/70'}`}>
+                      {userApplications.length === 0 ? (
+                        <p>Submit an application to start tracking</p>
+                      ) : (
+                        <>
+                          <p>Approvals: {approvalPct}/50 &middot; Funding: {fundingPct}/50</p>
+                        </>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
             </div>
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} text-center animate-fade-in`}>
