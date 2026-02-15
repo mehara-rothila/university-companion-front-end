@@ -22,7 +22,9 @@ import {
   Trophy,
   Calendar,
   Search,
-  BookOpen
+  BookOpen,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 // Types
@@ -91,6 +93,7 @@ export default function AdminPanel() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showRoleFilterDropdown, setShowRoleFilterDropdown] = useState(false);
   const [showUserRoleDropdown, setShowUserRoleDropdown] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -135,11 +138,14 @@ export default function AdminPanel() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
 
-  // Helper function to get auth headers
-  const getAuthHeaders = () => ({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  });
+  // Helper function to get auth headers (reads fresh token to avoid stale closures)
+  const getAuthHeaders = () => {
+    const currentToken = token || localStorage.getItem('token');
+    return {
+      'Authorization': `Bearer ${currentToken}`,
+      'Content-Type': 'application/json'
+    };
+  };
 
   // Load dashboard stats
   const loadStats = useCallback(async () => {
@@ -152,14 +158,14 @@ export default function AdminPanel() {
       console.error('Failed to load stats:', error);
       setError('Failed to load dashboard statistics');
     }
-  }, []);
+  }, [token]);
 
   // Load module counts
   const loadModuleCounts = useCallback(async () => {
     try {
       // Load achievements count
       try {
-        const achievementsRes = await axios.get(`${API_BASE}/achievements/pending/${user?.id}`, {
+        const achievementsRes = await axios.get(`${API_BASE}/achievements/admin/pending`, {
           headers: getAuthHeaders()
         });
         setModuleCounts(prev => ({ ...prev, pendingAchievements: achievementsRes.data?.length || 0 }));
@@ -169,10 +175,10 @@ export default function AdminPanel() {
 
       // Load financial aid count
       try {
-        const financialAidRes = await axios.get(`${API_BASE}/financial-aid/admin/applications?status=PENDING&page=0&size=1`, {
+        const financialAidRes = await axios.get(`${API_BASE}/admin/financial-aid/applications?status=PENDING`, {
           headers: getAuthHeaders()
         });
-        setModuleCounts(prev => ({ ...prev, pendingFinancialAid: financialAidRes.data?.totalElements || 0 }));
+        setModuleCounts(prev => ({ ...prev, pendingFinancialAid: financialAidRes.data?.length || 0 }));
       } catch (err) {
         console.log('Financial aid count not available');
       }
@@ -189,40 +195,40 @@ export default function AdminPanel() {
 
       // Load events count
       try {
-        const eventsRes = await axios.get(`${API_BASE}/events/pending?page=0&size=1`, {
+        const eventsRes = await axios.get(`${API_BASE}/events/admin/pending`, {
           headers: getAuthHeaders()
         });
-        setModuleCounts(prev => ({ ...prev, pendingEvents: eventsRes.data?.totalElements || 0 }));
+        setModuleCounts(prev => ({ ...prev, pendingEvents: eventsRes.data?.length || 0 }));
       } catch (err) {
         console.log('Events count not available');
       }
 
       // Load competitions count
       try {
-        const competitionsRes = await axios.get(`${API_BASE}/competitions/pending?page=0&size=1`, {
+        const competitionsRes = await axios.get(`${API_BASE}/competitions/admin/pending`, {
           headers: getAuthHeaders()
         });
-        setModuleCounts(prev => ({ ...prev, pendingCompetitions: competitionsRes.data?.totalElements || 0 }));
+        setModuleCounts(prev => ({ ...prev, pendingCompetitions: competitionsRes.data?.length || 0 }));
       } catch (err) {
         console.log('Competitions count not available');
       }
 
       // Load lost & found count
       try {
-        const lostFoundRes = await axios.get(`${API_BASE}/lost-found/all?page=0&size=1`, {
+        const lostFoundRes = await axios.get(`${API_BASE}/lost-found/admin/pending`, {
           headers: getAuthHeaders()
         });
-        setModuleCounts(prev => ({ ...prev, activeLostFound: lostFoundRes.data?.totalElements || 0 }));
+        setModuleCounts(prev => ({ ...prev, activeLostFound: lostFoundRes.data?.length || 0 }));
       } catch (err) {
         console.log('Lost & Found count not available');
       }
 
       // Load library books count
       try {
-        const libraryRes = await axios.get(`${API_BASE}/library/pending?page=0&size=1`, {
+        const libraryRes = await axios.get(`${API_BASE}/books/admin/pending`, {
           headers: getAuthHeaders()
         });
-        setModuleCounts(prev => ({ ...prev, pendingLibraryBooks: libraryRes.data?.totalElements || 0 }));
+        setModuleCounts(prev => ({ ...prev, pendingLibraryBooks: libraryRes.data?.length || 0 }));
       } catch (err) {
         console.log('Library count not available');
       }
@@ -1370,17 +1376,26 @@ export default function AdminPanel() {
                 {!selectedUser && (
                   <div>
                     <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>{t('admin.modal.fields.password')}</label>
-                    <input
-                      type="password"
-                      required={!selectedUser}
-                      value={userForm.password}
-                      onChange={(e) => setUserForm(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder={t('admin.modal.placeholders.password')}
-                      className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                        } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required={!selectedUser}
+                        value={userForm.password}
+                        onChange={(e) => setUserForm(prev => ({ ...prev, password: e.target.value }))}
+                        placeholder={t('admin.modal.placeholders.password')}
+                        className={`w-full px-4 py-3 rounded-lg border transition-all duration-200 ${isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400'
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-10`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                      >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      </button>
+                    </div>
                   </div>
                 )}
 
