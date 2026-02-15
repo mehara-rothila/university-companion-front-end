@@ -177,9 +177,9 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
   }, [userId]);
 
   const sendMessage = useCallback((destination: string, message: unknown) => {
-    if (client && isConnected) {
+    if (clientRef.current && isConnected) {
       try {
-        client.publish({
+        clientRef.current.publish({
           destination,
           body: JSON.stringify(message)
         });
