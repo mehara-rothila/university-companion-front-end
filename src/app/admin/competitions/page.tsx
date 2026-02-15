@@ -147,10 +147,12 @@ export default function AdminCompetitionsPage() {
     if (!selectedCompetition) return;
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/competitions/${selectedCompetition.id}/image`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
       },
       body: JSON.stringify({ imageUrl }),
     });
