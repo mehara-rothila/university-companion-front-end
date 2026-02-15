@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
               provider: 'google',
               providerId: account.providerAccountId,
               imageUrl: user.image,
+              accessToken: account.id_token,
               role: 'STUDENT'
             }),
           })
