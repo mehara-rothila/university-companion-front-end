@@ -136,6 +136,14 @@ const Navigation = () => {
             </Link>
           )}
 
+          {/* My Uploads - Only show when authenticated */}
+          {isAuthenticated && (
+            <Link href="/my-uploads" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+              <FolderOpen className="inline h-4 w-4 mr-1.5" />
+              {t('nav.myUploads')}
+            </Link>
+          )}
+
           {/* Emergency Notifications Badge - Only show when authenticated */}
           {isAuthenticated && (
             <Link
