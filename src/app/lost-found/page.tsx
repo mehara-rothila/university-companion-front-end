@@ -41,6 +41,7 @@ export default function LostFoundPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
@@ -98,6 +99,12 @@ export default function LostFoundPage() {
     tags: []
   });
 
+  // Debounce search query to avoid API call on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const loadItems = useCallback(async () => {
     try {
       setLoading(true);
@@ -107,7 +114,7 @@ export default function LostFoundPage() {
         type: viewMode === 'all' ? undefined : viewMode.toUpperCase(),
         category: selectedCategory === 'all' ? undefined : selectedCategory,
         location: selectedLocation === 'all' ? undefined : selectedLocation,
-        search: searchQuery || undefined,
+        search: debouncedSearch || undefined,
         status: 'ACTIVE'
       };
 
@@ -119,7 +126,7 @@ export default function LostFoundPage() {
     } finally {
       setLoading(false);
     }
-  }, [viewMode, selectedCategory, selectedLocation, searchQuery]);
+  }, [viewMode, selectedCategory, selectedLocation, debouncedSearch]);
 
   const loadStats = useCallback(async () => {
     try {
@@ -182,7 +189,7 @@ export default function LostFoundPage() {
   const locations: LocationArea[] = [
     { id: 'all', name: 'All Locations', zone: 'University Wide', frequency: 100 },
     ...(stats?.locations || []).map(location => ({
-      id: location.toLowerCase().replace(/\s+/g, '-'),
+      id: location,
       name: location,
       zone: 'University',
       frequency: Math.floor(Math.random() * 50) + 10

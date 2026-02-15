@@ -1,6 +1,8 @@
 // app/api/payment/stripe/create-checkout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
 import Stripe from 'stripe';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 // Create Stripe instance lazily to avoid build-time errors
 function getStripe() {
@@ -15,6 +17,16 @@ function getStripe() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify user is authenticated
+    const session = await getServerSession(authOptions);
+    const authHeader = request.headers.get('Authorization');
+    if (!session && !authHeader) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const { amount, financialAidId, donorName, donorEmail, isAnonymous, message } = await request.json();
 
     if (!amount || amount < 100) {

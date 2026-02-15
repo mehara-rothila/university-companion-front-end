@@ -118,9 +118,10 @@ export default function LostFoundContactModal({
 
   // Handle typing indicator
   const handleTyping = useCallback(() => {
-    if (!conversation || !isTyping) {
+    if (!conversation) return;
+    if (!isTyping) {
       setIsTyping(true);
-      lostFoundMessageService.sendTypingIndicator(conversation!.id, true);
+      lostFoundMessageService.sendTypingIndicator(conversation.id, true);
     }
 
     // Clear existing timeout

@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-// import { useDarkMode, DarkModeToggle } from '@/app/context/DarkModeContext';
+import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle } from 'lucide-react';
@@ -15,7 +15,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const isDarkMode = false;
+  const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated, logout } = useAuth();
   const { locale, setLocale, t } = useTranslation();
 

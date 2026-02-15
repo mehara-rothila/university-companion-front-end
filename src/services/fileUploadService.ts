@@ -48,8 +48,15 @@ class FileUploadService {
       formData.append('folder', folder);
     }
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${this.API_URL}${endpoint}`, {
       method: 'POST',
+      headers,
       body: formData,
     });
 
@@ -69,7 +76,7 @@ class FileUploadService {
   }
 
   // Process PDF with AI (extract text and analyze)
-  async processPdfWithAI(fileUrl: string, geminiApiKey: string): Promise<FileProcessingResult> {
+  async processPdfWithAI(fileUrl: string): Promise<FileProcessingResult> {
     const startTime = Date.now();
     
     try {
@@ -95,55 +102,34 @@ class FileUploadService {
     }
   }
 
-  // Process image with AI (analyze and describe)
-  async processImageWithAI(fileUrl: string, geminiApiKey: string): Promise<FileProcessingResult> {
+  // Process image with AI (analyze and describe) via server-side proxy
+  async processImageWithAI(fileUrl: string): Promise<FileProcessingResult> {
     const startTime = Date.now();
-    
-    try {
-      if (!geminiApiKey) {
-        throw new Error('Gemini API key is not configured');
-      }
 
-      // Use Gemini Vision for image analysis
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent', {
+    try {
+      const imageBase64 = await this.getImageAsBase64(fileUrl);
+
+      const response = await fetch('/api/athena', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-goog-api-key': geminiApiKey
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{
-            parts: [
-              {
-                text: "Analyze this image and provide a detailed description. Focus on any text, objects, people, or relevant details that might be helpful for a university student."
-              },
-              {
-                inline_data: {
-                  mime_type: "image/jpeg",
-                  data: await this.getImageAsBase64(fileUrl)
-                }
-              }
-            ]
-          }],
-          generationConfig: {
-            temperature: 0.4,
-            topK: 32,
-            topP: 1,
-            maxOutputTokens: 1024
-          }
+          action: 'analyze-image',
+          imageData: imageBase64,
+          mimeType: 'image/jpeg'
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `API error: ${response.status}`);
       }
 
       const data = await response.json();
       const extractedText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not analyze image';
-      const tokensUsed = Math.ceil(extractedText.length / 4) + 258; // Include image tokens
-      
+      const tokensUsed = Math.ceil(extractedText.length / 4) + 258;
+
       const processingTime = Date.now() - startTime;
-      
+
       return {
         extractedText,
         processingTime,

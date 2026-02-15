@@ -106,10 +106,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           name: session.user.name || undefined,
         };
         setUser(backendUser);
-        setToken(sessionData.backendToken || 'google-oauth-token');
+        if (sessionData.backendToken) {
+          setToken(sessionData.backendToken);
+          localStorage.setItem('token', sessionData.backendToken);
+        }
 
         // Store in localStorage for persistence
-        localStorage.setItem('token', sessionData.backendToken || 'google-oauth-token');
         localStorage.setItem('user', JSON.stringify(backendUser));
       } else {
         // Fallback to session data only (shouldn't happen with new implementation)
@@ -124,7 +126,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           name: session.user.name || undefined,
         };
         setUser(googleUser);
-        setToken(session.accessToken || 'google-oauth-token');
+        if (session.accessToken) {
+          setToken(session.accessToken);
+        }
       }
     } else {
       // Check for stored auth data (traditional login)
@@ -214,13 +218,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           };
         }
 
-        // Handle case where email might be in the username field (if user logged in with email)
-        if (typeof responseData === 'object') {
-          return {
-            error: 'EMAIL_NOT_VERIFIED',
-            email: responseData.email || usernameOrEmail
-          };
-        }
+        // For other 403 errors (disabled/banned users), don't assume EMAIL_NOT_VERIFIED
+        return {
+          error: responseData?.error || 'ACCESS_DENIED',
+          email: responseData?.email || usernameOrEmail
+        };
       }
 
       return false;

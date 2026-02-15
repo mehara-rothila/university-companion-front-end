@@ -133,8 +133,67 @@ export default function FinancialAidPage() {
     hasFinancialNeed: false
   });
 
-  // Budget data - will be loaded from backend or user input
+  // Budget data - persisted in localStorage
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>([]);
+  const [showAddBudgetModal, setShowAddBudgetModal] = useState(false);
+  const [editingBudgetId, setEditingBudgetId] = useState<string | null>(null);
+  const [budgetForm, setBudgetForm] = useState({ name: '', budgeted: 0, spent: 0, color: '#3B82F6' });
+
+  const budgetColors = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#06B6D4'];
+
+  // Load budget from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('budget_categories');
+      if (saved) {
+        try { setBudgetCategories(JSON.parse(saved)); } catch {}
+      }
+    }
+  }, []);
+
+  // Save budget to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && budgetCategories.length > 0) {
+      localStorage.setItem('budget_categories', JSON.stringify(budgetCategories));
+    }
+  }, [budgetCategories]);
+
+  const addOrUpdateBudgetCategory = () => {
+    if (!budgetForm.name.trim() || budgetForm.budgeted <= 0) return;
+    const remaining = budgetForm.budgeted - budgetForm.spent;
+    if (editingBudgetId) {
+      setBudgetCategories(prev => prev.map(c => c.id === editingBudgetId
+        ? { ...c, name: budgetForm.name, budgeted: budgetForm.budgeted, spent: budgetForm.spent, remaining, color: budgetForm.color }
+        : c
+      ));
+      setEditingBudgetId(null);
+    } else {
+      setBudgetCategories(prev => [...prev, {
+        id: Date.now().toString(),
+        name: budgetForm.name,
+        budgeted: budgetForm.budgeted,
+        spent: budgetForm.spent,
+        remaining,
+        color: budgetForm.color,
+      }]);
+    }
+    setBudgetForm({ name: '', budgeted: 0, spent: 0, color: budgetColors[budgetCategories.length % budgetColors.length] });
+    setShowAddBudgetModal(false);
+  };
+
+  const deleteBudgetCategory = (id: string) => {
+    const updated = budgetCategories.filter(c => c.id !== id);
+    setBudgetCategories(updated);
+    if (updated.length === 0 && typeof window !== 'undefined') {
+      localStorage.removeItem('budget_categories');
+    }
+  };
+
+  const startEditBudget = (cat: BudgetCategory) => {
+    setBudgetForm({ name: cat.name, budgeted: cat.budgeted, spent: cat.spent, color: cat.color });
+    setEditingBudgetId(cat.id);
+    setShowAddBudgetModal(true);
+  };
 
   // Aid opportunities - will be loaded from backend
   const [aidOpportunities, setAidOpportunities] = useState<FinancialAidOpportunity[]>([]);
@@ -144,13 +203,19 @@ export default function FinancialAidPage() {
 
   // Load data on component mount
   useEffect(() => {
-    loadApplications();
-    loadDonationEligibleApplications();
-    loadStats();
-    if (isAuthenticated && user) {
-      loadUserApplications();
-    }
-    setTimeout(() => setIsLoading(false), 1000);
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          loadApplications(),
+          loadDonationEligibleApplications(),
+          loadStats(),
+          ...(isAuthenticated && user ? [loadUserApplications()] : [])
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
   }, [isAuthenticated, user]);
 
   const loadApplications = async () => {
@@ -298,22 +363,23 @@ export default function FinancialAidPage() {
     }
   };
 
-  // Calculate financial health score
+  // Calculate financial health score from user's own applications
   const calculateFinancialHealth = () => {
-    const income = financialProfile.totalIncome + financialProfile.availableAid;
-    if (financialProfile.totalExpenses === 0) {
-      return income > 0 ? 100 : 0;
-    }
-    const ratio = income / financialProfile.totalExpenses;
-    return Math.min(ratio * 100, 100);
+    if (userApplications.length === 0) return 0;
+    const approved = userApplications.filter(a => a.status === 'APPROVED' || a.status === 'FUNDED').length;
+    const totalRequested = userApplications.reduce((sum, a) => sum + (a.requestedAmount || 0), 0);
+    const totalRaised = userApplications.reduce((sum, a) => sum + (a.raisedAmount || 0) + (a.approvedAmount || 0), 0);
+    const approvalScore = (approved / userApplications.length) * 50;
+    const fundingScore = totalRequested > 0 ? Math.min((totalRaised / totalRequested) * 50, 50) : 0;
+    return Math.round(approvalScore + fundingScore);
   };
 
   const tabs = [
-    { id: 'dashboard', name: 'Financial Dashboard', icon: '📊' },
-    { id: 'aid-finder', name: 'Aid Opportunities', icon: '🔍' },
-    { id: 'donations', name: 'Community Support', icon: '🤝' },
-    { id: 'budget', name: 'Budget Tracker', icon: '💰' },
-    { id: 'applications', name: 'My Applications', icon: '📝' }
+    { id: 'dashboard', name: 'Financial Dashboard', icon: '📊', count: null as number | null },
+    { id: 'aid-finder', name: 'Aid Opportunities', icon: '🔍', count: aidOpportunities.length },
+    { id: 'donations', name: 'Community Support', icon: '🤝', count: donationEligibleApps.length },
+    { id: 'budget', name: 'Budget Tracker', icon: '💰', count: null as number | null },
+    { id: 'applications', name: 'My Applications', icon: '📝', count: userApplications.length }
   ];
 
   if (isLoading) {
@@ -440,23 +506,23 @@ export default function FinancialAidPage() {
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-                Rs. {financialProfile.availableAid.toLocaleString()}
+                Rs. {userApplications.filter(a => a.status === 'APPROVED' || a.status === 'FUNDED').reduce((sum, a) => sum + (a.approvedAmount || 0), 0).toLocaleString()}
               </div>
-              <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Available Aid</div>
+              <div className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>My Approved Aid</div>
             </div>
             
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                {aidOpportunities.length}
+                {donationEligibleApps.length}
               </div>
-              <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Aid Opportunities</div>
+              <div className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>Open for Donations</div>
             </div>
-            
+
             <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-orange-900/20 border border-orange-800' : 'bg-orange-50 border border-orange-200'} text-center animate-fade-in`}>
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                Rs. {(realStats?.totalRaisedAmount || 0).toLocaleString()}
+                Rs. {userApplications.reduce((sum, a) => sum + (a.raisedAmount || 0), 0).toLocaleString()}
               </div>
-              <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Community Raised</div>
+              <div className={`text-sm ${isDarkMode ? 'text-orange-300' : 'text-orange-700'}`}>Raised for Me</div>
             </div>
           </div>
 
@@ -475,6 +541,17 @@ export default function FinancialAidPage() {
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <span className="hidden sm:inline">{tab.name}</span>
+                    {tab.count !== null && tab.count > 0 && (
+                      <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold rounded-full ${
+                        activeTab === tab.id
+                          ? 'bg-blue-500 text-white'
+                          : isDarkMode
+                            ? 'bg-gray-600 text-gray-200'
+                            : 'bg-gray-200 text-gray-700'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
                   </div>
                 </button>
               ))}
@@ -489,60 +566,105 @@ export default function FinancialAidPage() {
               <div className="p-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   
-                  {/* Financial Overview */}
+                  {/* My Financial Overview - user's own data */}
                   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
                     <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                      Financial Overview
+                      {userApplications.length > 0 ? 'My Financial Overview' : 'Get Started'}
                     </h3>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-green-100 dark:bg-green-900/20">
-                        <div>
-                          <p className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Total Income + Aid</p>
-                          <p className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
-                            Rs. {(financialProfile.totalIncome + financialProfile.availableAid).toLocaleString()}
-                          </p>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
-                      </div>
 
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-red-100 dark:bg-red-900/20">
-                        <div>
-                          <p className={`text-sm ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>Total Expenses</p>
-                          <p className={`text-2xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
-                            Rs. {financialProfile.totalExpenses.toLocaleString()}
+                    {userApplications.length === 0 ? (
+                      <div className="space-y-4">
+                        <div className={`p-5 rounded-lg text-center ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
+                          <div className="text-4xl mb-3">🎓</div>
+                          <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-blue-300' : 'text-blue-800'}`}>Need Financial Help?</h4>
+                          <p className={`text-sm mb-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
+                            Apply for scholarships, grants, or emergency funds. Our community is here to support you.
                           </p>
+                          <button
+                            onClick={() => setActiveTab('applications')}
+                            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all"
+                          >
+                            Apply for Aid
+                          </button>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
+                        <div className={`p-5 rounded-lg text-center ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
+                          <div className="text-4xl mb-3">🤝</div>
+                          <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>Support a Fellow Student</h4>
+                          <p className={`text-sm mb-4 ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
+                            {donationEligibleApps.length > 0
+                              ? `${donationEligibleApps.length} student${donationEligibleApps.length > 1 ? 's' : ''} currently need${donationEligibleApps.length === 1 ? 's' : ''} your help.`
+                              : 'Check back later for donation opportunities.'}
+                          </p>
+                          {donationEligibleApps.length > 0 && (
+                            <button
+                              onClick={() => setActiveTab('donations')}
+                              className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-all"
+                            >
+                              View Campaigns
+                            </button>
+                          )}
+                        </div>
                       </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 rounded-lg bg-green-100 dark:bg-green-900/20">
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>My Approved Aid</p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                              Rs. {userApplications.filter(a => a.status === 'APPROVED' || a.status === 'FUNDED').reduce((sum, a) => sum + (a.approvedAmount || 0), 0).toLocaleString()}
+                            </p>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
 
-                      <div className={`flex items-center justify-between p-4 rounded-lg ${
-                        financialProfile.totalIncome + financialProfile.availableAid >= financialProfile.totalExpenses 
-                          ? 'bg-blue-100 dark:bg-blue-900/20' 
-                          : 'bg-orange-100 dark:bg-orange-900/20'
-                      }`}>
-                        <div>
-                          <p className={`text-sm ${
-                            financialProfile.totalIncome + financialProfile.availableAid >= financialProfile.totalExpenses 
-                              ? isDarkMode ? 'text-blue-300' : 'text-blue-700'
-                              : isDarkMode ? 'text-orange-300' : 'text-orange-700'
-                          }`}>
-                            {financialProfile.totalIncome + financialProfile.availableAid >= financialProfile.totalExpenses ? 'Surplus' : 'Shortfall'}
-                          </p>
-                          <p className={`text-2xl font-bold ${
-                            financialProfile.totalIncome + financialProfile.availableAid >= financialProfile.totalExpenses 
-                              ? isDarkMode ? 'text-blue-400' : 'text-blue-600'
-                              : isDarkMode ? 'text-orange-400' : 'text-orange-600'
-                          }`}>
-                            Rs. {Math.abs((financialProfile.totalIncome + financialProfile.availableAid) - financialProfile.totalExpenses).toLocaleString()}
-                          </p>
+                        <div className="flex items-center justify-between p-4 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>Raised for Me</p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                              Rs. {userApplications.reduce((sum, a) => sum + (a.raisedAmount || 0), 0).toLocaleString()}
+                            </p>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className={`p-3 rounded-lg text-center ${isDarkMode ? 'bg-yellow-900/20' : 'bg-yellow-50'}`}>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                              {userApplications.filter(a => a.status === 'PENDING' || a.status === 'UNDER_REVIEW').length}
+                            </p>
+                            <p className={`text-xs ${isDarkMode ? 'text-yellow-300' : 'text-yellow-700'}`}>Pending</p>
+                          </div>
+                          <div className={`p-3 rounded-lg text-center ${isDarkMode ? 'bg-green-900/20' : 'bg-green-50'}`}>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                              {userApplications.filter(a => a.status === 'APPROVED' || a.status === 'FUNDED').length}
+                            </p>
+                            <p className={`text-xs ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>Approved</p>
+                          </div>
+                          <div className={`p-3 rounded-lg text-center ${isDarkMode ? 'bg-red-900/20' : 'bg-red-50'}`}>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                              {userApplications.filter(a => a.status === 'REJECTED').length}
+                            </p>
+                            <p className={`text-xs ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>Rejected</p>
+                          </div>
+                        </div>
+
+                        <div className={`flex items-center justify-between p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20' : 'bg-purple-100'}`}>
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>My Supporters</p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                              {userApplications.reduce((sum, a) => sum + (a.supporterCount || 0), 0)}
+                            </p>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Recent Aid Applications */}
@@ -790,102 +912,232 @@ export default function FinancialAidPage() {
             {/* Budget Tracker Tab */}
             {activeTab === 'budget' && (
               <div className="p-8">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                  Budget Tracker
-                </h2>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Budget Categories */}
-                  <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
-                    <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                      Budget Categories
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      {budgetCategories.map((category) => (
-                        <div key={category.id} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                              {category.name}
-                            </h4>
-                            <span className={`text-sm font-medium ${
-                              category.remaining < 0 ? 'text-red-500' : 'text-green-500'
-                            }`}>
-                              {category.remaining < 0 ? 'Over by ' : 'Remaining: '}
-                              Rs. {Math.abs(category.remaining).toLocaleString()}
-                            </span>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    Budget Tracker
+                  </h2>
+                  <button
+                    onClick={() => { setBudgetForm({ name: '', budgeted: 0, spent: 0, color: budgetColors[budgetCategories.length % budgetColors.length] }); setEditingBudgetId(null); setShowAddBudgetModal(true); }}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    Add Category
+                  </button>
+                </div>
+
+                {/* Add/Edit Budget Modal */}
+                {showAddBudgetModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowAddBudgetModal(false)}>
+                    <div className={`w-full max-w-md mx-4 rounded-2xl shadow-2xl p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`} onClick={e => e.stopPropagation()}>
+                      <h3 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                        {editingBudgetId ? 'Edit Category' : 'Add Budget Category'}
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Category Name</label>
+                          <input
+                            type="text"
+                            value={budgetForm.name}
+                            onChange={e => setBudgetForm({...budgetForm, name: e.target.value})}
+                            placeholder="e.g. Tuition, Food, Transport"
+                            className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Budget (Rs.)</label>
+                            <input
+                              type="number"
+                              value={budgetForm.budgeted || ''}
+                              onChange={e => setBudgetForm({...budgetForm, budgeted: parseFloat(e.target.value) || 0})}
+                              placeholder="0"
+                              min="0"
+                              className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                            />
                           </div>
-                          
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Spent: Rs. {category.spent.toLocaleString()}
-                              </span>
-                              <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                Budget: Rs. {category.budgeted.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className={`w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2`}>
-                              <div 
-                                className={`h-2 rounded-full transition-all duration-300 ${
-                                  category.spent > category.budgeted ? 'bg-red-500' :
-                                  category.spent > category.budgeted * 0.8 ? 'bg-yellow-500' :
-                                  'bg-green-500'
-                                }`}
-                                style={{ width: `${Math.min((category.spent / category.budgeted) * 100, 100)}%` }}
-                              ></div>
-                            </div>
+                          <div>
+                            <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Spent (Rs.)</label>
+                            <input
+                              type="number"
+                              value={budgetForm.spent || ''}
+                              onChange={e => setBudgetForm({...budgetForm, spent: parseFloat(e.target.value) || 0})}
+                              placeholder="0"
+                              min="0"
+                              className={`w-full px-4 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                            />
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Budget Summary */}
-                  <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
-                    <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
-                      Budget Summary
-                    </h3>
-                    
-                    <div className="space-y-4">
-                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
-                        <h4 className={`font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-2`}>
-                          Monthly Progress
-                        </h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
-                          You are tracking your budget in 6 categories this month.
-                        </p>
+                        <div>
+                          <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Color</label>
+                          <div className="flex gap-2 flex-wrap">
+                            {budgetColors.map(c => (
+                              <button
+                                key={c}
+                                onClick={() => setBudgetForm({...budgetForm, color: c})}
+                                className={`w-8 h-8 rounded-full border-2 transition-all ${budgetForm.color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent'}`}
+                                style={{ backgroundColor: c }}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
-
-                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
-                        <h4 className={`font-medium ${isDarkMode ? 'text-green-300' : 'text-green-800'} mb-2`}>
-                          On Track Categories
-                        </h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
-                          4 out of 6 categories are within budget limits.
-                        </p>
-                      </div>
-
-                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
-                        <h4 className={`font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-2`}>
-                          Budget Alert
-                        </h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
-                          Personal spending is over budget. Consider reducing discretionary purchases.
-                        </p>
-                      </div>
-
-                      <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-purple-900/20 border border-purple-800' : 'bg-purple-50 border border-purple-200'}`}>
-                        <h4 className={`font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-800'} mb-2`}>
-                          Savings Tip
-                        </h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-purple-400' : 'text-purple-700'}`}>
-                          Consider purchasing used textbooks to save on education expenses.
-                        </p>
+                      <div className="flex gap-3 mt-6">
+                        <button onClick={() => setShowAddBudgetModal(false)} className={`flex-1 px-4 py-2 rounded-lg font-medium ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                          Cancel
+                        </button>
+                        <button
+                          onClick={addOrUpdateBudgetCategory}
+                          disabled={!budgetForm.name.trim() || budgetForm.budgeted <= 0}
+                          className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium"
+                        >
+                          {editingBudgetId ? 'Update' : 'Add'}
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {budgetCategories.length === 0 ? (
+                  <div className={`text-center py-16 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                    <div className="text-5xl mb-4">📊</div>
+                    <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>No Budget Categories Yet</h3>
+                    <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Start tracking your monthly spending by adding budget categories like Tuition, Food, Transport, etc.
+                    </p>
+                    <button
+                      onClick={() => { setBudgetForm({ name: '', budgeted: 0, spent: 0, color: '#3B82F6' }); setEditingBudgetId(null); setShowAddBudgetModal(true); }}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+                    >
+                      Add Your First Category
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Budget Categories */}
+                    <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                      <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
+                        Budget Categories
+                      </h3>
+
+                      <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
+                        {budgetCategories.map((category) => (
+                          <div key={category.id} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-600/50' : 'bg-white'} border ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }}></div>
+                                <h4 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                                  {category.name}
+                                </h4>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className={`text-sm font-medium ${category.remaining < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                                  {category.remaining < 0 ? 'Over by ' : 'Left: '}Rs. {Math.abs(category.remaining).toLocaleString()}
+                                </span>
+                                <button onClick={() => startEditBudget(category)} className={`p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-500 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} title="Edit">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                </button>
+                                <button onClick={() => deleteBudgetCategory(category.id)} className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500" title="Delete">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="mb-2">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  Spent: Rs. {category.spent.toLocaleString()}
+                                </span>
+                                <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  Budget: Rs. {category.budgeted.toLocaleString()}
+                                </span>
+                              </div>
+                              <div className={`w-full rounded-full h-2.5 ${isDarkMode ? 'bg-gray-500' : 'bg-gray-200'}`}>
+                                <div
+                                  className={`h-2.5 rounded-full transition-all duration-300`}
+                                  style={{
+                                    width: `${Math.min((category.spent / category.budgeted) * 100, 100)}%`,
+                                    backgroundColor: category.spent > category.budgeted ? '#EF4444' : category.spent > category.budgeted * 0.8 ? '#F59E0B' : category.color
+                                  }}
+                                ></div>
+                              </div>
+                              <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {Math.round((category.spent / category.budgeted) * 100)}% used
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Budget Summary */}
+                    <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'}`}>
+                      <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
+                        Budget Summary
+                      </h3>
+
+                      {/* Total Overview */}
+                      <div className={`p-5 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-600/50 border border-gray-500' : 'bg-white border border-gray-200'}`}>
+                        <div className="grid grid-cols-3 gap-4 mb-3">
+                          <div>
+                            <p className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Budgeted</p>
+                            <p className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              Rs. {budgetCategories.reduce((sum, c) => sum + c.budgeted, 0).toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            <p className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Spent</p>
+                            <p className={`text-lg font-bold ${budgetCategories.reduce((sum, c) => sum + c.spent, 0) > budgetCategories.reduce((sum, c) => sum + c.budgeted, 0) ? 'text-red-500' : isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
+                              Rs. {budgetCategories.reduce((sum, c) => sum + c.spent, 0).toLocaleString()}
+                            </p>
+                          </div>
+                          <div>
+                            <p className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Remaining</p>
+                            <p className={`text-lg font-bold ${budgetCategories.reduce((sum, c) => sum + c.remaining, 0) < 0 ? 'text-red-500' : isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                              Rs. {budgetCategories.reduce((sum, c) => sum + c.remaining, 0).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={`w-full rounded-full h-3 ${isDarkMode ? 'bg-gray-500' : 'bg-gray-200'}`}>
+                          <div
+                            className={`h-3 rounded-full transition-all duration-500 ${
+                              budgetCategories.reduce((sum, c) => sum + c.spent, 0) / budgetCategories.reduce((sum, c) => sum + c.budgeted, 0) > 1 ? 'bg-red-500' :
+                              budgetCategories.reduce((sum, c) => sum + c.spent, 0) / budgetCategories.reduce((sum, c) => sum + c.budgeted, 0) > 0.8 ? 'bg-yellow-500' : 'bg-green-500'
+                            }`}
+                            style={{ width: `${Math.min((budgetCategories.reduce((sum, c) => sum + c.spent, 0) / budgetCategories.reduce((sum, c) => sum + c.budgeted, 0)) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {Math.round((budgetCategories.reduce((sum, c) => sum + c.spent, 0) / budgetCategories.reduce((sum, c) => sum + c.budgeted, 0)) * 100)}% of total budget used
+                        </p>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
+                          <h4 className={`font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-1`}>Monthly Progress</h4>
+                          <p className={`text-sm ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
+                            Tracking {budgetCategories.length} {budgetCategories.length === 1 ? 'category' : 'categories'} this month.
+                          </p>
+                        </div>
+
+                        <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
+                          <h4 className={`font-medium ${isDarkMode ? 'text-green-300' : 'text-green-800'} mb-1`}>On Track</h4>
+                          <p className={`text-sm ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>
+                            {budgetCategories.filter(c => c.spent <= c.budgeted).length} of {budgetCategories.length} categories within budget.
+                          </p>
+                        </div>
+
+                        {budgetCategories.some(c => c.spent > c.budgeted) && (
+                          <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+                            <h4 className={`font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-1`}>Over Budget</h4>
+                            <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
+                              {budgetCategories.filter(c => c.spent > c.budgeted).map(c => c.name).join(', ')} exceeded limits.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

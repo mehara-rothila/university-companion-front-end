@@ -290,8 +290,11 @@ class LostFoundMessageService {
     },
   });
 
-  // Initialize user API interceptor
-  private initUserApi() {
+  // User API interceptor initialized in constructor
+  private userApiInitialized = false;
+  private ensureUserApiInit() {
+    if (this.userApiInitialized) return;
+    this.userApiInitialized = true;
     this.userApi.interceptors.request.use((config) => {
       const token = localStorage.getItem('token');
       if (token) {
@@ -303,7 +306,7 @@ class LostFoundMessageService {
 
   // Block a user
   async blockUser(request: BlockUserRequest): Promise<{ message: string; blockedUser: BlockedUser }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.post('/block', request);
       return response.data;
@@ -315,7 +318,7 @@ class LostFoundMessageService {
 
   // Unblock a user
   async unblockUser(userId: number): Promise<{ message: string }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.delete(`/block/${userId}`);
       return response.data;
@@ -327,7 +330,7 @@ class LostFoundMessageService {
 
   // Get blocked users list
   async getBlockedUsers(): Promise<BlockedUser[]> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.get('/blocked');
       return response.data;
@@ -339,7 +342,7 @@ class LostFoundMessageService {
 
   // Check block status between current user and another user
   async checkBlockStatus(userId: number): Promise<BlockStatus> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.get(`/block/check/${userId}`);
       return response.data;
@@ -353,7 +356,7 @@ class LostFoundMessageService {
 
   // Report a user
   async reportUser(request: ReportUserRequest): Promise<{ message: string; reportId: number }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.post('/report', request);
       return response.data;
@@ -365,7 +368,7 @@ class LostFoundMessageService {
 
   // Get report reasons
   async getReportReasons(): Promise<ReportReason[]> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.get('/report/reasons');
       return response.data;
@@ -379,7 +382,7 @@ class LostFoundMessageService {
 
   // Get all reports (Admin only)
   async getAdminReports(status?: string): Promise<UserReport[]> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const params = status ? `?status=${status}` : '';
       const response = await this.userApi.get(`/admin/reports${params}`);
@@ -392,7 +395,7 @@ class LostFoundMessageService {
 
   // Get pending reports count (Admin only)
   async getPendingReportsCount(): Promise<{ count: number }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.get('/admin/reports/pending-count');
       return response.data;
@@ -408,7 +411,7 @@ class LostFoundMessageService {
     status: string,
     adminNotes?: string
   ): Promise<{ message: string; report: UserReport }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.put(`/admin/reports/${reportId}`, {
         status,
@@ -423,7 +426,7 @@ class LostFoundMessageService {
 
   // Delete report (Admin only)
   async deleteReport(reportId: number): Promise<{ message: string }> {
-    this.initUserApi();
+    this.ensureUserApiInit();
     try {
       const response = await this.userApi.delete(`/admin/reports/${reportId}`);
       return response.data;

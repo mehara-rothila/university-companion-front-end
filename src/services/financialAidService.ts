@@ -99,6 +99,61 @@ export interface AdminDashboard {
   recentPendingApplications: FinancialAidApplication[];
 }
 
+export interface DonationAnalytics {
+  totalDonated: number;
+  averageDonation: number;
+  totalDonationCount: number;
+  uniqueDonorCount: number;
+  topDonors: TopDonorItem[];
+  recentDonations: RecentDonationItem[];
+  donationsByCategory: CategoryBreakdownItem[];
+  donationsByAidType: AidTypeBreakdownItem[];
+  fundraisingProgress: FundraisingProgressItem[];
+}
+
+export interface TopDonorItem {
+  donorId: number;
+  donorName: string;
+  email: string;
+  totalAmount: number;
+  donationCount: number;
+}
+
+export interface RecentDonationItem {
+  donationId: number;
+  donorName: string;
+  amount: number;
+  applicationTitle: string;
+  applicationId: number;
+  category: string;
+  message?: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface CategoryBreakdownItem {
+  category: string;
+  totalAmount: number;
+  donationCount: number;
+}
+
+export interface AidTypeBreakdownItem {
+  aidType: string;
+  totalAmount: number;
+  donationCount: number;
+}
+
+export interface FundraisingProgressItem {
+  applicationId: number;
+  title: string;
+  category: string;
+  aidType: string;
+  requestedAmount: number;
+  raisedAmount: number;
+  supporterCount: number;
+  progressPercent: number;
+}
+
 export interface FinancialAidFilters {
   status?: string;
   aidType?: string;
@@ -325,6 +380,16 @@ class FinancialAidService {
       return response.data;
     } catch (error) {
       console.error('Error creating application for user:', error);
+      throw error;
+    }
+  }
+
+  async getDonationAnalytics(): Promise<DonationAnalytics> {
+    try {
+      const response = await this.api.get('/admin/financial-aid/donations/analytics');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching donation analytics:', error);
       throw error;
     }
   }

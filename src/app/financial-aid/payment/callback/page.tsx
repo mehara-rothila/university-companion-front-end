@@ -33,11 +33,12 @@ function PaymentCallbackContent() {
           if (details.status === 'COMPLETED' || details.status === 'SUCCESS') {
             setStatus('success');
           } else if (details.status === 'ERROR') {
-            // Payment confirmed at Stripe but backend had an issue - still show success to user
-            console.warn('Backend confirmation had issues, but Stripe confirmed success');
-            setStatus('success');
+            console.error('Payment confirmation failed:', details.message);
+            setStatus('failed');
+          } else if (details.status === 'PENDING') {
+            setStatus('pending');
           } else {
-            setStatus('success');
+            setStatus('pending');
           }
           return;
         }
@@ -57,12 +58,8 @@ function PaymentCallbackContent() {
         }
       } catch (error) {
         console.error('Error checking payment status:', error);
-        // If we have status=success in URL but API call failed, still show success
-        if (paymentStatus === 'success') {
-          setStatus('success');
-        } else {
-          setStatus('failed');
-        }
+        // Don't trust URL params — always verify with backend
+        setStatus('failed');
       }
     };
 

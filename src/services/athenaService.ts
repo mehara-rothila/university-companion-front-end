@@ -3,8 +3,7 @@ import { ChatMessage, ChatResponse, UniversityContext, ChatAttachment } from '@/
 import { fileUploadService, FileProcessingResult } from './fileUploadService';
 import { tokenCountingService } from './tokenCountingService';
 
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent';
+const ATHENA_API_URL = '/api/athena';
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 class AthenaService {
@@ -225,57 +224,27 @@ Remember: You represent ${context.university} and should embody the values of ac
   }
 
   private async callGeminiAPI(systemPrompt: string, userPrompt: string): Promise<string> {
-    if (!GEMINI_API_KEY) {
-      throw new Error('Gemini API key is not configured. Please check your environment variables.');
-    }
-
-    const response = await fetch(GEMINI_API_URL, {
+    const response = await fetch(ATHENA_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-goog-api-key': GEMINI_API_KEY
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `${systemPrompt}\n\n${userPrompt}`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048
-        },
-        safetySettings: [
-          {
-            category: 'HARM_CATEGORY_HARASSMENT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_HATE_SPEECH', 
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          },
-          {
-            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-          }
-        ]
+        action: 'chat',
+        systemPrompt,
+        userPrompt
       })
     });
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Athena API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    
+
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Invalid response from Gemini API');
+      throw new Error('Invalid response from AI');
     }
 
     return data.candidates[0].content.parts[0].text;
@@ -445,21 +414,15 @@ Remember: You represent ${context.university} and should embody the values of ac
       let processingResult: FileProcessingResult | undefined;
 
       if (attachment.type === 'image') {
-        processingResult = await fileUploadService.processImageWithAI(
-          attachment.content,
-          GEMINI_API_KEY
-        );
+        processingResult = await fileUploadService.processImageWithAI(attachment.content);
         attachment.extractedText = processingResult.extractedText;
       } else if (attachment.type === 'pdf') {
-        processingResult = await fileUploadService.processPdfWithAI(
-          attachment.content,
-          GEMINI_API_KEY
-        );
+        processingResult = await fileUploadService.processPdfWithAI(attachment.content);
         attachment.extractedText = processingResult.extractedText;
       }
 
       // Record processing tokens
-      if (processingResult!) {
+      if (processingResult) {
         tokenCountingService.recordTokenUsage(
           processingResult.tokensUsed,
           0,

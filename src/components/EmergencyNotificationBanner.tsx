@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
-import { useWebSocket } from '@/hooks/useWebSocket';
 import { useBrowserNotifications } from '@/hooks/useBrowserNotifications';
 import axios from 'axios';
 import { AlertTriangle, X } from 'lucide-react';
@@ -137,6 +136,11 @@ export default function EmergencyNotificationBanner() {
     // Only setup WebSocket if we have a valid JWT token
     if (!isValidJWT(token)) {
       return;
+    }
+
+    // Deactivate existing client to prevent duplicate connections
+    if (stompClient?.active) {
+      stompClient.deactivate();
     }
 
     try {
