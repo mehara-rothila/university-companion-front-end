@@ -190,7 +190,7 @@ export default function EditEventPage() {
     setDeleting(true);
 
     try {
-      await eventService.deleteEvent(eventId, user.id);
+      await eventService.deleteEvent(eventId);
       router.push('/events');
     } catch (err: any) {
       alert(err.response?.data?.error || t('events.errors.deleteFailed'));

@@ -162,7 +162,6 @@ export default function CreateEventPage() {
         location: formData.location,
         organizerName: formData.organizerName || `${user.firstName} ${user.lastName}`,
         maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : undefined,
-        creatorId: user.id,
         isRecurring: formData.isRecurring,
         recurrencePattern: formData.isRecurring ? formData.recurrencePattern : undefined,
       };

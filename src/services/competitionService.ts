@@ -85,7 +85,6 @@ export interface CreateCompetitionData {
 }
 
 export interface EnrollmentData {
-  userId: number;
   formResponses: string; // JSON string of form responses
 }
 
@@ -151,11 +150,9 @@ export const competitionService = {
   },
 
   // Withdraw from a competition
-  withdrawFromCompetition: async (competitionId: number, userId: number): Promise<{ message: string }> => {
+  withdrawFromCompetition: async (competitionId: number): Promise<{ message: string }> => {
     try {
-      const response = await api.post(`/${competitionId}/withdraw`, null, {
-        params: { userId }
-      });
+      const response = await api.post(`/${competitionId}/withdraw`);
       return response.data;
     } catch (error) {
       console.error('Error withdrawing from competition:', error);

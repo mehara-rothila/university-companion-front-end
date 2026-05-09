@@ -63,7 +63,6 @@ export default function EnrollmentModal({
     try {
       setLoading(true);
       await competitionService.enrollInCompetition(competition.id, {
-        userId,
         formResponses: JSON.stringify(formResponses)
       });
 

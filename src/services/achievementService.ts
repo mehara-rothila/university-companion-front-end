@@ -67,19 +67,14 @@ export const achievementService = {
 
   updateAchievement: async (
     id: number,
-    userId: number,
     achievementData: UpdateAchievementRequest
   ): Promise<{ message: string; achievement: StudentAchievement }> => {
-    const response = await api.put(`/${id}`, achievementData, {
-      params: { userId },
-    });
+    const response = await api.put(`/${id}`, achievementData);
     return response.data;
   },
 
-  deleteAchievement: async (id: number, userId: number): Promise<{ message: string }> => {
-    const response = await api.delete(`/${id}`, {
-      params: { userId },
-    });
+  deleteAchievement: async (id: number): Promise<{ message: string }> => {
+    const response = await api.delete(`/${id}`);
     return response.data;
   },
 
@@ -141,14 +136,9 @@ export const achievementService = {
   // Comment operations
   addComment: async (
     achievementId: number,
-    userId: number,
     comment: string
   ): Promise<{ message: string; commentId: number }> => {
-    const response = await api.post(
-      `/${achievementId}/comments`,
-      { comment },
-      { params: { userId } }
-    );
+    const response = await api.post(`/${achievementId}/comments`, { comment });
     return response.data;
   },
 
@@ -157,10 +147,8 @@ export const achievementService = {
     return response.data;
   },
 
-  deleteComment: async (commentId: number, userId: number): Promise<{ message: string }> => {
-    const response = await api.delete(`/comments/${commentId}`, {
-      params: { userId },
-    });
+  deleteComment: async (commentId: number): Promise<{ message: string }> => {
+    const response = await api.delete(`/comments/${commentId}`);
     return response.data;
   },
 };

@@ -176,7 +176,7 @@ export default function EventDetailPage() {
     setRegistrationSuccess('');
 
     try {
-      const response = await eventService.registerForEvent(eventId, { userId: user.id });
+      const response = await eventService.registerForEvent(eventId, {});
       setRegistrationSuccess(response.message);
 
       // Refresh registration status and event details
@@ -205,7 +205,7 @@ export default function EventDetailPage() {
     setRegistrationSuccess('');
 
     try {
-      const response = await eventService.cancelRegistration(eventId, user.id);
+      const response = await eventService.cancelRegistration(eventId);
       setRegistrationSuccess(response.message);
 
       // Refresh registration status and event details
@@ -230,7 +230,6 @@ export default function EventDetailPage() {
 
     try {
       await eventService.addEventComment(eventId, {
-        userId: user.id,
         comment: newComment.trim(),
       });
 
@@ -249,7 +248,7 @@ export default function EventDetailPage() {
     if (!confirm(t('events.confirmations.deleteComment'))) return;
 
     try {
-      await eventService.deleteEventComment(eventId, commentId, user.id);
+      await eventService.deleteEventComment(eventId, commentId);
       await fetchComments();
     } catch (err: any) {
       console.error('Error deleting comment:', err);

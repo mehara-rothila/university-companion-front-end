@@ -122,7 +122,7 @@ export default function AdminEventsPage() {
 
     try {
       setActionLoading(true);
-      await eventService.deleteEvent(selectedEvent.id, user.id);
+      await eventService.deleteEvent(selectedEvent.id);
       setShowDeleteModal(false);
       setSelectedEvent(null);
       await loadEvents();

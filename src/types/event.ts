@@ -97,17 +97,14 @@ export interface CreateEventRequest {
   location: string;
   organizerName: string;
   maxAttendees?: number;
-  creatorId: number;
   isRecurring?: boolean;
   recurrencePattern?: string;
 }
 
 export interface UpdateEventRequest extends Partial<CreateEventRequest> {
-  userId: number;
 }
 
 export interface RegisterEventRequest {
-  userId: number;
 }
 
 export interface RejectEventRequest {
@@ -115,7 +112,6 @@ export interface RejectEventRequest {
 }
 
 export interface AddCommentRequest {
-  userId: number;
   comment: string;
 }
 

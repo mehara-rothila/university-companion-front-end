@@ -148,7 +148,7 @@ export default function MyAchievementsPage() {
       console.log('📝 Original achievement date:', editingAchievement.achievementDate);
       console.log('📝 Formatted date being sent:', formattedDate);
 
-      await achievementService.updateAchievement(editingAchievement.id, user.id, updateData);
+      await achievementService.updateAchievement(editingAchievement.id, updateData);
       alert('Achievement updated successfully!');
       setShowEditModal(false);
       setEditingAchievement(null);
@@ -174,7 +174,7 @@ export default function MyAchievementsPage() {
 
     try {
       setActionLoading(true);
-      await achievementService.deleteAchievement(deletingAchievement.id, user.id);
+      await achievementService.deleteAchievement(deletingAchievement.id);
       setShowDeleteModal(false);
       setDeletingAchievement(null);
       await fetchAchievements();

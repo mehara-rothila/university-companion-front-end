@@ -79,10 +79,8 @@ export const eventService = {
     return response.data;
   },
 
-  deleteEvent: async (id: number, userId: number): Promise<{ message: string }> => {
-    const response = await api.delete(`/${id}`, {
-      params: { userId },
-    });
+  deleteEvent: async (id: number): Promise<{ message: string }> => {
+    const response = await api.delete(`/${id}`);
     return response.data;
   },
 
@@ -95,10 +93,8 @@ export const eventService = {
     return response.data;
   },
 
-  cancelRegistration: async (eventId: number, userId: number): Promise<{ message: string }> => {
-    const response = await api.post(`/${eventId}/cancel-registration`, null, {
-      params: { userId },
-    });
+  cancelRegistration: async (eventId: number): Promise<{ message: string }> => {
+    const response = await api.post(`/${eventId}/cancel-registration`);
     return response.data;
   },
 
@@ -140,12 +136,9 @@ export const eventService = {
 
   deleteEventComment: async (
     eventId: number,
-    commentId: number,
-    userId: number
+    commentId: number
   ): Promise<{ message: string }> => {
-    const response = await api.delete(`/${eventId}/comments/${commentId}`, {
-      params: { userId },
-    });
+    const response = await api.delete(`/${eventId}/comments/${commentId}`);
     return response.data;
   },
 

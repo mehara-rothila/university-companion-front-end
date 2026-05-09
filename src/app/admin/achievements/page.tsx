@@ -123,7 +123,7 @@ export default function AdminAchievementsPage() {
 
     try {
       setActionLoading(true);
-      await achievementService.deleteAchievement(selectedAchievement.id, user.id);
+      await achievementService.deleteAchievement(selectedAchievement.id);
       setShowDeleteModal(false);
       setSelectedAchievement(null);
       await loadAchievements();
