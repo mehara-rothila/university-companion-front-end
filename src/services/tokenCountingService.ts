@@ -83,7 +83,12 @@ class TokenCountingService {
   // Get token statistics from backend (async)
   async getTokenStatsFromBackend(userId: number | string): Promise<any> {
     try {
-      const response = await fetch(`${this.API_URL}/api/tokens/stats/${userId}`);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const response = await fetch(`${this.API_URL}/api/tokens/stats/${userId}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch token stats');
       }

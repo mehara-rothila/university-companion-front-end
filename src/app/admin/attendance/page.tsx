@@ -60,7 +60,7 @@ export default function AttendanceTrackingPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/approved`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/approved`);
       setEvents(response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
