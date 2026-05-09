@@ -15,9 +15,20 @@ declare module "next-auth" {
       provider?: string
     }
   }
+}
 
+declare module "next-auth/jwt" {
   interface JWT {
     backendToken?: string
-    backendUser?: Session['backendUser']
+    backendUser?: {
+      id: number
+      username: string
+      email: string
+      firstName: string
+      lastName: string
+      role: string
+      imageUrl?: string
+      provider?: string
+    }
   }
 }
