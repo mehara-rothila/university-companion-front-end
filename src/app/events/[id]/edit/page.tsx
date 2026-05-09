@@ -163,7 +163,6 @@ export default function EditEventPage() {
         location: formData.location,
         organizerName: formData.organizerName,
         maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : undefined,
-        userId: user.id,
       };
 
       await eventService.updateEvent(eventId, updateData);
