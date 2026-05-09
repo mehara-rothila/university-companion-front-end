@@ -253,9 +253,19 @@ class TokenCountingService {
   }
 
   private getCurrentUserId(): string {
-    // In a real app, this would get the actual user ID from auth context
     if (typeof window === 'undefined') return 'student_anonymous';
-    return 'student_' + (localStorage.getItem('user_id') || 'anonymous');
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.id) {
+          return 'student_' + user.id;
+        }
+      } catch {
+        // ignore parse error
+      }
+    }
+    return 'student_anonymous';
   }
 
   private storeTransaction(transaction: TokenTransaction): void {

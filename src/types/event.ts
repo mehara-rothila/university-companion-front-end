@@ -43,6 +43,10 @@ export interface Event {
   rejectionReason?: string;
   isRecurring: boolean;
   recurrencePattern?: string;
+  updatedAt?: string;
+  hidden?: boolean;
+  rejectedBy?: number;
+  rejectedAt?: string;
   // Additional fields from API response
   registeredCount?: number;
   waitlistCount?: number;

@@ -31,10 +31,14 @@ export default function AuthGuard({
       return;
     }
 
-    // Check role authorization
-    if (allowedRoles && user && !allowedRoles.includes(user.role.toLowerCase())) {
-      router.push('/dashboard'); // Redirect to dashboard if role not allowed
-      return;
+    // Check role authorization (normalize to lowercase for comparison)
+    if (allowedRoles && user) {
+      const userRoleLower = user.role.toLowerCase();
+      const hasAllowedRole = allowedRoles.some(role => role.toLowerCase() === userRoleLower);
+      if (!hasAllowedRole) {
+        router.push('/dashboard'); // Redirect to dashboard if role not allowed
+        return;
+      }
     }
 
     setIsAuthorized(true);

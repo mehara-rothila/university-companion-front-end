@@ -65,8 +65,16 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async signIn({ user, account, profile, email, credentials }) {
-      // Allow all Google users
-      return true
+      // Enforce university email domain for OAuth (same as local signup)
+      if (user.email) {
+        const lowerEmail = user.email.toLowerCase();
+        const allowedDomains = ['@uom.lk', '@mrt.ac.lk', '@student.mrt.ac.lk'];
+        const isUniversityEmail = allowedDomains.some(domain => lowerEmail.endsWith(domain));
+        if (!isUniversityEmail) {
+          return `/login?error=OAuthAccountNotLinked&email=${encodeURIComponent(user.email)}`;
+        }
+      }
+      return true;
     },
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
@@ -82,6 +90,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours to match backend JWT expiration
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
