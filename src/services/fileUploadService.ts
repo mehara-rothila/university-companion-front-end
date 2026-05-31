@@ -75,106 +75,22 @@ class FileUploadService {
     };
   }
 
-  // Process PDF with AI (extract text and analyze)
+  // Process PDF with AI — backend Kimi handles text extraction
   async processPdfWithAI(fileUrl: string): Promise<FileProcessingResult> {
-    const startTime = Date.now();
-    
-    try {
-      // For PDF processing, we'll need to implement text extraction
-      // This would typically involve:
-      // 1. Download PDF from S3
-      // 2. Extract text using PDF.js or similar
-      // 3. Send to Gemini for analysis
-      
-      // Placeholder implementation
-      const extractedText = await this.extractPdfText(fileUrl);
-      const tokensUsed = Math.ceil(extractedText.length / 4); // Rough estimate: 4 chars = 1 token
-      
-      const processingTime = Date.now() - startTime;
-      
-      return {
-        extractedText,
-        processingTime,
-        tokensUsed
-      };
-    } catch (error) {
-      throw new Error(`PDF processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+    return {
+      extractedText: '',
+      processingTime: 0,
+      tokensUsed: 0
+    };
   }
 
-  // Process image with AI (analyze and describe) via server-side proxy
+  // Process image with AI — backend Kimi handles vision analysis
   async processImageWithAI(fileUrl: string): Promise<FileProcessingResult> {
-    const startTime = Date.now();
-
-    try {
-      const imageBase64 = await this.getImageAsBase64(fileUrl);
-
-      const response = await fetch('/api/athena', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'analyze-image',
-          imageData: imageBase64,
-          mimeType: 'image/jpeg'
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const extractedText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not analyze image';
-      const tokensUsed = Math.ceil(extractedText.length / 4) + 258;
-
-      const processingTime = Date.now() - startTime;
-
-      return {
-        extractedText,
-        processingTime,
-        tokensUsed
-      };
-    } catch (error) {
-      throw new Error(`Image processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
-
-  // Convert image URL to base64 for Gemini Vision
-  private async getImageAsBase64(imageUrl: string): Promise<string> {
-    try {
-      // Use backend API to serve the image to avoid CORS issues
-      const apiUrl = `${this.API_URL}/api/upload/image/serve?url=${encodeURIComponent(imageUrl)}`;
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-      
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64 = (reader.result as string).split(',')[1];
-          resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      throw new Error('Failed to convert image to base64');
-    }
-  }
-
-  // Extract text from PDF (placeholder - would need actual PDF.js implementation)
-  private async extractPdfText(pdfUrl: string): Promise<string> {
-    // This is a placeholder. In a real implementation, you'd:
-    // 1. Fetch the PDF from the URL
-    // 2. Use PDF.js to extract text
-    // 3. Return the extracted text
-    
-    // For now, return a placeholder
-    return `Extracted text from PDF: ${pdfUrl}\n\nThis is a placeholder for PDF text extraction. In a production implementation, this would contain the actual text content extracted from the uploaded PDF document using libraries like PDF.js or similar tools.`;
+    return {
+      extractedText: '',
+      processingTime: 0,
+      tokensUsed: 0
+    };
   }
 
   // File validation methods

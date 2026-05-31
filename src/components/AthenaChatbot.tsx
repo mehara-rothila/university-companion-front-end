@@ -265,7 +265,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       const inputTokens = data.inputTokens || 0;
       const outputTokens = data.outputTokens || 0;
       if (inputTokens > 0 || outputTokens > 0) {
-        // Use real token counts from Gemini API
+        // Use real token counts from Kimi API
         tokenCountingService.recordTokenUsage(inputTokens, outputTokens, 'chat');
         console.log(`✅ Real token consumption: ${inputTokens} input + ${outputTokens} output = ${inputTokens + outputTokens} total`);
       } else {

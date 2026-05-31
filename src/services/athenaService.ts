@@ -1,9 +1,9 @@
-// Athena AI Assistant Service with Gemini 2.5 Pro Integration
+// Athena AI Assistant Service with Kimi (Moonshot AI) Integration
 import { ChatMessage, ChatResponse, UniversityContext, ChatAttachment } from '@/types/athena';
 import { fileUploadService, FileProcessingResult } from './fileUploadService';
 import { tokenCountingService } from './tokenCountingService';
 
-const ATHENA_API_URL = '/api/athena';
+const ATHENA_API_URL = `${BACKEND_API_URL}/api/chatbot/chat`;
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 class AthenaService {
@@ -117,9 +117,22 @@ class AthenaService {
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(message + attachmentContext);
 
-      console.log('🤖 Sending to Gemini 2.5 Pro...');
+      console.log('🤖 Sending to Kimi...');
 
-      const response = await this.callGeminiAPI(systemPrompt, userPrompt);
+      // Collect attachment URLs for multimodal support
+      const imageUrls: string[] = [];
+      const pdfUrls: string[] = [];
+      if (attachments && attachments.length > 0) {
+        for (const attachment of attachments) {
+          if (attachment.type === 'image' && attachment.url) {
+            imageUrls.push(attachment.url);
+          } else if (attachment.type === 'pdf' && attachment.url) {
+            pdfUrls.push(attachment.url);
+          }
+        }
+      }
+
+      const response = await this.callKimiAPI(userPrompt, imageUrls, pdfUrls);
       
       // Record token usage
       const outputTokens = tokenCountingService.estimateTokenCount(response);
@@ -223,31 +236,33 @@ Remember: You represent ${context.university} and should embody the values of ac
     return prompt;
   }
 
-  private async callGeminiAPI(systemPrompt: string, userPrompt: string): Promise<string> {
+  private async callKimiAPI(message: string, imageUrls: string[] = [], pdfUrls: string[] = []): Promise<string> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const response = await fetch(ATHENA_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
       },
       body: JSON.stringify({
-        action: 'chat',
-        systemPrompt,
-        userPrompt
+        message,
+        imageUrls,
+        pdfUrls
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Athena API error: ${response.status} ${response.statusText}`);
+      throw new Error(errorData.error || `Kimi API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
 
-    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Invalid response from AI');
+    if (!data.success || !data.response) {
+      throw new Error(data.error || 'Invalid response from AI');
     }
 
-    return data.candidates[0].content.parts[0].text;
+    return data.response;
   }
 
   private parseResponse(aiResponse: string, userMessage: string): ChatResponse {
@@ -408,35 +423,10 @@ Remember: You represent ${context.university} and should embody the values of ac
   }
 
   async processAttachment(attachment: ChatAttachment): Promise<ChatAttachment> {
-    try {
-      attachment.processingStatus = 'processing';
-
-      let processingResult: FileProcessingResult | undefined;
-
-      if (attachment.type === 'image') {
-        processingResult = await fileUploadService.processImageWithAI(attachment.content);
-        attachment.extractedText = processingResult.extractedText;
-      } else if (attachment.type === 'pdf') {
-        processingResult = await fileUploadService.processPdfWithAI(attachment.content);
-        attachment.extractedText = processingResult.extractedText;
-      }
-
-      // Record processing tokens
-      if (processingResult) {
-        tokenCountingService.recordTokenUsage(
-          processingResult.tokensUsed,
-          0,
-          `${attachment.type}_processing`
-        );
-      }
-
-      attachment.processingStatus = 'completed';
-      return attachment;
-    } catch (error) {
-      console.error('Error processing attachment:', error);
-      attachment.processingStatus = 'error';
-      throw error;
-    }
+    // Backend Kimi handles image vision and PDF text extraction directly
+    // Just mark as ready — no frontend pre-processing needed
+    attachment.processingStatus = 'completed';
+    return attachment;
   }
 
   // Token usage methods

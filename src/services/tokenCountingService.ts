@@ -311,7 +311,7 @@ class TokenCountingService {
 
   // Calculate tokens for different operations
   calculateImageTokens(imageSizeKB: number): number {
-    // Gemini Vision tokens are roughly based on image resolution
+    // Kimi Vision tokens are roughly based on image resolution
     // This is an approximation - actual usage may vary
     const baseTokens = 258; // Base cost for image processing
     const sizeTokens = Math.ceil(imageSizeKB / 100) * 10; // ~10 tokens per 100KB
@@ -325,20 +325,18 @@ class TokenCountingService {
     return extractionTokens + analysisTokens;
   }
 
-  // Get real-time token usage from Gemini response
-  extractTokensFromGeminiResponse(response: any): { inputTokens: number; outputTokens: number } {
-    // Extract actual token usage from Gemini API response if available
-    const usageMetadata = response.usageMetadata;
-    
-    if (usageMetadata) {
+  // Get real-time token usage from Kimi response
+  extractTokensFromKimiResponse(response: any): { inputTokens: number; outputTokens: number } {
+    // Extract actual token usage from Kimi API response if available
+    if (response.inputTokens !== undefined && response.outputTokens !== undefined) {
       return {
-        inputTokens: usageMetadata.promptTokenCount || 0,
-        outputTokens: usageMetadata.candidatesTokenCount || 0
+        inputTokens: response.inputTokens || 0,
+        outputTokens: response.outputTokens || 0
       };
     }
     
     // Fallback to estimation if metadata not available
-    const outputText = response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const outputText = response.response || '';
     return {
       inputTokens: 0, // Would need to estimate input
       outputTokens: this.estimateTokenCount(outputText)
