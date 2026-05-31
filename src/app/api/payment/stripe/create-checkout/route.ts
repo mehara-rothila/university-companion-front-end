@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const baseUrl = request.headers.get('origin') || 'https://athena.mehara.io';
+    const baseUrl = request.headers.get('origin') || 'https://athena.rothila.com';
 
     // Create Stripe Checkout Session
     const stripe = getStripe();

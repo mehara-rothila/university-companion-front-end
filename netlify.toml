@@ -7,16 +7,14 @@
   NODE_VERSION = "18"
   # Backend API is hosted on Heroku
   NEXT_PUBLIC_API_URL = "https://athena001-535225bb557e.herokuapp.com"
-  NEXT_PUBLIC_WS_URL = "wss://athena001-535225bb557e.herokuapp.com"
+  NEXT_PUBLIC_WS_URL = "wss://athena001-535225bb557e.herokuapp.com/ws"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 # Redirect rules for Next.js app
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Note: @netlify/plugin-nextjs handles Next.js routing automatically
+# Do NOT add a catch-all SPA redirect here — it breaks SSR and API routes
 
 # Headers for security
 [[headers]]

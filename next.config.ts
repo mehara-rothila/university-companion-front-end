@@ -20,12 +20,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.herokuapp.com',
-        pathname: '/api/upload/image/serve/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.mehara.io',
+        hostname: '*.netlify.app',
         pathname: '/**',
       },
       {

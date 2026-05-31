@@ -52,10 +52,10 @@ export default function DisbursementTrackingPage() {
     try {
       const token = localStorage.getItem('token');
       const [statsResponse, pendingResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/financial-aid/disbursements/stats`, {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/financial-aid/disbursements/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/financial-aid/disbursements/pending`, {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/financial-aid/disbursements/pending`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -75,7 +75,7 @@ export default function DisbursementTrackingPage() {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/financial-aid/disbursements/${disbursementId}/status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/financial-aid/disbursements/${disbursementId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

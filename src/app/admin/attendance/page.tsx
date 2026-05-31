@@ -71,10 +71,10 @@ export default function AttendanceTrackingPage() {
     setLoading(true);
     try {
       const [statsResponse, recordsResponse] = await Promise.all([
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/attendance/stats`, {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventId}/attendance/stats`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         }),
-        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/${eventId}/attendance`, {
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventId}/attendance`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
       ]);
