@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useBrowserNotifications } from '@/hooks/useBrowserNotifications';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import axios from 'axios';
 import { AlertTriangle, X } from 'lucide-react';
-import { Client, IMessage } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { IMessage } from '@stomp/stompjs';
 
 interface Emergency {
   id: number;
@@ -24,8 +24,8 @@ export default function EmergencyNotificationBanner() {
   const { isDarkMode } = useDarkMode();
   const { user, token } = useAuth();
   const [emergencies, setEmergencies] = useState<Emergency[]>([]);
-  const [stompClient, setStompClient] = useState<Client | null>(null);
   const { showEmergencyNotification, requestPermission } = useBrowserNotifications();
+  const { client, isConnected } = useWebSocket(user?.id?.toString());
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
@@ -76,14 +76,7 @@ export default function EmergencyNotificationBanner() {
     // Only load if we have both user and a valid JWT token
     if (user && isValidJWT(token)) {
       loadActiveEmergencies();
-      setupWebSocket();
     }
-
-    return () => {
-      if (stompClient?.active) {
-        stompClient.deactivate();
-      }
-    };
   }, [user, token]);
 
   // Mark emergencies as seen when they appear
@@ -94,6 +87,45 @@ export default function EmergencyNotificationBanner() {
       });
     }
   }, [emergencies.map(e => e.id).join(',')]);
+
+  // Subscribe to emergency WebSocket topics using shared client
+  useEffect(() => {
+    if (!client || !isConnected || !isValidJWT(token)) return;
+
+    const subscriptions: { unsubscribe: () => void }[] = [];
+
+    // Subscribe to global emergency broadcasts
+    const globalSub = client.subscribe('/topic/emergency', (message: IMessage) => {
+      try {
+        const emergencyMsg = JSON.parse(message.body);
+        if (emergencyMsg.type === 'EMERGENCY') {
+          handleNewEmergency(emergencyMsg);
+        }
+      } catch (error) {
+        console.error('Error parsing emergency message:', error);
+      }
+    });
+    subscriptions.push(globalSub);
+
+    // Subscribe to user-specific emergency broadcasts
+    if (user?.id) {
+      const userSub = client.subscribe(`/topic/emergency/${user.id}`, (message: IMessage) => {
+        try {
+          const emergencyMsg = JSON.parse(message.body);
+          if (emergencyMsg.type === 'EMERGENCY') {
+            handleNewEmergency(emergencyMsg);
+          }
+        } catch (error) {
+          console.error('Error parsing user emergency message:', error);
+        }
+      });
+      subscriptions.push(userSub);
+    }
+
+    return () => {
+      subscriptions.forEach(sub => sub.unsubscribe());
+    };
+  }, [client, isConnected, user?.id, token]);
 
   const loadActiveEmergencies = async () => {
     try {
@@ -132,138 +164,39 @@ export default function EmergencyNotificationBanner() {
     }
   };
 
-  const setupWebSocket = () => {
-    // Only setup WebSocket if we have a valid JWT token
-    if (!isValidJWT(token)) {
-      return;
-    }
+  const handleNewEmergency = (emergencyMsg: any) => {
+    const newEmergency: Emergency = {
+      id: parseInt(emergencyMsg.id),
+      title: emergencyMsg.title,
+      message: emergencyMsg.message,
+      type: emergencyMsg.type,
+      priority: emergencyMsg.priority,
+      timestamp: emergencyMsg.timestamp,
+      expiresAt: emergencyMsg.expiresAt,
+      dismissed: false
+    };
 
-    // Deactivate existing client to prevent duplicate connections
-    if (stompClient?.active) {
-      stompClient.deactivate();
-    }
+    setEmergencies(prev => {
+      const exists = prev.some(e => e.id === newEmergency.id);
+      if (!exists) {
+        playEmergencyAlert();
 
-    try {
-      const client = new Client({
-        webSocketFactory: () => {
-          return new SockJS(`${API_BASE_URL}/ws`);
-        },
-        reconnectDelay: 5000,
-        heartbeatIncoming: 10000,
-        heartbeatOutgoing: 10000,
-
-        onConnect: (frame) => {
-          console.log('✅ STOMP Connected for emergencies');
-
-          // Subscribe to global emergency broadcasts
-          client.subscribe('/topic/emergency', (message: IMessage) => {
-            try {
-              const emergencyMsg = JSON.parse(message.body);
-              if (emergencyMsg.type === 'EMERGENCY') {
-                const newEmergency: Emergency = {
-                  id: parseInt(emergencyMsg.id),
-                  title: emergencyMsg.title,
-                  message: emergencyMsg.message,
-                  type: emergencyMsg.type,
-                  priority: emergencyMsg.priority,
-                  timestamp: emergencyMsg.timestamp,
-                  expiresAt: emergencyMsg.expiresAt,
-                  dismissed: false
-                };
-
-                setEmergencies(prev => {
-                  const exists = prev.some(e => e.id === newEmergency.id);
-                  if (!exists) {
-                    playEmergencyAlert();
-
-                    // Show browser notification
-                    showEmergencyNotification(newEmergency.title, newEmergency.message)
-                      .then(notification => {
-                        if (notification) {
-                          console.log('🔔 Browser notification shown');
-                          // Handle notification click
-                          notification.onclick = () => {
-                            window.focus();
-                            notification.close();
-                          };
-                        }
-                      });
-
-                    return [newEmergency, ...prev];
-                  }
-                  return prev;
-                });
-              }
-            } catch (error) {
-              console.error('Error parsing emergency message:', error);
+        // Show browser notification
+        showEmergencyNotification(newEmergency.title, newEmergency.message)
+          .then(notification => {
+            if (notification) {
+              console.log('🔔 Browser notification shown');
+              notification.onclick = () => {
+                window.focus();
+                notification.close();
+              };
             }
           });
 
-          // Subscribe to user-specific emergency broadcasts
-          if (user?.id) {
-            client.subscribe(`/topic/emergency/${user.id}`, (message: IMessage) => {
-              try {
-                const emergencyMsg = JSON.parse(message.body);
-                if (emergencyMsg.type === 'EMERGENCY') {
-                  const newEmergency: Emergency = {
-                    id: parseInt(emergencyMsg.id),
-                    title: emergencyMsg.title,
-                    message: emergencyMsg.message,
-                    type: emergencyMsg.type,
-                    priority: emergencyMsg.priority,
-                    timestamp: emergencyMsg.timestamp,
-                    expiresAt: emergencyMsg.expiresAt,
-                    dismissed: false
-                  };
-
-                  setEmergencies(prev => {
-                    const exists = prev.some(e => e.id === newEmergency.id);
-                    if (!exists) {
-                      playEmergencyAlert();
-
-                      // Show browser notification
-                      showEmergencyNotification(newEmergency.title, newEmergency.message)
-                        .then(notification => {
-                          if (notification) {
-                            console.log('🔔 Browser notification shown (user-specific)');
-                            // Handle notification click
-                            notification.onclick = () => {
-                              window.focus();
-                              notification.close();
-                            };
-                          }
-                        });
-
-                      return [newEmergency, ...prev];
-                    }
-                    return prev;
-                  });
-                }
-              } catch (error) {
-                console.error('Error parsing user emergency message:', error);
-              }
-            });
-          }
-        },
-
-        onDisconnect: () => {
-          console.log('STOMP disconnected for emergencies');
-        },
-
-        onStompError: (frame) => {
-          console.error('STOMP Error:', frame);
-        },
-
-        onWebSocketError: (error) => {
-          console.error('WebSocket Error:', error);
-        }
-      });
-
-      client.activate();
-      setStompClient(client);
-    } catch (error) {
-      console.error('Failed to setup WebSocket:', error);
-    }
+        return [newEmergency, ...prev];
+      }
+      return prev;
+    });
   };
 
   const playEmergencyAlert = () => {
