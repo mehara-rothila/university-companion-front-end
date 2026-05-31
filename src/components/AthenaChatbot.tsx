@@ -326,7 +326,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             </h3>
             <p className={`text-[10px] md:text-xs font-medium ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} flex items-center gap-1`}>
               <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
-              <span className="truncate">University of Moratuwa • Gemini 2.5 Pro</span>
+              <span className="truncate">University of Moratuwa • Kimi AI</span>
             </p>
           </div>
         </div>

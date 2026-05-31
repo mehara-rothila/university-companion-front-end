@@ -1,5 +1,5 @@
 // Weather Chatbot Component for University of Moratuwa
-// AI-Powered weather assistant using Gemini AI
+// AI-Powered weather assistant using Kimi AI
 
 'use client';
 
@@ -72,7 +72,7 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
   };
 
   // Call Backend Chat API
-  const callGeminiAI = async (userMessage: string): Promise<string> => {
+  const callKimiAI = async (userMessage: string): Promise<string> => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     try {
@@ -177,7 +177,7 @@ ${tomorrow.precipitation > 50 ? '☔ Consider bringing an umbrella!' : '☀️ L
     // Handle general chatbot questions
     if (query.includes('model') || query.includes('who are you') || query.includes('what are you') ||
       query.includes('your name') || query.includes('about you')) {
-      return `🤖 I'm the University of Moratuwa Weather Assistant, powered by Gemini AI! 
+      return `🤖 I'm the University of Moratuwa Weather Assistant, powered by Kimi AI! 
 
 I can help you with:
 • Current weather conditions on campus
@@ -250,8 +250,8 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
     setIsLoading(true);
 
     try {
-      // Try Gemini AI first
-      const aiResponse = await callGeminiAI(inputMessage);
+      // Try Kimi AI first
+      const aiResponse = await callKimiAI(inputMessage);
 
       const assistantMessage: Message = {
         id: `${Date.now()}-${msgCounter++}`,
@@ -320,7 +320,7 @@ Current conditions: ${current.temperature}°C, ${current.condition}`;
             </h3>
             <p className={`text-xs font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1`}>
               <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Powered by Gemini AI
+              Powered by Kimi AI
             </p>
           </div>
         </div>
