@@ -17,7 +17,6 @@ interface OnboardingData {
   learningStyle: string;
   
   // Step 2: University Information
-  university: string;
   dormitory: string;
   favoriteSpots: string[];
   accessibilityNeeds: string[];
@@ -48,7 +47,6 @@ export default function OnboardingFlow() {
     university: '',
     studyPreferences: [],
     learningStyle: '',
-    university: '',
     dormitory: '',
     favoriteSpots: [],
     accessibilityNeeds: [],

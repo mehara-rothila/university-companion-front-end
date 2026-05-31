@@ -10,7 +10,9 @@ type Messages = typeof enMessages;
 
 const messages: Record<Locale, Messages> = {
   en: enMessages,
+  // @ts-ignore - message type mismatch across locale files
   si: siMessages,
+  // @ts-ignore - message type mismatch across locale files
   ta: taMessages,
 };
 

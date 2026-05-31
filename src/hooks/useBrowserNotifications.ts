@@ -68,6 +68,7 @@ export const useBrowserNotifications = () => {
         tag: options.tag || 'university-notification',
         requireInteraction: options.requireInteraction ?? false,
         silent: options.silent ?? false,
+        // @ts-ignore - vibrate is supported in mobile browsers but not in TS types
         vibrate: [200, 100, 200], // Vibration pattern for mobile
         timestamp: Date.now(),
       });

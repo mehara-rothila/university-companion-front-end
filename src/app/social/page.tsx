@@ -437,7 +437,7 @@ export default function SocialPage() {
                   try {
                     const dateValue = formData.get('achievementDate') as string;
                     // Convert date string to ISO 8601 format with time for LocalDateTime
-                    let formattedDate = null;
+                    let formattedDate: string | undefined = undefined;
                     if (dateValue && dateValue.trim() !== '') {
                       formattedDate = dateValue + 'T00:00:00';
                     }
@@ -448,7 +448,7 @@ export default function SocialPage() {
                       description: formData.get('description') as string,
                       category: formData.get('category') as string,
                       achievementDate: formattedDate,
-                      imageUrl: achievementImageUrl || null,
+                      imageUrl: achievementImageUrl || undefined,
                     };
 
                     console.log('Submitting achievement:', achievementData);

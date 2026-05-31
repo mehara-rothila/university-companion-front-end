@@ -96,9 +96,9 @@ export default function AdminEmergency() {
       console.log('📊 Emergency IDs:', emergenciesData.map((e: any) => e.id));
 
       // De-duplicate by ID just in case
-      const uniqueEmergencies: EmergencyNotification[] = Array.from(
+      const uniqueEmergencies = Array.from(
         new Map(emergenciesData.map((e: any) => [e.id, e])).values()
-      );
+      ) as EmergencyNotification[];
 
       console.log('✅ After de-duplication:', uniqueEmergencies.length, 'emergencies');
       setEmergencies(uniqueEmergencies);

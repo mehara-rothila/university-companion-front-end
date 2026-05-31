@@ -3,8 +3,8 @@ import { ChatMessage, ChatResponse, UniversityContext, ChatAttachment } from '@/
 import { fileUploadService, FileProcessingResult } from './fileUploadService';
 import { tokenCountingService } from './tokenCountingService';
 
-const ATHENA_API_URL = `${BACKEND_API_URL}/api/chatbot/chat`;
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const ATHENA_API_URL = `${BACKEND_API_URL}/api/chatbot/chat`;
 
 class AthenaService {
   private context: UniversityContext | null = null;
@@ -124,10 +124,10 @@ class AthenaService {
       const pdfUrls: string[] = [];
       if (attachments && attachments.length > 0) {
         for (const attachment of attachments) {
-          if (attachment.type === 'image' && attachment.url) {
-            imageUrls.push(attachment.url);
-          } else if (attachment.type === 'pdf' && attachment.url) {
-            pdfUrls.push(attachment.url);
+          if (attachment.type === 'image' && attachment.content) {
+            imageUrls.push(attachment.content);
+          } else if (attachment.type === 'pdf' && attachment.content) {
+            pdfUrls.push(attachment.content);
           }
         }
       }

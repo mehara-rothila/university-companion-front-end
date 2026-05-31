@@ -134,7 +134,7 @@ export default function MyAchievementsPage() {
       setActionLoading(true);
 
       // Convert date to ISO 8601 format with time for LocalDateTime
-      let formattedDate = null;
+      let formattedDate: string | undefined = undefined;
       if (editForm.achievementDate && editForm.achievementDate.trim() !== '') {
         formattedDate = editForm.achievementDate + 'T00:00:00';
       }

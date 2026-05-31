@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 export const locales = ['en', 'si', 'ta'] as const;
 export type Locale = (typeof locales)[number];
 
+// @ts-ignore - next-intl getRequestConfig type mismatch
 export default getRequestConfig(async ({ locale }) => {
   // Validate that the incoming `locale` parameter is valid
   if (!locales.includes(locale as Locale)) notFound();

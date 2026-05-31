@@ -484,13 +484,13 @@ export default function EventsPage() {
                         {/* Status Badge */}
                         <div className="absolute top-4 left-4">
                           <span className={`px-3 py-1 backdrop-blur-sm text-sm font-medium rounded-full ${
-                            event.approvalStatus === 'APPROVED'
+                            event.status === 'APPROVED'
                               ? 'bg-green-100/90 text-green-800'
-                              : event.approvalStatus === 'PENDING'
+                              : event.status === 'PENDING'
                               ? 'bg-yellow-100/90 text-yellow-800'
                               : 'bg-red-100/90 text-red-800'
                           }`}>
-                            {event.approvalStatus}
+                            {event.status}
                           </span>
                         </div>
 
@@ -560,7 +560,7 @@ export default function EventsPage() {
                           >
                             {t('events.viewDetails')}
                           </Link>
-                          {event.approvalStatus === 'APPROVED' && (
+                          {event.status === 'APPROVED' && (
                             <Link
                               href={`/events/${event.id}/edit`}
                               className={`px-4 py-2 ${
