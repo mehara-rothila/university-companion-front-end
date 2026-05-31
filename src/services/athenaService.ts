@@ -65,10 +65,10 @@ class AthenaService {
       await this.initializeContext();
       this.conversationHistory = conversationHistory;
 
-      // Check token limits from backend if userId is available
-      if (userId) {
+      // Check token limits from backend if authenticated
+      if (typeof window !== 'undefined' && localStorage.getItem('token')) {
         try {
-          const backendUsage = await tokenCountingService.getTokenUsageFromBackend(userId);
+          const backendUsage = await tokenCountingService.getTokenUsageFromBackend();
           if (backendUsage.remainingTokens <= 500) {
             return {
               content: `⚠️ **Daily Token Limit Reached**\n\nYou've used ${backendUsage.used.toLocaleString()} out of your ${backendUsage.limit.toLocaleString()} daily tokens.\n\nYour limit will reset at midnight (${backendUsage.resetTime.toLocaleTimeString()}).\n\nIn the meantime, you can browse university services directly using the buttons below.`,
@@ -356,11 +356,10 @@ Remember: You represent ${context.university} and should embody the values of ac
           throw new Error(`File type ${fileType} not supported`);
       }
 
-      // Track upload in database if userId is provided
-      if (userId && uploadResult.fileUrl) {
+      // Track upload in database if authenticated
+      if (uploadResult.fileUrl) {
         try {
           await this.trackChatbotUpload({
-            userId,
             fileUrl: uploadResult.fileUrl,
             fileName: uploadResult.fileName,
             fileType: fileType,
@@ -388,16 +387,17 @@ Remember: You represent ${context.university} and should embody the values of ac
   }
 
   private async trackChatbotUpload(uploadData: {
-    userId: number;
     fileUrl: string;
     fileName: string;
     fileType: string;
     fileSize?: number;
   }): Promise<void> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const response = await fetch(`${BACKEND_API_URL}/api/chatbot/uploads`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
       },
       body: JSON.stringify(uploadData),
     });

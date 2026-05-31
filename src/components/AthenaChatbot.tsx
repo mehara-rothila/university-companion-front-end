@@ -134,10 +134,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       throw new Error('Upload succeeded but no file URL returned');
     }
 
-    // Track in database if user is logged in
-    if (user?.id) {
+    // Track in database if authenticated
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
       try {
-        await trackUpload(user.id, fileUrl, file.name, fileType, file.size);
+        await trackUpload(fileUrl, file.name, fileType, file.size);
         console.log('✅ Upload tracked in database');
       } catch (error) {
         console.error('❌ Failed to track upload in database:', error);
@@ -152,13 +153,13 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
   // Track upload in database
   const trackUpload = async (
-    userId: number,
     fileUrl: string,
     fileName: string,
     fileType: 'image' | 'pdf',
     fileSize: number
   ) => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     // Validate inputs
     if (!fileUrl || !fileName) {
@@ -169,9 +170,9 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
       },
       body: JSON.stringify({
-        userId,
         fileUrl,
         fileName,
         fileType: fileType.toUpperCase(),

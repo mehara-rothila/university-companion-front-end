@@ -142,7 +142,7 @@ export default function LostFoundPage() {
 
     try {
       setLoading(true);
-      const items = await lostFoundService.getUserItems(user.id);
+      const items = await lostFoundService.getUserItems();
       setMyItems(items);
     } catch (err) {
       console.error('Error loading my items:', err);

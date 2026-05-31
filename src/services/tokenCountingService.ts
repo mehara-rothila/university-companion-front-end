@@ -47,12 +47,12 @@ class TokenCountingService {
   }
 
   // Get token usage from backend (async - preferred method)
-  async getTokenUsageFromBackend(userId: number | string): Promise<TokenUsage> {
+  async getTokenUsageFromBackend(): Promise<TokenUsage> {
     try {
       // Get auth token from localStorage
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       
-      const response = await fetch(`${this.API_URL}/api/tokens/usage/${userId}`, {
+      const response = await fetch(`${this.API_URL}/api/tokens/usage`, {
         headers: {
           ...(token && { 'Authorization': `Bearer ${token}` }),
         },
@@ -81,10 +81,10 @@ class TokenCountingService {
   }
 
   // Get token statistics from backend (async)
-  async getTokenStatsFromBackend(userId: number | string): Promise<any> {
+  async getTokenStatsFromBackend(): Promise<any> {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      const response = await fetch(`${this.API_URL}/api/tokens/stats/${userId}`, {
+      const response = await fetch(`${this.API_URL}/api/tokens/stats`, {
         headers: {
           ...(token && { 'Authorization': `Bearer ${token}` }),
         },

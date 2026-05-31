@@ -240,7 +240,7 @@ export default function FinancialAidPage() {
   const loadUserApplications = async () => {
     if (!user) return;
     try {
-      const data = await financialAidService.getUserApplications(user.id);
+      const data = await financialAidService.getUserApplications();
       setUserApplications(data);
     } catch (err) {
       console.error('Error loading user applications:', err);

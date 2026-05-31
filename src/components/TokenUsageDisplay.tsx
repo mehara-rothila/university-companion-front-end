@@ -60,7 +60,7 @@ export default function TokenUsageDisplay({ compact = false, showDetails = true,
     try {
       setError(null);
       // Try backend first
-      const usage = await tokenCountingService.getTokenUsageFromBackend(user.id);
+      const usage = await tokenCountingService.getTokenUsageFromBackend();
       setTokensUsed(usage.used);
       setTokensRemaining(usage.remainingTokens);
       setDailyLimit(usage.limit);

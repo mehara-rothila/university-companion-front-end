@@ -164,10 +164,10 @@ class LostFoundService {
     }
   }
 
-  // Get items posted by a specific user
-  async getUserItems(userId: number): Promise<LostFoundItem[]> {
+  // Get items posted by the current user
+  async getUserItems(): Promise<LostFoundItem[]> {
     try {
-      const response = await this.api.get(`/lost-found/items/user/${userId}`);
+      const response = await this.api.get(`/lost-found/items/my-items`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user items:', error);

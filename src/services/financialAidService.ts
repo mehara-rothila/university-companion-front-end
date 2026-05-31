@@ -250,10 +250,10 @@ class FinancialAidService {
     }
   }
 
-  // Get applications for a specific user
-  async getUserApplications(userId: number): Promise<FinancialAidApplication[]> {
+  // Get applications for the current user
+  async getUserApplications(): Promise<FinancialAidApplication[]> {
     try {
-      const response = await this.api.get(`/financial-aid/applications/user/${userId}`);
+      const response = await this.api.get(`/financial-aid/applications/my-applications`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user applications:', error);

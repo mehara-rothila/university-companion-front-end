@@ -87,7 +87,7 @@ export default function EventDetailPage() {
       // Check registration status
       if (user?.id) {
         try {
-          const data = await eventService.isUserRegistered(eventId, user.id);
+          const data = await eventService.isUserRegistered(eventId);
           if (isMounted) {
             setIsRegistered(data.isRegistered);
             setIsWaitlisted(data.isWaitlisted);
@@ -138,7 +138,7 @@ export default function EventDetailPage() {
     if (!eventId || !user?.id) return;
 
     try {
-      const data = await eventService.isUserRegistered(eventId, user.id);
+      const data = await eventService.isUserRegistered(eventId);
       setIsRegistered(data.isRegistered);
       setIsWaitlisted(data.isWaitlisted);
       setWaitlistPosition(data.waitlistPosition || null);

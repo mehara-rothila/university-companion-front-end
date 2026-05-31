@@ -160,12 +160,10 @@ export const competitionService = {
     }
   },
 
-  // Check if user is enrolled in a competition
-  isUserEnrolled: async (competitionId: number, userId: number): Promise<boolean> => {
+  // Check if current user is enrolled in a competition
+  isUserEnrolled: async (competitionId: number): Promise<boolean> => {
     try {
-      const response = await api.get(`/${competitionId}/is-enrolled`, {
-        params: { userId }
-      });
+      const response = await api.get(`/${competitionId}/is-enrolled`);
       return response.data.isEnrolled;
     } catch (error) {
       console.error('Error checking enrollment status:', error);

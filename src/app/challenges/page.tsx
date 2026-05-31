@@ -56,7 +56,7 @@ export default function ChallengesPage() {
     for (const comp of competitions) {
       if (comp.internalEnrollmentEnabled) {
         try {
-          const isEnrolled = await competitionService.isUserEnrolled(comp.id, user.id);
+          const isEnrolled = await competitionService.isUserEnrolled(comp.id);
           statuses[comp.id] = isEnrolled;
         } catch (error) {
           statuses[comp.id] = false;

@@ -52,10 +52,10 @@ export interface FileStats {
 }
 
 export const fileManagementService = {
-  // Get all files for a user
-  getUserFiles: async (userId: number): Promise<UserFile[]> => {
+  // Get all files for the current user
+  getUserFiles: async (): Promise<UserFile[]> => {
     try {
-      const response = await api.get(`/user/${userId}`);
+      const response = await api.get(`/user`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user files:', error);
@@ -63,10 +63,10 @@ export const fileManagementService = {
     }
   },
 
-  // Get file statistics for a user
-  getUserFileStats: async (userId: number): Promise<FileStats> => {
+  // Get file statistics for the current user
+  getUserFileStats: async (): Promise<FileStats> => {
     try {
-      const response = await api.get(`/user/${userId}/stats`);
+      const response = await api.get(`/user/stats`);
       return response.data;
     } catch (error) {
       console.error('Error fetching file stats:', error);
@@ -75,11 +75,9 @@ export const fileManagementService = {
   },
 
   // Delete a lost & found image
-  deleteLostFoundImage: async (itemId: number, userId: number): Promise<void> => {
+  deleteLostFoundImage: async (itemId: number): Promise<void> => {
     try {
-      await api.delete(`/lost-found/${itemId}/image`, {
-        params: { userId }
-      });
+      await api.delete(`/lost-found/${itemId}/image`);
     } catch (error) {
       console.error('Error deleting lost & found image:', error);
       throw error;
@@ -87,11 +85,9 @@ export const fileManagementService = {
   },
 
   // Delete a book photo
-  deleteBookPhoto: async (bookId: number, userId: number): Promise<void> => {
+  deleteBookPhoto: async (bookId: number): Promise<void> => {
     try {
-      await api.delete(`/book/${bookId}/photo`, {
-        params: { userId }
-      });
+      await api.delete(`/book/${bookId}/photo`);
     } catch (error) {
       console.error('Error deleting book photo:', error);
       throw error;
@@ -99,11 +95,9 @@ export const fileManagementService = {
   },
 
   // Delete a book PDF
-  deleteBookPdf: async (bookId: number, userId: number): Promise<void> => {
+  deleteBookPdf: async (bookId: number): Promise<void> => {
     try {
-      await api.delete(`/book/${bookId}/pdf`, {
-        params: { userId }
-      });
+      await api.delete(`/book/${bookId}/pdf`);
     } catch (error) {
       console.error('Error deleting book PDF:', error);
       throw error;
@@ -111,11 +105,9 @@ export const fileManagementService = {
   },
 
   // Delete a chatbot upload
-  deleteChatbotUpload: async (uploadId: number, userId: number): Promise<void> => {
+  deleteChatbotUpload: async (uploadId: number): Promise<void> => {
     try {
-      await api.delete(`/chatbot-upload/${uploadId}`, {
-        params: { userId }
-      });
+      await api.delete(`/chatbot-upload/${uploadId}`);
     } catch (error) {
       console.error('Error deleting chatbot upload:', error);
       throw error;

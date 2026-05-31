@@ -32,7 +32,7 @@ export default function MyUploadsPage() {
     if (!user?.id) return;
     try {
       setLoading(true);
-      const userFiles = await fileManagementService.getUserFiles(user.id);
+      const userFiles = await fileManagementService.getUserFiles();
       setFiles(userFiles);
     } catch (error) {
       console.error('Error loading files:', error);
@@ -44,7 +44,7 @@ export default function MyUploadsPage() {
   const loadStats = async () => {
     if (!user?.id) return;
     try {
-      const fileStats = await fileManagementService.getUserFileStats(user.id);
+      const fileStats = await fileManagementService.getUserFileStats();
       setStats(fileStats);
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -59,16 +59,16 @@ export default function MyUploadsPage() {
 
       switch (file.source) {
         case 'lost_found':
-          await fileManagementService.deleteLostFoundImage(file.id, user.id);
+          await fileManagementService.deleteLostFoundImage(file.id);
           break;
         case 'book_photo':
-          await fileManagementService.deleteBookPhoto(file.id, user.id);
+          await fileManagementService.deleteBookPhoto(file.id);
           break;
         case 'book_pdf':
-          await fileManagementService.deleteBookPdf(file.id, user.id);
+          await fileManagementService.deleteBookPdf(file.id);
           break;
         case 'chatbot_upload':
-          await fileManagementService.deleteChatbotUpload(file.id, user.id);
+          await fileManagementService.deleteChatbotUpload(file.id);
           break;
       }
 

@@ -106,17 +106,14 @@ export const eventService = {
   },
 
   isUserRegistered: async (
-    eventId: number,
-    userId: number
-  ): Promise<{ isRegistered: boolean; isWaitlisted: boolean; status: string }> => {
-    const response = await api.get(`/${eventId}/is-registered`, {
-      params: { userId },
-    });
+    eventId: number
+  ): Promise<{ isRegistered: boolean; isWaitlisted: boolean; status: string; waitlistPosition?: number }> => {
+    const response = await api.get(`/${eventId}/is-registered`);
     return response.data;
   },
 
-  getUserRegisteredEvents: async (userId: number): Promise<Event[]> => {
-    const response = await api.get(`/user/${userId}/registered`);
+  getUserRegisteredEvents: async (): Promise<Event[]> => {
+    const response = await api.get(`/user/registered`);
     return response.data;
   },
 
