@@ -65,15 +65,6 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async signIn({ user, account, profile, email, credentials }) {
-      // Enforce university email domain for OAuth (same as local signup)
-      if (user.email) {
-        const lowerEmail = user.email.toLowerCase();
-        const allowedDomains = ['@uom.lk', '@mrt.ac.lk', '@student.mrt.ac.lk'];
-        const isUniversityEmail = allowedDomains.some(domain => lowerEmail.endsWith(domain));
-        if (!isUniversityEmail) {
-          return `/login?error=OAuthAccountNotLinked&email=${encodeURIComponent(user.email)}`;
-        }
-      }
       return true;
     },
     async redirect({ url, baseUrl }) {
