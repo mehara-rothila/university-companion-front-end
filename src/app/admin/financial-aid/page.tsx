@@ -1392,7 +1392,7 @@ export default function AdminFinancialAidPage() {
                   Cancel
                 </button>
                 <button 
-                  onClick={() => handleDeleteApplication(selectedApplication.id)}
+                  onClick={() => handleDeleteApplication()}
                   disabled={loading}
                   className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
                 >
