@@ -90,40 +90,57 @@ export default function EmergencyNotificationBanner() {
 
   // Subscribe to emergency WebSocket topics using shared client
   useEffect(() => {
-    if (!client || !isConnected || !isValidJWT(token)) return;
+    // Guard on the client's *live* connection (client.connected), not just the
+    // isConnected React state, which can lag behind a dropped socket. If the
+    // socket is already gone, client.subscribe() throws "There is no underlying
+    // STOMP connection" — unguarded, that crashes the whole app (Next.js
+    // client-side exception). The same applies to unsubscribe() on cleanup.
+    if (!client || !isConnected || !client.connected || !isValidJWT(token)) return;
 
     const subscriptions: { unsubscribe: () => void }[] = [];
 
-    // Subscribe to global emergency broadcasts
-    const globalSub = client.subscribe('/topic/emergency', (message: IMessage) => {
-      try {
-        const emergencyMsg = JSON.parse(message.body);
-        if (emergencyMsg.type === 'EMERGENCY') {
-          handleNewEmergency(emergencyMsg);
-        }
-      } catch (error) {
-        console.error('Error parsing emergency message:', error);
-      }
-    });
-    subscriptions.push(globalSub);
-
-    // Subscribe to user-specific emergency broadcasts
-    if (user?.id) {
-      const userSub = client.subscribe(`/topic/emergency/${user.id}`, (message: IMessage) => {
+    try {
+      // Subscribe to global emergency broadcasts
+      const globalSub = client.subscribe('/topic/emergency', (message: IMessage) => {
         try {
           const emergencyMsg = JSON.parse(message.body);
           if (emergencyMsg.type === 'EMERGENCY') {
             handleNewEmergency(emergencyMsg);
           }
         } catch (error) {
-          console.error('Error parsing user emergency message:', error);
+          console.error('Error parsing emergency message:', error);
         }
       });
-      subscriptions.push(userSub);
+      subscriptions.push(globalSub);
+
+      // Subscribe to user-specific emergency broadcasts
+      if (user?.id) {
+        const userSub = client.subscribe(`/topic/emergency/${user.id}`, (message: IMessage) => {
+          try {
+            const emergencyMsg = JSON.parse(message.body);
+            if (emergencyMsg.type === 'EMERGENCY') {
+              handleNewEmergency(emergencyMsg);
+            }
+          } catch (error) {
+            console.error('Error parsing user emergency message:', error);
+          }
+        });
+        subscriptions.push(userSub);
+      }
+    } catch (error) {
+      // Socket dropped between the guard and subscribe — degrade gracefully
+      // (no real-time emergencies) instead of crashing the page.
+      console.error('Failed to subscribe to emergency topics:', error);
     }
 
     return () => {
-      subscriptions.forEach(sub => sub.unsubscribe());
+      subscriptions.forEach(sub => {
+        try {
+          sub.unsubscribe();
+        } catch (error) {
+          console.error('Error unsubscribing from emergency topic:', error);
+        }
+      });
     };
   }, [client, isConnected, user?.id, token]);
 
