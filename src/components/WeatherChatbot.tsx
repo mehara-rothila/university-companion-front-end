@@ -74,6 +74,7 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
   // Call Backend Chat API
   const callGeminiAI = async (userMessage: string): Promise<string> => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     try {
       const response = await fetch(
@@ -82,10 +83,10 @@ ${daily.map((d, i) => `${d.day}: High ${d.high}°C, Low ${d.low}°C, ${d.conditi
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
           body: JSON.stringify({
             message: userMessage,
-            userId: null, // Set to user ID when auth is implemented
           }),
         }
       );
