@@ -44,7 +44,7 @@ export const generateWelcomeMessage = (): ChatMessage => {
     type: 'athena',
     content: `${greeting} I'm Athena, your AI assistant for University of Moratuwa! 
 
-I'm powered by Kimi (Moonshot AI) and can help you with any questions about university life, services, academics, and more. 
+I'm powered by Google Gemini and can help you with any questions about university life, services, academics, and more. 
 
 How can I assist you today?`,
     timestamp: new Date(),

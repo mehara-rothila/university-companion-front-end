@@ -265,7 +265,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       const inputTokens = data.inputTokens || 0;
       const outputTokens = data.outputTokens || 0;
       if (inputTokens > 0 || outputTokens > 0) {
-        // Use real token counts from Kimi API
+        // Use real token counts from Gemini API
         tokenCountingService.recordTokenUsage(inputTokens, outputTokens, 'chat');
         console.log(`✅ Real token consumption: ${inputTokens} input + ${outputTokens} output = ${inputTokens + outputTokens} total`);
       } else {
@@ -327,7 +327,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
             </h3>
             <p className={`text-[10px] md:text-xs font-medium ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} flex items-center gap-1`}>
               <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></span>
-              <span className="truncate">University of Moratuwa • Kimi AI</span>
+              <span className="truncate">University of Moratuwa • Google Gemini</span>
             </p>
           </div>
         </div>

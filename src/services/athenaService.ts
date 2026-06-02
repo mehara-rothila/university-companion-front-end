@@ -1,4 +1,4 @@
-// Athena AI Assistant Service with Kimi (Moonshot AI) Integration
+// Athena AI Assistant Service with Google Gemini Integration
 import { ChatMessage, ChatResponse, UniversityContext, ChatAttachment } from '@/types/athena';
 import { fileUploadService, FileProcessingResult } from './fileUploadService';
 import { tokenCountingService } from './tokenCountingService';
@@ -117,7 +117,7 @@ class AthenaService {
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(message + attachmentContext);
 
-      console.log('🤖 Sending to Kimi...');
+      console.log('🤖 Sending to Gemini...');
 
       // Collect attachment URLs for multimodal support
       const imageUrls: string[] = [];
@@ -132,7 +132,7 @@ class AthenaService {
         }
       }
 
-      const response = await this.callKimiAPI(userPrompt, imageUrls, pdfUrls);
+      const response = await this.callGeminiAPI(userPrompt, imageUrls, pdfUrls);
       
       // Record token usage
       const outputTokens = tokenCountingService.estimateTokenCount(response);
@@ -236,7 +236,7 @@ Remember: You represent ${context.university} and should embody the values of ac
     return prompt;
   }
 
-  private async callKimiAPI(message: string, imageUrls: string[] = [], pdfUrls: string[] = []): Promise<string> {
+  private async callGeminiAPI(message: string, imageUrls: string[] = [], pdfUrls: string[] = []): Promise<string> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const response = await fetch(ATHENA_API_URL, {
       method: 'POST',
@@ -253,7 +253,7 @@ Remember: You represent ${context.university} and should embody the values of ac
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Kimi API error: ${response.status} ${response.statusText}`);
+      throw new Error(errorData.error || `Gemini API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -423,7 +423,7 @@ Remember: You represent ${context.university} and should embody the values of ac
   }
 
   async processAttachment(attachment: ChatAttachment): Promise<ChatAttachment> {
-    // Backend Kimi handles image vision and PDF text extraction directly
+    // Backend Gemini handles image vision and PDF text extraction directly
     // Just mark as ready — no frontend pre-processing needed
     attachment.processingStatus = 'completed';
     return attachment;
