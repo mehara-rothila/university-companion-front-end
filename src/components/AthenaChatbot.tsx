@@ -22,6 +22,88 @@ interface AthenaChatbotProps {
   isDarkMode: boolean;
 }
 
+// --- Lightweight markdown renderer for assistant replies (headings, bold, italic, code, lists) ---
+function renderInlineMarkdown(text: string, keyPrefix: string): React.ReactNode[] {
+  const nodes: React.ReactNode[] = [];
+  const regex = /(\*\*([^*]+)\*\*|\*([^*]+)\*|`([^`]+)`)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let i = 0;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) nodes.push(text.slice(lastIndex, match.index));
+    if (match[2] !== undefined) {
+      nodes.push(<strong key={`${keyPrefix}-b${i}`}>{match[2]}</strong>);
+    } else if (match[3] !== undefined) {
+      nodes.push(<em key={`${keyPrefix}-i${i}`}>{match[3]}</em>);
+    } else if (match[4] !== undefined) {
+      nodes.push(
+        <code key={`${keyPrefix}-c${i}`} className="px-1 py-0.5 rounded bg-black/10 dark:bg-white/10 font-mono text-[0.85em]">{match[4]}</code>
+      );
+    }
+    lastIndex = match.index + match[0].length;
+    i++;
+  }
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes;
+}
+
+function MarkdownMessage({ content }: { content: string }) {
+  const lines = content.split('\n');
+  const blocks: React.ReactNode[] = [];
+  let listItems: React.ReactNode[] = [];
+  let listOrdered = false;
+  let key = 0;
+
+  const flushList = () => {
+    if (listItems.length === 0) return;
+    const items = listItems;
+    listItems = [];
+    blocks.push(
+      listOrdered
+        ? <ol key={`ol${key++}`} className="list-decimal pl-5 space-y-1 my-1.5">{items}</ol>
+        : <ul key={`ul${key++}`} className="list-disc pl-5 space-y-1 my-1.5">{items}</ul>
+    );
+  };
+
+  lines.forEach((raw, idx) => {
+    const trimmed = raw.trim();
+    if (trimmed === '') { flushList(); return; }
+
+    const heading = /^(#{1,6})\s+(.*)$/.exec(trimmed);
+    if (heading) {
+      flushList();
+      const level = heading[1].length;
+      const cls = level <= 2 ? 'text-sm md:text-base font-bold mt-2 mb-1'
+        : level === 3 ? 'text-sm font-bold mt-2 mb-0.5'
+        : 'text-sm font-semibold mt-1.5 mb-0.5';
+      blocks.push(<p key={`h${idx}`} className={cls}>{renderInlineMarkdown(heading[2], `h${idx}`)}</p>);
+      return;
+    }
+
+    const bullet = /^[*\-•]\s+(.*)$/.exec(trimmed);
+    if (bullet) {
+      if (listOrdered) flushList();
+      listOrdered = false;
+      listItems.push(<li key={`li${idx}`}>{renderInlineMarkdown(bullet[1], `li${idx}`)}</li>);
+      return;
+    }
+
+    const numbered = /^\d+\.\s+(.*)$/.exec(trimmed);
+    if (numbered) {
+      if (!listOrdered) flushList();
+      listOrdered = true;
+      listItems.push(<li key={`li${idx}`}>{renderInlineMarkdown(numbered[1], `li${idx}`)}</li>);
+      return;
+    }
+
+    flushList();
+    blocks.push(<p key={`p${idx}`} className="my-1">{renderInlineMarkdown(trimmed, `p${idx}`)}</p>);
+  });
+  flushList();
+
+  return <div className="text-xs md:text-sm leading-relaxed space-y-1">{blocks}</div>;
+}
+
 const AthenaChatbot: React.FC<AthenaChatbotProps> = ({ isDarkMode }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
@@ -386,7 +468,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
                 </div>
               )}
 
-              <p className="text-xs md:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+              {message.role === 'assistant' ? (
+                <MarkdownMessage content={message.content} />
+              ) : (
+                <p className="text-xs md:text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+              )}
               <p
                 className={`text-xs mt-1 ${message.role === 'user'
                   ? 'text-white/70'
