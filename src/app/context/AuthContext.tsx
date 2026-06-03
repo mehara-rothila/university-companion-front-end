@@ -160,7 +160,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     interceptorRef.current = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response?.status === 401) {
+        // Don't force-logout for non-critical background calls (e.g. emergency alerts),
+        // which can legitimately 401 for a user lacking that permission.
+        const failedUrl = error.config?.url || '';
+        const isBackgroundCall = failedUrl.includes('/emergency/');
+        if (error.response?.status === 401 && !isBackgroundCall) {
           // Token expired or invalid - logout user
           console.warn('Session expired. Logging out...');
           setUser(null);
