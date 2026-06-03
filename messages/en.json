@@ -407,7 +407,7 @@
   },
   "chatbot": {
     "title": "Athena AI Assistant",
-    "subtitle": "Your intelligent university companion powered by Gemini 2.5 Pro",
+    "subtitle": "Your intelligent university companion powered by Gemini 3.5 Flash",
     "welcomeBack": "Welcome back, {{name}}!",
     "features": {
       "smartChat": {
@@ -446,7 +446,7 @@
       }
     },
     "footer": {
-      "poweredBy": "Athena uses Gemini 2.5 Pro for intelligent, context-aware responses",
+      "poweredBy": "Athena uses Gemini 3.5 Flash for intelligent, context-aware responses",
       "security": "All uploaded files are securely stored and processed"
     }
   },
