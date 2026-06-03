@@ -131,6 +131,11 @@ const MobileMenuContent = ({ closeMenu, emergencyCount }: MobileMenuContentProps
                                 <FolderOpen className="inline h-4 w-4 mr-2.5" /> {t('nav.myUploads')}
                             </Link>
                         )}
+                        {isAuthenticated && (
+                            <Link href="/my-donations" className="mobile-nav-link flex items-center py-2" onClick={closeMenu}>
+                                <Heart className="inline h-4 w-4 mr-2.5" /> My Donations
+                            </Link>
+                        )}
                         <Link href="/help" className="mobile-nav-link flex items-center py-2" onClick={closeMenu}>
                             <HelpCircle className="inline h-4 w-4 mr-2.5" /> {t('nav.helpSupport')}
                         </Link>

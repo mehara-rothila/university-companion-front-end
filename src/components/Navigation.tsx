@@ -144,6 +144,14 @@ const Navigation = () => {
             </Link>
           )}
 
+          {/* My Donations - Only show when authenticated */}
+          {isAuthenticated && (
+            <Link href="/my-donations" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+              <Heart className="inline h-4 w-4 mr-1.5" />
+              My Donations
+            </Link>
+          )}
+
           {/* Emergency Notifications Badge - Only show when authenticated */}
           {isAuthenticated && (
             <Link
