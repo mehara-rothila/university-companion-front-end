@@ -42,11 +42,16 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
     setUploading(true);
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const formData = new FormData();
       formData.append('file', file);
 
       const response = await fetch(`${API_URL}/api/upload/image`, {
         method: 'POST',
+        // No Content-Type — the browser sets the multipart boundary for FormData
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
         body: formData,
       });
 

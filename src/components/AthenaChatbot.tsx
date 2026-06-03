@@ -106,6 +106,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
   // Upload file to S3 via backend
   const uploadFileToS3 = async (file: File, fileType: 'image' | 'pdf'): Promise<string> => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     const formData = new FormData();
     formData.append('file', file);
@@ -116,6 +117,10 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
     const response = await fetch(uploadEndpoint, {
       method: 'POST',
+      // No Content-Type — the browser sets the multipart boundary for FormData
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
       body: formData,
     });
 
