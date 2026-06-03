@@ -303,6 +303,13 @@ export default function FinancialAidPage() {
       setIsLoading(true);
       setError(null);
 
+      // Donations must target a real application — general/"#0" donations aren't supported
+      if (!donationForm.financialAidId || donationForm.financialAidId <= 0) {
+        setError('Please choose a financial aid application to contribute to (click "Contribute" on an application).');
+        setIsLoading(false);
+        return;
+      }
+
       // Close modal before redirect
       setShowDonationModal(false);
 
@@ -431,8 +438,8 @@ export default function FinancialAidPage() {
                   Apply for Aid
                 </button>
                 
-                <button 
-                  onClick={() => setShowDonationModal(true)}
+                <button
+                  onClick={() => setActiveTab('donations')}
                   className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
