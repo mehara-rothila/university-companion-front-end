@@ -95,9 +95,12 @@ export default function WeatherPage() {
         return <Sun className={`${iconClass} text-yellow-500`} strokeWidth={1.5} />;
       case 'partly cloudy':
         return <CloudSun className={`${iconClass} text-blue-400`} strokeWidth={1.5} />;
+      case 'clouds':
       case 'cloudy':
         return <Cloud className={`${iconClass} text-gray-400`} strokeWidth={1.5} />;
+      case 'rain':
       case 'rainy':
+      case 'thunderstorm':
         return <CloudRain className={`${iconClass} text-blue-600`} strokeWidth={1.5} />;
       case 'drizzle':
         return <CloudDrizzle className={`${iconClass} text-blue-500`} strokeWidth={1.5} />;

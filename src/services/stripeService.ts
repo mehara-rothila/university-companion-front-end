@@ -24,11 +24,15 @@ class StripeService {
     try {
       console.log('Starting Stripe payment...');
       console.log('Donation data:', donationData);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
       // Create checkout session via API
       const response = await fetch('/api/payment/stripe/create-checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
         body: JSON.stringify(donationData),
       });
 
