@@ -77,12 +77,14 @@ export default function MyDonationsPage() {
   return (
     <AuthGuard>
       <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-        <AnimatedBackground />
+        <div className="fixed inset-0 z-0">
+          <AnimatedBackground />
+        </div>
         <Navigation />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className="mb-6 sm:mb-8">
+          <div className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl ${cardClass} backdrop-blur-sm shadow-lg`}>
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
               My Donations
             </h1>
