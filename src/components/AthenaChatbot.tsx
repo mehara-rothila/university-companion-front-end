@@ -139,8 +139,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       throw new Error('Upload succeeded but no file URL returned');
     }
 
-    // Track in database if authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    // Track in database if authenticated (token resolved above)
     if (token) {
       try {
         await trackUpload(fileUrl, file.name, fileType, file.size);
