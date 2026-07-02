@@ -129,8 +129,9 @@ export const classifyIntent = (message: string): string => {
     academic: ['class', 'course', 'grade', 'exam', 'assignment', 'professor', 'semester']
   };
 
+  // Match whole words only, so e.g. "feeling" does not match the keyword "fee"
   for (const [intent, keywords] of Object.entries(patterns)) {
-    if (keywords.some(keyword => lowerMessage.includes(keyword))) {
+    if (keywords.some(keyword => new RegExp(`\\b${keyword}\\b`).test(lowerMessage))) {
       return intent;
     }
   }
@@ -190,12 +191,16 @@ export const calculateConfidence = (message: string, intent: string): number => 
   };
 
   const intentKeywords = patterns[intent as keyof typeof patterns] || [];
+  if (intentKeywords.length === 0) {
+    return 25; // Unknown intent — fall back to minimum confidence instead of NaN
+  }
+
   const lowerMessage = message.toLowerCase();
-  
-  const matchCount = intentKeywords.filter(keyword => 
-    lowerMessage.includes(keyword)
+
+  const matchCount = intentKeywords.filter(keyword =>
+    new RegExp(`\\b${keyword}\\b`).test(lowerMessage)
   ).length;
-  
+
   const confidence = Math.min((matchCount / intentKeywords.length) * 100, 100);
   return Math.max(confidence, 25); // Minimum 25% confidence
 };
