@@ -21,7 +21,7 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +53,7 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
 
       // Simulate progress (since we can't track real progress easily)
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           if (prev >= 90) return prev;
           return prev + 10;
         });
@@ -96,16 +96,31 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
 
   return (
     <div className="space-y-4">
-      <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+      <label
+        className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+      >
         PDF File *
       </label>
 
       {pdfName ? (
-        <div className={`relative p-4 rounded-lg border-2 ${isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-50'}`}>
+        <div
+          className={`relative p-4 rounded-lg border-2 ${isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-50'}`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                />
               </svg>
               <div>
                 <p className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
@@ -122,8 +137,19 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
               disabled={uploading}
               className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors duration-200 disabled:opacity-50"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -137,8 +163,19 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
               : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
           }`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-10 w-10 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-10 w-10 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+            />
           </svg>
           <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             Click to upload PDF
@@ -161,14 +198,14 @@ export default function PdfUpload({ onPdfUpload, currentPdf, onPdfRemove }: PdfU
       {uploading && (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-              Uploading...
-            </span>
+            <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Uploading...</span>
             <span className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
               {uploadProgress}%
             </span>
           </div>
-          <div className={`w-full h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+          <div
+            className={`w-full h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
+          >
             <div
               className="h-full bg-gradient-to-r from-purple-600 to-purple-700 transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}

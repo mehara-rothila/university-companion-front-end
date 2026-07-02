@@ -101,11 +101,9 @@ export interface CreateEventRequest {
   recurrencePattern?: string;
 }
 
-export interface UpdateEventRequest extends Partial<CreateEventRequest> {
-}
+export interface UpdateEventRequest extends Partial<CreateEventRequest> {}
 
-export interface RegisterEventRequest {
-}
+export interface RegisterEventRequest {}
 
 export interface RejectEventRequest {
   reason: string;

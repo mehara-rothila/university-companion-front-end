@@ -16,7 +16,7 @@ import {
   Twitter,
   Linkedin,
   ArrowUp,
-  ExternalLink
+  ExternalLink,
 } from 'lucide-react';
 
 export default function Footer() {
@@ -29,15 +29,20 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={`relative ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'} transition-colors duration-300`}>
+    <footer
+      className={`relative ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'} transition-colors duration-300`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-
           {/* Brand Section */}
           <div className="lg:col-span-1 space-y-5">
             <div className="flex items-center space-x-3">
-              <div className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-purple-900/40' : 'bg-purple-100'}`}>
-                <Brain className={`h-7 w-7 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+              <div
+                className={`p-2.5 rounded-xl ${isDarkMode ? 'bg-purple-900/40' : 'bg-purple-100'}`}
+              >
+                <Brain
+                  className={`h-7 w-7 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                />
               </div>
               <div>
                 <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -48,16 +53,19 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
-              Your intelligent university companion, enhancing campus life through AI-powered assistance.
+            <p
+              className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}
+            >
+              Your intelligent university companion, enhancing campus life through AI-powered
+              assistance.
             </p>
 
             {/* Social Links */}
             <div className="flex items-center space-x-2">
               {[
-                { icon: <Github className="h-4 w-4" />, href: "#", label: "GitHub" },
-                { icon: <Twitter className="h-4 w-4" />, href: "#", label: "Twitter" },
-                { icon: <Linkedin className="h-4 w-4" />, href: "#", label: "LinkedIn" }
+                { icon: <Github className="h-4 w-4" />, href: '#', label: 'GitHub' },
+                { icon: <Twitter className="h-4 w-4" />, href: '#', label: 'Twitter' },
+                { icon: <Linkedin className="h-4 w-4" />, href: '#', label: 'LinkedIn' },
               ].map((social, index) => (
                 <a
                   key={index}
@@ -73,17 +81,49 @@ export default function Footer() {
 
           {/* Features Links */}
           <div className="space-y-4">
-            <h4 className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+            <h4
+              className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}
+            >
               Features
             </h4>
             <ul className="space-y-3">
               {[
-                { icon: <Bot className="h-4 w-4" />, name: "AI Assistant", href: "/chatbot", color: "text-purple-500" },
-                { icon: <MapPin className="h-4 w-4" />, name: "Navigation", href: "/navigation", color: "text-emerald-500" },
-                { icon: <BookOpen className="h-4 w-4" />, name: "Study Spaces", href: "/study-spaces", color: "text-cyan-500" },
-                { icon: <Search className="h-4 w-4" />, name: "Lost & Found", href: "/lost-found", color: "text-slate-500" },
-                { icon: <Heart className="h-4 w-4" />, name: "Wellness Hub", href: "/wellness", color: "text-green-500" },
-                { icon: <Users className="h-4 w-4" />, name: "Community", href: "/social", color: "text-amber-500" }
+                {
+                  icon: <Bot className="h-4 w-4" />,
+                  name: 'AI Assistant',
+                  href: '/chatbot',
+                  color: 'text-purple-500',
+                },
+                {
+                  icon: <MapPin className="h-4 w-4" />,
+                  name: 'Navigation',
+                  href: '/navigation',
+                  color: 'text-emerald-500',
+                },
+                {
+                  icon: <BookOpen className="h-4 w-4" />,
+                  name: 'Study Spaces',
+                  href: '/study-spaces',
+                  color: 'text-cyan-500',
+                },
+                {
+                  icon: <Search className="h-4 w-4" />,
+                  name: 'Lost & Found',
+                  href: '/lost-found',
+                  color: 'text-slate-500',
+                },
+                {
+                  icon: <Heart className="h-4 w-4" />,
+                  name: 'Wellness Hub',
+                  href: '/wellness',
+                  color: 'text-green-500',
+                },
+                {
+                  icon: <Users className="h-4 w-4" />,
+                  name: 'Community',
+                  href: '/social',
+                  color: 'text-amber-500',
+                },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -100,15 +140,17 @@ export default function Footer() {
 
           {/* Support Links */}
           <div className="space-y-4">
-            <h4 className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+            <h4
+              className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}
+            >
               Support
             </h4>
             <ul className="space-y-3">
               {[
-                { name: "Help Center", href: "/help" },
-                { name: "Privacy Policy", href: "/privacy" },
-                { name: "Terms of Service", href: "/terms" },
-                { name: "Accessibility", href: "/accessibility" }
+                { name: 'Help Center', href: '/help' },
+                { name: 'Privacy Policy', href: '/privacy' },
+                { name: 'Terms of Service', href: '/terms' },
+                { name: 'Accessibility', href: '/accessibility' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -124,7 +166,9 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+            <h4
+              className={`text-sm font-semibold uppercase tracking-wider ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}
+            >
               Contact
             </h4>
             <div className="space-y-4">
@@ -149,10 +193,16 @@ export default function Footer() {
               </a>
 
               {/* AI Support Card */}
-              <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-purple-900/20 border-purple-800/30' : 'bg-purple-50 border-purple-100'} border`}>
+              <div
+                className={`p-4 rounded-xl ${isDarkMode ? 'bg-purple-900/20 border-purple-800/30' : 'bg-purple-50 border-purple-100'} border`}
+              >
                 <div className="flex items-center space-x-2 mb-2">
-                  <Bot className={`h-4 w-4 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                  <p className={`text-sm font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}>
+                  <Bot
+                    className={`h-4 w-4 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                  />
+                  <p
+                    className={`text-sm font-medium ${isDarkMode ? 'text-purple-300' : 'text-purple-700'}`}
+                  >
                     24/7 AI Support
                   </p>
                 </div>
@@ -165,9 +215,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className={`mt-12 pt-8 border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+        <div
+          className={`mt-12 pt-8 border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}
+        >
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} text-center md:text-left`}>
+            <div
+              className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} text-center md:text-left`}
+            >
               <p>© {currentYear} Athena. All rights reserved.</p>
               <p className="mt-1 flex items-center justify-center md:justify-start space-x-1">
                 <span>L3 Project</span>

@@ -11,7 +11,16 @@ import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import { fileUploadService } from '@/services/fileUploadService';
 import type { CreateEventRequest } from '@/types/event';
-import { Calendar, MapPin, Users, Clock, Image as ImageIcon, ArrowLeft, Upload, X } from 'lucide-react';
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Image as ImageIcon,
+  ArrowLeft,
+  Upload,
+  X,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function CreateEventPage() {
@@ -54,7 +63,9 @@ export default function CreateEventPage() {
     'Other',
   ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
 
     if (type === 'checkbox') {
@@ -91,7 +102,9 @@ export default function CreateEventPage() {
 
     // Check if online
     if (!isOnline) {
-      setError(t('common.offlineError') || 'You are offline. Please check your internet connection.');
+      setError(
+        t('common.offlineError') || 'You are offline. Please check your internet connection.'
+      );
       return;
     }
 
@@ -126,7 +139,9 @@ export default function CreateEventPage() {
       }
 
       if (registrationDeadlineDateTime && isNaN(registrationDeadlineDateTime.getTime())) {
-        setError(t('events.errors.invalidDeadlineFormat') || 'Invalid registration deadline format');
+        setError(
+          t('events.errors.invalidDeadlineFormat') || 'Invalid registration deadline format'
+        );
         setLoading(false);
         return;
       }
@@ -182,23 +197,33 @@ export default function CreateEventPage() {
 
   return (
     <AuthGuard>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <div
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
         <Navigation />
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}
+          >
             <Link
               href="/events"
               className={`inline-flex items-center gap-2 mb-4 ${
-                isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+                isDarkMode
+                  ? 'text-blue-400 hover:text-blue-300'
+                  : 'text-blue-600 hover:text-blue-700'
               }`}
             >
               <ArrowLeft size={20} />
               {t('events.backToEvents')}
             </Link>
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>{t('events.form.createTitle')}</h1>
+            <h1
+              className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+            >
+              {t('events.form.createTitle')}
+            </h1>
             <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               {t('events.form.createDescription')}
             </p>
@@ -219,10 +244,17 @@ export default function CreateEventPage() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm animate-fade-in`}>
+          <form
+            onSubmit={handleSubmit}
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm animate-fade-in`}
+          >
             {/* Basic Information */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.basicInfo')}</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {t('events.form.basicInfo')}
+              </h2>
 
               <div className="space-y-4">
                 {/* Title */}
@@ -299,10 +331,16 @@ export default function CreateEventPage() {
                     {t('events.form.imageUpload')}
                   </label>
 
-                  <div className={`border-2 border-dashed rounded-lg p-4 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}>
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-4 ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
+                  >
                     {imagePreview ? (
                       <div className="relative">
-                        <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded" />
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="max-h-48 mx-auto rounded"
+                        />
                         <button
                           type="button"
                           onClick={() => {
@@ -318,9 +356,17 @@ export default function CreateEventPage() {
                       </div>
                     ) : (
                       <label className="cursor-pointer block text-center">
-                        <Upload className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>{t('events.form.clickToUpload')}</p>
-                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>{t('events.form.imageFormats')}</p>
+                        <Upload
+                          className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+                        />
+                        <p
+                          className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}
+                        >
+                          {t('events.form.clickToUpload')}
+                        </p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                          {t('events.form.imageFormats')}
+                        </p>
                         <input
                           type="file"
                           accept="image/*"
@@ -332,7 +378,9 @@ export default function CreateEventPage() {
                   </div>
 
                   <div className="mt-3">
-                    <p className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('events.form.orProvideUrl')}</p>
+                    <p className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('events.form.orProvideUrl')}
+                    </p>
                     <input
                       type="url"
                       id="imageUrl"
@@ -354,7 +402,11 @@ export default function CreateEventPage() {
 
             {/* Date & Time */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.dateTime')}</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {t('events.form.dateTime')}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Event Date */}
@@ -456,13 +508,15 @@ export default function CreateEventPage() {
                     {!formData.eventDate || !formData.eventTime
                       ? t('events.form.validationDeadline')
                       : t('events.form.validationDeadlineRange', {
-                          eventDateTime: new Date(formData.eventDate + 'T' + formData.eventTime).toLocaleString('en-US', {
+                          eventDateTime: new Date(
+                            formData.eventDate + 'T' + formData.eventTime
+                          ).toLocaleString('en-US', {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',
                             hour: '2-digit',
-                            minute: '2-digit'
-                          })
+                            minute: '2-digit',
+                          }),
                         })}
                   </p>
                 </div>
@@ -471,7 +525,11 @@ export default function CreateEventPage() {
 
             {/* Location & Organizer */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.locationOrganizer')}</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {t('events.form.locationOrganizer')}
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Location */}
@@ -523,7 +581,11 @@ export default function CreateEventPage() {
 
             {/* Capacity */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.capacity')}</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {t('events.form.capacity')}
+              </h2>
 
               <div>
                 <label htmlFor="maxAttendees" className="block text-sm font-medium mb-2">
@@ -552,7 +614,11 @@ export default function CreateEventPage() {
 
             {/* Recurring Event */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.form.recurrence')}</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                {t('events.form.recurrence')}
+              </h2>
 
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -587,7 +653,9 @@ export default function CreateEventPage() {
                     >
                       <option value="">{t('events.form.recurrenceOptions.select')}</option>
                       <option value="WEEKLY">{t('events.form.recurrenceOptions.weekly')}</option>
-                      <option value="BIWEEKLY">{t('events.form.recurrenceOptions.biweekly')}</option>
+                      <option value="BIWEEKLY">
+                        {t('events.form.recurrenceOptions.biweekly')}
+                      </option>
                       <option value="MONTHLY">{t('events.form.recurrenceOptions.monthly')}</option>
                     </select>
                   </div>

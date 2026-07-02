@@ -77,7 +77,7 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
             try {
               const notification: Notification = JSON.parse(message.body);
               console.log('Received global notification:', notification);
-              setNotifications(prev => [...prev, notification]);
+              setNotifications((prev) => [...prev, notification]);
             } catch (error) {
               console.error('Error parsing notification:', error);
             }
@@ -86,15 +86,18 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
 
           // Subscribe to user-specific notifications if userId is provided
           if (userId) {
-            const userSub = stompClient.subscribe(`/topic/notifications/${userId}`, (message: IMessage) => {
-              try {
-                const notification: Notification = JSON.parse(message.body);
-                console.log('Received user-specific notification:', notification);
-                setNotifications(prev => [...prev, notification]);
-              } catch (error) {
-                console.error('Error parsing user notification:', error);
+            const userSub = stompClient.subscribe(
+              `/topic/notifications/${userId}`,
+              (message: IMessage) => {
+                try {
+                  const notification: Notification = JSON.parse(message.body);
+                  console.log('Received user-specific notification:', notification);
+                  setNotifications((prev) => [...prev, notification]);
+                } catch (error) {
+                  console.error('Error parsing user notification:', error);
+                }
               }
-            });
+            );
             subscriptionsRef.current['user'] = userSub;
           }
         } catch (error) {
@@ -112,13 +115,17 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       onStompError: (frame) => {
         console.error('STOMP Error:', frame);
         reconnectAttemptsRef.current++;
-        
+
         if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
-          setConnectionError(`Connection failed after ${maxReconnectAttempts} attempts. WebSocket notifications disabled.`);
+          setConnectionError(
+            `Connection failed after ${maxReconnectAttempts} attempts. WebSocket notifications disabled.`
+          );
           console.warn('Max reconnection attempts reached. Stopping reconnection.');
           stompClient.deactivate();
         } else {
-          setConnectionError(`Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
+          setConnectionError(
+            `Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`
+          );
         }
         setIsConnected(false);
       },
@@ -126,16 +133,18 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       onWebSocketError: (error) => {
         console.error('WebSocket Error:', error);
         reconnectAttemptsRef.current++;
-        
+
         if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
           setConnectionError('WebSocket connection unavailable. Real-time notifications disabled.');
           console.warn('WebSocket connection failed. Operating without real-time notifications.');
           stompClient.deactivate();
         } else {
-          setConnectionError(`Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`);
+          setConnectionError(
+            `Connection error (attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts})`
+          );
         }
         setIsConnected(false);
-      }
+      },
     });
 
     // Activate the client
@@ -153,7 +162,7 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
       console.log('Cleaning up WebSocket connection');
 
       // Unsubscribe from all subscriptions
-      Object.values(subscriptionsRef.current).forEach(sub => {
+      Object.values(subscriptionsRef.current).forEach((sub) => {
         if (sub && typeof sub.unsubscribe === 'function') {
           try {
             sub.unsubscribe();
@@ -176,21 +185,24 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
     };
   }, [userId]);
 
-  const sendMessage = useCallback((destination: string, message: unknown) => {
-    if (clientRef.current && isConnected) {
-      try {
-        clientRef.current.publish({
-          destination,
-          body: JSON.stringify(message)
-        });
-        console.log('Message sent to:', destination, message);
-      } catch (error) {
-        console.error('Error sending message:', error);
+  const sendMessage = useCallback(
+    (destination: string, message: unknown) => {
+      if (clientRef.current && isConnected) {
+        try {
+          clientRef.current.publish({
+            destination,
+            body: JSON.stringify(message),
+          });
+          console.log('Message sent to:', destination, message);
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      } else {
+        console.warn('Cannot send message: WebSocket not connected');
       }
-    } else {
-      console.warn('Cannot send message: WebSocket not connected');
-    }
-  }, [client, isConnected]);
+    },
+    [client, isConnected]
+  );
 
   const clearNotifications = useCallback(() => {
     setNotifications([]);
@@ -202,6 +214,6 @@ export const useWebSocket = (userId?: string): WebSocketHookReturn => {
     notifications,
     sendMessage,
     clearNotifications,
-    connectionError
+    connectionError,
   };
 };

@@ -84,7 +84,9 @@ export default function MyDonationsPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl ${cardClass} backdrop-blur-sm shadow-lg`}>
+          <div
+            className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl ${cardClass} backdrop-blur-sm shadow-lg`}
+          >
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
               My Donations
             </h1>
@@ -98,7 +100,9 @@ export default function MyDonationsPage() {
             <div className={`p-4 sm:p-6 rounded-xl ${cardClass} backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Donated</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                    Total Donated
+                  </p>
                   <p className="text-xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mt-1">
                     {formatCurrency(totalDonated)}
                   </p>
@@ -122,7 +126,9 @@ export default function MyDonationsPage() {
             <div className={`p-4 sm:p-6 rounded-xl ${cardClass} backdrop-blur-sm shadow-lg`}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Students Supported</p>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                    Students Supported
+                  </p>
                   <p className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                     {appsSupported}
                   </p>
@@ -151,7 +157,9 @@ export default function MyDonationsPage() {
           ) : donations.length === 0 ? (
             <div className={`text-center py-12 rounded-xl ${cardClass} backdrop-blur-sm`}>
               <FolderOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">No donations yet</p>
+              <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">
+                No donations yet
+              </p>
               <p className="text-gray-500 dark:text-gray-500 mt-2">
                 Support a student to see your contribution history here.
               </p>
@@ -179,12 +187,18 @@ export default function MyDonationsPage() {
                           {d.financialAidTitle || `Financial Aid #${d.financialAidId ?? ''}`}
                         </h3>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                          <span className={`px-2 py-0.5 rounded ${statusBadge(d.status)}`}>{d.status}</span>
+                          <span className={`px-2 py-0.5 rounded ${statusBadge(d.status)}`}>
+                            {d.status}
+                          </span>
                           {d.category && (
-                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">{d.category}</span>
+                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
+                              {d.category}
+                            </span>
                           )}
                           {d.isAnonymous && (
-                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">Anonymous</span>
+                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
+                              Anonymous
+                            </span>
                           )}
                           <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded">
                             {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : ''}

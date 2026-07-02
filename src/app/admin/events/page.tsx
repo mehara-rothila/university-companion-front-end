@@ -9,7 +9,20 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event } from '@/types/event';
-import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Eye, AlertCircle, Trash2, Filter, User, ImageIcon } from 'lucide-react';
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Eye,
+  AlertCircle,
+  Trash2,
+  Filter,
+  User,
+  ImageIcon,
+} from 'lucide-react';
 import ImageEditModal from '@/components/ImageEditModal';
 import Image from 'next/image';
 
@@ -52,14 +65,14 @@ export default function AdminEventsPage() {
         try {
           data = await eventService.getAllEvents();
           if (filter !== 'ALL') {
-            data = data.filter(event => event.status === filter);
+            data = data.filter((event) => event.status === filter);
           }
         } catch {
           const approved = await eventService.getApprovedEvents();
           const pending = await eventService.getPendingEvents();
           data = [...approved, ...pending];
           if (filter !== 'ALL') {
-            data = data.filter(event => event.status === filter);
+            data = data.filter((event) => event.status === filter);
           }
         }
       }
@@ -145,7 +158,7 @@ export default function AdminEventsPage() {
     const response = await fetch(`${API_URL}/api/events/${selectedEvent.id}/image`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageUrl })
+      body: JSON.stringify({ imageUrl }),
     });
 
     if (!response.ok) {
@@ -178,13 +191,29 @@ export default function AdminEventsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Approved</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            Approved
+          </span>
+        );
       case 'PENDING':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">Pending</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+            Pending
+          </span>
+        );
       case 'REJECTED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">Rejected</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            Rejected
+          </span>
+        );
       default:
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">{status}</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -192,13 +221,28 @@ export default function AdminEventsPage() {
     return (
       <AuthGuard>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+        >
           <AnimatedBackground variant="dashboard" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+            <div
+              className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+            >
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-red-500 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
                   Access denied. Admin privileges required.
@@ -214,16 +258,20 @@ export default function AdminEventsPage() {
   return (
     <AuthGuard>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-
           {/* Header */}
           <div className="mb-8">
-            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+            <div
+              className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+            >
+              <h1
+                className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}
+              >
                 <Calendar className="h-10 w-10 mr-3 text-pink-500" />
                 Event Management
               </h1>
@@ -234,10 +282,14 @@ export default function AdminEventsPage() {
           </div>
 
           {/* Filter Tabs */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-4 mb-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-4 mb-8`}
+          >
             <div className="flex items-center gap-2 mb-4">
               <Filter className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Filter by Status:</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                Filter by Status:
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -293,30 +345,42 @@ export default function AdminEventsPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Current View</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Current View
+                  </p>
                   <p className="text-3xl font-bold text-yellow-500">{events.length}</p>
                 </div>
                 <AlertCircle size={48} className="text-yellow-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Filter Active</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Filter Active
+                  </p>
                   <p className="text-3xl font-bold text-purple-500">{filter}</p>
                 </div>
                 <Filter size={48} className="text-purple-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Showing</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Showing
+                  </p>
                   <p className="text-3xl font-bold text-green-500">{events.length}</p>
                 </div>
                 <CheckCircle size={48} className="text-green-500 opacity-20" />
@@ -326,18 +390,35 @@ export default function AdminEventsPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}
+            >
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Loading events...</p>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                Loading events...
+              </p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+            <div
+              className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+            >
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-red-500 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
                   {error}
@@ -350,9 +431,15 @@ export default function AdminEventsPage() {
           {!loading && !error && (
             <>
               {events.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
+                <div
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}
+                >
                   <CheckCircle size={64} className="mx-auto mb-4 text-green-500" />
-                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>No events found</h3>
+                  <h3
+                    className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
+                    No events found
+                  </h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     No events match the current filter.
                   </p>
@@ -396,8 +483,14 @@ export default function AdminEventsPage() {
 
                         {/* Event Details */}
                         <div className="flex-1 p-6">
-                          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{event.title}</h3>
-                          <p className={`mb-4 line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <h3
+                            className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                          >
+                            {event.title}
+                          </h3>
+                          <p
+                            className={`mb-4 line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
                             {event.description}
                           </p>
 
@@ -405,7 +498,9 @@ export default function AdminEventsPage() {
                             {/* Date & Time */}
                             <div className="flex items-center gap-2 text-sm">
                               <Calendar size={16} className="text-pink-500" />
-                              <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>{formatDate(event.eventDate)}</span>
+                              <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                                {formatDate(event.eventDate)}
+                              </span>
                             </div>
 
                             <div className="flex items-center gap-2 text-sm">
@@ -418,20 +513,28 @@ export default function AdminEventsPage() {
                             {/* Location */}
                             <div className="flex items-center gap-2 text-sm">
                               <MapPin size={16} className="text-pink-500" />
-                              <span className={`line-clamp-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{event.location}</span>
+                              <span
+                                className={`line-clamp-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                              >
+                                {event.location}
+                              </span>
                             </div>
 
                             {/* Capacity */}
                             {event.maxAttendees && (
                               <div className="flex items-center gap-2 text-sm">
                                 <Users size={16} className="text-pink-500" />
-                                <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Max {event.maxAttendees} attendees</span>
+                                <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                                  Max {event.maxAttendees} attendees
+                                </span>
                               </div>
                             )}
                           </div>
 
                           {/* Creator Info */}
-                          <div className={`text-sm mb-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}>
+                          <div
+                            className={`text-sm mb-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}
+                          >
                             <div className="flex items-center gap-2 mb-1">
                               <User size={14} className="text-pink-500" />
                               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
@@ -511,17 +614,23 @@ export default function AdminEventsPage() {
           {/* Rejection Modal */}
           {showRejectModal && selectedEvent && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-4">
                     <XCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     Reject Event
                   </h2>
                 </div>
 
-                <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                >
                   {selectedEvent.imageUrl && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedEvent.imageUrl)}`}
@@ -530,13 +639,21 @@ export default function AdminEventsPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedEvent.title}</p>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedEvent.category} • {selectedEvent.location}</p>
+                    <p
+                      className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                    >
+                      {selectedEvent.title}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {selectedEvent.category} • {selectedEvent.location}
+                    </p>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Rejection Reason *
                   </label>
                   <textarea
@@ -569,7 +686,9 @@ export default function AdminEventsPage() {
                     }}
                     disabled={actionLoading}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     Cancel
@@ -582,17 +701,23 @@ export default function AdminEventsPage() {
           {/* Delete Modal */}
           {showDeleteModal && selectedEvent && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
                     <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
-                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     Delete Event Permanently
                   </h2>
                 </div>
 
-                <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                >
                   {selectedEvent.imageUrl && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedEvent.imageUrl)}`}
@@ -601,15 +726,23 @@ export default function AdminEventsPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedEvent.title}</p>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedEvent.category} • {selectedEvent.location}</p>
+                    <p
+                      className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                    >
+                      {selectedEvent.title}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {selectedEvent.category} • {selectedEvent.location}
+                    </p>
                   </div>
                 </div>
 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
                   Are you sure you want to permanently delete this event?
                 </p>
-                <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
+                <p
+                  className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}
+                >
                   ⚠️ This action cannot be undone. All registrations will be removed.
                 </p>
 
@@ -629,7 +762,9 @@ export default function AdminEventsPage() {
                     }}
                     disabled={actionLoading}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     Cancel

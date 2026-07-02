@@ -45,7 +45,9 @@ export const useBrowserNotifications = () => {
     }
   };
 
-  const showNotification = async (options: BrowserNotificationOptions): Promise<Notification | null> => {
+  const showNotification = async (
+    options: BrowserNotificationOptions
+  ): Promise<Notification | null> => {
     if (!supported) {
       console.warn('Browser notifications not supported');
       return null;
@@ -85,7 +87,10 @@ export const useBrowserNotifications = () => {
     }
   };
 
-  const showEmergencyNotification = async (title: string, message: string): Promise<Notification | null> => {
+  const showEmergencyNotification = async (
+    title: string,
+    message: string
+  ): Promise<Notification | null> => {
     return showNotification({
       title: `🚨 EMERGENCY: ${title}`,
       body: message,

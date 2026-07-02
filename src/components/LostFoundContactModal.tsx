@@ -8,7 +8,7 @@ import lostFoundMessageService, {
   Conversation,
   Message,
   ConversationRequest,
-  BlockStatus
+  BlockStatus,
 } from '@/services/lostFoundMessageService';
 import { LostFoundItem } from '@/services/lostFoundService';
 
@@ -23,13 +23,15 @@ export default function LostFoundContactModal({
   item,
   existingConversation,
   onClose,
-  onConversationCreated
+  onConversationCreated,
 }: LostFoundContactModalProps) {
   const { isDarkMode } = useDarkMode();
   const { user, isAuthenticated } = useAuth();
   const { t } = useTranslation();
 
-  const [conversation, setConversation] = useState<Conversation | null>(existingConversation || null);
+  const [conversation, setConversation] = useState<Conversation | null>(
+    existingConversation || null
+  );
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [initialMessage, setInitialMessage] = useState('');
@@ -151,7 +153,7 @@ export default function LostFoundContactModal({
 
       const request: ConversationRequest = {
         itemId: item.id,
-        initialMessage: initialMessage.trim() || undefined
+        initialMessage: initialMessage.trim() || undefined,
       };
 
       const newConversation = await lostFoundMessageService.requestConversation(request);
@@ -180,10 +182,10 @@ export default function LostFoundContactModal({
       setSendingMessage(true);
       const sentMessage = await lostFoundMessageService.sendMessage({
         conversationId: conversation.id,
-        content: newMessage.trim()
+        content: newMessage.trim(),
       });
 
-      setMessages(prev => [...prev, sentMessage]);
+      setMessages((prev) => [...prev, sentMessage]);
       setNewMessage('');
       inputRef.current?.focus();
     } catch (err: any) {
@@ -218,7 +220,7 @@ export default function LostFoundContactModal({
       setActionLoading(true);
       await lostFoundMessageService.blockUser({
         userId: otherUser.id,
-        reason: blockReason || undefined
+        reason: blockReason || undefined,
       });
       setBlockStatus({ isBlocked: true, hasBlockedMe: false, anyBlock: true });
       setShowBlockModal(false);
@@ -258,7 +260,7 @@ export default function LostFoundContactModal({
         userId: otherUser.id,
         reason: reportReason,
         description: reportDescription || undefined,
-        conversationId: conversation?.id
+        conversationId: conversation?.id,
       });
       setShowReportModal(false);
       setReportReason('');
@@ -294,7 +296,11 @@ export default function LostFoundContactModal({
   };
 
   // Get user avatar
-  const getUserAvatar = (userInfo: { profileImage?: string; fullName?: string; username: string }) => {
+  const getUserAvatar = (userInfo: {
+    profileImage?: string;
+    fullName?: string;
+    username: string;
+  }) => {
     if (userInfo.profileImage) {
       return (
         <img
@@ -311,15 +317,17 @@ export default function LostFoundContactModal({
 
     const initials = (userInfo.fullName || userInfo.username)
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
 
     return (
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-        isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
-      }`}>
+      <div
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+          isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
+        }`}
+      >
         {initials}
       </div>
     );
@@ -333,7 +341,7 @@ export default function LostFoundContactModal({
     { value: 'SCAM', label: 'Scam / Fraud' },
     { value: 'FAKE_ITEM', label: 'Fake Item Listing' },
     { value: 'OFFENSIVE_LANGUAGE', label: 'Offensive Language' },
-    { value: 'OTHER', label: 'Other' }
+    { value: 'OTHER', label: 'Other' },
   ];
 
   // Render different states
@@ -343,11 +351,24 @@ export default function LostFoundContactModal({
       return (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-purple-600 dark:text-purple-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
             </svg>
           </div>
-          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+          >
             {t('lostFoundPage.messages.loginRequired')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -363,23 +384,37 @@ export default function LostFoundContactModal({
         <div className="space-y-4">
           <div className="text-center">
             <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-purple-600 dark:text-purple-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
               </svg>
             </div>
-            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+            <h3
+              className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+            >
               {t('lostFoundPage.messages.contactAbout')} {item.title}
             </h3>
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
               {item.contactMethod === 'ANONYMOUS'
                 ? t('lostFoundPage.messages.anonymousNote')
-                : t('lostFoundPage.messages.directNote')
-              }
+                : t('lostFoundPage.messages.directNote')}
             </p>
           </div>
 
           <div>
-            <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+            <label
+              className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+            >
               {t('lostFoundPage.messages.yourMessage')} ({t('lostFoundPage.messages.optional')})
             </label>
             <textarea
@@ -396,7 +431,9 @@ export default function LostFoundContactModal({
           </div>
 
           {error && (
-            <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-red-900/20 text-red-300' : 'bg-red-50 text-red-700'} text-sm`}>
+            <div
+              className={`p-3 rounded-lg ${isDarkMode ? 'bg-red-900/20 text-red-300' : 'bg-red-50 text-red-700'} text-sm`}
+            >
               {error}
             </div>
           )}
@@ -406,7 +443,9 @@ export default function LostFoundContactModal({
             disabled={loading}
             className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
           >
-            {loading ? t('lostFoundPage.messages.sending') : t('lostFoundPage.messages.sendRequest')}
+            {loading
+              ? t('lostFoundPage.messages.sending')
+              : t('lostFoundPage.messages.sendRequest')}
           </button>
         </div>
       );
@@ -417,18 +456,33 @@ export default function LostFoundContactModal({
       return (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-yellow-600 dark:text-yellow-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
-          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+          >
             {t('lostFoundPage.messages.requestPending')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             {t('lostFoundPage.messages.waitingForApproval')}
           </p>
           {conversation.initialMessage && (
-            <div className={`mt-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'} text-left`}>
+            <div
+              className={`mt-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'} text-left`}
+            >
               <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>
                 {t('lostFoundPage.messages.yourMessage')}:
               </p>
@@ -446,11 +500,24 @@ export default function LostFoundContactModal({
       return (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-red-600 dark:text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </div>
-          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+          >
             {t('lostFoundPage.messages.requestRejected')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -465,11 +532,24 @@ export default function LostFoundContactModal({
       return (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-gray-600 dark:text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
-          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+          >
             {t('lostFoundPage.messages.conversationClosed')}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -484,11 +564,24 @@ export default function LostFoundContactModal({
       return (
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-gray-600 dark:text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+              />
             </svg>
           </div>
-          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+          >
             {blockStatus.isBlocked ? 'User Blocked' : 'You have been blocked'}
           </h3>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
@@ -515,7 +608,9 @@ export default function LostFoundContactModal({
     return (
       <div className="flex flex-col h-[60vh]">
         {/* Messages area */}
-        <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${isDarkMode ? 'bg-gray-900/50' : 'bg-gray-50'} rounded-lg`}>
+        <div
+          className={`flex-1 overflow-y-auto p-4 space-y-4 ${isDarkMode ? 'bg-gray-900/50' : 'bg-gray-50'} rounded-lg`}
+        >
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -527,14 +622,17 @@ export default function LostFoundContactModal({
               {messages.map((message, index) => {
                 const isOwnMessage = message.sender?.id === user?.id;
                 const isSystemMessage = message.messageType === 'SYSTEM';
-                const showDateSeparator = index === 0 ||
+                const showDateSeparator =
+                  index === 0 ||
                   formatDate(messages[index - 1].sentAt) !== formatDate(message.sentAt);
 
                 return (
                   <div key={message.id}>
                     {showDateSeparator && (
                       <div className="text-center my-4">
-                        <span className={`text-xs px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'}`}>
+                        <span
+                          className={`text-xs px-3 py-1 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'}`}
+                        >
                           {formatDate(message.sentAt)}
                         </span>
                       </div>
@@ -542,47 +640,53 @@ export default function LostFoundContactModal({
 
                     {isSystemMessage ? (
                       <div className="text-center">
-                        <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} italic`}>
+                        <span
+                          className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} italic`}
+                        >
                           {message.content}
                         </span>
                       </div>
                     ) : (
-                      <div className={`flex items-end gap-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`flex items-end gap-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                      >
                         {/* Avatar for other user's messages */}
                         {!isOwnMessage && (
-                          <div className="flex-shrink-0">
-                            {getUserAvatar(message.sender)}
-                          </div>
+                          <div className="flex-shrink-0">{getUserAvatar(message.sender)}</div>
                         )}
 
-                        <div className={`max-w-[70%] ${
-                          isOwnMessage
-                            ? 'bg-purple-600 text-white rounded-l-lg rounded-tr-lg'
-                            : isDarkMode
-                              ? 'bg-gray-700 text-gray-100 rounded-r-lg rounded-tl-lg'
-                              : 'bg-white text-gray-900 rounded-r-lg rounded-tl-lg shadow-sm'
-                        } px-4 py-2`}>
+                        <div
+                          className={`max-w-[70%] ${
+                            isOwnMessage
+                              ? 'bg-purple-600 text-white rounded-l-lg rounded-tr-lg'
+                              : isDarkMode
+                                ? 'bg-gray-700 text-gray-100 rounded-r-lg rounded-tl-lg'
+                                : 'bg-white text-gray-900 rounded-r-lg rounded-tl-lg shadow-sm'
+                          } px-4 py-2`}
+                        >
                           {!isOwnMessage && (
-                            <p className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                            <p
+                              className={`text-xs font-medium mb-1 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                            >
                               {message.sender?.fullName || message.sender?.username}
                             </p>
                           )}
-                          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-purple-200' : isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                          <p className="text-sm whitespace-pre-wrap break-words">
+                            {message.content}
+                          </p>
+                          <p
+                            className={`text-xs mt-1 ${isOwnMessage ? 'text-purple-200' : isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                          >
                             {formatTime(message.sentAt)}
                             {isOwnMessage && (
-                              <span className="ml-2">
-                                {message.isRead ? '✓✓' : '✓'}
-                              </span>
+                              <span className="ml-2">{message.isRead ? '✓✓' : '✓'}</span>
                             )}
                           </p>
                         </div>
 
                         {/* Avatar for own messages */}
                         {isOwnMessage && (
-                          <div className="flex-shrink-0">
-                            {getUserAvatar(message.sender)}
-                          </div>
+                          <div className="flex-shrink-0">{getUserAvatar(message.sender)}</div>
                         )}
                       </div>
                     )}
@@ -593,14 +697,23 @@ export default function LostFoundContactModal({
               {/* Typing indicator */}
               {otherUserTyping && otherUser && (
                 <div className="flex items-center gap-2">
-                  <div className="flex-shrink-0">
-                    {getUserAvatar(otherUser)}
-                  </div>
-                  <div className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white shadow-sm'}`}>
+                  <div className="flex-shrink-0">{getUserAvatar(otherUser)}</div>
+                  <div
+                    className={`px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white shadow-sm'}`}
+                  >
                     <div className="flex space-x-1">
-                      <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`} style={{ animationDelay: '0ms' }} />
-                      <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`} style={{ animationDelay: '150ms' }} />
-                      <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`} style={{ animationDelay: '300ms' }} />
+                      <div
+                        className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`}
+                        style={{ animationDelay: '0ms' }}
+                      />
+                      <div
+                        className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`}
+                        style={{ animationDelay: '150ms' }}
+                      />
+                      <div
+                        className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-400' : 'bg-gray-500'} animate-bounce`}
+                        style={{ animationDelay: '300ms' }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -634,19 +747,43 @@ export default function LostFoundContactModal({
           >
             {sendingMessage ? (
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
               </svg>
             )}
           </button>
         </div>
 
         {error && (
-          <div className={`mt-2 p-2 rounded-lg ${isDarkMode ? 'bg-red-900/20 text-red-300' : 'bg-red-50 text-red-700'} text-sm`}>
+          <div
+            className={`mt-2 p-2 rounded-lg ${isDarkMode ? 'bg-red-900/20 text-red-300' : 'bg-red-50 text-red-700'} text-sm`}
+          >
             {error}
           </div>
         )}
@@ -659,9 +796,13 @@ export default function LostFoundContactModal({
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-lg w-full`}>
+        <div
+          className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-lg w-full`}
+        >
           {/* Header */}
-          <div className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div
+            className={`flex items-center justify-between p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+          >
             <div className="flex items-center gap-3">
               {conversation?.status === 'APPROVED' && otherUser ? (
                 <>
@@ -674,17 +815,26 @@ export default function LostFoundContactModal({
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     ) : (
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                        isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
-                      }`}>
-                        {(otherUser.fullName || otherUser.username).split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                          isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
+                        }`}
+                      >
+                        {(otherUser.fullName || otherUser.username)
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                          .toUpperCase()
+                          .slice(0, 2)}
                       </div>
                     )}
                     {/* Online indicator - placeholder for future WebSocket implementation */}
                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" />
                   </div>
                   <div>
-                    <h2 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    <h2
+                      className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                    >
                       {otherUser.fullName || otherUser.username}
                     </h2>
                     <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -702,11 +852,14 @@ export default function LostFoundContactModal({
                     />
                   )}
                   <div>
-                    <h2 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    <h2
+                      className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                    >
                       {item.title}
                     </h2>
                     <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {item.type === 'LOST' ? t('lostFoundPage.lost') : t('lostFoundPage.found')} • {item.category}
+                      {item.type === 'LOST' ? t('lostFoundPage.lost') : t('lostFoundPage.found')} •{' '}
+                      {item.category}
                     </p>
                   </div>
                 </>
@@ -721,13 +874,26 @@ export default function LostFoundContactModal({
                     onClick={() => setShowOptionsMenu(!showOptionsMenu)}
                     className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700 text-gray-400' : 'hover:bg-gray-100 text-gray-600'} transition-colors`}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                      />
                     </svg>
                   </button>
 
                   {showOptionsMenu && (
-                    <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white'} ring-1 ring-black ring-opacity-5 z-50`}>
+                    <div
+                      className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-700' : 'bg-white'} ring-1 ring-black ring-opacity-5 z-50`}
+                    >
                       <div className="py-1">
                         <button
                           onClick={() => {
@@ -736,8 +902,19 @@ export default function LostFoundContactModal({
                           }}
                           className={`w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'text-gray-200 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'} flex items-center gap-2`}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-red-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                            />
                           </svg>
                           Block User
                         </button>
@@ -748,8 +925,19 @@ export default function LostFoundContactModal({
                           }}
                           className={`w-full text-left px-4 py-2 text-sm ${isDarkMode ? 'text-gray-200 hover:bg-gray-600' : 'text-gray-700 hover:bg-gray-100'} flex items-center gap-2`}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-orange-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
                           </svg>
                           Report User
                         </button>
@@ -763,31 +951,55 @@ export default function LostFoundContactModal({
                 onClick={onClose}
                 className={`p-2 rounded-full ${isDarkMode ? 'hover:bg-gray-700 text-gray-400' : 'hover:bg-gray-100 text-gray-600'} transition-colors`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
           </div>
 
           {/* Content */}
-          <div className="p-4">
-            {renderContent()}
-          </div>
+          <div className="p-4">{renderContent()}</div>
         </div>
       </div>
 
       {/* Block Modal */}
       {showBlockModal && otherUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-sm w-full p-6`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-sm w-full p-6`}
+          >
             <div className="text-center mb-4">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-red-600 dark:text-red-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                  />
                 </svg>
               </div>
-              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+              <h3
+                className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+              >
                 Block {otherUser.fullName || otherUser.username}?
               </h3>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -796,7 +1008,9 @@ export default function LostFoundContactModal({
             </div>
 
             <div className="mb-4">
-              <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+              <label
+                className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+              >
                 Reason (optional)
               </label>
               <textarea
@@ -819,7 +1033,9 @@ export default function LostFoundContactModal({
                   setBlockReason('');
                 }}
                 className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 Cancel
@@ -839,14 +1055,29 @@ export default function LostFoundContactModal({
       {/* Report Modal */}
       {showReportModal && otherUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-sm w-full p-6`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-sm w-full p-6`}
+          >
             <div className="text-center mb-4">
               <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-orange-600 dark:text-orange-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
               </div>
-              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+              <h3
+                className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+              >
                 Report {otherUser.fullName || otherUser.username}
               </h3>
               <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -855,7 +1086,9 @@ export default function LostFoundContactModal({
             </div>
 
             <div className="mb-4">
-              <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+              <label
+                className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+              >
                 Reason *
               </label>
               <select
@@ -877,7 +1110,9 @@ export default function LostFoundContactModal({
             </div>
 
             <div className="mb-4">
-              <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+              <label
+                className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+              >
                 Additional details (optional)
               </label>
               <textarea
@@ -901,7 +1136,9 @@ export default function LostFoundContactModal({
                   setReportDescription('');
                 }}
                 className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 Cancel
@@ -920,4 +1157,3 @@ export default function LostFoundContactModal({
     </>
   );
 }
-

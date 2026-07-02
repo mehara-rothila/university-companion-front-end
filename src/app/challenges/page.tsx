@@ -83,25 +83,45 @@ export default function ChallengesPage() {
     loadCompetitions();
   };
 
-  const filteredCompetitions = competitions.filter(comp => {
+  const filteredCompetitions = competitions.filter((comp) => {
     if (selectedCategory === 'all') return true;
     return comp.category?.toLowerCase() === selectedCategory;
   });
 
   const categories = [
     { id: 'all', name: 'All', count: competitions.length },
-    { id: 'sports', name: 'Sports', count: competitions.filter(c => c.category?.toLowerCase() === 'sports').length },
-    { id: 'academic', name: 'Academic', count: competitions.filter(c => c.category?.toLowerCase() === 'academic').length },
-    { id: 'tech', name: 'Tech', count: competitions.filter(c => c.category?.toLowerCase() === 'tech').length },
-    { id: 'cultural', name: 'Cultural', count: competitions.filter(c => c.category?.toLowerCase() === 'cultural').length },
+    {
+      id: 'sports',
+      name: 'Sports',
+      count: competitions.filter((c) => c.category?.toLowerCase() === 'sports').length,
+    },
+    {
+      id: 'academic',
+      name: 'Academic',
+      count: competitions.filter((c) => c.category?.toLowerCase() === 'academic').length,
+    },
+    {
+      id: 'tech',
+      name: 'Tech',
+      count: competitions.filter((c) => c.category?.toLowerCase() === 'tech').length,
+    },
+    {
+      id: 'cultural',
+      name: 'Cultural',
+      count: competitions.filter((c) => c.category?.toLowerCase() === 'cultural').length,
+    },
   ];
 
   const getCategoryColor = (category: string) => {
     const cat = category?.toLowerCase() || '';
-    if (cat.includes('sport')) return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
-    if (cat.includes('academic')) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
-    if (cat.includes('tech')) return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300';
-    if (cat.includes('cultural')) return 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300';
+    if (cat.includes('sport'))
+      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
+    if (cat.includes('academic'))
+      return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300';
+    if (cat.includes('tech'))
+      return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300';
+    if (cat.includes('cultural'))
+      return 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300';
     return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
   };
 
@@ -109,7 +129,7 @@ export default function ChallengesPage() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -126,10 +146,14 @@ export default function ChallengesPage() {
     return (
       <>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}
+        >
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading competitions...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Loading competitions...
+            </p>
           </div>
         </main>
       </>
@@ -139,20 +163,26 @@ export default function ChallengesPage() {
   return (
     <>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-
           {/* Header */}
           <div className="mb-8">
-            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+            <div
+              className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+            >
+              <h1
+                className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}
+              >
                 <Trophy className="h-10 w-10 mr-3 text-purple-500" />
                 Competitions & Challenges
               </h1>
-              <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}>
+              <p
+                className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-3xl mx-auto mb-6`}
+              >
                 Discover upcoming competitions, showcase your skills, and compete with peers
               </p>
 
@@ -169,7 +199,9 @@ export default function ChallengesPage() {
           </div>
 
           {/* Tab Navigation */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6`}
+          >
             <div className="flex overflow-x-auto">
               <button
                 onClick={() => setActiveTab('explore')}
@@ -196,8 +228,9 @@ export default function ChallengesPage() {
 
           {/* Explore Tab */}
           {activeTab === 'explore' && (
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}>
-
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}
+            >
               {/* Category Filter */}
               <div className="mb-6">
                 <div className="flex flex-wrap gap-2">
@@ -222,7 +255,9 @@ export default function ChallengesPage() {
               {/* Competitions Grid */}
               {filteredCompetitions.length === 0 ? (
                 <div className="text-center py-12">
-                  <Trophy className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+                  <Trophy
+                    className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+                  />
                   <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     No competitions found
                   </p>
@@ -255,7 +290,9 @@ export default function ChallengesPage() {
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center space-x-2">
                           {competition.category && (
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(competition.category)}`}>
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(competition.category)}`}
+                            >
                               {competition.category}
                             </span>
                           )}
@@ -272,49 +309,90 @@ export default function ChallengesPage() {
                         </div>
                       </div>
 
-                      <h3 className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                      <h3
+                        className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+                      >
                         {competition.title}
                       </h3>
 
-                      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 line-clamp-2`}>
+                      <p
+                        className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 line-clamp-2`}
+                      >
                         {competition.description}
                       </p>
 
                       {/* Details Grid */}
                       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                         <div className="flex items-center">
-                          <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                          <Calendar
+                            className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                          />
                           <div>
-                            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>Start Date</p>
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.startDate)}</p>
+                            <p
+                              className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}
+                            >
+                              Start Date
+                            </p>
+                            <p
+                              className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}
+                            >
+                              {formatDate(competition.startDate)}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center">
-                          <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                          <Calendar
+                            className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                          />
                           <div>
-                            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>End Date</p>
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.endDate)}</p>
+                            <p
+                              className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}
+                            >
+                              End Date
+                            </p>
+                            <p
+                              className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}
+                            >
+                              {formatDate(competition.endDate)}
+                            </p>
                           </div>
                         </div>
                         {competition.location && (
                           <div className="flex items-center col-span-2">
-                            <MapPin className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{competition.location}</p>
+                            <MapPin
+                              className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                            />
+                            <p
+                              className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}
+                            >
+                              {competition.location}
+                            </p>
                           </div>
                         )}
                         {competition.maxParticipants && (
                           <div className="flex items-center col-span-2">
-                            <Users className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>
+                            <Users
+                              className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                            />
+                            <p
+                              className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}
+                            >
                               Max {competition.maxParticipants} participants
-                              {competition.enrollmentCount && ` • ${competition.enrollmentCount} enrolled`}
+                              {competition.enrollmentCount &&
+                                ` • ${competition.enrollmentCount} enrolled`}
                             </p>
                           </div>
                         )}
                         {competition.prizes && (
                           <div className="flex items-start col-span-2">
-                            <Award className={`w-4 h-4 mr-2 mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs line-clamp-2`}>{competition.prizes}</p>
+                            <Award
+                              className={`w-4 h-4 mr-2 mt-0.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                            />
+                            <p
+                              className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs line-clamp-2`}
+                            >
+                              {competition.prizes}
+                            </p>
                           </div>
                         )}
                       </div>

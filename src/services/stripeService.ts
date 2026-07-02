@@ -46,11 +46,14 @@ class StripeService {
 
       // Store session info for callback
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('pendingStripePayment', JSON.stringify({
-          sessionId: data.sessionId,
-          amount: donationData.amount,
-          financialAidId: donationData.financialAidId
-        }));
+        sessionStorage.setItem(
+          'pendingStripePayment',
+          JSON.stringify({
+            sessionId: data.sessionId,
+            amount: donationData.amount,
+            financialAidId: donationData.financialAidId,
+          })
+        );
       }
 
       // Redirect to Stripe Checkout
@@ -60,7 +63,6 @@ class StripeService {
       } else {
         throw new Error('No checkout URL received');
       }
-
     } catch (error) {
       console.error('Stripe payment error:', error);
       throw error;

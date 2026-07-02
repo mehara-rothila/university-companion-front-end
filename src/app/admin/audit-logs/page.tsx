@@ -39,15 +39,33 @@ export default function AuditLogsPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   const actionTypes = [
-    'ALL', 'LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'DELETE',
-    'APPROVE', 'REJECT', 'ROLE_CHANGE', 'DISBURSE_FUNDS',
-    'MARK_ATTENDANCE', 'REGISTER_EVENT', 'CANCEL_REGISTRATION'
+    'ALL',
+    'LOGIN',
+    'LOGOUT',
+    'CREATE',
+    'UPDATE',
+    'DELETE',
+    'APPROVE',
+    'REJECT',
+    'ROLE_CHANGE',
+    'DISBURSE_FUNDS',
+    'MARK_ATTENDANCE',
+    'REGISTER_EVENT',
+    'CANCEL_REGISTRATION',
   ];
 
   const entityTypes = [
-    'ALL', 'USER', 'EVENT', 'COMPETITION', 'ACHIEVEMENT',
-    'BOOK', 'FINANCIAL_AID', 'DISBURSEMENT', 'NOTIFICATION',
-    'ATTENDANCE', 'EVENT_REGISTRATION'
+    'ALL',
+    'USER',
+    'EVENT',
+    'COMPETITION',
+    'ACHIEVEMENT',
+    'BOOK',
+    'FINANCIAL_AID',
+    'DISBURSEMENT',
+    'NOTIFICATION',
+    'ATTENDANCE',
+    'EVENT_REGISTRATION',
   ];
 
   useEffect(() => {
@@ -81,21 +99,22 @@ export default function AuditLogsPage() {
 
     // Search filter
     if (searchQuery) {
-      filtered = filtered.filter(log =>
-        log.userEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        log.description.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (log) =>
+          log.userEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          log.entityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          log.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     // Action type filter
     if (actionTypeFilter !== 'ALL') {
-      filtered = filtered.filter(log => log.actionType === actionTypeFilter);
+      filtered = filtered.filter((log) => log.actionType === actionTypeFilter);
     }
 
     // Entity type filter
     if (entityTypeFilter !== 'ALL') {
-      filtered = filtered.filter(log => log.entityType === entityTypeFilter);
+      filtered = filtered.filter((log) => log.entityType === entityTypeFilter);
     }
 
     setFilteredLogs(filtered);
@@ -104,8 +123,17 @@ export default function AuditLogsPage() {
   const exportLogsCSV = () => {
     if (!filteredLogs.length) return;
 
-    const headers = ['Timestamp', 'User', 'Role', 'Action', 'Entity Type', 'Entity Name', 'Description', 'IP Address'];
-    const rows = filteredLogs.map(log => [
+    const headers = [
+      'Timestamp',
+      'User',
+      'Role',
+      'Action',
+      'Entity Type',
+      'Entity Name',
+      'Description',
+      'IP Address',
+    ];
+    const rows = filteredLogs.map((log) => [
       new Date(log.createdAt).toLocaleString(),
       log.userEmail,
       log.userRole,
@@ -113,12 +141,12 @@ export default function AuditLogsPage() {
       log.entityType,
       log.entityName || '-',
       log.description,
-      log.ipAddress || '-'
+      log.ipAddress || '-',
     ]);
 
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -133,15 +161,30 @@ export default function AuditLogsPage() {
     const actionConfig: Record<string, { bg: string; text: string }> = {
       LOGIN: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-800 dark:text-blue-300' },
       LOGOUT: { bg: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-800 dark:text-gray-300' },
-      CREATE: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300' },
-      UPDATE: { bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-800 dark:text-yellow-300' },
+      CREATE: {
+        bg: 'bg-green-100 dark:bg-green-900/30',
+        text: 'text-green-800 dark:text-green-300',
+      },
+      UPDATE: {
+        bg: 'bg-yellow-100 dark:bg-yellow-900/30',
+        text: 'text-yellow-800 dark:text-yellow-300',
+      },
       DELETE: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-800 dark:text-red-300' },
-      APPROVE: { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300' },
+      APPROVE: {
+        bg: 'bg-green-100 dark:bg-green-900/30',
+        text: 'text-green-800 dark:text-green-300',
+      },
       REJECT: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-800 dark:text-red-300' },
-      ROLE_CHANGE: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-800 dark:text-purple-300' },
+      ROLE_CHANGE: {
+        bg: 'bg-purple-100 dark:bg-purple-900/30',
+        text: 'text-purple-800 dark:text-purple-300',
+      },
     };
 
-    const config = actionConfig[actionType] || { bg: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-800 dark:text-gray-300' };
+    const config = actionConfig[actionType] || {
+      bg: 'bg-gray-100 dark:bg-gray-700',
+      text: 'text-gray-800 dark:text-gray-300',
+    };
 
     return (
       <span className={`${config.bg} ${config.text} px-2 py-1 rounded-full text-xs font-medium`}>
@@ -153,7 +196,9 @@ export default function AuditLogsPage() {
   return (
     <AuthGuard>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
@@ -169,7 +214,9 @@ export default function AuditLogsPage() {
           </div>
 
           {/* Filters */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-6 border backdrop-blur-sm`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-6 border backdrop-blur-sm`}
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Search */}
               <div className="col-span-full">
@@ -246,32 +293,49 @@ export default function AuditLogsPage() {
 
           {/* Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Logs</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Total Logs
+                  </p>
                   <p className="text-3xl font-bold text-blue-600">{logs.length}</p>
                 </div>
                 <FileText size={32} className="text-blue-600 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Filtered Results</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Filtered Results
+                  </p>
                   <p className="text-3xl font-bold text-green-600">{filteredLogs.length}</p>
                 </div>
                 <Filter size={32} className="text-green-600 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Last 24 Hours</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Last 24 Hours
+                  </p>
                   <p className="text-3xl font-bold text-purple-600">
-                    {logs.filter(log => new Date(log.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)).length}
+                    {
+                      logs.filter(
+                        (log) =>
+                          new Date(log.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+                      ).length
+                    }
                   </p>
                 </div>
                 <Clock size={32} className="text-purple-600 opacity-20" />
@@ -280,7 +344,9 @@ export default function AuditLogsPage() {
           </div>
 
           {/* Audit Logs Table */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+          >
             <h2 className="text-2xl font-bold mb-6">Activity Log</h2>
 
             {loading ? (
@@ -297,7 +363,9 @@ export default function AuditLogsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <tr
+                      className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+                    >
                       <th className="text-left py-3 px-4">Timestamp</th>
                       <th className="text-left py-3 px-4">User</th>
                       <th className="text-left py-3 px-4">Action</th>
@@ -330,9 +398,7 @@ export default function AuditLogsPage() {
                             )}
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm max-w-md truncate">
-                          {log.description}
-                        </td>
+                        <td className="py-3 px-4 text-sm max-w-md truncate">{log.description}</td>
                         <td className="py-3 px-4">
                           <div className="flex justify-end">
                             <button
@@ -359,54 +425,74 @@ export default function AuditLogsPage() {
         {/* Detail Modal */}
         {showDetailModal && selectedLog && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-2xl shadow-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto border`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-2xl shadow-2xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto border`}
+            >
               <h3 className="text-2xl font-bold mb-4">Audit Log Details</h3>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Timestamp</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      Timestamp
+                    </label>
                     <p>{new Date(selectedLog.createdAt).toLocaleString()}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Action Type</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      Action Type
+                    </label>
                     {getActionBadge(selectedLog.actionType)}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">User Email</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      User Email
+                    </label>
                     <p>{selectedLog.userEmail}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">User Role</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      User Role
+                    </label>
                     <p>{selectedLog.userRole}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Entity Type</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      Entity Type
+                    </label>
                     <p>{selectedLog.entityType}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Entity Name</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      Entity Name
+                    </label>
                     <p>{selectedLog.entityName || '-'}</p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-500 mb-1">Description</label>
-                  <p className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">{selectedLog.description}</p>
+                  <label className="block text-sm font-medium text-gray-500 mb-1">
+                    Description
+                  </label>
+                  <p className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    {selectedLog.description}
+                  </p>
                 </div>
 
                 {selectedLog.oldValue && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Old Value</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      Old Value
+                    </label>
                     <pre className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm overflow-auto">
                       {selectedLog.oldValue}
                     </pre>
@@ -415,7 +501,9 @@ export default function AuditLogsPage() {
 
                 {selectedLog.newValue && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">New Value</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      New Value
+                    </label>
                     <pre className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm overflow-auto">
                       {selectedLog.newValue}
                     </pre>
@@ -424,7 +512,9 @@ export default function AuditLogsPage() {
 
                 {selectedLog.ipAddress && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">IP Address</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                      IP Address
+                    </label>
                     <p className="font-mono text-sm">{selectedLog.ipAddress}</p>
                   </div>
                 )}

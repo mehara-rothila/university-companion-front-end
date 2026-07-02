@@ -30,7 +30,9 @@ api.interceptors.request.use((config) => {
 
 export const achievementService = {
   // Achievement CRUD operations
-  createAchievement: async (achievementData: CreateAchievementRequest): Promise<{ achievementId: number; message: string }> => {
+  createAchievement: async (
+    achievementData: CreateAchievementRequest
+  ): Promise<{ achievementId: number; message: string }> => {
     const response = await api.post('', achievementData);
     return response.data;
   },
@@ -112,7 +114,10 @@ export const achievementService = {
     return response.data;
   },
 
-  updateAchievementImage: async (achievementId: number, imageUrl: string | null): Promise<{ message: string }> => {
+  updateAchievementImage: async (
+    achievementId: number,
+    imageUrl: string | null
+  ): Promise<{ message: string }> => {
     const response = await api.put(`/${achievementId}/image`, { imageUrl });
     return response.data;
   },

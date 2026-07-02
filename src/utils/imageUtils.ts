@@ -13,11 +13,11 @@ interface OptimizedImageOptions {
 
 /**
  * Get an optimized image URL with quality and size parameters
- * 
+ *
  * @param imageUrl - The original S3 image URL
  * @param options - Optimization options
  * @returns Optimized image serve URL
- * 
+ *
  * Quality levels:
  * - low: 30% quality, max 400px width (thumbnails, lists)
  * - medium: 50% quality, max 800px width (cards, previews) [default]
@@ -29,15 +29,15 @@ export function getOptimizedImageUrl(
   options: OptimizedImageOptions = {}
 ): string {
   if (!imageUrl) return '';
-  
+
   const { quality = 'medium', maxWidth } = options;
-  
+
   let url = `${API_BASE_URL}/api/upload/image/serve?url=${encodeURIComponent(imageUrl)}&quality=${quality}`;
-  
+
   if (maxWidth) {
     url += `&maxWidth=${maxWidth}`;
   }
-  
+
   return url;
 }
 
@@ -45,7 +45,10 @@ export function getOptimizedImageUrl(
  * Get a thumbnail image URL (low quality, small size)
  * Good for: avatars, list items, grid thumbnails
  */
-export function getThumbnailUrl(imageUrl: string | undefined | null, maxWidth: number = 200): string {
+export function getThumbnailUrl(
+  imageUrl: string | undefined | null,
+  maxWidth: number = 200
+): string {
   return getOptimizedImageUrl(imageUrl, { quality: 'low', maxWidth });
 }
 
@@ -78,5 +81,5 @@ export default {
   getThumbnailUrl,
   getPreviewUrl,
   getFullImageUrl,
-  getOriginalImageUrl
+  getOriginalImageUrl,
 };

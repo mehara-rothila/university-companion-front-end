@@ -62,15 +62,15 @@ export default function AdminEmergency() {
     message: '',
     target: 'ALL_STUDENTS',
     targetUserIds: [],
-    expiresAt: ''
+    expiresAt: '',
   });
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
 
   const getAuthHeaders = () => ({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   });
 
   // Safe date formatting helper
@@ -88,12 +88,15 @@ export default function AdminEmergency() {
   const loadEmergencies = async () => {
     try {
       const response = await axios.get(`${API_BASE}/emergency/admin/all`, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
 
       const emergenciesData = response.data || [];
       console.log('📥 Loaded emergencies:', emergenciesData);
-      console.log('📊 Emergency IDs:', emergenciesData.map((e: any) => e.id));
+      console.log(
+        '📊 Emergency IDs:',
+        emergenciesData.map((e: any) => e.id)
+      );
 
       // De-duplicate by ID just in case
       const uniqueEmergencies = Array.from(
@@ -113,7 +116,7 @@ export default function AdminEmergency() {
   const loadUsers = async () => {
     try {
       const response = await axios.get(`${API_BASE}/notifications/admin/users`, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
       setUsers(response.data || []);
     } catch (error) {
@@ -148,15 +151,20 @@ export default function AdminEmergency() {
         type: 'EMERGENCY',
         priority: 'URGENT',
         target: emergencyForm.target,
-        targetUserIds: emergencyForm.target === 'SPECIFIC_USERS' && selectedUsers.length > 0 ? selectedUsers : undefined,
-        expiresAt: emergencyForm.expiresAt ? new Date(emergencyForm.expiresAt).toISOString() : undefined
+        targetUserIds:
+          emergencyForm.target === 'SPECIFIC_USERS' && selectedUsers.length > 0
+            ? selectedUsers
+            : undefined,
+        expiresAt: emergencyForm.expiresAt
+          ? new Date(emergencyForm.expiresAt).toISOString()
+          : undefined,
       };
 
       console.log('🚀 Sending emergency data:', requestData);
       console.log('🔑 Auth headers:', { Authorization: `Bearer ${token?.substring(0, 20)}...` });
 
       const response = await axios.post(`${API_BASE}/emergency/create`, requestData, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
 
       console.log('✅ Emergency created:', response.data);
@@ -166,7 +174,8 @@ export default function AdminEmergency() {
       loadEmergencies();
     } catch (error: any) {
       console.error('❌ Failed to create emergency:', error);
-      const errorMsg = error.response?.data?.error || error.message || 'Failed to send emergency alert';
+      const errorMsg =
+        error.response?.data?.error || error.message || 'Failed to send emergency alert';
       setError(errorMsg);
     } finally {
       setCreating(false);
@@ -178,7 +187,7 @@ export default function AdminEmergency() {
 
     try {
       await axios.delete(`${API_BASE}/emergency/${id}`, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
       setSuccessMessage(t('admin.emergency.deleteSuccess'));
       loadEmergencies();
@@ -194,7 +203,7 @@ export default function AdminEmergency() {
       message: '',
       target: 'ALL_STUDENTS',
       targetUserIds: [],
-      expiresAt: ''
+      expiresAt: '',
     });
     setSelectedUsers([]);
   };
@@ -220,7 +229,9 @@ export default function AdminEmergency() {
     return (
       <>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+        >
           <AnimatedBackground variant="dashboard" />
           <div className="flex items-center justify-center h-screen">
             <div className={`text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -236,7 +247,9 @@ export default function AdminEmergency() {
   return (
     <>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         {/* Messages */}
@@ -254,20 +267,27 @@ export default function AdminEmergency() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
           <div className="mb-8 animate-fade-in">
-            <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/90'} backdrop-blur-sm shadow-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div
+              className={`p-6 rounded-2xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/90'} backdrop-blur-sm shadow-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+            >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex-1">
-                  <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
+                  <h1
+                    className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}
+                  >
                     <AlertTriangle className="w-10 h-10 mr-3 text-red-600" />
                     Emergency Alerts
                   </h1>
                   <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    Send urgent notifications to all students or specific users with real-time delivery
+                    Send urgent notifications to all students or specific users with real-time
+                    delivery
                   </p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-4">
                   <Link href="/admin">
-                    <button className={`px-4 py-2 rounded-lg transition-all duration-200 font-medium ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}>
+                    <button
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 font-medium ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
+                    >
                       Back
                     </button>
                   </Link>
@@ -284,9 +304,13 @@ export default function AdminEmergency() {
           </div>
 
           {/* Emergency Alerts List */}
-          <div className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700/50' : 'bg-white/95 border-gray-200'} rounded-2xl shadow-xl p-8 border backdrop-blur-sm animate-fade-in`}>
+          <div
+            className={`glass-card ${isDarkMode ? 'bg-gray-800/90 border-gray-700/50' : 'bg-white/95 border-gray-200'} rounded-2xl shadow-xl p-8 border backdrop-blur-sm animate-fade-in`}
+          >
             <div className="mb-6">
-              <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+              <h2
+                className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
                 Active Emergency Alerts
               </h2>
               <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -300,10 +324,16 @@ export default function AdminEmergency() {
               </div>
             ) : emergencies.length === 0 ? (
               <div className="text-center py-16">
-                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} mb-4`}>
-                  <AlertTriangle className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                <div
+                  className={`inline-flex items-center justify-center w-16 h-16 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} mb-4`}
+                >
+                  <AlertTriangle
+                    className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+                  />
                 </div>
-                <p className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <p
+                  className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   No Active Emergencies
                 </p>
                 <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -316,7 +346,9 @@ export default function AdminEmergency() {
                   <div
                     key={emergency.id}
                     className={`p-6 rounded-xl border-l-4 border-l-red-600 transition-all duration-200 hover:shadow-lg ${
-                      isDarkMode ? 'bg-gray-700/50 border border-gray-600' : 'bg-gradient-to-r from-red-50 to-red-50/50 border border-red-200'
+                      isDarkMode
+                        ? 'bg-gray-700/50 border border-gray-600'
+                        : 'bg-gradient-to-r from-red-50 to-red-50/50 border border-red-200'
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -328,7 +360,9 @@ export default function AdminEmergency() {
                             </div>
                           </div>
                           <div className="flex-1">
-                            <h3 className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                            <h3
+                              className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                            >
                               {emergency.title}
                             </h3>
                           </div>
@@ -336,17 +370,25 @@ export default function AdminEmergency() {
                             URGENT
                           </span>
                         </div>
-                        <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 text-sm leading-relaxed whitespace-pre-wrap`}>
+                        <p
+                          className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 text-sm leading-relaxed whitespace-pre-wrap`}
+                        >
                           {emergency.message}
                         </p>
 
                         {/* Stats Section */}
-                        <div className={`grid grid-cols-3 gap-4 p-4 rounded-xl mb-3 ${isDarkMode ? 'bg-gray-600/30' : 'bg-gray-50'}`}>
+                        <div
+                          className={`grid grid-cols-3 gap-4 p-4 rounded-xl mb-3 ${isDarkMode ? 'bg-gray-600/30' : 'bg-gray-50'}`}
+                        >
                           <div className="text-center">
-                            <p className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            <p
+                              className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                            >
                               Total Users
                             </p>
-                            <p className={`text-xl font-bold mt-1 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                            <p
+                              className={`text-xl font-bold mt-1 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                            >
                               {emergency.totalUsers}
                             </p>
                           </div>
@@ -369,11 +411,21 @@ export default function AdminEmergency() {
                         </div>
 
                         {/* Meta Info */}
-                        <div className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} space-y-1`}>
-                          <p>Created by <span className="font-medium text-gray-600 dark:text-gray-400">{emergency.createdByName}</span></p>
+                        <div
+                          className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} space-y-1`}
+                        >
+                          <p>
+                            Created by{' '}
+                            <span className="font-medium text-gray-600 dark:text-gray-400">
+                              {emergency.createdByName}
+                            </span>
+                          </p>
                           <p>Created: {formatDate(emergency.createdAt)}</p>
                           {emergency.expiresAt && (
-                            <p>Expires: <span className="font-medium">{formatDate(emergency.expiresAt)}</span></p>
+                            <p>
+                              Expires:{' '}
+                              <span className="font-medium">{formatDate(emergency.expiresAt)}</span>
+                            </p>
                           )}
                         </div>
                       </div>
@@ -398,13 +450,17 @@ export default function AdminEmergency() {
         {/* Create Emergency Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto`}
+            >
               <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30">
                     <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     Send Emergency Alert
                   </h2>
                 </div>
@@ -422,21 +478,29 @@ export default function AdminEmergency() {
               </div>
 
               <div className="space-y-4">
-                <div className={`p-4 rounded-xl border border-red-200 ${isDarkMode ? 'bg-red-900/20 border-red-800/50' : 'bg-red-50'}`}>
-                  <p className={`text-sm font-semibold flex items-center ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>
+                <div
+                  className={`p-4 rounded-xl border border-red-200 ${isDarkMode ? 'bg-red-900/20 border-red-800/50' : 'bg-red-50'}`}
+                >
+                  <p
+                    className={`text-sm font-semibold flex items-center ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}
+                  >
                     <AlertTriangle className="w-4 h-4 mr-2" />
                     This alert will be sent immediately with URGENT priority to all recipients
                   </p>
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  <label
+                    className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                  >
                     Alert Title <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={emergencyForm.title}
-                    onChange={(e) => setEmergencyForm(prev => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) =>
+                      setEmergencyForm((prev) => ({ ...prev, title: e.target.value }))
+                    }
                     placeholder="e.g., Campus Evacuation Order"
                     className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 ${
                       isDarkMode
@@ -447,13 +511,17 @@ export default function AdminEmergency() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  <label
+                    className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                  >
                     Alert Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     rows={5}
                     value={emergencyForm.message}
-                    onChange={(e) => setEmergencyForm(prev => ({ ...prev, message: e.target.value }))}
+                    onChange={(e) =>
+                      setEmergencyForm((prev) => ({ ...prev, message: e.target.value }))
+                    }
                     placeholder="Provide detailed information about the emergency..."
                     className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 resize-none ${
                       isDarkMode
@@ -464,13 +532,15 @@ export default function AdminEmergency() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  <label
+                    className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                  >
                     Send To
                   </label>
                   <select
                     value={emergencyForm.target}
                     onChange={(e) => {
-                      setEmergencyForm(prev => ({ ...prev, target: e.target.value }));
+                      setEmergencyForm((prev) => ({ ...prev, target: e.target.value }));
                       setSelectedUsers([]);
                     }}
                     className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 ${
@@ -486,27 +556,40 @@ export default function AdminEmergency() {
 
                 {emergencyForm.target === 'SPECIFIC_USERS' && (
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                    <label
+                      className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                    >
                       Select Users
                     </label>
-                    <div className={`max-h-48 overflow-y-auto border rounded-xl p-3 ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-300 bg-gray-50'}`}>
+                    <div
+                      className={`max-h-48 overflow-y-auto border rounded-xl p-3 ${isDarkMode ? 'border-gray-600 bg-gray-700/30' : 'border-gray-300 bg-gray-50'}`}
+                    >
                       {users.map((userItem) => (
-                        <label key={userItem.id} className={`flex items-center p-2 rounded cursor-pointer transition-colors ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}>
+                        <label
+                          key={userItem.id}
+                          className={`flex items-center p-2 rounded cursor-pointer transition-colors ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+                        >
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(userItem.id)}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setSelectedUsers(prev => [...prev, userItem.id]);
+                                setSelectedUsers((prev) => [...prev, userItem.id]);
                               } else {
-                                setSelectedUsers(prev => prev.filter(id => id !== userItem.id));
+                                setSelectedUsers((prev) => prev.filter((id) => id !== userItem.id));
                               }
                             }}
                             className="mr-3 rounded accent-red-500"
                           />
-                          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <span
+                            className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                          >
                             <span className="font-medium">{userItem.username}</span>
-                            <span className={`ml-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>({userItem.email})</span>
+                            <span
+                              className={`ml-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}
+                            >
+                              ({userItem.email})
+                            </span>
                           </span>
                         </label>
                       ))}
@@ -515,13 +598,22 @@ export default function AdminEmergency() {
                 )}
 
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
-                    Expires At <span className={`font-normal ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>(Optional)</span>
+                  <label
+                    className={`block text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                  >
+                    Expires At{' '}
+                    <span
+                      className={`font-normal ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                    >
+                      (Optional)
+                    </span>
                   </label>
                   <input
                     type="datetime-local"
                     value={emergencyForm.expiresAt}
-                    onChange={(e) => setEmergencyForm(prev => ({ ...prev, expiresAt: e.target.value }))}
+                    onChange={(e) =>
+                      setEmergencyForm((prev) => ({ ...prev, expiresAt: e.target.value }))
+                    }
                     className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 ${
                       isDarkMode
                         ? 'bg-gray-700/50 border-gray-600 text-gray-100 focus:bg-gray-700'
@@ -548,7 +640,9 @@ export default function AdminEmergency() {
                   <button
                     type="button"
                     onClick={createEmergency}
-                    disabled={!emergencyForm.title.trim() || !emergencyForm.message.trim() || creating}
+                    disabled={
+                      !emergencyForm.title.trim() || !emergencyForm.message.trim() || creating
+                    }
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95 flex items-center justify-center gap-2"
                   >
                     <AlertTriangle className={`w-5 h-5 ${creating ? 'animate-pulse' : ''}`} />

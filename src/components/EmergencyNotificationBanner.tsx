@@ -41,8 +41,8 @@ export default function EmergencyNotificationBanner() {
   };
 
   const getAuthHeaders = () => ({
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
   });
 
   // Safe date formatting helper
@@ -61,7 +61,7 @@ export default function EmergencyNotificationBanner() {
   useEffect(() => {
     if (user && isValidJWT(token)) {
       // Request permission for browser notifications
-      requestPermission().then(granted => {
+      requestPermission().then((granted) => {
         if (granted) {
           console.log('✅ Browser notification permission granted');
         } else {
@@ -82,11 +82,11 @@ export default function EmergencyNotificationBanner() {
   // Mark emergencies as seen when they appear
   useEffect(() => {
     if (user && isValidJWT(token) && emergencies.length > 0) {
-      emergencies.forEach(emergency => {
+      emergencies.forEach((emergency) => {
         markEmergencyAsSeen(emergency.id);
       });
     }
-  }, [emergencies.map(e => e.id).join(',')]);
+  }, [emergencies.map((e) => e.id).join(',')]);
 
   // Subscribe to emergency WebSocket topics using shared client
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function EmergencyNotificationBanner() {
     }
 
     return () => {
-      subscriptions.forEach(sub => {
+      subscriptions.forEach((sub) => {
         try {
           sub.unsubscribe();
         } catch (error) {
@@ -152,7 +152,7 @@ export default function EmergencyNotificationBanner() {
       }
 
       const response = await axios.get(`${API_BASE}/emergency/active`, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
 
       if (response.data) {
@@ -166,7 +166,7 @@ export default function EmergencyNotificationBanner() {
             priority: e.priority,
             timestamp: e.createdAt,
             expiresAt: e.expiresAt,
-            dismissed: false
+            dismissed: false,
           }));
 
         setEmergencies(activeEmergencies);
@@ -190,25 +190,24 @@ export default function EmergencyNotificationBanner() {
       priority: emergencyMsg.priority,
       timestamp: emergencyMsg.timestamp,
       expiresAt: emergencyMsg.expiresAt,
-      dismissed: false
+      dismissed: false,
     };
 
-    setEmergencies(prev => {
-      const exists = prev.some(e => e.id === newEmergency.id);
+    setEmergencies((prev) => {
+      const exists = prev.some((e) => e.id === newEmergency.id);
       if (!exists) {
         playEmergencyAlert();
 
         // Show browser notification
-        showEmergencyNotification(newEmergency.title, newEmergency.message)
-          .then(notification => {
-            if (notification) {
-              console.log('🔔 Browser notification shown');
-              notification.onclick = () => {
-                window.focus();
-                notification.close();
-              };
-            }
-          });
+        showEmergencyNotification(newEmergency.title, newEmergency.message).then((notification) => {
+          if (notification) {
+            console.log('🔔 Browser notification shown');
+            notification.onclick = () => {
+              window.focus();
+              notification.close();
+            };
+          }
+        });
 
         return [newEmergency, ...prev];
       }
@@ -240,11 +239,15 @@ export default function EmergencyNotificationBanner() {
 
   const dismissEmergency = async (id: number) => {
     try {
-      await axios.post(`${API_BASE}/emergency/${id}/dismiss`, {}, {
-        headers: getAuthHeaders()
-      });
+      await axios.post(
+        `${API_BASE}/emergency/${id}/dismiss`,
+        {},
+        {
+          headers: getAuthHeaders(),
+        }
+      );
 
-      setEmergencies(prev => prev.filter(e => e.id !== id));
+      setEmergencies((prev) => prev.filter((e) => e.id !== id));
     } catch (error: any) {
       if (error.response && [400, 401, 403].includes(error.response.status)) {
         console.log('Unable to dismiss emergency - authentication issue');
@@ -256,16 +259,16 @@ export default function EmergencyNotificationBanner() {
 
   const acknowledgeEmergency = async (id: number) => {
     try {
-      await axios.post(`${API_BASE}/emergency/${id}/acknowledge`, {}, {
-        headers: getAuthHeaders()
-      });
+      await axios.post(
+        `${API_BASE}/emergency/${id}/acknowledge`,
+        {},
+        {
+          headers: getAuthHeaders(),
+        }
+      );
 
       // Update emergency to acknowledged in UI
-      setEmergencies(prev =>
-        prev.map(e =>
-          e.id === id ? { ...e, dismissed: true } : e
-        )
-      );
+      setEmergencies((prev) => prev.map((e) => (e.id === id ? { ...e, dismissed: true } : e)));
     } catch (error: any) {
       if (error.response && [400, 401, 403].includes(error.response.status)) {
         console.log('Unable to acknowledge emergency - authentication issue');
@@ -277,9 +280,13 @@ export default function EmergencyNotificationBanner() {
 
   const markEmergencyAsSeen = async (id: number) => {
     try {
-      await axios.post(`${API_BASE}/emergency/${id}/seen`, {}, {
-        headers: getAuthHeaders()
-      });
+      await axios.post(
+        `${API_BASE}/emergency/${id}/seen`,
+        {},
+        {
+          headers: getAuthHeaders(),
+        }
+      );
     } catch (error: any) {
       // Silently fail for "seen" tracking - not critical
       if (error.response && ![400, 401, 403].includes(error.response.status)) {
@@ -353,9 +360,12 @@ export default function EmergencyNotificationBanner() {
 
           {/* Animated bottom border */}
           <div className="h-1 bg-red-700">
-            <div className="h-full bg-white animate-pulse" style={{
-              animation: 'slideInOut 3s infinite'
-            }} />
+            <div
+              className="h-full bg-white animate-pulse"
+              style={{
+                animation: 'slideInOut 3s infinite',
+              }}
+            />
           </div>
 
           <style>{`

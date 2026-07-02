@@ -19,7 +19,7 @@ export default function EnrollmentModal({
   competition,
   userId,
   isDarkMode,
-  onSuccess
+  onSuccess,
 }: EnrollmentModalProps) {
   const [loading, setLoading] = useState(false);
   const [formFields, setFormFields] = useState<FormField[]>([]);
@@ -43,9 +43,9 @@ export default function EnrollmentModal({
   };
 
   const handleInputChange = (fieldLabel: string, value: string) => {
-    setFormResponses(prev => ({
+    setFormResponses((prev) => ({
       ...prev,
-      [fieldLabel]: value
+      [fieldLabel]: value,
     }));
   };
 
@@ -63,7 +63,7 @@ export default function EnrollmentModal({
     try {
       setLoading(true);
       await competitionService.enrollInCompetition(competition.id, {
-        formResponses: JSON.stringify(formResponses)
+        formResponses: JSON.stringify(formResponses),
       });
 
       alert('Successfully enrolled in competition!');
@@ -80,7 +80,9 @@ export default function EnrollmentModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full my-8`}>
+      <div
+        className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full my-8`}
+      >
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -113,7 +115,9 @@ export default function EnrollmentModal({
 
                 {formFields.map((field) => (
                   <div key={field.id}>
-                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label
+                      className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       {field.fieldLabel} {field.required && <span className="text-red-500">*</span>}
                     </label>
 
@@ -129,11 +133,15 @@ export default function EnrollmentModal({
                     ) : (
                       <input
                         type={
-                          field.fieldType === 'EMAIL' ? 'email' :
-                          field.fieldType === 'PHONE' ? 'tel' :
-                          field.fieldType === 'NUMBER' ? 'number' :
-                          field.fieldType === 'DATE' ? 'date' :
-                          'text'
+                          field.fieldType === 'EMAIL'
+                            ? 'email'
+                            : field.fieldType === 'PHONE'
+                              ? 'tel'
+                              : field.fieldType === 'NUMBER'
+                                ? 'number'
+                                : field.fieldType === 'DATE'
+                                  ? 'date'
+                                  : 'text'
                         }
                         value={formResponses[field.fieldLabel] || ''}
                         onChange={(e) => handleInputChange(field.fieldLabel, e.target.value)}

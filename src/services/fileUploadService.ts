@@ -25,7 +25,7 @@ class FileUploadService {
     return await this.uploadToS3(file, '/api/upload/image', folder);
   }
 
-  // Upload PDF to S3  
+  // Upload PDF to S3
   async uploadPdf(file: File): Promise<UploadResponse> {
     this.validatePdfFile(file);
     return await this.uploadToS3(file, '/api/upload/pdf');
@@ -71,7 +71,7 @@ class FileUploadService {
       fileUrl: data.imageUrl || data.pdfUrl || data.fileUrl,
       fileName: file.name,
       fileSize: file.size,
-      message: data.message || 'File uploaded successfully'
+      message: data.message || 'File uploaded successfully',
     };
   }
 
@@ -80,7 +80,7 @@ class FileUploadService {
     return {
       extractedText: '',
       processingTime: 0,
-      tokensUsed: 0
+      tokensUsed: 0,
     };
   }
 
@@ -89,7 +89,7 @@ class FileUploadService {
     return {
       extractedText: '',
       processingTime: 0,
-      tokensUsed: 0
+      tokensUsed: 0,
     };
   }
 
@@ -99,8 +99,9 @@ class FileUploadService {
     if (!validTypes.includes(file.type)) {
       throw new Error('Only image files (JPG, PNG, GIF, WebP) are allowed');
     }
-    
-    if (file.size > 10 * 1024 * 1024) { // 10MB
+
+    if (file.size > 10 * 1024 * 1024) {
+      // 10MB
       throw new Error('Image file size cannot exceed 10MB');
     }
   }
@@ -109,8 +110,9 @@ class FileUploadService {
     if (file.type !== 'application/pdf') {
       throw new Error('Only PDF files are allowed');
     }
-    
-    if (file.size > 50 * 1024 * 1024) { // 50MB
+
+    if (file.size > 50 * 1024 * 1024) {
+      // 50MB
       throw new Error('PDF file size cannot exceed 50MB');
     }
   }
@@ -120,8 +122,9 @@ class FileUploadService {
     if (!validTypes.includes(file.type)) {
       throw new Error('Only video files (MP4, WebM, OGG, AVI, MOV) are allowed');
     }
-    
-    if (file.size > 100 * 1024 * 1024) { // 100MB
+
+    if (file.size > 100 * 1024 * 1024) {
+      // 100MB
       throw new Error('Video file size cannot exceed 100MB');
     }
   }

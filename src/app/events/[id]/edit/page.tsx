@@ -10,7 +10,15 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event } from '@/types/event';
-import { Calendar, MapPin, Users, Clock, Image as ImageIcon, ArrowLeft, Trash2 } from 'lucide-react';
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Image as ImageIcon,
+  ArrowLeft,
+  Trash2,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function EditEventPage() {
@@ -115,7 +123,9 @@ export default function EditEventPage() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
 
     if (type === 'checkbox') {
@@ -201,11 +211,15 @@ export default function EditEventPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <div
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+        >
           <AnimatedBackground variant="dashboard" />
           <Navigation />
           <div className="flex items-center justify-center h-screen relative z-10">
-            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}
+            >
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
           </div>
@@ -217,15 +231,22 @@ export default function EditEventPage() {
   if (error && !event) {
     return (
       <AuthGuard>
-        <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <div
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+        >
           <AnimatedBackground variant="dashboard" />
           <Navigation />
           <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}
+            >
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
                 {error}
               </div>
-              <Link href="/events" className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+              <Link
+                href="/events"
+                className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+              >
                 ← Back to Events
               </Link>
             </div>
@@ -237,7 +258,9 @@ export default function EditEventPage() {
 
   return (
     <AuthGuard>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <div
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
         <Navigation />
 
@@ -247,13 +270,19 @@ export default function EditEventPage() {
             <Link
               href={`/events/${eventId}`}
               className={`inline-flex items-center gap-2 mb-4 ${
-                isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+                isDarkMode
+                  ? 'text-blue-400 hover:text-blue-300'
+                  : 'text-blue-600 hover:text-blue-700'
               }`}
             >
               <ArrowLeft size={20} />
               Back to Event
             </Link>
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>Edit Event</h1>
+            <h1
+              className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+            >
+              Edit Event
+            </h1>
             <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Update your event details
             </p>
@@ -277,15 +306,24 @@ export default function EditEventPage() {
           {event?.rejectionReason && (
             <div className="mb-6 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg">
               <strong>Previous Rejection Reason:</strong> {event.rejectionReason}
-              <p className="text-sm mt-2">Please address the issues mentioned above before resubmitting.</p>
+              <p className="text-sm mt-2">
+                Please address the issues mentioned above before resubmitting.
+              </p>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm animate-fade-in`}>
+          <form
+            onSubmit={handleSubmit}
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm animate-fade-in`}
+          >
             {/* Basic Information */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Basic Information</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                Basic Information
+              </h2>
 
               <div className="space-y-4">
                 {/* Title */}
@@ -377,7 +415,11 @@ export default function EditEventPage() {
 
             {/* Date & Time */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Date & Time</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                Date & Time
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Event Date */}
@@ -467,7 +509,11 @@ export default function EditEventPage() {
 
             {/* Location & Organizer */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Location & Organizer</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                Location & Organizer
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Location */}
@@ -514,7 +560,11 @@ export default function EditEventPage() {
 
             {/* Capacity */}
             <div className="mb-8">
-              <h2 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>Capacity</h2>
+              <h2
+                className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+              >
+                Capacity
+              </h2>
 
               <div>
                 <label htmlFor="maxAttendees" className="block text-sm font-medium mb-2">

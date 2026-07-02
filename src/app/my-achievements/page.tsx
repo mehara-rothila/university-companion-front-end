@@ -9,7 +9,22 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, Clock, CheckCircle, XCircle, Calendar, Edit2, Trash2, ArrowLeft, AlertCircle, Eye, EyeOff, Heart, MessageCircle, Share2 } from 'lucide-react';
+import {
+  Trophy,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Calendar,
+  Edit2,
+  Trash2,
+  ArrowLeft,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Heart,
+  MessageCircle,
+  Share2,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -43,7 +58,7 @@ export default function MyAchievementsPage() {
     title: '',
     description: '',
     category: '',
-    achievementDate: ''
+    achievementDate: '',
   });
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -58,7 +73,9 @@ export default function MyAchievementsPage() {
     // Check if we have a valid JWT token
     if (!isValidJWT(token)) {
       setLoading(false);
-      setError('You need to be logged in with a valid account to view your achievements. Please log out and log in again.');
+      setError(
+        'You need to be logged in with a valid account to view your achievements. Please log out and log in again.'
+      );
       return;
     }
 
@@ -67,14 +84,17 @@ export default function MyAchievementsPage() {
       setError('');
       const data = await achievementService.getAchievementsByStudent(user.id);
       console.log('📊 Fetched achievements:', data);
-      console.log('📅 Achievement dates:', data.map((a: any) => ({
-        id: a.id,
-        title: a.title,
-        achievementDate: a.achievementDate,
-        createdAt: a.createdAt,
-        approvedAt: a.approvedAt,
-        status: a.status
-      })));
+      console.log(
+        '📅 Achievement dates:',
+        data.map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          achievementDate: a.achievementDate,
+          createdAt: a.createdAt,
+          approvedAt: a.approvedAt,
+          status: a.status,
+        }))
+      );
       setAchievements(data);
     } catch (err: any) {
       if (err.response?.status === 400 || err.response?.status === 401) {
@@ -97,7 +117,7 @@ export default function MyAchievementsPage() {
     if (filterStatus === 'all') {
       setFilteredAchievements(achievements);
     } else {
-      setFilteredAchievements(achievements.filter(a => a.status === filterStatus));
+      setFilteredAchievements(achievements.filter((a) => a.status === filterStatus));
     }
   }, [achievements, filterStatus]);
 
@@ -120,7 +140,7 @@ export default function MyAchievementsPage() {
       title: achievement.title,
       description: achievement.description,
       category: achievement.category,
-      achievementDate: dateValue
+      achievementDate: dateValue,
     });
     setShowEditModal(true);
   };
@@ -141,7 +161,7 @@ export default function MyAchievementsPage() {
 
       const updateData = {
         ...editForm,
-        achievementDate: formattedDate
+        achievementDate: formattedDate,
       };
 
       console.log('📝 Updating achievement with data:', updateData);
@@ -155,7 +175,11 @@ export default function MyAchievementsPage() {
       await fetchAchievements();
     } catch (err: any) {
       console.error('Update error:', err);
-      const errorMessage = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to update achievement';
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to update achievement';
       alert(`Failed to update achievement: ${errorMessage}`);
     } finally {
       setActionLoading(false);
@@ -238,61 +262,64 @@ export default function MyAchievementsPage() {
   // Get category color
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Competition': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-      'Academic': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      'Project': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-      'Award': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-      'Research': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-      'Sports': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-      'Cultural': 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-      'Leadership': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+      Competition: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+      Academic: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+      Project: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+      Award: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+      Research: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+      Sports: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+      Cultural: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+      Leadership: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
       'Community Service': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     };
     return colors[category] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
   };
 
   // Count by status
-  const countByStatus = (status: string) => achievements.filter(a => a.status === status).length;
+  const countByStatus = (status: string) => achievements.filter((a) => a.status === status).length;
 
   // Handle achievement like
-  const handleAchievementLike = useCallback(async (achievementId: number) => {
-    const isLiked = likedAchievements.has(achievementId);
+  const handleAchievementLike = useCallback(
+    async (achievementId: number) => {
+      const isLiked = likedAchievements.has(achievementId);
 
-    try {
-      if (isLiked) {
-        await achievementService.unlikeAchievement(achievementId);
-        setLikedAchievements(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(achievementId);
-          return newSet;
-        });
-      } else {
-        await achievementService.likeAchievement(achievementId);
-        setLikedAchievements(prev => new Set(prev).add(achievementId));
+      try {
+        if (isLiked) {
+          await achievementService.unlikeAchievement(achievementId);
+          setLikedAchievements((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(achievementId);
+            return newSet;
+          });
+        } else {
+          await achievementService.likeAchievement(achievementId);
+          setLikedAchievements((prev) => new Set(prev).add(achievementId));
+        }
+
+        // Update local state
+        setAchievements((prev) =>
+          prev.map((achievement) =>
+            achievement.id === achievementId
+              ? {
+                  ...achievement,
+                  likes: isLiked ? achievement.likes - 1 : achievement.likes + 1,
+                }
+              : achievement
+          )
+        );
+      } catch (error) {
+        console.error('Error liking achievement:', error);
       }
-
-      // Update local state
-      setAchievements(prev =>
-        prev.map(achievement =>
-          achievement.id === achievementId
-            ? {
-                ...achievement,
-                likes: isLiked ? achievement.likes - 1 : achievement.likes + 1
-              }
-            : achievement
-        )
-      );
-    } catch (error) {
-      console.error('Error liking achievement:', error);
-    }
-  }, [likedAchievements]);
+    },
+    [likedAchievements]
+  );
 
   // Handle achievement share
   const handleAchievementShare = useCallback(async (achievementId: number) => {
     try {
       await achievementService.shareAchievement(achievementId);
-      setAchievements(prev =>
-        prev.map(achievement =>
+      setAchievements((prev) =>
+        prev.map((achievement) =>
           achievement.id === achievementId
             ? { ...achievement, shares: achievement.shares + 1 }
             : achievement
@@ -306,12 +333,12 @@ export default function MyAchievementsPage() {
   return (
     <AuthGuard>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-
           {/* Back Button */}
           <Link
             href="/social"
@@ -327,8 +354,12 @@ export default function MyAchievementsPage() {
 
           {/* Header */}
           <div className="mb-8">
-            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+            <div
+              className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+            >
+              <h1
+                className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}
+              >
                 <Trophy className="h-10 w-10 mr-3 text-yellow-500" />
                 My Achievements
               </h1>
@@ -340,40 +371,56 @@ export default function MyAchievementsPage() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Total
+                  </p>
                   <p className="text-2xl font-bold text-purple-500">{achievements.length}</p>
                 </div>
                 <Trophy size={32} className="text-purple-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Pending</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Pending
+                  </p>
                   <p className="text-2xl font-bold text-yellow-500">{countByStatus('PENDING')}</p>
                 </div>
                 <Clock size={32} className="text-yellow-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Approved</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Approved
+                  </p>
                   <p className="text-2xl font-bold text-green-500">{countByStatus('APPROVED')}</p>
                 </div>
                 <CheckCircle size={32} className="text-green-500 opacity-20" />
               </div>
             </div>
 
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-xl shadow-lg border backdrop-blur-sm p-4`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Rejected</p>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Rejected
+                  </p>
                   <p className="text-2xl font-bold text-red-500">{countByStatus('REJECTED')}</p>
                 </div>
                 <XCircle size={32} className="text-red-500 opacity-20" />
@@ -382,13 +429,15 @@ export default function MyAchievementsPage() {
           </div>
 
           {/* Filter Tabs */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-8`}
+          >
             <div className="flex overflow-x-auto">
               {[
                 { id: 'all', label: 'All', count: achievements.length },
                 { id: 'PENDING', label: 'Pending', count: countByStatus('PENDING') },
                 { id: 'APPROVED', label: 'Approved', count: countByStatus('APPROVED') },
-                { id: 'REJECTED', label: 'Rejected', count: countByStatus('REJECTED') }
+                { id: 'REJECTED', label: 'Rejected', count: countByStatus('REJECTED') },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -400,11 +449,13 @@ export default function MyAchievementsPage() {
                   }`}
                 >
                   {tab.label}
-                  <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                    filterStatus === tab.id
-                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                      : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                  }`}>
+                  <span
+                    className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                      filterStatus === tab.id
+                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                    }`}
+                  >
                     {tab.count}
                   </span>
                 </button>
@@ -414,15 +465,21 @@ export default function MyAchievementsPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}
+            >
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Loading your achievements...</p>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                Loading your achievements...
+              </p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+            <div
+              className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+            >
               <div className="flex items-center">
                 <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
@@ -436,10 +493,19 @@ export default function MyAchievementsPage() {
           {!loading && !error && (
             <>
               {filteredAchievements.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
-                  <Trophy size={64} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
-                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-                    {filterStatus === 'all' ? 'No achievements yet' : `No ${filterStatus.toLowerCase()} achievements`}
+                <div
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}
+                >
+                  <Trophy
+                    size={64}
+                    className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+                  />
+                  <h3
+                    className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
+                    {filterStatus === 'all'
+                      ? 'No achievements yet'
+                      : `No ${filterStatus.toLowerCase()} achievements`}
                   </h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     {filterStatus === 'all'
@@ -482,7 +548,9 @@ export default function MyAchievementsPage() {
 
                           {/* Category Badge */}
                           <div className="absolute top-4 left-4">
-                            <span className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(achievement.category)}`}>
+                            <span
+                              className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(achievement.category)}`}
+                            >
                               {achievement.category}
                             </span>
                           </div>
@@ -506,28 +574,40 @@ export default function MyAchievementsPage() {
                             <div className="relative w-10 h-10 flex-shrink-0">
                               {achievement.studentImageUrl && !failedImages.has(achievement.id) ? (
                                 <img
-                                  src={achievement.studentImageUrl.includes('amazonaws.com')
-                                    ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(achievement.studentImageUrl)}`
-                                    : achievement.studentImageUrl}
+                                  src={
+                                    achievement.studentImageUrl.includes('amazonaws.com')
+                                      ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(achievement.studentImageUrl)}`
+                                      : achievement.studentImageUrl
+                                  }
                                   alt={achievement.studentName || 'Student'}
                                   className="w-10 h-10 rounded-full object-cover border-2 border-purple-500"
                                   onError={() => {
-                                    setFailedImages(prev => new Set(prev).add(achievement.id));
+                                    setFailedImages((prev) => new Set(prev).add(achievement.id));
                                   }}
                                 />
                               ) : (
                                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-purple-500">
-                                  {achievement.studentName?.split(' ').map(n => n[0]).join('').toUpperCase() || user?.firstName?.charAt(0) || 'S'}
+                                  {achievement.studentName
+                                    ?.split(' ')
+                                    .map((n) => n[0])
+                                    .join('')
+                                    .toUpperCase() ||
+                                    user?.firstName?.charAt(0) ||
+                                    'S'}
                                 </div>
                               )}
                             </div>
 
                             {/* Student Name and Role */}
                             <div>
-                              <p className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                              <p
+                                className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                              >
                                 {achievement.studentName || `${user?.firstName} ${user?.lastName}`}
                               </p>
-                              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              <p
+                                className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                              >
                                 {user?.role || 'Student'}
                               </p>
                             </div>
@@ -535,16 +615,18 @@ export default function MyAchievementsPage() {
 
                           <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                             <div>
-                              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                              <h3
+                                className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                              >
                                 {achievement.title}
                               </h3>
-                              <div className="mt-2">
-                                {getStatusBadge(achievement.status)}
-                              </div>
+                              <div className="mt-2">{getStatusBadge(achievement.status)}</div>
                             </div>
 
                             {/* Action Buttons */}
-                            {(achievement.status === 'PENDING' || achievement.status === 'REJECTED' || achievement.status === 'APPROVED') && (
+                            {(achievement.status === 'PENDING' ||
+                              achievement.status === 'REJECTED' ||
+                              achievement.status === 'APPROVED') && (
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => openEditModal(achievement)}
@@ -558,7 +640,8 @@ export default function MyAchievementsPage() {
                                   <Edit2 size={18} />
                                 </button>
                                 {/* Delete only for pending/rejected */}
-                                {(achievement.status === 'PENDING' || achievement.status === 'REJECTED') && (
+                                {(achievement.status === 'PENDING' ||
+                                  achievement.status === 'REJECTED') && (
                                   <button
                                     onClick={() => openDeleteModal(achievement)}
                                     className="p-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 transition-colors duration-200"
@@ -595,14 +678,23 @@ export default function MyAchievementsPage() {
 
                           {/* Rejection Reason */}
                           {achievement.status === 'REJECTED' && achievement.rejectionReason && (
-                            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+                            <div
+                              className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+                            >
                               <div className="flex items-start">
-                                <XCircle size={18} className="text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                                <XCircle
+                                  size={18}
+                                  className="text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                                />
                                 <div>
-                                  <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}>
+                                  <p
+                                    className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'}`}
+                                  >
                                     Rejection Reason:
                                   </p>
-                                  <p className={`text-sm mt-1 ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
+                                  <p
+                                    className={`text-sm mt-1 ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}
+                                  >
                                     {achievement.rejectionReason}
                                   </p>
                                 </div>
@@ -612,10 +704,14 @@ export default function MyAchievementsPage() {
 
                           {/* Approval Info */}
                           {achievement.status === 'APPROVED' && achievement.approvedAt && (
-                            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}>
+                            <div
+                              className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800' : 'bg-green-50 border border-green-200'}`}
+                            >
                               <div className="flex items-center">
                                 <CheckCircle size={18} className="text-green-500 mr-2" />
-                                <p className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
+                                <p
+                                  className={`text-sm ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}
+                                >
                                   Approved on {formatDate(achievement.approvedAt)}
                                 </p>
                               </div>
@@ -624,25 +720,33 @@ export default function MyAchievementsPage() {
 
                           {/* Engagement Stats for Approved */}
                           {achievement.status === 'APPROVED' && (
-                            <div className={`mt-4 pt-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}>
+                            <div
+                              className={`mt-4 pt-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between`}
+                            >
                               <button
                                 onClick={() => handleAchievementLike(achievement.id)}
                                 className={`flex items-center space-x-2 transition-colors duration-200 ${
                                   likedAchievements.has(achievement.id)
                                     ? 'text-red-500 hover:text-red-600'
-                                    : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                                    : isDarkMode
+                                      ? 'text-gray-400 hover:text-gray-200'
+                                      : 'text-gray-600 hover:text-gray-800'
                                 }`}
                               >
                                 <Heart
                                   size={20}
-                                  className={likedAchievements.has(achievement.id) ? 'fill-current' : ''}
+                                  className={
+                                    likedAchievements.has(achievement.id) ? 'fill-current' : ''
+                                  }
                                 />
                                 <span className="text-sm font-medium">{achievement.likes}</span>
                               </button>
 
                               <button
                                 className={`flex items-center space-x-2 transition-colors duration-200 ${
-                                  isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                                  isDarkMode
+                                    ? 'text-gray-400 hover:text-gray-200'
+                                    : 'text-gray-600 hover:text-gray-800'
                                 }`}
                               >
                                 <MessageCircle size={20} />
@@ -652,7 +756,9 @@ export default function MyAchievementsPage() {
                               <button
                                 onClick={() => handleAchievementShare(achievement.id)}
                                 className={`flex items-center space-x-2 transition-colors duration-200 ${
-                                  isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                                  isDarkMode
+                                    ? 'text-gray-400 hover:text-gray-200'
+                                    : 'text-gray-600 hover:text-gray-800'
                                 }`}
                               >
                                 <Share2 size={20} />
@@ -673,9 +779,13 @@ export default function MyAchievementsPage() {
         {/* Edit Modal */}
         {showEditModal && editingAchievement && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 my-8`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 my-8`}
+            >
               <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} flex items-center`}>
+                <h2
+                  className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} flex items-center`}
+                >
                   <Edit2 className="h-6 w-6 mr-2 text-purple-500" />
                   Edit Achievement
                 </h2>
@@ -686,15 +796,28 @@ export default function MyAchievementsPage() {
                   }}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
 
               <form onSubmit={handleEditSubmit} className="space-y-4">
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Achievement Title *
                   </label>
                   <input
@@ -707,7 +830,9 @@ export default function MyAchievementsPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Category *
                   </label>
                   <select
@@ -731,7 +856,9 @@ export default function MyAchievementsPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Description *
                   </label>
                   <textarea
@@ -744,7 +871,9 @@ export default function MyAchievementsPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Achievement Date
                   </label>
                   <input
@@ -755,7 +884,9 @@ export default function MyAchievementsPage() {
                   />
                 </div>
 
-                <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
+                <div
+                  className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}
+                >
                   <div className="flex items-start">
                     <AlertCircle className="h-5 w-5 text-yellow-500 mr-3 mt-0.5" />
                     <p className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
@@ -783,7 +914,9 @@ export default function MyAchievementsPage() {
                     }}
                     disabled={actionLoading}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     Cancel
@@ -797,18 +930,24 @@ export default function MyAchievementsPage() {
         {/* Delete Confirmation Modal */}
         {showDeleteModal && deletingAchievement && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+            >
               <div className="text-center">
                 <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trash2 className="h-8 w-8 text-red-600 dark:text-red-400" />
                 </div>
-                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+                <h2
+                  className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}
+                >
                   Delete Achievement?
                 </h2>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
                   Are you sure you want to delete this achievement?
                 </p>
-                <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}>
+                <p
+                  className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-6`}
+                >
                   &quot;{deletingAchievement.title}&quot;
                 </p>
                 <div className="flex gap-3">
@@ -819,7 +958,9 @@ export default function MyAchievementsPage() {
                     }}
                     disabled={actionLoading}
                     className={`flex-1 px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     Cancel

@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { competitionService, Competition, Enrollment } from '@/services/competitionService';
-import { Calendar, MapPin, Users, Download, Eye, Trash2, Pencil, Image as ImageIcon } from 'lucide-react';
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Download,
+  Eye,
+  Trash2,
+  Pencil,
+  Image as ImageIcon,
+} from 'lucide-react';
 import ImageEditModal from './ImageEditModal';
 
 interface MyCompetitionsViewProps {
@@ -64,7 +73,7 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify({ imageUrl }),
     });
@@ -95,16 +104,20 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
   if (loading) {
     return (
-      <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}>
+      <div
+        className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}
+      >
         <div className="text-center py-8">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading your competitions...</p>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            Loading your competitions...
+          </p>
         </div>
       </div>
     );
@@ -112,14 +125,18 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
 
   return (
     <>
-      <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}>
+      <div
+        className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-8`}
+      >
         <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-6`}>
           My Created Competitions
         </h2>
 
         {competitions.length === 0 ? (
           <div className="text-center py-12">
-            <Users className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+            <Users
+              className={`w-16 h-16 mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+            />
             <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               You haven't created any competitions yet
             </p>
@@ -143,8 +160,12 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                         className="w-32 h-32 rounded-lg object-contain bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700"
                       />
                     ) : (
-                      <div className={`w-32 h-32 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                        <ImageIcon className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                      <div
+                        className={`w-32 h-32 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
+                      >
+                        <ImageIcon
+                          className={`w-8 h-8 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+                        />
                       </div>
                     )}
                     <button
@@ -161,14 +182,20 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
-                      <h3 className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                      <h3
+                        className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                      >
                         {competition.title}
                       </h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(competition.status)}`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(competition.status)}`}
+                      >
                         {competition.status}
                       </span>
                     </div>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}>
+                    <p
+                      className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}
+                    >
                       {competition.description}
                     </p>
                   </div>
@@ -176,36 +203,58 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
                   <div className="flex items-center">
-                    <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    <Calendar
+                      className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                    />
                     <div>
-                      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>Start</p>
-                      <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.startDate)}</p>
+                      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>
+                        Start
+                      </p>
+                      <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>
+                        {formatDate(competition.startDate)}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center">
-                    <Calendar className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                    <Calendar
+                      className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                    />
                     <div>
-                      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>End</p>
-                      <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{formatDate(competition.endDate)}</p>
+                      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>
+                        End
+                      </p>
+                      <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>
+                        {formatDate(competition.endDate)}
+                      </p>
                     </div>
                   </div>
 
                   {competition.location && (
                     <div className="flex items-center">
-                      <MapPin className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                      <MapPin
+                        className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                      />
                       <div>
-                        <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>Location</p>
-                        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>{competition.location}</p>
+                        <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>
+                          Location
+                        </p>
+                        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>
+                          {competition.location}
+                        </p>
                       </div>
                     </div>
                   )}
 
                   {competition.internalEnrollmentEnabled && (
                     <div className="flex items-center">
-                      <Users className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                      <Users
+                        className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                      />
                       <div>
-                        <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>Enrolled</p>
+                        <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xs`}>
+                          Enrolled
+                        </p>
                         <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs`}>
                           {competition.enrollmentCount || 0}
                           {competition.maxParticipants && `/${competition.maxParticipants}`}
@@ -216,8 +265,12 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                 </div>
 
                 {competition.rejectionReason && (
-                  <div className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
-                    <p className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-1`}>
+                  <div
+                    className={`p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+                  >
+                    <p
+                      className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'} mb-1`}
+                    >
                       Rejection Reason:
                     </p>
                     <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-700'}`}>
@@ -265,10 +318,14 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
       {/* Enrollments Modal */}
       {showEnrollmentsModal && selectedCompetition && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-4xl w-full my-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-4xl w-full my-8`}
+          >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                <h2
+                  className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                >
                   Enrollments for {selectedCompetition.title}
                 </h2>
                 <button
@@ -294,30 +351,42 @@ export default function MyCompetitionsView({ userId, isDarkMode }: MyCompetition
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div>
-                          <p className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                          <p
+                            className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                          >
                             {enrollment.userName || 'Unknown User'}
                           </p>
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <p
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                          >
                             {enrollment.userEmail}
                           </p>
                         </div>
-                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <span
+                          className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                        >
                           {formatDate(enrollment.enrolledAt)}
                         </span>
                       </div>
 
                       {enrollment.formResponses && (
                         <div className="mt-3">
-                          <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                          <p
+                            className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                          >
                             Form Responses:
                           </p>
-                          <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} space-y-1`}>
-                            {Object.entries(JSON.parse(enrollment.formResponses)).map(([key, value]) => (
-                              <div key={key} className="flex">
-                                <span className="font-medium mr-2">{key}:</span>
-                                <span>{String(value)}</span>
-                              </div>
-                            ))}
+                          <div
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} space-y-1`}
+                          >
+                            {Object.entries(JSON.parse(enrollment.formResponses)).map(
+                              ([key, value]) => (
+                                <div key={key} className="flex">
+                                  <span className="font-medium mr-2">{key}:</span>
+                                  <span>{String(value)}</span>
+                                </div>
+                              )
+                            )}
                           </div>
                         </div>
                       )}

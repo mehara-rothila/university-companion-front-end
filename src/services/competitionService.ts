@@ -99,7 +99,7 @@ export const competitionService = {
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
-        message: error.message
+        message: error.message,
       });
       throw error;
     }
@@ -128,7 +128,9 @@ export const competitionService = {
   },
 
   // Create a new competition
-  createCompetition: async (competitionData: CreateCompetitionData): Promise<{ id: number; message: string }> => {
+  createCompetition: async (
+    competitionData: CreateCompetitionData
+  ): Promise<{ id: number; message: string }> => {
     try {
       const response = await api.post('', competitionData);
       return response.data;
@@ -139,7 +141,10 @@ export const competitionService = {
   },
 
   // Enroll in a competition
-  enrollInCompetition: async (competitionId: number, enrollmentData: EnrollmentData): Promise<{ message: string }> => {
+  enrollInCompetition: async (
+    competitionId: number,
+    enrollmentData: EnrollmentData
+  ): Promise<{ message: string }> => {
     try {
       const response = await api.post(`/${competitionId}/enroll`, enrollmentData);
       return response.data;
@@ -172,10 +177,13 @@ export const competitionService = {
   },
 
   // Get enrollments for a competition (organizer only)
-  getCompetitionEnrollments: async (competitionId: number, organizerId: number): Promise<Enrollment[]> => {
+  getCompetitionEnrollments: async (
+    competitionId: number,
+    organizerId: number
+  ): Promise<Enrollment[]> => {
     try {
       const response = await api.get(`/${competitionId}/enrollments`, {
-        params: { organizerId }
+        params: { organizerId },
       });
       return response.data;
     } catch (error) {
@@ -189,7 +197,7 @@ export const competitionService = {
     try {
       const response = await api.get(`/${competitionId}/enrollments/export`, {
         params: { organizerId },
-        responseType: 'blob'
+        responseType: 'blob',
       });
 
       // Create download link
@@ -230,7 +238,10 @@ export const competitionService = {
   },
 
   // Admin: Reject competition
-  rejectCompetition: async (competitionId: number, reason: string): Promise<{ message: string }> => {
+  rejectCompetition: async (
+    competitionId: number,
+    reason: string
+  ): Promise<{ message: string }> => {
     try {
       const response = await api.post(`/${competitionId}/reject`, { reason });
       return response.data;
@@ -299,7 +310,7 @@ export const competitionService = {
   exportEnrollmentsAsAdmin: async (competitionId: number): Promise<void> => {
     try {
       const response = await api.get(`/${competitionId}/enrollments/export`, {
-        responseType: 'blob'
+        responseType: 'blob',
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));

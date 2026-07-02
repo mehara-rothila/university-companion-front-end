@@ -185,7 +185,7 @@ class FinancialAidService {
   async getApplications(filters?: FinancialAidFilters): Promise<FinancialAidApplication[]> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.status) {
         params.append('status', filters.status);
       }
@@ -230,7 +230,10 @@ class FinancialAidService {
   }
 
   // Update an existing application
-  async updateApplication(id: number, application: FinancialAidRequest): Promise<FinancialAidApplication> {
+  async updateApplication(
+    id: number,
+    application: FinancialAidRequest
+  ): Promise<FinancialAidApplication> {
     try {
       const response = await this.api.put(`/financial-aid/applications/${id}`, application);
       return response.data;
@@ -305,10 +308,12 @@ class FinancialAidService {
     }
   }
 
-  async getAllApplicationsForAdmin(filters?: FinancialAidFilters): Promise<FinancialAidApplication[]> {
+  async getAllApplicationsForAdmin(
+    filters?: FinancialAidFilters
+  ): Promise<FinancialAidApplication[]> {
     try {
       const params = new URLSearchParams();
-      
+
       if (filters?.status) {
         params.append('status', filters.status);
       }
@@ -334,7 +339,10 @@ class FinancialAidService {
     }
   }
 
-  async reviewApplication(id: number, review: AdminReviewRequest): Promise<FinancialAidApplication> {
+  async reviewApplication(
+    id: number,
+    review: AdminReviewRequest
+  ): Promise<FinancialAidApplication> {
     try {
       const response = await this.api.put(`/admin/financial-aid/applications/${id}/review`, review);
       return response.data;
@@ -346,7 +354,9 @@ class FinancialAidService {
 
   async updateApplicationStatus(id: number, status: string): Promise<FinancialAidApplication> {
     try {
-      const response = await this.api.put(`/admin/financial-aid/applications/${id}/status?status=${status}`);
+      const response = await this.api.put(
+        `/admin/financial-aid/applications/${id}/status?status=${status}`
+      );
       return response.data;
     } catch (error) {
       console.error('Error updating application status:', error);
@@ -356,7 +366,9 @@ class FinancialAidService {
 
   async getApplicationsByUrgency(urgency: string): Promise<FinancialAidApplication[]> {
     try {
-      const response = await this.api.get(`/admin/financial-aid/applications/by-urgency/${urgency}`);
+      const response = await this.api.get(
+        `/admin/financial-aid/applications/by-urgency/${urgency}`
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching applications by urgency:', error);
@@ -366,7 +378,9 @@ class FinancialAidService {
 
   async getApplicationsByCategory(category: string): Promise<FinancialAidApplication[]> {
     try {
-      const response = await this.api.get(`/admin/financial-aid/applications/by-category/${category}`);
+      const response = await this.api.get(
+        `/admin/financial-aid/applications/by-category/${category}`
+      );
       return response.data;
     } catch (error) {
       console.error('Error fetching applications by category:', error);
@@ -374,7 +388,9 @@ class FinancialAidService {
     }
   }
 
-  async createApplicationForUser(application: AdminFinancialAidRequest): Promise<FinancialAidApplication> {
+  async createApplicationForUser(
+    application: AdminFinancialAidRequest
+  ): Promise<FinancialAidApplication> {
     try {
       const response = await this.api.post('/admin/financial-aid/applications/create', application);
       return response.data;

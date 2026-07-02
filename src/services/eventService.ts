@@ -98,7 +98,10 @@ export const eventService = {
     return response.data;
   },
 
-  getEventRegistrations: async (eventId: number, creatorId: number): Promise<EventRegistration[]> => {
+  getEventRegistrations: async (
+    eventId: number,
+    creatorId: number
+  ): Promise<EventRegistration[]> => {
     const response = await api.get(`/${eventId}/registrations`, {
       params: { creatorId },
     });
@@ -107,7 +110,12 @@ export const eventService = {
 
   isUserRegistered: async (
     eventId: number
-  ): Promise<{ isRegistered: boolean; isWaitlisted: boolean; status: string; waitlistPosition?: number }> => {
+  ): Promise<{
+    isRegistered: boolean;
+    isWaitlisted: boolean;
+    status: string;
+    waitlistPosition?: number;
+  }> => {
     const response = await api.get(`/${eventId}/is-registered`);
     return response.data;
   },
@@ -131,10 +139,7 @@ export const eventService = {
     return response.data;
   },
 
-  deleteEventComment: async (
-    eventId: number,
-    commentId: number
-  ): Promise<{ message: string }> => {
+  deleteEventComment: async (eventId: number, commentId: number): Promise<{ message: string }> => {
     const response = await api.delete(`/${eventId}/comments/${commentId}`);
     return response.data;
   },
@@ -150,10 +155,7 @@ export const eventService = {
     return response.data;
   },
 
-  rejectEvent: async (
-    eventId: number,
-    data: RejectEventRequest
-  ): Promise<{ message: string }> => {
+  rejectEvent: async (eventId: number, data: RejectEventRequest): Promise<{ message: string }> => {
     const response = await api.post(`/${eventId}/reject`, data);
     return response.data;
   },

@@ -2,10 +2,20 @@
 
 import React, { memo } from 'react';
 import { useNotifications } from '../context/NotificationContext';
-import { X, CheckCircle, AlertTriangle, AlertCircle, Info, Bell, Wifi, WifiOff } from 'lucide-react';
+import {
+  X,
+  CheckCircle,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  Bell,
+  Wifi,
+  WifiOff,
+} from 'lucide-react';
 
 const NotificationToast: React.FC = () => {
-  const { toastNotifications, removeToastNotification, isConnected, connectionError } = useNotifications();
+  const { toastNotifications, removeToastNotification, isConnected, connectionError } =
+    useNotifications();
 
   // Safe date formatting helper
   const formatTime = (dateString?: string | null): string => {
@@ -23,10 +33,14 @@ const NotificationToast: React.FC = () => {
     if (priority === 'URGENT') return <AlertCircle className="w-5 h-5" />;
 
     switch (type) {
-      case 'success': return <CheckCircle className="w-5 h-5" />;
-      case 'warning': return <AlertTriangle className="w-5 h-5" />;
-      case 'error': return <AlertCircle className="w-5 h-5" />;
-      default: return <Bell className="w-5 h-5" />;
+      case 'success':
+        return <CheckCircle className="w-5 h-5" />;
+      case 'warning':
+        return <AlertTriangle className="w-5 h-5" />;
+      case 'error':
+        return <AlertCircle className="w-5 h-5" />;
+      default:
+        return <Bell className="w-5 h-5" />;
     }
   };
 
@@ -35,10 +49,14 @@ const NotificationToast: React.FC = () => {
     if (priority === 'HIGH') return 'bg-orange-500 border-l-4 border-orange-700';
 
     switch (type) {
-      case 'success': return 'bg-green-500 border-l-4 border-green-700';
-      case 'warning': return 'bg-yellow-500 border-l-4 border-yellow-700';
-      case 'error': return 'bg-red-500 border-l-4 border-red-700';
-      default: return 'bg-blue-500 border-l-4 border-blue-700';
+      case 'success':
+        return 'bg-green-500 border-l-4 border-green-700';
+      case 'warning':
+        return 'bg-yellow-500 border-l-4 border-yellow-700';
+      case 'error':
+        return 'bg-red-500 border-l-4 border-red-700';
+      default:
+        return 'bg-blue-500 border-l-4 border-blue-700';
     }
   };
 
@@ -51,9 +69,7 @@ const NotificationToast: React.FC = () => {
             <WifiOff className="w-4 h-4" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium">
-              Connection lost
-            </p>
+            <p className="text-xs font-medium">Connection lost</p>
             <p className="text-xs opacity-80 mt-1">{connectionError}</p>
           </div>
         </div>
@@ -68,21 +84,23 @@ const NotificationToast: React.FC = () => {
             {getIcon(notification.type, notification.priority)}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold mb-1 line-clamp-2">
-              {notification.title}
-            </h4>
+            <h4 className="text-sm font-semibold mb-1 line-clamp-2">{notification.title}</h4>
             <p className="text-xs opacity-90 line-clamp-3 leading-relaxed">
               {notification.message}
             </p>
             <div className="flex items-center justify-between mt-2">
-              <p className="text-xs opacity-75">
-                {formatTime(notification.timestamp)}
-              </p>
-              <span className={`text-xs px-2 py-1 rounded-full ${notification.priority === 'URGENT' ? 'bg-red-700/50' :
-                  notification.priority === 'HIGH' ? 'bg-orange-600/50' :
-                    notification.priority === 'MEDIUM' ? 'bg-yellow-600/50' :
-                      'bg-gray-600/50'
-                }`}>
+              <p className="text-xs opacity-75">{formatTime(notification.timestamp)}</p>
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${
+                  notification.priority === 'URGENT'
+                    ? 'bg-red-700/50'
+                    : notification.priority === 'HIGH'
+                      ? 'bg-orange-600/50'
+                      : notification.priority === 'MEDIUM'
+                        ? 'bg-yellow-600/50'
+                        : 'bg-gray-600/50'
+                }`}
+              >
                 {notification.priority}
               </span>
             </div>

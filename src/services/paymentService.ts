@@ -54,14 +54,14 @@ class PaymentService {
   async confirmStripePayment(sessionId: string): Promise<PaymentStatus> {
     try {
       const response = await this.api.post<PaymentStatus>('/payment/stripe/confirm', {
-        sessionId
+        sessionId,
       });
       return response.data;
     } catch (error: any) {
       console.error('Error confirming payment:', error);
       return {
         status: 'ERROR',
-        message: error.response?.data?.message || 'Failed to confirm payment'
+        message: error.response?.data?.message || 'Failed to confirm payment',
       };
     }
   }
@@ -74,7 +74,7 @@ class PaymentService {
       console.error('Error getting payment status:', error);
       return {
         status: 'ERROR',
-        message: 'Failed to get payment status'
+        message: 'Failed to get payment status',
       };
     }
   }

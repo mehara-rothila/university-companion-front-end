@@ -18,49 +18,59 @@ class AthenaService {
       availableServices: [
         'Lost & Found',
         'Financial Aid',
-        'Library Services', 
+        'Library Services',
         'Study Spaces',
         'Wellness Support',
         'Academic Planning',
         'Navigation',
         'Dining Services',
         'Weather Updates',
-        'Notifications'
+        'Notifications',
       ],
       studentResources: {
         library: {
           name: 'Main Library',
           hours: '24/7',
           floors: 5,
-          studySpaces: ['Silent Study Zone', 'Group Study Rooms', 'Computer Labs', 'Discussion Areas']
+          studySpaces: [
+            'Silent Study Zone',
+            'Group Study Rooms',
+            'Computer Labs',
+            'Discussion Areas',
+          ],
         },
         diningHalls: [
           { name: 'North Dining Hall', status: 'Open', waitTime: '5-10 mins' },
           { name: 'South Dining Hall', status: 'Open', waitTime: '15-20 mins' },
-          { name: 'Engineering Cafeteria', status: 'Open', waitTime: '3-5 mins' }
+          { name: 'Engineering Cafeteria', status: 'Open', waitTime: '3-5 mins' },
         ],
         buildings: [
           'Engineering Building',
-          'Science Building', 
+          'Science Building',
           'Architecture Building',
           'IT Building',
           'Administration Building',
           'Library',
-          'Student Center'
-        ]
+          'Student Center',
+        ],
       },
       emergencyContacts: {
         security: '+94-11-2640051',
         medical: '+94-11-2642941',
-        counseling: '+94-11-2640456'
+        counseling: '+94-11-2640456',
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     return this.context;
   }
 
-  async processMessage(message: string, conversationHistory: ChatMessage[] = [], attachments?: ChatAttachment[], userId?: number): Promise<ChatResponse> {
+  async processMessage(
+    message: string,
+    conversationHistory: ChatMessage[] = [],
+    attachments?: ChatAttachment[],
+    userId?: number
+  ): Promise<ChatResponse> {
     try {
       await this.initializeContext();
       this.conversationHistory = conversationHistory;
@@ -76,9 +86,9 @@ class AthenaService {
                 { text: 'Lost & Found', action: 'lost_found', route: '/lost-found' },
                 { text: 'Financial Aid', action: 'financial_aid', route: '/financial-aid' },
                 { text: 'Library Services', action: 'library', route: '/library' },
-                { text: 'Contact Support', action: 'contact_support' }
+                { text: 'Contact Support', action: 'contact_support' },
               ],
-              intent: 'token_limit_exceeded'
+              intent: 'token_limit_exceeded',
             };
           }
         } catch (error) {
@@ -96,15 +106,15 @@ class AthenaService {
             { text: 'Lost & Found', action: 'lost_found', route: '/lost-found' },
             { text: 'Financial Aid', action: 'financial_aid', route: '/financial-aid' },
             { text: 'Library Services', action: 'library', route: '/library' },
-            { text: 'Contact Support', action: 'contact_support' }
+            { text: 'Contact Support', action: 'contact_support' },
           ],
-          intent: 'token_limit_exceeded'
+          intent: 'token_limit_exceeded',
         };
       }
 
       // Process any attachments first
       let attachmentContext = '';
-      
+
       if (attachments && attachments.length > 0) {
         for (const attachment of attachments) {
           if (attachment.extractedText) {
@@ -133,7 +143,7 @@ class AthenaService {
       }
 
       const response = await this.callGeminiAPI(userPrompt, imageUrls, pdfUrls);
-      
+
       // Record token usage
       const outputTokens = tokenCountingService.estimateTokenCount(response);
       tokenCountingService.recordTokenUsage(
@@ -141,35 +151,35 @@ class AthenaService {
         outputTokens,
         attachments && attachments.length > 0 ? 'chat_with_files' : 'chat'
       );
-      
+
       const chatResponse = this.parseResponse(response, message);
-      
+
       // Add token usage metadata
       chatResponse.metadata = {
         tokens: estimatedInputTokens + outputTokens,
         responseTime: Date.now(),
-        attachmentsProcessed: attachments?.length || 0
+        attachmentsProcessed: attachments?.length || 0,
       };
-      
+
       return chatResponse;
-      
     } catch (error) {
       console.error('❌ Error processing message:', error);
       return {
-        content: "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment. If the issue persists, you can reach out to university support services.",
+        content:
+          "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment. If the issue persists, you can reach out to university support services.",
         suggestions: [
           { text: 'Try again', action: 'retry' },
           { text: 'Contact support', action: 'contact_support' },
-          { text: 'View help', action: 'help' }
+          { text: 'View help', action: 'help' },
         ],
-        intent: 'error'
+        intent: 'error',
       };
     }
   }
 
   private buildSystemPrompt(): string {
     const context = this.context!;
-    
+
     return `You are Athena, the AI assistant for ${context.university}. You are a knowledgeable, friendly, and helpful university companion designed to assist students with their academic and campus life.
 
 🏛️ **UNIVERSITY CONTEXT:**
@@ -183,10 +193,10 @@ class AthenaService {
 - Study Areas: ${context.studentResources.library.studySpaces.join(', ')}
 
 🏢 **CAMPUS BUILDINGS:**
-${context.studentResources.buildings.map(building => `- ${building}`).join('\n')}
+${context.studentResources.buildings.map((building) => `- ${building}`).join('\n')}
 
 🍽️ **DINING OPTIONS:**
-${context.studentResources.diningHalls.map(hall => `- ${hall.name}: ${hall.status} (Wait: ${hall.waitTime})`).join('\n')}
+${context.studentResources.diningHalls.map((hall) => `- ${hall.name}: ${hall.status} (Wait: ${hall.waitTime})`).join('\n')}
 
 🚨 **EMERGENCY CONTACTS:**
 - Security: ${context.emergencyContacts.security}
@@ -220,12 +230,12 @@ Remember: You represent ${context.university} and should embody the values of ac
 
   private buildUserPrompt(message: string): string {
     const recentHistory = this.conversationHistory.slice(-5); // Last 5 messages for context
-    
+
     let prompt = `STUDENT MESSAGE: "${message}"\n\n`;
 
     if (recentHistory.length > 0) {
       prompt += `RECENT CONVERSATION:\n`;
-      recentHistory.forEach(msg => {
+      recentHistory.forEach((msg) => {
         prompt += `${msg.type === 'user' ? 'Student' : 'Athena'}: ${msg.content}\n`;
       });
       prompt += '\n';
@@ -236,24 +246,30 @@ Remember: You represent ${context.university} and should embody the values of ac
     return prompt;
   }
 
-  private async callGeminiAPI(message: string, imageUrls: string[] = [], pdfUrls: string[] = []): Promise<string> {
+  private async callGeminiAPI(
+    message: string,
+    imageUrls: string[] = [],
+    pdfUrls: string[] = []
+  ): Promise<string> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const response = await fetch(ATHENA_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify({
         message,
         imageUrls,
-        pdfUrls
-      })
+        pdfUrls,
+      }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Gemini API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        errorData.error || `Gemini API error: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
@@ -268,7 +284,7 @@ Remember: You represent ${context.university} and should embody the values of ac
   private parseResponse(aiResponse: string, userMessage: string): ChatResponse {
     const content = aiResponse.trim();
     const lowerUserMessage = userMessage.toLowerCase();
-    
+
     // Determine intent and generate appropriate suggestions
     let intent = 'general';
     let suggestions = [];
@@ -278,77 +294,96 @@ Remember: You represent ${context.university} and should embody the values of ac
       suggestions = [
         { text: 'Report lost item', action: 'report_lost', route: '/lost-found' },
         { text: 'Search found items', action: 'search_found', route: '/lost-found' },
-        { text: 'View all items', action: 'view_all', route: '/lost-found' }
+        { text: 'View all items', action: 'view_all', route: '/lost-found' },
       ];
-    } else if (lowerUserMessage.includes('financial') || lowerUserMessage.includes('aid') || lowerUserMessage.includes('scholarship')) {
+    } else if (
+      lowerUserMessage.includes('financial') ||
+      lowerUserMessage.includes('aid') ||
+      lowerUserMessage.includes('scholarship')
+    ) {
       intent = 'financial_aid';
       suggestions = [
         { text: 'Apply for aid', action: 'apply_aid', route: '/financial-aid' },
         { text: 'View applications', action: 'view_applications', route: '/financial-aid' },
-        { text: 'Donation opportunities', action: 'donate', route: '/financial-aid' }
+        { text: 'Donation opportunities', action: 'donate', route: '/financial-aid' },
       ];
-    } else if (lowerUserMessage.includes('library') || lowerUserMessage.includes('book') || lowerUserMessage.includes('study')) {
+    } else if (
+      lowerUserMessage.includes('library') ||
+      lowerUserMessage.includes('book') ||
+      lowerUserMessage.includes('study')
+    ) {
       intent = 'library';
       suggestions = [
         { text: 'Search catalog', action: 'search_books', route: '/library' },
         { text: 'Book a room', action: 'book_room', route: '/library' },
-        { text: 'Library hours', action: 'library_hours', route: '/library' }
+        { text: 'Library hours', action: 'library_hours', route: '/library' },
       ];
-    } else if (lowerUserMessage.includes('navigation') || lowerUserMessage.includes('direction') || lowerUserMessage.includes('where')) {
+    } else if (
+      lowerUserMessage.includes('navigation') ||
+      lowerUserMessage.includes('direction') ||
+      lowerUserMessage.includes('where')
+    ) {
       intent = 'navigation';
       suggestions = [
         { text: 'Open map', action: 'open_map', route: '/navigation' },
         { text: 'Find building', action: 'find_building', route: '/navigation' },
-        { text: 'Accessibility routes', action: 'accessibility', route: '/navigation' }
+        { text: 'Accessibility routes', action: 'accessibility', route: '/navigation' },
       ];
-    } else if (lowerUserMessage.includes('wellness') || lowerUserMessage.includes('health') || lowerUserMessage.includes('stress')) {
+    } else if (
+      lowerUserMessage.includes('wellness') ||
+      lowerUserMessage.includes('health') ||
+      lowerUserMessage.includes('stress')
+    ) {
       intent = 'wellness';
       suggestions = [
         { text: 'Wellness check-in', action: 'wellness_checkin', route: '/wellness' },
         { text: 'Counseling services', action: 'counseling', route: '/wellness' },
-        { text: 'Mental health resources', action: 'mental_health', route: '/wellness' }
+        { text: 'Mental health resources', action: 'mental_health', route: '/wellness' },
       ];
     } else if (lowerUserMessage.includes('weather')) {
       intent = 'weather';
       suggestions = [
         { text: 'Full weather report', action: 'weather_report', route: '/weather' },
         { text: 'Weekly forecast', action: 'weekly_forecast', route: '/weather' },
-        { text: 'Weather alerts', action: 'weather_alerts', route: '/weather' }
+        { text: 'Weather alerts', action: 'weather_alerts', route: '/weather' },
       ];
     } else if (lowerUserMessage.includes('notification') || lowerUserMessage.includes('alert')) {
       intent = 'notifications';
       suggestions = [
         { text: 'View all notifications', action: 'view_notifications', route: '/notifications' },
         { text: 'Notification settings', action: 'notification_settings', route: '/notifications' },
-        { text: 'Mark as read', action: 'mark_read', route: '/notifications' }
+        { text: 'Mark as read', action: 'mark_read', route: '/notifications' },
       ];
     } else {
       suggestions = [
         { text: 'Lost & Found', action: 'lost_found', route: '/lost-found' },
         { text: 'Financial Aid', action: 'financial_aid', route: '/financial-aid' },
         { text: 'Library Services', action: 'library', route: '/library' },
-        { text: 'Campus Navigation', action: 'navigation', route: '/navigation' }
+        { text: 'Campus Navigation', action: 'navigation', route: '/navigation' },
       ];
     }
 
     return {
       content,
       suggestions,
-      intent
+      intent,
     };
   }
 
   // Quick action handlers
   async getQuickStats(): Promise<ChatResponse> {
-    return await this.processMessage("Show me quick university statistics and current status");
+    return await this.processMessage('Show me quick university statistics and current status');
   }
 
   async getEmergencyInfo(): Promise<ChatResponse> {
-    return await this.processMessage("I need emergency information and university contact numbers");
+    return await this.processMessage('I need emergency information and university contact numbers');
   }
 
   // File upload methods
-  async uploadFile(file: File, userId?: number): Promise<{ attachment: ChatAttachment; uploadResult: any }> {
+  async uploadFile(
+    file: File,
+    userId?: number
+  ): Promise<{ attachment: ChatAttachment; uploadResult: any }> {
     try {
       const fileType = fileUploadService.getFileType(file);
       if (!fileType) {
@@ -378,7 +413,7 @@ Remember: You represent ${context.university} and should embody the values of ac
             fileUrl: uploadResult.fileUrl,
             fileName: uploadResult.fileName,
             fileType: fileType,
-            fileSize: uploadResult.fileSize
+            fileSize: uploadResult.fileSize,
           });
           console.log('✅ Chatbot upload tracked in database');
         } catch (dbError) {
@@ -392,12 +427,14 @@ Remember: You represent ${context.university} and should embody the values of ac
         name: uploadResult.fileName,
         size: uploadResult.fileSize,
         content: uploadResult.fileUrl,
-        processingStatus: 'completed'
+        processingStatus: 'completed',
       };
 
       return { attachment, uploadResult };
     } catch (error) {
-      throw new Error(`File upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `File upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -412,7 +449,7 @@ Remember: You represent ${context.university} and should embody the values of ac
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify(uploadData),
     });

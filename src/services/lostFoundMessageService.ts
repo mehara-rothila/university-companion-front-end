@@ -305,7 +305,9 @@ class LostFoundMessageService {
   }
 
   // Block a user
-  async blockUser(request: BlockUserRequest): Promise<{ message: string; blockedUser: BlockedUser }> {
+  async blockUser(
+    request: BlockUserRequest
+  ): Promise<{ message: string; blockedUser: BlockedUser }> {
     this.ensureUserApiInit();
     try {
       const response = await this.userApi.post('/block', request);

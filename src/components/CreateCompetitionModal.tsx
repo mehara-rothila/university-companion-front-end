@@ -18,7 +18,7 @@ export default function CreateCompetitionModal({
   onClose,
   onSuccess,
   organizerId,
-  isDarkMode
+  isDarkMode,
 }: CreateCompetitionModalProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -36,18 +36,20 @@ export default function CreateCompetitionModal({
     registrationDeadline: '',
     maxParticipants: '',
     internalEnrollmentEnabled: false,
-    externalEnrollmentUrl: ''
+    externalEnrollmentUrl: '',
   });
 
   const [formFields, setFormFields] = useState<Omit<FormField, 'id' | 'competitionId'>[]>([]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -64,20 +66,24 @@ export default function CreateCompetitionModal({
   };
 
   const addFormField = () => {
-    setFormFields([...formFields, {
-      fieldLabel: '',
-      fieldType: 'TEXT',
-      required: true,
-      order: formFields.length,
-      options: null,
-      placeholder: null
-    }]);
+    setFormFields([
+      ...formFields,
+      {
+        fieldLabel: '',
+        fieldType: 'TEXT',
+        required: true,
+        order: formFields.length,
+        options: null,
+        placeholder: null,
+      },
+    ]);
   };
 
-  const updateFormField = (index: number, updates: Partial<Omit<FormField, 'id' | 'competitionId'>>) => {
-    setFormFields(formFields.map((field, i) =>
-      i === index ? { ...field, ...updates } : field
-    ));
+  const updateFormField = (
+    index: number,
+    updates: Partial<Omit<FormField, 'id' | 'competitionId'>>
+  ) => {
+    setFormFields(formFields.map((field, i) => (i === index ? { ...field, ...updates } : field)));
   };
 
   const removeFormField = (index: number) => {
@@ -102,13 +108,15 @@ export default function CreateCompetitionModal({
         prizes: formData.prizes || null,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
-        registrationDeadline: formData.registrationDeadline ? new Date(formData.registrationDeadline).toISOString() : null,
+        registrationDeadline: formData.registrationDeadline
+          ? new Date(formData.registrationDeadline).toISOString()
+          : null,
         maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
         imageUrl,
         organizerId,
         internalEnrollmentEnabled: formData.internalEnrollmentEnabled,
         externalEnrollmentUrl: formData.externalEnrollmentUrl || null,
-        formFields: formData.internalEnrollmentEnabled ? formFields : []
+        formFields: formData.internalEnrollmentEnabled ? formFields : [],
       };
 
       await competitionService.createCompetition(competitionData);
@@ -126,7 +134,9 @@ export default function CreateCompetitionModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full my-8`}>
+      <div
+        className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full my-8`}
+      >
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -146,27 +156,37 @@ export default function CreateCompetitionModal({
             <div className="flex items-center justify-between">
               {[1, 2, 3].map((s) => (
                 <div key={s} className="flex items-center flex-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step >= s
-                      ? 'bg-purple-600 text-white'
-                      : isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                      step >= s
+                        ? 'bg-purple-600 text-white'
+                        : isDarkMode
+                          ? 'bg-gray-700 text-gray-400'
+                          : 'bg-gray-200 text-gray-600'
+                    }`}
+                  >
                     {s}
                   </div>
                   {s < 3 && (
-                    <div className={`flex-1 h-1 mx-2 ${
-                      step > s
-                        ? 'bg-purple-600'
-                        : isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-                    }`} />
+                    <div
+                      className={`flex-1 h-1 mx-2 ${
+                        step > s ? 'bg-purple-600' : isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+                      }`}
+                    />
                   )}
                 </div>
               ))}
             </div>
             <div className="flex items-center justify-between mt-2">
-              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Basic Info</span>
-              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Enrollment</span>
-              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Review</span>
+              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Basic Info
+              </span>
+              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Enrollment
+              </span>
+              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Review
+              </span>
             </div>
           </div>
 
@@ -174,7 +194,9 @@ export default function CreateCompetitionModal({
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   Competition Title *
                 </label>
                 <input
@@ -188,7 +210,9 @@ export default function CreateCompetitionModal({
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   Description *
                 </label>
                 <textarea
@@ -203,7 +227,9 @@ export default function CreateCompetitionModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Category *
                   </label>
                   <select
@@ -223,7 +249,9 @@ export default function CreateCompetitionModal({
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Location
                   </label>
                   <input
@@ -238,7 +266,9 @@ export default function CreateCompetitionModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Start Date *
                   </label>
                   <input
@@ -252,7 +282,9 @@ export default function CreateCompetitionModal({
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     End Date *
                   </label>
                   <input
@@ -268,7 +300,9 @@ export default function CreateCompetitionModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Registration Deadline
                   </label>
                   <input
@@ -281,7 +315,9 @@ export default function CreateCompetitionModal({
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     Max Participants
                   </label>
                   <input
@@ -296,7 +332,9 @@ export default function CreateCompetitionModal({
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   Prizes
                 </label>
                 <textarea
@@ -310,10 +348,14 @@ export default function CreateCompetitionModal({
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   Competition Image
                 </label>
-                <div className={`border-2 border-dashed rounded-lg p-4 text-center ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}>
+                <div
+                  className={`border-2 border-dashed rounded-lg p-4 text-center ${isDarkMode ? 'border-gray-600' : 'border-gray-300'}`}
+                >
                   {imagePreview ? (
                     <div className="relative">
                       <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded" />
@@ -329,8 +371,12 @@ export default function CreateCompetitionModal({
                     </div>
                   ) : (
                     <label className="cursor-pointer">
-                      <Upload className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Click to upload image</p>
+                      <Upload
+                        className={`w-12 h-12 mx-auto mb-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+                      />
+                      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        Click to upload image
+                      </p>
                       <input
                         type="file"
                         accept="image/*"
@@ -355,7 +401,9 @@ export default function CreateCompetitionModal({
                   onChange={handleInputChange}
                   className="w-4 h-4"
                 />
-                <label className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   Enable internal enrollment (with custom form)
                 </label>
               </div>
@@ -363,7 +411,9 @@ export default function CreateCompetitionModal({
               {formData.internalEnrollmentEnabled && (
                 <div className="space-y-4 pl-6">
                   <div className="flex items-center justify-between">
-                    <h4 className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <h4
+                      className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                    >
                       Enrollment Form Fields
                     </h4>
                     <button
@@ -376,9 +426,14 @@ export default function CreateCompetitionModal({
                   </div>
 
                   {formFields.map((field, index) => (
-                    <div key={index} className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}
+                    >
                       <div className="flex items-center justify-between mb-3">
-                        <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <span
+                          className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                        >
                           Field {index + 1}
                         </span>
                         <button
@@ -400,7 +455,11 @@ export default function CreateCompetitionModal({
 
                         <select
                           value={field.fieldType}
-                          onChange={(e) => updateFormField(index, { fieldType: e.target.value as FormField['fieldType'] })}
+                          onChange={(e) =>
+                            updateFormField(index, {
+                              fieldType: e.target.value as FormField['fieldType'],
+                            })
+                          }
                           className={`px-3 py-2 rounded ${isDarkMode ? 'bg-gray-600 text-gray-100' : 'bg-white text-gray-900'}`}
                         >
                           <option value="TEXT">Text</option>
@@ -426,7 +485,11 @@ export default function CreateCompetitionModal({
                             onChange={(e) => updateFormField(index, { required: e.target.checked })}
                             className="w-4 h-4"
                           />
-                          <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Required field</span>
+                          <span
+                            className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                          >
+                            Required field
+                          </span>
                         </label>
                       </div>
                     </div>
@@ -435,7 +498,9 @@ export default function CreateCompetitionModal({
               )}
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label
+                  className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   External Enrollment URL (optional)
                 </label>
                 <input
@@ -456,18 +521,28 @@ export default function CreateCompetitionModal({
           {/* Step 3: Review */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
+              <div
+                className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}
+              >
                 <p className={`text-sm ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'}`}>
-                  Your competition will be submitted for admin approval. It will be visible to students once approved.
+                  Your competition will be submitted for admin approval. It will be visible to
+                  students once approved.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Summary:</h4>
-                <ul className={`text-sm space-y-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <h4 className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                  Summary:
+                </h4>
+                <ul
+                  className={`text-sm space-y-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                >
                   <li>Title: {formData.title}</li>
                   <li>Category: {formData.category}</li>
-                  <li>Dates: {new Date(formData.startDate).toLocaleDateString()} - {new Date(formData.endDate).toLocaleDateString()}</li>
+                  <li>
+                    Dates: {new Date(formData.startDate).toLocaleDateString()} -{' '}
+                    {new Date(formData.endDate).toLocaleDateString()}
+                  </li>
                   <li>Internal Enrollment: {formData.internalEnrollmentEnabled ? 'Yes' : 'No'}</li>
                   <li>External URL: {formData.externalEnrollmentUrl ? 'Yes' : 'No'}</li>
                   {formData.internalEnrollmentEnabled && <li>Form Fields: {formFields.length}</li>}
@@ -498,7 +573,14 @@ export default function CreateCompetitionModal({
               {step < 3 ? (
                 <button
                   onClick={() => setStep(step + 1)}
-                  disabled={step === 1 && (!formData.title || !formData.description || !formData.category || !formData.startDate || !formData.endDate)}
+                  disabled={
+                    step === 1 &&
+                    (!formData.title ||
+                      !formData.description ||
+                      !formData.category ||
+                      !formData.startDate ||
+                      !formData.endDate)
+                  }
                   className="px-6 py-2 bg-purple-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next

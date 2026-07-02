@@ -1,6 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useState, useMemo, useCallback, useRef } from 'react';
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 
 interface RealtimeNotification {
@@ -40,11 +48,9 @@ interface NotificationProviderProps {
   userId?: string;
 }
 
-export const NotificationProvider: React.FC<NotificationProviderProps> = ({
-  children,
-  userId
-}) => {
-  const { notifications, isConnected, connectionError, sendMessage, clearNotifications } = useWebSocket(userId);
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children, userId }) => {
+  const { notifications, isConnected, connectionError, sendMessage, clearNotifications } =
+    useWebSocket(userId);
   const [toastNotifications, setToastNotifications] = useState<ToastNotification[]>([]);
 
   // Track timer IDs for cleanup
@@ -55,36 +61,39 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   // Cleanup all timers on unmount
   React.useEffect(() => {
     return () => {
-      timersRef.current.forEach(timer => clearTimeout(timer));
+      timersRef.current.forEach((timer) => clearTimeout(timer));
       timersRef.current.clear();
     };
   }, []);
 
   const removeToastNotification = useCallback((id: string) => {
-    setToastNotifications(prev => prev.filter(n => n.id !== id));
+    setToastNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  const addToastNotification = useCallback((notification: Omit<ToastNotification, 'id' | 'timestamp'>) => {
-    const newNotification: ToastNotification = {
-      ...notification,
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString()
-    };
-    setToastNotifications(prev => [...prev, newNotification]);
+  const addToastNotification = useCallback(
+    (notification: Omit<ToastNotification, 'id' | 'timestamp'>) => {
+      const newNotification: ToastNotification = {
+        ...notification,
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+      };
+      setToastNotifications((prev) => [...prev, newNotification]);
 
-    // Auto-remove after 5 seconds for non-urgent notifications
-    if (notification.priority !== 'URGENT') {
-      const timer = setTimeout(() => {
-        removeToastNotification(newNotification.id);
-        timersRef.current.delete(timer);
-      }, 5000);
-      timersRef.current.add(timer);
-    }
-  }, [removeToastNotification]);
+      // Auto-remove after 5 seconds for non-urgent notifications
+      if (notification.priority !== 'URGENT') {
+        const timer = setTimeout(() => {
+          removeToastNotification(newNotification.id);
+          timersRef.current.delete(timer);
+        }, 5000);
+        timersRef.current.add(timer);
+      }
+    },
+    [removeToastNotification]
+  );
 
   // Convert realtime notifications to toast notifications
   React.useEffect(() => {
-    notifications.forEach(notification => {
+    notifications.forEach((notification) => {
       // Prevent duplicate processing
       if (processedNotificationsRef.current.has(notification.id)) {
         return;
@@ -92,35 +101,49 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       processedNotificationsRef.current.add(notification.id);
 
       const toastType: 'info' | 'success' | 'warning' | 'error' =
-        notification.type === 'SYSTEM' ? 'info' :
-        notification.type === 'WELLNESS' ? 'success' :
-        notification.priority === 'URGENT' ? 'error' : 'info';
+        notification.type === 'SYSTEM'
+          ? 'info'
+          : notification.type === 'WELLNESS'
+            ? 'success'
+            : notification.priority === 'URGENT'
+              ? 'error'
+              : 'info';
 
       addToastNotification({
         title: notification.title,
         message: notification.message,
         type: toastType,
-        priority: notification.priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+        priority: notification.priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT',
       });
     });
   }, [notifications, addToastNotification]);
 
-  const contextValue = useMemo(() => ({
-    realtimeNotifications: notifications,
-    toastNotifications,
-    isConnected,
-    connectionError,
-    sendMessage,
-    clearNotifications,
-    addToastNotification,
-    removeToastNotification,
-    notificationCount: notifications.length
-  }), [notifications, toastNotifications, isConnected, connectionError, sendMessage, clearNotifications, addToastNotification, removeToastNotification]);
+  const contextValue = useMemo(
+    () => ({
+      realtimeNotifications: notifications,
+      toastNotifications,
+      isConnected,
+      connectionError,
+      sendMessage,
+      clearNotifications,
+      addToastNotification,
+      removeToastNotification,
+      notificationCount: notifications.length,
+    }),
+    [
+      notifications,
+      toastNotifications,
+      isConnected,
+      connectionError,
+      sendMessage,
+      clearNotifications,
+      addToastNotification,
+      removeToastNotification,
+    ]
+  );
 
   return (
-    <NotificationContext.Provider value={contextValue}>
-      {children}
-    </NotificationContext.Provider>
+    <NotificationContext.Provider value={contextValue}>{children}</NotificationContext.Provider>
   );
 };
 

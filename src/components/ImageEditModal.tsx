@@ -19,7 +19,7 @@ export default function ImageEditModal({
   title,
   currentImage,
   onSave,
-  entityType
+  entityType,
 }: ImageEditModalProps) {
   const { isDarkMode } = useDarkMode();
   const [imageUrl, setImageUrl] = useState<string>(currentImage || '');
@@ -71,13 +71,17 @@ export default function ImageEditModal({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className={`relative w-full max-w-md transform rounded-xl shadow-2xl transition-all ${
-          isDarkMode ? 'bg-gray-800' : 'bg-white'
-        }`}>
+        <div
+          className={`relative w-full max-w-md transform rounded-xl shadow-2xl transition-all ${
+            isDarkMode ? 'bg-gray-800' : 'bg-white'
+          }`}
+        >
           {/* Header */}
-          <div className={`flex items-center justify-between px-6 py-4 border-b ${
-            isDarkMode ? 'border-gray-700' : 'border-gray-200'
-          }`}>
+          <div
+            className={`flex items-center justify-between px-6 py-4 border-b ${
+              isDarkMode ? 'border-gray-700' : 'border-gray-200'
+            }`}
+          >
             <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Edit {entityType.charAt(0).toUpperCase() + entityType.slice(1)} Image
             </h3>
@@ -88,7 +92,12 @@ export default function ImageEditModal({
               }`}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -105,15 +114,15 @@ export default function ImageEditModal({
               onImageRemove={handleImageRemove}
             />
 
-            {error && (
-              <p className="mt-3 text-sm text-red-500">{error}</p>
-            )}
+            {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
           </div>
 
           {/* Footer */}
-          <div className={`flex justify-end gap-3 px-6 py-4 border-t ${
-            isDarkMode ? 'border-gray-700' : 'border-gray-200'
-          }`}>
+          <div
+            className={`flex justify-end gap-3 px-6 py-4 border-t ${
+              isDarkMode ? 'border-gray-700' : 'border-gray-200'
+            }`}
+          >
             <button
               onClick={handleClose}
               disabled={saving}
@@ -137,8 +146,20 @@ export default function ImageEditModal({
               {saving ? (
                 <span className="flex items-center gap-2">
                   <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Saving...
                 </span>

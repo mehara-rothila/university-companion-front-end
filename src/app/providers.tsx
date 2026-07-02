@@ -8,12 +8,8 @@ import { TranslationProvider } from '../contexts/TranslationContext';
 
 function NotificationProviderWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  
-  return (
-    <NotificationProvider userId={user?.id?.toString()}>
-      {children}
-    </NotificationProvider>
-  );
+
+  return <NotificationProvider userId={user?.id?.toString()}>{children}</NotificationProvider>;
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -22,9 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <TranslationProvider>
           <DarkModeProvider>
-            <NotificationProviderWrapper>
-              {children}
-            </NotificationProviderWrapper>
+            <NotificationProviderWrapper>{children}</NotificationProviderWrapper>
           </DarkModeProvider>
         </TranslationProvider>
       </AuthProvider>

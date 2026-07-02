@@ -104,7 +104,7 @@ class LostFoundService {
         data: error.response?.data,
         message: error.message,
         url: error.config?.url,
-        params: filters
+        params: filters,
       });
       throw error;
     }

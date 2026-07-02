@@ -157,7 +157,9 @@ export default function EventDetailPage() {
     if (event?.registrationDeadline) {
       const deadline = new Date(event.registrationDeadline);
       if (deadline < new Date()) {
-        setRegistrationError(t('events.errors.deadlinePassed') || 'Registration deadline has passed');
+        setRegistrationError(
+          t('events.errors.deadlinePassed') || 'Registration deadline has passed'
+        );
         return;
       }
     }
@@ -290,11 +292,15 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <div
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
         <Navigation />
         <div className="flex items-center justify-center h-screen relative z-10">
-          <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12`}
+          >
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
           </div>
         </div>
@@ -304,15 +310,22 @@ export default function EventDetailPage() {
 
   if (error || !event) {
     return (
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <div
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
         <Navigation />
         <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}
+          >
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
               {error || 'Event not found'}
             </div>
-            <Link href="/events" className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+            <Link
+              href="/events"
+              className={`inline-block ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+            >
               ← Back to Events
             </Link>
           </div>
@@ -323,7 +336,9 @@ export default function EventDetailPage() {
 
   return (
     <>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <div
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
         <Navigation />
 
@@ -333,7 +348,9 @@ export default function EventDetailPage() {
             <Link
               href="/events"
               className={`inline-flex items-center gap-2 mb-4 ${
-                isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+                isDarkMode
+                  ? 'text-blue-400 hover:text-blue-300'
+                  : 'text-blue-600 hover:text-blue-700'
               }`}
             >
               <ArrowLeft size={20} />
@@ -371,8 +388,8 @@ export default function EventDetailPage() {
                     event.status === 'PENDING'
                       ? 'bg-yellow-500/90 text-yellow-900'
                       : event.status === 'APPROVED'
-                      ? 'bg-green-500/90 text-green-900'
-                      : 'bg-red-500/90 text-red-900'
+                        ? 'bg-green-500/90 text-green-900'
+                        : 'bg-red-500/90 text-red-900'
                   }`}
                 >
                   {event.status}
@@ -380,14 +397,14 @@ export default function EventDetailPage() {
 
                 {/* Faculty Auto-Approval Badge */}
                 {event.status === 'APPROVED' &&
-                 event.approvedBy &&
-                 event.creatorId === event.approvedBy &&
-                 event.creatorRole === 'FACULTY' && (
-                  <span className="px-4 py-2 bg-emerald-600/90 backdrop-blur-sm text-white font-medium rounded-full text-sm flex items-center gap-1">
-                    <CheckCircle size={16} />
-                    Faculty Verified
-                  </span>
-                )}
+                  event.approvedBy &&
+                  event.creatorId === event.approvedBy &&
+                  event.creatorRole === 'FACULTY' && (
+                    <span className="px-4 py-2 bg-emerald-600/90 backdrop-blur-sm text-white font-medium rounded-full text-sm flex items-center gap-1">
+                      <CheckCircle size={16} />
+                      Faculty Verified
+                    </span>
+                  )}
               </div>
             )}
           </div>
@@ -396,7 +413,9 @@ export default function EventDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Title and Description */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 mb-8 border backdrop-blur-sm`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 mb-8 border backdrop-blur-sm`}
+              >
                 <div className="flex justify-between items-start mb-4">
                   <h1 className="text-4xl font-bold">{event.title}</h1>
                   {canEdit && (
@@ -410,7 +429,9 @@ export default function EventDetailPage() {
                   )}
                 </div>
 
-                <p className={`text-lg whitespace-pre-wrap ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <p
+                  className={`text-lg whitespace-pre-wrap ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
                   {event.description}
                 </p>
 
@@ -422,7 +443,9 @@ export default function EventDetailPage() {
               </div>
 
               {/* Comments Section */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-8 border backdrop-blur-sm`}
+              >
                 <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                   <MessageCircle size={24} />
                   Comments ({comments.length})
@@ -477,7 +500,9 @@ export default function EventDetailPage() {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <span className="font-semibold">{comment.userName || 'Anonymous'}</span>
-                            <span className={`text-sm ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <span
+                              className={`text-sm ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                            >
                               {formatCommentDate(comment.createdAt)}
                             </span>
                           </div>
@@ -490,7 +515,9 @@ export default function EventDetailPage() {
                             </button>
                           )}
                         </div>
-                        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>{comment.comment}</p>
+                        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                          {comment.comment}
+                        </p>
                       </div>
                     ))
                   )}
@@ -501,7 +528,9 @@ export default function EventDetailPage() {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               {/* Registration Card */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-6 border backdrop-blur-sm`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-6 border backdrop-blur-sm`}
+              >
                 <h2 className="text-xl font-bold mb-4">Registration</h2>
 
                 {registrationSuccess && (
@@ -581,7 +610,9 @@ export default function EventDetailPage() {
               </div>
 
               {/* Event Details Card */}
-              <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+              >
                 <h2 className="text-xl font-bold mb-4">Event Details</h2>
 
                 <div className="space-y-4">
@@ -612,7 +643,9 @@ export default function EventDetailPage() {
                     <MapPin size={20} className="text-blue-500 mt-1" />
                     <div>
                       <p className="font-semibold">Location</p>
-                      <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{event.location}</p>
+                      <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                        {event.location}
+                      </p>
                     </div>
                   </div>
 
@@ -621,7 +654,9 @@ export default function EventDetailPage() {
                     <Users size={20} className="text-blue-500 mt-1" />
                     <div>
                       <p className="font-semibold">Organizer</p>
-                      <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{event.organizerName}</p>
+                      <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                        {event.organizerName}
+                      </p>
                     </div>
                   </div>
 

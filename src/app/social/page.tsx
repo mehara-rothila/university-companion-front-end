@@ -9,7 +9,19 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, Heart, MessageCircle, Share2, Calendar, Users, Newspaper, Search, Building2, ImagePlus, X } from 'lucide-react';
+import {
+  Trophy,
+  Heart,
+  MessageCircle,
+  Share2,
+  Calendar,
+  Users,
+  Newspaper,
+  Search,
+  Building2,
+  ImagePlus,
+  X,
+} from 'lucide-react';
 import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
 
@@ -46,44 +58,47 @@ export default function SocialPage() {
   }, []);
 
   // Handle achievement like
-  const handleAchievementLike = useCallback(async (achievementId: number) => {
-    const isLiked = likedAchievements.has(achievementId);
+  const handleAchievementLike = useCallback(
+    async (achievementId: number) => {
+      const isLiked = likedAchievements.has(achievementId);
 
-    try {
-      if (isLiked) {
-        await achievementService.unlikeAchievement(achievementId);
-        setLikedAchievements(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(achievementId);
-          return newSet;
-        });
-      } else {
-        await achievementService.likeAchievement(achievementId);
-        setLikedAchievements(prev => new Set(prev).add(achievementId));
+      try {
+        if (isLiked) {
+          await achievementService.unlikeAchievement(achievementId);
+          setLikedAchievements((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(achievementId);
+            return newSet;
+          });
+        } else {
+          await achievementService.likeAchievement(achievementId);
+          setLikedAchievements((prev) => new Set(prev).add(achievementId));
+        }
+
+        // Update local state
+        setAchievements((prev) =>
+          prev.map((achievement) =>
+            achievement.id === achievementId
+              ? {
+                  ...achievement,
+                  likes: isLiked ? achievement.likes - 1 : achievement.likes + 1,
+                }
+              : achievement
+          )
+        );
+      } catch (error) {
+        console.error('Error liking achievement:', error);
       }
-
-      // Update local state
-      setAchievements(prev =>
-        prev.map(achievement =>
-          achievement.id === achievementId
-            ? {
-                ...achievement,
-                likes: isLiked ? achievement.likes - 1 : achievement.likes + 1
-              }
-            : achievement
-        )
-      );
-    } catch (error) {
-      console.error('Error liking achievement:', error);
-    }
-  }, [likedAchievements]);
+    },
+    [likedAchievements]
+  );
 
   // Handle achievement share
   const handleAchievementShare = useCallback(async (achievementId: number) => {
     try {
       await achievementService.shareAchievement(achievementId);
-      setAchievements(prev =>
-        prev.map(achievement =>
+      setAchievements((prev) =>
+        prev.map((achievement) =>
           achievement.id === achievementId
             ? { ...achievement, shares: achievement.shares + 1 }
             : achievement
@@ -97,14 +112,14 @@ export default function SocialPage() {
   // Get category color for achievements
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Competition': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-      'Academic': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      'Project': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-      'Award': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-      'Research': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-      'Sports': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-      'Cultural': 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-      'Leadership': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+      Competition: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+      Academic: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+      Project: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+      Award: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+      Research: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+      Sports: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+      Cultural: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+      Leadership: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
       'Community Service': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     };
     return colors[category] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
@@ -121,10 +136,27 @@ export default function SocialPage() {
   };
 
   // Coming Soon placeholder component
-  const ComingSoonPlaceholder = ({ title, icon: Icon, description }: { title: string; icon: any; description: string }) => (
-    <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
-      <Icon size={64} className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`} />
-      <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{title}</h3>
+  const ComingSoonPlaceholder = ({
+    title,
+    icon: Icon,
+    description,
+  }: {
+    title: string;
+    icon: any;
+    description: string;
+  }) => (
+    <div
+      className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}
+    >
+      <Icon
+        size={64}
+        className={`mx-auto mb-4 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}
+      />
+      <h3
+        className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+      >
+        {title}
+      </h3>
       <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>{description}</p>
       <div className="mt-6">
         <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
@@ -138,10 +170,14 @@ export default function SocialPage() {
     return (
       <>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}
+        >
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Loading social activities...</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Loading social activities...
+            </p>
           </div>
         </main>
       </>
@@ -151,21 +187,36 @@ export default function SocialPage() {
   return (
     <>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-        
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-          
           {/* Header */}
           <div className="mb-8">
-            <div className={`${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg rounded-xl p-6 animate-fade-in`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg rounded-xl p-6 animate-fade-in`}
+            >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <h1
+                    className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2 flex items-center`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-8 w-8 mr-3 text-purple-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
                     </svg>
                     Social & Activities
                   </h1>
@@ -203,14 +254,46 @@ export default function SocialPage() {
           </div>
 
           {/* Tab Navigation */}
-          <div className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}>
+          <div
+            className={`mb-8 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm animate-fade-in`}
+          >
             <div className="flex overflow-x-auto">
               {[
-                { id: 'achievements', label: 'Achievements', icon: Trophy, count: achievements.length, color: 'text-yellow-500' },
-                { id: 'events', label: 'Events', icon: Calendar, count: null, color: 'text-blue-500' },
-                { id: 'clubs', label: 'Clubs', icon: Building2, count: null, color: 'text-green-500' },
-                { id: 'feed', label: 'Feed', icon: Newspaper, count: null, color: 'text-orange-500' },
-                { id: 'discover', label: 'Discover', icon: Search, count: null, color: 'text-pink-500' }
+                {
+                  id: 'achievements',
+                  label: 'Achievements',
+                  icon: Trophy,
+                  count: achievements.length,
+                  color: 'text-yellow-500',
+                },
+                {
+                  id: 'events',
+                  label: 'Events',
+                  icon: Calendar,
+                  count: null,
+                  color: 'text-blue-500',
+                },
+                {
+                  id: 'clubs',
+                  label: 'Clubs',
+                  icon: Building2,
+                  count: null,
+                  color: 'text-green-500',
+                },
+                {
+                  id: 'feed',
+                  label: 'Feed',
+                  icon: Newspaper,
+                  count: null,
+                  color: 'text-orange-500',
+                },
+                {
+                  id: 'discover',
+                  label: 'Discover',
+                  icon: Search,
+                  count: null,
+                  color: 'text-pink-500',
+                },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -224,11 +307,13 @@ export default function SocialPage() {
                   <tab.icon className={`w-4 h-4 mr-2 ${tab.color}`} />
                   {tab.label}
                   {tab.count !== null && (
-                    <span className={`ml-2 px-2 py-1 text-xs rounded-full ${
-                      activeTab === tab.id
-                        ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-                    }`}>
+                    <span
+                      className={`ml-2 px-2 py-1 text-xs rounded-full ${
+                        activeTab === tab.id
+                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                      }`}
+                    >
                       {tab.count}
                     </span>
                   )}
@@ -241,7 +326,9 @@ export default function SocialPage() {
           {activeTab === 'achievements' && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {achievements.length === 0 ? (
-                <div className={`col-span-full ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm`}>
+                <div
+                  className={`col-span-full ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm`}
+                >
                   <div className="text-center py-12">
                     <Trophy size={64} className="mx-auto mb-4 text-yellow-500" />
                     <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
@@ -274,7 +361,9 @@ export default function SocialPage() {
 
                       {/* Category Badge */}
                       <div className="absolute top-4 right-4">
-                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(achievement.category)}`}>
+                        <span
+                          className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(achievement.category)}`}
+                        >
                           {achievement.category}
                         </span>
                       </div>
@@ -287,26 +376,36 @@ export default function SocialPage() {
                         <div className="relative w-10 h-10 flex-shrink-0 mr-3">
                           {achievement.studentImageUrl && !failedImages.has(achievement.id) ? (
                             <img
-                              src={achievement.studentImageUrl.includes('amazonaws.com')
-                                ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(achievement.studentImageUrl)}`
-                                : achievement.studentImageUrl}
+                              src={
+                                achievement.studentImageUrl.includes('amazonaws.com')
+                                  ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(achievement.studentImageUrl)}`
+                                  : achievement.studentImageUrl
+                              }
                               alt={achievement.studentName || 'Student'}
                               className="w-10 h-10 rounded-full object-cover border-2 border-purple-500"
                               onError={() => {
-                                setFailedImages(prev => new Set(prev).add(achievement.id));
+                                setFailedImages((prev) => new Set(prev).add(achievement.id));
                               }}
                             />
                           ) : (
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-purple-500">
-                              {achievement.studentName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'S'}
+                              {achievement.studentName
+                                ?.split(' ')
+                                .map((n) => n[0])
+                                .join('')
+                                .toUpperCase() || 'S'}
                             </div>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} truncate`}>
+                          <h4
+                            className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} truncate`}
+                          >
                             {achievement.studentName}
                           </h4>
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} truncate`}>
+                          <p
+                            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} truncate`}
+                          >
                             {achievement.studentMajor || 'Student'}
                             {achievement.studentYear && ` • Year ${achievement.studentYear}`}
                           </p>
@@ -314,12 +413,16 @@ export default function SocialPage() {
                       </div>
 
                       {/* Achievement Title */}
-                      <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} line-clamp-2`}>
+                      <h3
+                        className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} line-clamp-2`}
+                      >
                         {achievement.title}
                       </h3>
 
                       {/* Achievement Description */}
-                      <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 line-clamp-3`}>
+                      <p
+                        className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4 line-clamp-3`}
+                      >
                         {achievement.description}
                       </p>
 
@@ -340,7 +443,9 @@ export default function SocialPage() {
                           className={`flex items-center space-x-2 transition-colors duration-200 ${
                             likedAchievements.has(achievement.id)
                               ? 'text-red-500 hover:text-red-600'
-                              : isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                              : isDarkMode
+                                ? 'text-gray-400 hover:text-gray-200'
+                                : 'text-gray-600 hover:text-gray-800'
                           }`}
                         >
                           <Heart
@@ -352,7 +457,9 @@ export default function SocialPage() {
 
                         <button
                           className={`flex items-center space-x-2 transition-colors duration-200 ${
-                            isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                            isDarkMode
+                              ? 'text-gray-400 hover:text-gray-200'
+                              : 'text-gray-600 hover:text-gray-800'
                           }`}
                         >
                           <MessageCircle size={20} />
@@ -362,7 +469,9 @@ export default function SocialPage() {
                         <button
                           onClick={() => handleAchievementShare(achievement.id)}
                           className={`flex items-center space-x-2 transition-colors duration-200 ${
-                            isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'
+                            isDarkMode
+                              ? 'text-gray-400 hover:text-gray-200'
+                              : 'text-gray-600 hover:text-gray-800'
                           }`}
                         >
                           <Share2 size={20} />
@@ -377,34 +486,34 @@ export default function SocialPage() {
           )}
 
           {activeTab === 'events' && (
-            <ComingSoonPlaceholder 
-              title="Events" 
-              icon={Calendar} 
-              description="Campus events and activities will be available here soon." 
+            <ComingSoonPlaceholder
+              title="Events"
+              icon={Calendar}
+              description="Campus events and activities will be available here soon."
             />
           )}
 
           {activeTab === 'clubs' && (
-            <ComingSoonPlaceholder 
-              title="Clubs & Organizations" 
-              icon={Users} 
-              description="Join clubs and connect with student organizations coming soon." 
+            <ComingSoonPlaceholder
+              title="Clubs & Organizations"
+              icon={Users}
+              description="Join clubs and connect with student organizations coming soon."
             />
           )}
 
           {activeTab === 'feed' && (
-            <ComingSoonPlaceholder 
-              title="University Feed" 
-              icon={Newspaper} 
-              description="Stay updated with university news and announcements coming soon." 
+            <ComingSoonPlaceholder
+              title="University Feed"
+              icon={Newspaper}
+              description="Stay updated with university news and announcements coming soon."
             />
           )}
 
           {activeTab === 'discover' && (
-            <ComingSoonPlaceholder 
-              title="Discover" 
-              icon={Search} 
-              description="Discover new opportunities and connections coming soon." 
+            <ComingSoonPlaceholder
+              title="Discover"
+              icon={Search}
+              description="Discover new opportunities and connections coming soon."
             />
           )}
         </div>
@@ -412,9 +521,13 @@ export default function SocialPage() {
         {/* Share Achievement Modal */}
         {showAchievementModal && user && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 my-8`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-2xl w-full p-6 my-8`}
+            >
               <div className="flex items-center justify-between mb-6">
-                <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} flex items-center`}>
+                <h2
+                  className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} flex items-center`}
+                >
                   <Trophy className="h-6 w-6 mr-2 text-yellow-500" />
                   Share Your Achievement
                 </h2>
@@ -423,8 +536,19 @@ export default function SocialPage() {
                   onClick={() => setShowAchievementModal(false)}
                   className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors duration-200`}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -453,7 +577,9 @@ export default function SocialPage() {
 
                     console.log('Submitting achievement:', achievementData);
                     await achievementService.createAchievement(achievementData);
-                    alert('Achievement submitted successfully! It will be visible after admin approval.');
+                    alert(
+                      'Achievement submitted successfully! It will be visible after admin approval.'
+                    );
                     setShowAchievementModal(false);
                     setAchievementImageUrl(null);
                     e.currentTarget.reset();
@@ -465,7 +591,9 @@ export default function SocialPage() {
                 className="space-y-4"
               >
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Achievement Title *
                   </label>
                   <input
@@ -478,7 +606,9 @@ export default function SocialPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Category *
                   </label>
                   <select
@@ -501,7 +631,9 @@ export default function SocialPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Description *
                   </label>
                   <textarea
@@ -514,7 +646,9 @@ export default function SocialPage() {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Achievement Date
                   </label>
                   <input
@@ -526,7 +660,9 @@ export default function SocialPage() {
 
                 {/* Image Upload Section */}
                 <div>
-                  <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                  <label
+                    className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}
+                  >
                     Achievement Image (Optional)
                   </label>
                   <ImageUpload
@@ -536,17 +672,35 @@ export default function SocialPage() {
                   />
                 </div>
 
-                <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}>
+                <div
+                  className={`p-4 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800' : 'bg-yellow-50 border border-yellow-200'}`}
+                >
                   <div className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500 mr-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-yellow-500 mr-3 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <div>
-                      <p className={`text-sm font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-1`}>
+                      <p
+                        className={`text-sm font-medium ${isDarkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-1`}
+                      >
                         Admin Approval Required
                       </p>
-                      <p className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
-                        Your achievement will be reviewed by an admin before appearing in the social feed.
+                      <p
+                        className={`text-sm ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}`}
+                      >
+                        Your achievement will be reviewed by an admin before appearing in the social
+                        feed.
                       </p>
                     </div>
                   </div>
@@ -564,7 +718,9 @@ export default function SocialPage() {
                     type="button"
                     onClick={() => setShowAchievementModal(false)}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     Cancel

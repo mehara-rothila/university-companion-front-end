@@ -6,7 +6,27 @@ import { useState, useEffect } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { Home, BookOpen, HelpCircle, LogIn, UserPlus, User, Bot, MapPin, Calendar, Heart, LogOut, Settings, Cloud, FolderOpen, Globe, UserCircle, LayoutDashboard, Bell, AlertTriangle } from 'lucide-react';
+import {
+  Home,
+  BookOpen,
+  HelpCircle,
+  LogIn,
+  UserPlus,
+  User,
+  Bot,
+  MapPin,
+  Calendar,
+  Heart,
+  LogOut,
+  Settings,
+  Cloud,
+  FolderOpen,
+  Globe,
+  UserCircle,
+  LayoutDashboard,
+  Bell,
+  AlertTriangle,
+} from 'lucide-react';
 import axios from 'axios';
 import MobileMenuContent from './MobileMenuContent';
 import { getThumbnailUrl } from '@/utils/imageUtils';
@@ -26,11 +46,11 @@ const Navigation = () => {
   const languages = [
     { code: 'si', name: 'සිංහල', nativeName: 'Sinhala' },
     { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' }
+    { code: 'ta', name: 'தமிழ்', nativeName: 'Tamil' },
   ];
 
   const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === locale) || languages[1];
+    return languages.find((lang) => lang.code === locale) || languages[1];
   };
 
   // Fetch active emergency count
@@ -43,9 +63,9 @@ const Navigation = () => {
 
       const response = await axios.get(`${API_BASE}/emergency/active`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       // Count non-dismissed emergencies
@@ -114,7 +134,9 @@ const Navigation = () => {
           >
             <span className="hidden sm:block">{t('nav.brandName')}</span>
             <span className="sm:hidden">{t('nav.brandName')}</span>
-            <span className="text-purple-800 dark:text-purple-400 block text-xs">{t('nav.brandTagline')}</span>
+            <span className="text-purple-800 dark:text-purple-400 block text-xs">
+              {t('nav.brandTagline')}
+            </span>
           </Link>
         </div>
 
@@ -122,7 +144,11 @@ const Navigation = () => {
         <nav className="hidden lg:flex items-center space-x-6">
           {/* Dashboard - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/dashboard" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+            <Link
+              href="/dashboard"
+              className="nav-link text-sm font-medium"
+              onClick={handleNavigation}
+            >
               <LayoutDashboard className="inline h-4 w-4 mr-1.5" />
               {t('nav.dashboard')}
             </Link>
@@ -130,7 +156,11 @@ const Navigation = () => {
 
           {/* Profile - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/profile" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+            <Link
+              href="/profile"
+              className="nav-link text-sm font-medium"
+              onClick={handleNavigation}
+            >
               <UserCircle className="inline h-4 w-4 mr-1.5" />
               {t('nav.profile')}
             </Link>
@@ -138,7 +168,11 @@ const Navigation = () => {
 
           {/* My Uploads - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/my-uploads" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+            <Link
+              href="/my-uploads"
+              className="nav-link text-sm font-medium"
+              onClick={handleNavigation}
+            >
               <FolderOpen className="inline h-4 w-4 mr-1.5" />
               {t('nav.myUploads')}
             </Link>
@@ -146,7 +180,11 @@ const Navigation = () => {
 
           {/* My Donations - Only show when authenticated */}
           {isAuthenticated && (
-            <Link href="/my-donations" className="nav-link text-sm font-medium" onClick={handleNavigation}>
+            <Link
+              href="/my-donations"
+              className="nav-link text-sm font-medium"
+              onClick={handleNavigation}
+            >
               <Heart className="inline h-4 w-4 mr-1.5" />
               My Donations
             </Link>
@@ -171,7 +209,11 @@ const Navigation = () => {
 
           {/* Admin Panel Link - Only show for admin users */}
           {isAuthenticated && user?.role === 'ADMIN' && (
-            <Link href="/admin" className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-3 py-1.5 rounded-lg font-medium" onClick={handleNavigation}>
+            <Link
+              href="/admin"
+              className="nav-link text-sm bg-purple-100 dark:bg-purple-900/30 px-3 py-1.5 rounded-lg font-medium"
+              onClick={handleNavigation}
+            >
               <Settings className="inline h-4 w-4 mr-1.5" />
               {t('nav.admin')}
             </Link>
@@ -185,8 +227,19 @@ const Navigation = () => {
             >
               <Globe className="h-4 w-4" />
               <span className="text-sm font-medium">{getCurrentLanguage().name}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -199,16 +252,28 @@ const Navigation = () => {
                       setLocale(language.code as 'en' | 'si' | 'ta');
                       setShowLanguageDropdown(false);
                     }}
-                    className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${locale === language.code
-                      ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
+                    className={`w-full px-3 py-2 text-left text-sm transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg ${
+                      locale === language.code
+                        ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{language.name}</span>
                       {locale === language.code && (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                       )}
                     </div>
@@ -227,9 +292,11 @@ const Navigation = () => {
               <div className="flex items-center space-x-2">
                 {user?.image && (
                   <img
-                    src={user.image.includes('amazonaws.com')
-                      ? getThumbnailUrl(user.image, 64)
-                      : user.image}
+                    src={
+                      user.image.includes('amazonaws.com')
+                        ? getThumbnailUrl(user.image, 64)
+                        : user.image
+                    }
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -263,11 +330,7 @@ const Navigation = () => {
         <div className="lg:hidden flex items-center space-x-3">
           {/* Emergency Badge - Mobile Icon */}
           {isAuthenticated && emergencyCount > 0 && (
-            <Link
-              href="/notifications"
-              className="relative p-2"
-              title="Emergency Notifications"
-            >
+            <Link href="/notifications" className="relative p-2" title="Emergency Notifications">
               <Bell className="h-6 w-6 text-purple-700 dark:text-purple-400" />
               <span className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse">
                 {emergencyCount}
@@ -283,11 +346,27 @@ const Navigation = () => {
             className="p-2 rounded-md flex items-center transition-all duration-200 text-purple-700 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
             onClick={handleToggle}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               {isOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -296,13 +375,14 @@ const Navigation = () => {
 
       {/* Mobile menu flyout */}
       <div
-        className={`lg:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${isOpen
-          ? 'opacity-100 translate-y-0 max-h-[1000px]'
-          : 'opacity-0 -translate-y-4 pointer-events-none max-h-0'
-          }`}
+        className={`lg:hidden bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/30 absolute w-full transform transition-all duration-300 ease-in-out ${
+          isOpen
+            ? 'opacity-100 translate-y-0 max-h-[1000px]'
+            : 'opacity-0 -translate-y-4 pointer-events-none max-h-0'
+        }`}
         style={{
           overflow: 'hidden',
-          transitionProperty: 'transform, opacity, max-height'
+          transitionProperty: 'transform, opacity, max-height',
         }}
         aria-hidden={!isOpen}
       >

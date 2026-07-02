@@ -83,7 +83,7 @@ export default function MyUploadsPage() {
     }
   };
 
-  const filteredFiles = files.filter(file => {
+  const filteredFiles = files.filter((file) => {
     if (filter === 'all') return true;
     if (filter === 'images') return file.fileType === 'image';
     if (filter === 'pdfs') return file.fileType === 'pdf';
@@ -107,7 +107,9 @@ export default function MyUploadsPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl ${isDarkMode ? 'bg-gray-800/90 border border-gray-700' : 'bg-white border border-gray-200'} backdrop-blur-sm shadow-lg`}>
+          <div
+            className={`mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl ${isDarkMode ? 'bg-gray-800/90 border border-gray-700' : 'bg-white border border-gray-200'} backdrop-blur-sm shadow-lg`}
+          >
             <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
               My Uploads
             </h1>
@@ -119,14 +121,18 @@ export default function MyUploadsPage() {
           {/* Statistics Cards */}
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
-              <div className={`p-4 sm:p-6 rounded-xl ${
-                isDarkMode
-                  ? 'bg-gray-800/90 border border-gray-700'
-                  : 'bg-white border border-gray-200'
-              } backdrop-blur-sm shadow-lg`}>
+              <div
+                className={`p-4 sm:p-6 rounded-xl ${
+                  isDarkMode
+                    ? 'bg-gray-800/90 border border-gray-700'
+                    : 'bg-white border border-gray-200'
+                } backdrop-blur-sm shadow-lg`}
+              >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Files</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                      Total Files
+                    </p>
                     <p className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                       {stats.totalFiles}
                     </p>
@@ -135,11 +141,13 @@ export default function MyUploadsPage() {
                 </div>
               </div>
 
-              <div className={`p-4 sm:p-6 rounded-xl ${
-                isDarkMode
-                  ? 'bg-gray-800/90 border border-gray-700'
-                  : 'bg-white border border-gray-200'
-              } backdrop-blur-sm shadow-lg`}>
+              <div
+                className={`p-4 sm:p-6 rounded-xl ${
+                  isDarkMode
+                    ? 'bg-gray-800/90 border border-gray-700'
+                    : 'bg-white border border-gray-200'
+                } backdrop-blur-sm shadow-lg`}
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Images</p>
@@ -151,11 +159,13 @@ export default function MyUploadsPage() {
                 </div>
               </div>
 
-              <div className={`p-4 sm:p-6 rounded-xl ${
-                isDarkMode
-                  ? 'bg-gray-800/90 border border-gray-700'
-                  : 'bg-white border border-gray-200'
-              } backdrop-blur-sm shadow-lg`}>
+              <div
+                className={`p-4 sm:p-6 rounded-xl ${
+                  isDarkMode
+                    ? 'bg-gray-800/90 border border-gray-700'
+                    : 'bg-white border border-gray-200'
+                } backdrop-blur-sm shadow-lg`}
+              >
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">PDFs</p>
@@ -167,14 +177,18 @@ export default function MyUploadsPage() {
                 </div>
               </div>
 
-              <div className={`p-4 sm:p-6 rounded-xl ${
-                isDarkMode
-                  ? 'bg-gray-800/90 border border-gray-700'
-                  : 'bg-white border border-gray-200'
-              } backdrop-blur-sm shadow-lg`}>
+              <div
+                className={`p-4 sm:p-6 rounded-xl ${
+                  isDarkMode
+                    ? 'bg-gray-800/90 border border-gray-700'
+                    : 'bg-white border border-gray-200'
+                } backdrop-blur-sm shadow-lg`}
+              >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Storage Used</p>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                      Storage Used
+                    </p>
                     <p className="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">
                       {stats.totalStorageMB.toFixed(2)} MB
                     </p>
@@ -189,10 +203,25 @@ export default function MyUploadsPage() {
           <div className="flex gap-2 sm:gap-4 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible sm:flex-wrap">
             {[
               { key: 'all' as const, label: 'All Files', count: files.length, color: 'blue' },
-              { key: 'images' as const, label: 'Images', count: files.filter(f => f.fileType === 'image').length, color: 'green' },
-              { key: 'pdfs' as const, label: 'PDFs', count: files.filter(f => f.fileType === 'pdf').length, color: 'purple' },
-              { key: 'videos' as const, label: 'Videos', count: files.filter(f => f.fileType === 'video').length, color: 'orange' },
-            ].map(tab => (
+              {
+                key: 'images' as const,
+                label: 'Images',
+                count: files.filter((f) => f.fileType === 'image').length,
+                color: 'green',
+              },
+              {
+                key: 'pdfs' as const,
+                label: 'PDFs',
+                count: files.filter((f) => f.fileType === 'pdf').length,
+                color: 'purple',
+              },
+              {
+                key: 'videos' as const,
+                label: 'Videos',
+                count: files.filter((f) => f.fileType === 'video').length,
+                color: 'orange',
+              },
+            ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setFilter(tab.key)}
@@ -200,12 +229,23 @@ export default function MyUploadsPage() {
                   filter === tab.key
                     ? `bg-${tab.color}-600 text-white shadow-lg`
                     : isDarkMode
-                    ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
-                style={filter === tab.key ? {
-                  backgroundColor: tab.color === 'blue' ? '#2563eb' : tab.color === 'green' ? '#16a34a' : tab.color === 'purple' ? '#9333ea' : '#ea580c'
-                } : undefined}
+                style={
+                  filter === tab.key
+                    ? {
+                        backgroundColor:
+                          tab.color === 'blue'
+                            ? '#2563eb'
+                            : tab.color === 'green'
+                              ? '#16a34a'
+                              : tab.color === 'purple'
+                                ? '#9333ea'
+                                : '#ea580c',
+                      }
+                    : undefined
+                }
               >
                 {tab.label} ({tab.count})
               </button>
@@ -219,13 +259,17 @@ export default function MyUploadsPage() {
               <p className="mt-4 text-gray-600 dark:text-gray-400">Loading your files...</p>
             </div>
           ) : filteredFiles.length === 0 ? (
-            <div className={`text-center py-12 rounded-xl ${
-              isDarkMode
-                ? 'bg-gray-800/90 border border-gray-700'
-                : 'bg-white border border-gray-200'
-            } backdrop-blur-sm`}>
+            <div
+              className={`text-center py-12 rounded-xl ${
+                isDarkMode
+                  ? 'bg-gray-800/90 border border-gray-700'
+                  : 'bg-white border border-gray-200'
+              } backdrop-blur-sm`}
+            >
               <FolderOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">No files found</p>
+              <p className="text-xl font-semibold text-gray-600 dark:text-gray-400">
+                No files found
+              </p>
               <p className="text-gray-500 dark:text-gray-500 mt-2">
                 {filter !== 'all' ? 'Try changing the filter' : 'Upload some files to get started'}
               </p>
@@ -245,13 +289,15 @@ export default function MyUploadsPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
                     {/* Icon + Info */}
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className={`p-2.5 sm:p-3 rounded-lg flex-shrink-0 ${
-                        file.fileType === 'pdf'
-                          ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
-                          : file.fileType === 'video'
-                          ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
-                          : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                      }`}>
+                      <div
+                        className={`p-2.5 sm:p-3 rounded-lg flex-shrink-0 ${
+                          file.fileType === 'pdf'
+                            ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                            : file.fileType === 'video'
+                              ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
+                              : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                        }`}
+                      >
                         {getFileIcon(file.fileType)}
                       </div>
 

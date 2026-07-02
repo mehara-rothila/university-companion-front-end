@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(authHeader && { 'Authorization': authHeader }),
+        ...(authHeader && { Authorization: authHeader }),
       },
       body: JSON.stringify({
         message: body.message || body.userPrompt,
@@ -31,12 +31,8 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data);
-
   } catch (error) {
     console.error('Athena proxy error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

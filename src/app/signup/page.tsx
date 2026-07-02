@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
-import AnimatedBackground from '../../components/AnimatedBackground'
-import Navigation from '../../components/Navigation'
-import { useDarkMode } from '../context/DarkModeContext'
-import { useTranslation } from '@/contexts/TranslationContext'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
+import AnimatedBackground from '../../components/AnimatedBackground';
+import Navigation from '../../components/Navigation';
+import { useDarkMode } from '../context/DarkModeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -20,35 +20,35 @@ export default function SignupPage() {
     studentId: '',
     major: '',
     year: '',
-    role: 'STUDENT'
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const router = useRouter()
-  const { isDarkMode } = useDarkMode()
-  const { t } = useTranslation()
+    role: 'STUDENT',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const router = useRouter();
+  const { isDarkMode } = useDarkMode();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Prevent double submission
     if (isLoading) return;
 
-    setIsLoading(true)
-    setError('')
-    setSuccess('')
+    setIsLoading(true);
+    setError('');
+    setSuccess('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError(t('auth.signup.errorPasswordMismatch'))
-      setIsLoading(false)
-      return
+      setError(t('auth.signup.errorPasswordMismatch'));
+      setIsLoading(false);
+      return;
     }
 
     try {
-      const { confirmPassword, ...signupData } = formData
+      const { confirmPassword, ...signupData } = formData;
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
@@ -56,33 +56,38 @@ export default function SignupPage() {
         },
         body: JSON.stringify({
           ...signupData,
-          year: formData.year ? parseInt(formData.year) : null
+          year: formData.year ? parseInt(formData.year) : null,
         }),
-      })
+      });
 
       if (response.ok) {
-        setSuccess('Account created! Please check your email for the verification code.')
-        setTimeout(() => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`), 2000)
+        setSuccess('Account created! Please check your email for the verification code.');
+        setTimeout(
+          () => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`),
+          2000
+        );
       } else {
-        const errorData = await response.json().catch(() => null)
-        setError(errorData?.message || t('auth.signup.errorRegistrationFailed'))
+        const errorData = await response.json().catch(() => null);
+        setError(errorData?.message || t('auth.signup.errorRegistrationFailed'));
       }
     } catch (err) {
-      setError(t('auth.signup.errorConnection'))
+      setError(t('auth.signup.errorConnection'));
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
-    <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'}`}>
+    <div
+      className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'}`}
+    >
       <AnimatedBackground />
       <Navigation />
 
@@ -108,7 +113,10 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.firstName')}
                 </label>
                 <input
@@ -124,7 +132,10 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.lastName')}
                 </label>
                 <input
@@ -141,7 +152,10 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 {t('auth.signup.email')}
               </label>
               <input
@@ -157,7 +171,10 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 {t('auth.signup.username')}
               </label>
               <input
@@ -174,12 +191,15 @@ export default function SignupPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.password')}
                 </label>
                 <div className="relative">
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     id="password"
                     name="password"
                     value={formData.password}
@@ -200,12 +220,15 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.confirmPassword')}
                 </label>
                 <div className="relative">
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     id="confirmPassword"
                     name="confirmPassword"
                     value={formData.confirmPassword}
@@ -227,7 +250,10 @@ export default function SignupPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label htmlFor="studentId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="studentId"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.studentId')}
                 </label>
                 <input
@@ -242,7 +268,10 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="major" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="major"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.major')}
                 </label>
                 <input
@@ -257,7 +286,10 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="year"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   {t('auth.signup.year')}
                 </label>
                 <select
@@ -278,7 +310,10 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="role"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 {t('auth.signup.accountType')}
               </label>
               <select
@@ -306,7 +341,10 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 dark:text-gray-400">
               {t('auth.signup.haveAccount')}{' '}
-              <Link href="/login" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link">
+              <Link
+                href="/login"
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium animated-link"
+              >
                 {t('auth.signup.signInLink')}
               </Link>
             </p>
@@ -314,5 +352,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

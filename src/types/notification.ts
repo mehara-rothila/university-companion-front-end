@@ -2,7 +2,17 @@ export interface Notification {
   id: number;
   title: string;
   message: string;
-  type: 'GENERAL' | 'ACADEMIC' | 'FINANCIAL_AID' | 'LOST_FOUND' | 'WELLNESS' | 'DINING' | 'LIBRARY' | 'SOCIAL' | 'SYSTEM' | 'EMERGENCY';
+  type:
+    | 'GENERAL'
+    | 'ACADEMIC'
+    | 'FINANCIAL_AID'
+    | 'LOST_FOUND'
+    | 'WELLNESS'
+    | 'DINING'
+    | 'LIBRARY'
+    | 'SOCIAL'
+    | 'SYSTEM'
+    | 'EMERGENCY';
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
   target: 'ALL_STUDENTS' | 'SPECIFIC_USERS' | 'ADMIN_ONLY';
   targetUserIds?: number[];

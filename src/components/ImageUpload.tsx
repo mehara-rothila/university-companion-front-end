@@ -9,7 +9,11 @@ interface ImageUploadProps {
   onImageRemove?: () => void;
 }
 
-export default function ImageUpload({ onImageUpload, currentImage, onImageRemove }: ImageUploadProps) {
+export default function ImageUpload({
+  onImageUpload,
+  currentImage,
+  onImageRemove,
+}: ImageUploadProps) {
   const { isDarkMode } = useDarkMode();
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
@@ -85,9 +89,9 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
     <div className="space-y-2">
       {preview ? (
         <div className="relative">
-          <img 
-            src={preview} 
-            alt="Preview" 
+          <img
+            src={preview}
+            alt="Preview"
             className="w-full h-32 object-cover rounded-lg border-2 border-dashed border-gray-300"
           />
           <button
@@ -96,22 +100,44 @@ export default function ImageUpload({ onImageUpload, currentImage, onImageRemove
             disabled={uploading}
             className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg transition-colors duration-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
       ) : (
-        <div 
+        <div
           onClick={() => fileInputRef.current?.click()}
           className={`w-full h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${
-            isDarkMode 
-              ? 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700' 
+            isDarkMode
+              ? 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700'
               : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
           }`}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-8 w-8 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
           </svg>
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Click to upload image

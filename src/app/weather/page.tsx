@@ -51,7 +51,7 @@ export default function WeatherPage() {
     visibility: 0,
     pressure: 0,
     sunrise: '',
-    sunset: ''
+    sunset: '',
   });
 
   const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
@@ -84,7 +84,7 @@ export default function WeatherPage() {
     const sizeClasses = {
       sm: 'h-6 w-6',
       md: 'h-12 w-12',
-      lg: 'h-20 w-20'
+      lg: 'h-20 w-20',
     };
 
     const iconClass = sizeClasses[size];
@@ -130,10 +130,14 @@ export default function WeatherPage() {
     return (
       <>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center`}
+        >
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.loading')}</p>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              {t('weatherPage.loading')}
+            </p>
           </div>
         </main>
       </>
@@ -143,14 +147,20 @@ export default function WeatherPage() {
   return (
     <>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="default" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Page Header */}
           <div className="mb-8">
-            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <h1 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+            <div
+              className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+            >
+              <h1
+                className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+              >
                 {t('weatherPage.title')}
               </h1>
               <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -160,16 +170,24 @@ export default function WeatherPage() {
           </div>
 
           {/* Current Weather - Large Card */}
-          <div className={`${isDarkMode ? 'bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-700' : 'bg-gradient-to-br from-white/90 to-blue-50/90 border-blue-100'} rounded-3xl shadow-2xl p-8 border backdrop-blur-sm mb-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-gray-700' : 'bg-gradient-to-br from-white/90 to-blue-50/90 border-blue-100'} rounded-3xl shadow-2xl p-8 border backdrop-blur-sm mb-8`}
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Left Side - Main Weather */}
               <div className="flex flex-col justify-center">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
-                      {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                      {new Date().toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
                     </p>
-                    <h2 className={`text-5xl sm:text-7xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                    <h2
+                      className={`text-5xl sm:text-7xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                    >
                       {Math.round(currentWeather.temperature)}°
                     </h2>
                     <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mt-2`}>
@@ -179,9 +197,7 @@ export default function WeatherPage() {
                       {t('weatherPage.feelsLike')} {Math.round(currentWeather.feelsLike)}°C
                     </p>
                   </div>
-                  <div>
-                    {getWeatherIcon(currentWeather.condition, 'lg')}
-                  </div>
+                  <div>{getWeatherIcon(currentWeather.condition, 'lg')}</div>
                 </div>
               </div>
 
@@ -189,40 +205,66 @@ export default function WeatherPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className={`${isDarkMode ? 'bg-gray-700/30' : 'bg-white/70'} rounded-xl p-4`}>
                   <div className="flex items-center mb-2">
-                    <Droplets className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.humidity')}</p>
+                    <Droplets
+                      className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                    />
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('weatherPage.humidity')}
+                    </p>
                   </div>
-                  <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <p
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {currentWeather.humidity}%
                   </p>
                 </div>
 
                 <div className={`${isDarkMode ? 'bg-gray-700/30' : 'bg-white/70'} rounded-xl p-4`}>
                   <div className="flex items-center mb-2">
-                    <Wind className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} />
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.windSpeed')}</p>
+                    <Wind
+                      className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}
+                    />
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('weatherPage.windSpeed')}
+                    </p>
                   </div>
-                  <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <p
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {currentWeather.windSpeed} km/h
                   </p>
                 </div>
 
                 <div className={`${isDarkMode ? 'bg-gray-700/30' : 'bg-white/70'} rounded-xl p-4`}>
                   <div className="flex items-center mb-2">
-                    <Sun className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`} />
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.uvIndex')}</p>
+                    <Sun
+                      className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-600'}`}
+                    />
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('weatherPage.uvIndex')}
+                    </p>
                   </div>
-                  <p className={`text-2xl font-bold ${currentWeather.uvIndex >= 0 ? getUVIndexColor(currentWeather.uvIndex) : (isDarkMode ? 'text-gray-400' : 'text-gray-500')}`}>
-                    {currentWeather.uvIndex >= 0 ? `${currentWeather.uvIndex} - ${getUVIndexLabel(currentWeather.uvIndex)}` : 'N/A'}
+                  <p
+                    className={`text-2xl font-bold ${currentWeather.uvIndex >= 0 ? getUVIndexColor(currentWeather.uvIndex) : isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                  >
+                    {currentWeather.uvIndex >= 0
+                      ? `${currentWeather.uvIndex} - ${getUVIndexLabel(currentWeather.uvIndex)}`
+                      : 'N/A'}
                   </p>
                 </div>
 
                 <div className={`${isDarkMode ? 'bg-gray-700/30' : 'bg-white/70'} rounded-xl p-4`}>
                   <div className="flex items-center mb-2">
-                    <Eye className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.visibility')}</p>
+                    <Eye
+                      className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}
+                    />
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {t('weatherPage.visibility')}
+                    </p>
                   </div>
-                  <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <p
+                    className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {currentWeather.visibility} km
                   </p>
                 </div>
@@ -232,26 +274,42 @@ export default function WeatherPage() {
             {/* Additional Info */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-300/30 dark:border-gray-700/30">
               <div className="text-center">
-                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.pressure')}</p>
-                <p className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('weatherPage.pressure')}
+                </p>
+                <p
+                  className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                >
                   {currentWeather.pressure} mb
                 </p>
               </div>
               <div className="text-center">
-                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.sunrise')}</p>
-                <p className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('weatherPage.sunrise')}
+                </p>
+                <p
+                  className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                >
                   {currentWeather.sunrise}
                 </p>
               </div>
               <div className="text-center">
-                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.sunset')}</p>
-                <p className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('weatherPage.sunset')}
+                </p>
+                <p
+                  className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                >
                   {currentWeather.sunset}
                 </p>
               </div>
               <div className="text-center">
-                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{t('weatherPage.location')}</p>
-                <p className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {t('weatherPage.location')}
+                </p>
+                <p
+                  className={`text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                >
                   Moratuwa
                 </p>
               </div>
@@ -259,8 +317,12 @@ export default function WeatherPage() {
           </div>
 
           {/* Hourly Forecast */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm mb-8`}>
-            <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm mb-8`}
+          >
+            <h3
+              className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}
+            >
               {t('weatherPage.hourlyForecast')}
             </h3>
             <div className="flex overflow-x-auto space-x-4 pb-4">
@@ -270,7 +332,9 @@ export default function WeatherPage() {
                   className={`flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 min-w-[120px]`}
                 >
                   {/* Time */}
-                  <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 text-center`}>
+                  <p
+                    className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-3 text-center`}
+                  >
                     {hour.time}
                   </p>
 
@@ -284,19 +348,27 @@ export default function WeatherPage() {
                     <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-1`}>
                       {t('weatherPage.temperature')}
                     </p>
-                    <p className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} text-center`}>
+                    <p
+                      className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} text-center`}
+                    >
                       {Math.round(hour.temperature)}°C
                     </p>
                   </div>
 
                   {/* Rain Chance */}
                   <div className="flex items-center justify-center space-x-1">
-                    <Droplets className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-                    <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                    <Droplets
+                      className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                    />
+                    <p
+                      className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                    >
                       {hour.precipitation}%
                     </p>
                   </div>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-center mt-1`}>
+                  <p
+                    className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-center mt-1`}
+                  >
                     {t('weatherPage.rainChance')}
                   </p>
                 </div>
@@ -306,15 +378,21 @@ export default function WeatherPage() {
 
           {/* Weather Chatbot */}
           <div className="mb-8">
-            <h3 className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-100 bg-gray-800/90' : 'text-gray-900 bg-white/90'} px-6 py-3 rounded-2xl shadow-sm inline-block mb-4 backdrop-blur-sm`}>
+            <h3
+              className={`text-2xl font-semibold ${isDarkMode ? 'text-gray-100 bg-gray-800/90' : 'text-gray-900 bg-white/90'} px-6 py-3 rounded-2xl shadow-sm inline-block mb-4 backdrop-blur-sm`}
+            >
               {t('weatherPage.askAboutWeather')}
             </h3>
             <WeatherChatbot weatherData={fullWeatherData} isDarkMode={isDarkMode} />
           </div>
 
           {/* 7-Day Forecast */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}>
-            <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm`}
+          >
+            <h3
+              className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4`}
+            >
               {t('weatherPage.sevenDayForecast')}
             </h3>
             <div className="space-y-3">
@@ -325,7 +403,9 @@ export default function WeatherPage() {
                 >
                   {/* Day & Condition */}
                   <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto space-x-4">
-                    <p className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} w-24`}>
+                    <p
+                      className={`text-sm font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} w-24`}
+                    >
                       {day.day}
                     </p>
                     <div className="flex items-center space-x-2">
@@ -340,9 +420,13 @@ export default function WeatherPage() {
                   <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-6">
                     {/* Rain Chance */}
                     <div className="flex items-center space-x-1">
-                      <Droplets className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                      <Droplets
+                        className={`h-4 w-4 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                      />
                       <div>
-                        <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                        <p
+                          className={`text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                        >
                           {day.precipitation}%
                         </p>
                         <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -354,14 +438,18 @@ export default function WeatherPage() {
                     {/* Temperature */}
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
-                        <p className={`text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <p
+                          className={`text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                        >
                           {Math.round(day.high)}°C
                         </p>
                         <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                           {t('weatherPage.high')}
                         </p>
                       </div>
-                      <div className={`w-px h-8 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
+                      <div
+                        className={`w-px h-8 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`}
+                      ></div>
                       <div>
                         <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           {Math.round(day.low)}°C

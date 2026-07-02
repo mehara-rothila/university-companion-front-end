@@ -21,19 +21,14 @@ export async function POST(request: NextRequest) {
     const authSession = await getServerSession(authOptions);
     const authHeader = request.headers.get('Authorization');
     if (!authSession && !authHeader) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const { amount, financialAidId, donorName, donorEmail, isAnonymous, message } = await request.json();
+    const { amount, financialAidId, donorName, donorEmail, isAnonymous, message } =
+      await request.json();
 
     if (!amount || amount < 100) {
-      return NextResponse.json(
-        { error: 'Minimum donation amount is Rs. 100' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Minimum donation amount is Rs. 100' }, { status: 400 });
     }
 
     const baseUrl = request.headers.get('origin') || 'https://athena.rothila.com';
@@ -74,7 +69,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Stripe checkout error:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: 'Failed to create checkout session',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
       { status: 500 }
     );
   }

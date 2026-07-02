@@ -1,6 +1,15 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback, useRef } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import axios from 'axios';
 
@@ -18,7 +27,10 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (username: string, password: string) => Promise<boolean | { error: string; email?: string }>;
+  login: (
+    username: string,
+    password: string
+  ) => Promise<boolean | { error: string; email?: string }>;
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -134,7 +146,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Check for stored auth data (traditional login)
       const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
-      
+
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
@@ -187,51 +199,57 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, [token]);
 
-  const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean | { error: string; email?: string }> => {
-    try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-      const response = await axios.post(`${API_URL}/api/auth/signin`, {
-        usernameOrEmail,
-        password
-      });
+  const login = useCallback(
+    async (
+      usernameOrEmail: string,
+      password: string
+    ): Promise<boolean | { error: string; email?: string }> => {
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+        const response = await axios.post(`${API_URL}/api/auth/signin`, {
+          usernameOrEmail,
+          password,
+        });
 
-      const { accessToken, ...userData } = response.data;
+        const { accessToken, ...userData } = response.data;
 
-      setToken(accessToken);
-      setUser(userData);
+        setToken(accessToken);
+        setUser(userData);
 
-      // Store in localStorage
-      localStorage.setItem('token', accessToken);
-      localStorage.setItem('user', JSON.stringify(userData));
+        // Store in localStorage
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('user', JSON.stringify(userData));
 
-      return true;
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      console.log('Error response:', error.response);
-      console.log('Error response data:', error.response?.data);
+        return true;
+      } catch (error: any) {
+        console.error('Login failed:', error);
+        console.log('Error response:', error.response);
+        console.log('Error response data:', error.response?.data);
 
-      // Check for EMAIL_NOT_VERIFIED error (handle both object and string response)
-      if (error.response?.status === 403) {
-        const responseData = error.response?.data;
+        // Check for EMAIL_NOT_VERIFIED error (handle both object and string response)
+        if (error.response?.status === 403) {
+          const responseData = error.response?.data;
 
-        // Handle case where data is the error object directly
-        if (responseData?.error === 'EMAIL_NOT_VERIFIED') {
+          // Handle case where data is the error object directly
+          if (responseData?.error === 'EMAIL_NOT_VERIFIED') {
+            return {
+              error: 'EMAIL_NOT_VERIFIED',
+              email: responseData.email,
+            };
+          }
+
+          // For other 403 errors (disabled/banned users), don't assume EMAIL_NOT_VERIFIED
           return {
-            error: 'EMAIL_NOT_VERIFIED',
-            email: responseData.email
+            error: responseData?.error || 'ACCESS_DENIED',
+            email: responseData?.email || usernameOrEmail,
           };
         }
 
-        // For other 403 errors (disabled/banned users), don't assume EMAIL_NOT_VERIFIED
-        return {
-          error: responseData?.error || 'ACCESS_DENIED',
-          email: responseData?.email || usernameOrEmail
-        };
+        return false;
       }
-
-      return false;
-    }
-  }, []);
+    },
+    []
+  );
 
   const loginWithGoogle = useCallback(async () => {
     try {
@@ -255,22 +273,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [session]);
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    login,
-    loginWithGoogle,
-    logout,
-    isAuthenticated: !!user,
-    loading,
-    isOnline
-  }), [user, token, login, loginWithGoogle, logout, loading, isOnline]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      login,
+      loginWithGoogle,
+      logout,
+      isAuthenticated: !!user,
+      loading,
+      isOnline,
+    }),
+    [user, token, login, loginWithGoogle, logout, loading, isOnline]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

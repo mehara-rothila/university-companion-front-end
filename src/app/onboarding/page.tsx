@@ -15,18 +15,18 @@ interface OnboardingData {
   university: string;
   studyPreferences: string[];
   learningStyle: string;
-  
+
   // Step 2: University Information
   dormitory: string;
   favoriteSpots: string[];
   accessibilityNeeds: string[];
-  
+
   // Step 3: Schedule & Academic
   academicYear: string;
   major: string;
   courses: string[];
   scheduleImport: boolean;
-  
+
   // Step 4: AI & Notifications
   aiFeatures: string[];
   notificationPreferences: string[];
@@ -60,13 +60,13 @@ export default function OnboardingFlow() {
   });
 
   const updateData = (field: keyof OnboardingData, value: string | boolean | string[]) => {
-    setOnboardingData(prev => ({ ...prev, [field]: value }));
+    setOnboardingData((prev) => ({ ...prev, [field]: value }));
   };
 
   const toggleArrayItem = (field: keyof OnboardingData, item: string) => {
     const currentArray = onboardingData[field] as string[];
     const newArray = currentArray.includes(item)
-      ? currentArray.filter(i => i !== item)
+      ? currentArray.filter((i) => i !== item)
       : [...currentArray, item];
     updateData(field, newArray);
   };
@@ -105,9 +105,23 @@ export default function OnboardingFlow() {
       <div className="bg-gradient-to-r from-purple-700 to-purple-600 dark:from-purple-800 dark:to-purple-700 text-white p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <Link href="/" className="text-white hover:text-purple-200 transition-colors duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <Link
+              href="/"
+              className="text-white hover:text-purple-200 transition-colors duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
             </Link>
             <div className="text-center">
@@ -115,13 +129,15 @@ export default function OnboardingFlow() {
               <p className="text-purple-100">Let&apos;s personalize your experience</p>
             </div>
             <div className="text-right">
-              <span className="text-sm text-purple-200">Step {currentStep} of {totalSteps}</span>
+              <span className="text-sm text-purple-200">
+                Step {currentStep} of {totalSteps}
+              </span>
             </div>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="w-full bg-white/20 rounded-full h-2">
-            <div 
+            <div
               className="bg-white rounded-full h-2 transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
@@ -133,26 +149,42 @@ export default function OnboardingFlow() {
       <main className="relative overflow-hidden">
         {/* Background Animation */}
         <AnimatedBackground variant="default" />
-        
+
         <div className="max-w-4xl mx-auto p-6 relative z-10">
-          
           {/* Step 1: Personal Preferences */}
           {currentStep === 1 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fadeIn">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Tell us about yourself</h2>
-                <p className="text-gray-600 dark:text-gray-400">Help us personalize your Smart University experience</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Tell us about yourself
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Help us personalize your Smart University experience
+                </p>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Full Name
+                    </label>
                     <input
                       type="text"
                       value={onboardingData.name}
@@ -161,9 +193,11 @@ export default function OnboardingFlow() {
                       placeholder="Your full name"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Student ID</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Student ID
+                    </label>
                     <input
                       type="text"
                       value={onboardingData.studentId}
@@ -175,7 +209,9 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">University/College</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    University/College
+                  </label>
                   <input
                     type="text"
                     value={onboardingData.university}
@@ -186,7 +222,9 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">What&apos;s your preferred learning style?</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    What&apos;s your preferred learning style?
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {['Visual', 'Auditory', 'Reading/Writing', 'Kinesthetic'].map((style) => (
                       <button
@@ -205,9 +243,18 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Study Preferences (Select all that apply)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Study Preferences (Select all that apply)
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {['Quiet Spaces', 'Group Study', 'Library', 'Outdoor Areas', 'Cafes', 'Late Night Study'].map((pref) => (
+                    {[
+                      'Quiet Spaces',
+                      'Group Study',
+                      'Library',
+                      'Outdoor Areas',
+                      'Cafes',
+                      'Late Night Study',
+                    ].map((pref) => (
                       <button
                         key={pref}
                         onClick={() => toggleArrayItem('studyPreferences', pref)}
@@ -231,18 +278,35 @@ export default function OnboardingFlow() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fadeIn">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">University Information</h2>
-                <p className="text-gray-600 dark:text-gray-400">Help us understand your university environment</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  University Information
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Help us understand your university environment
+                </p>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">University/Location</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      University/Location
+                    </label>
                     <input
                       type="text"
                       value={onboardingData.university}
@@ -251,9 +315,11 @@ export default function OnboardingFlow() {
                       placeholder="Main University, North University, etc."
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Dormitory/Residence (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Dormitory/Residence (Optional)
+                    </label>
                     <input
                       type="text"
                       value={onboardingData.dormitory}
@@ -265,9 +331,21 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Favorite University Spots (Select all that apply)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Favorite University Spots (Select all that apply)
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {['Library', 'Student Union', 'Gym/Recreation', 'Dining Hall', 'Computer Labs', 'Study Lounges', 'Outdoor Spaces', 'Coffee Shops', 'Academic Buildings'].map((spot) => (
+                    {[
+                      'Library',
+                      'Student Union',
+                      'Gym/Recreation',
+                      'Dining Hall',
+                      'Computer Labs',
+                      'Study Lounges',
+                      'Outdoor Spaces',
+                      'Coffee Shops',
+                      'Academic Buildings',
+                    ].map((spot) => (
                       <button
                         key={spot}
                         onClick={() => toggleArrayItem('favoriteSpots', spot)}
@@ -284,9 +362,18 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Accessibility Needs (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Accessibility Needs (Optional)
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {['Wheelchair Access', 'Visual Aids', 'Hearing Assistance', 'Elevator Priority', 'Close Parking', 'None'].map((need) => (
+                    {[
+                      'Wheelchair Access',
+                      'Visual Aids',
+                      'Hearing Assistance',
+                      'Elevator Priority',
+                      'Close Parking',
+                      'None',
+                    ].map((need) => (
                       <button
                         key={need}
                         onClick={() => toggleArrayItem('accessibilityNeeds', need)}
@@ -310,18 +397,35 @@ export default function OnboardingFlow() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fadeIn">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4l6 6m0-6l-6 6m6-6H4"
+                    />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Academic Setup</h2>
-                <p className="text-gray-600 dark:text-gray-400">Configure your academic profile and schedule</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  Academic Setup
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Configure your academic profile and schedule
+                </p>
               </div>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Academic Year</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Academic Year
+                    </label>
                     <select
                       value={onboardingData.academicYear}
                       onChange={(e) => updateData('academicYear', e.target.value)}
@@ -336,9 +440,11 @@ export default function OnboardingFlow() {
                       <option value="other">Other</option>
                     </select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Major/Field of Study</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Major/Field of Study
+                    </label>
                     <input
                       type="text"
                       value={onboardingData.major}
@@ -350,10 +456,17 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Courses (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Current Courses (Optional)
+                  </label>
                   <textarea
                     value={onboardingData.courses.join(', ')}
-                    onChange={(e) => updateData('courses', e.target.value.split(', ').filter(c => c.trim()))}
+                    onChange={(e) =>
+                      updateData(
+                        'courses',
+                        e.target.value.split(', ').filter((c) => c.trim())
+                      )
+                    }
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                     placeholder="Enter course names separated by commas (e.g., Math 101, Computer Science 201, English 150)"
                     rows={3}
@@ -372,11 +485,15 @@ export default function OnboardingFlow() {
                       />
                     </div>
                     <div className="ml-3">
-                      <label htmlFor="scheduleImport" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label
+                        htmlFor="scheduleImport"
+                        className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >
                         Import Schedule from University System
                       </label>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Allow Smart University to sync with your university&apos;s scheduling system for automatic calendar integration and class reminders.
+                        Allow Smart University to sync with your university&apos;s scheduling system
+                        for automatic calendar integration and class reminders.
                       </p>
                     </div>
                   </div>
@@ -390,25 +507,66 @@ export default function OnboardingFlow() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 animate-fadeIn">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
                   </svg>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">AI Features & Preferences</h2>
-                <p className="text-gray-600 dark:text-gray-400">Customize your AI assistant and notification settings</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  AI Features & Preferences
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Customize your AI assistant and notification settings
+                </p>
               </div>
 
               <div className="space-y-8">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Enable AI Features (Select all that apply)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Enable AI Features (Select all that apply)
+                  </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      { key: 'chatbot', name: 'AI Chatbot Assistant', desc: 'Natural language university assistance' },
-                      { key: 'studySpaces', name: 'Smart Study Space Finder', desc: 'ML-powered availability predictions' },
-                      { key: 'navigation', name: 'Intelligent Navigation', desc: 'Route optimization and crowd analysis' },
-                      { key: 'academic', name: 'Academic Assistant', desc: 'Smart calendar and schedule optimization' },
-                      { key: 'wellness', name: 'Wellness Check-ins', desc: 'Mood tracking and mental health support' },
-                      { key: 'recommendations', name: 'Personalized Recommendations', desc: 'University activities and resources' },
+                      {
+                        key: 'chatbot',
+                        name: 'AI Chatbot Assistant',
+                        desc: 'Natural language university assistance',
+                      },
+                      {
+                        key: 'studySpaces',
+                        name: 'Smart Study Space Finder',
+                        desc: 'ML-powered availability predictions',
+                      },
+                      {
+                        key: 'navigation',
+                        name: 'Intelligent Navigation',
+                        desc: 'Route optimization and crowd analysis',
+                      },
+                      {
+                        key: 'academic',
+                        name: 'Academic Assistant',
+                        desc: 'Smart calendar and schedule optimization',
+                      },
+                      {
+                        key: 'wellness',
+                        name: 'Wellness Check-ins',
+                        desc: 'Mood tracking and mental health support',
+                      },
+                      {
+                        key: 'recommendations',
+                        name: 'Personalized Recommendations',
+                        desc: 'University activities and resources',
+                      },
                     ].map((feature) => (
                       <div
                         key={feature.key}
@@ -420,20 +578,34 @@ export default function OnboardingFlow() {
                         }`}
                       >
                         <div className="flex items-start">
-                          <div className={`w-5 h-5 rounded border-2 mr-3 mt-0.5 flex items-center justify-center ${
-                            onboardingData.aiFeatures.includes(feature.key)
-                              ? 'bg-purple-500 border-purple-500'
-                              : 'border-gray-300 dark:border-gray-500'
-                          }`}>
+                          <div
+                            className={`w-5 h-5 rounded border-2 mr-3 mt-0.5 flex items-center justify-center ${
+                              onboardingData.aiFeatures.includes(feature.key)
+                                ? 'bg-purple-500 border-purple-500'
+                                : 'border-gray-300 dark:border-gray-500'
+                            }`}
+                          >
                             {onboardingData.aiFeatures.includes(feature.key) && (
-                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                             )}
                           </div>
                           <div>
-                            <h3 className="font-medium text-gray-900 dark:text-gray-100">{feature.name}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{feature.desc}</p>
+                            <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                              {feature.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {feature.desc}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -442,9 +614,18 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Notification Preferences</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Notification Preferences
+                  </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {['Study Reminders', 'Class Notifications', 'Wellness Check-ins', 'University Events', 'AI Recommendations', 'Emergency Alerts'].map((pref) => (
+                    {[
+                      'Study Reminders',
+                      'Class Notifications',
+                      'Wellness Check-ins',
+                      'University Events',
+                      'AI Recommendations',
+                      'Emergency Alerts',
+                    ].map((pref) => (
                       <button
                         key={pref}
                         onClick={() => toggleArrayItem('notificationPreferences', pref)}
@@ -461,7 +642,9 @@ export default function OnboardingFlow() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Privacy Level</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Privacy Level
+                  </label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
                       { key: 'minimal', name: 'Minimal', desc: 'Basic features only' },
@@ -486,13 +669,28 @@ export default function OnboardingFlow() {
 
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
                   <div className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500 mr-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-blue-500 mr-3 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <div>
-                      <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-1">AI Ethics & Transparency</h3>
+                      <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-1">
+                        AI Ethics & Transparency
+                      </h3>
                       <p className="text-sm text-blue-700 dark:text-blue-400">
-                        All AI features use transparent algorithms with bias detection. You maintain full control over your data and can adjust these settings anytime in your profile.
+                        All AI features use transparent algorithms with bias detection. You maintain
+                        full control over your data and can adjust these settings anytime in your
+                        profile.
                       </p>
                     </div>
                   </div>
@@ -512,8 +710,19 @@ export default function OnboardingFlow() {
                   : 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-500'
               }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               Previous
             </button>
@@ -527,17 +736,44 @@ export default function OnboardingFlow() {
             >
               {isLoading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Setting up...
                 </>
               ) : (
                 <>
                   {currentStep < totalSteps ? 'Next' : 'Complete Setup'}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </>
               )}

@@ -27,7 +27,9 @@ export default function EventsPage() {
 
   // Filter states
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedTimeFilter, setSelectedTimeFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState<'all' | 'upcoming' | 'past'>(
+    'upcoming'
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
 
@@ -147,15 +149,21 @@ export default function EventsPage() {
   return (
     <>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
           {/* Header */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}
+          >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}>
+                <h1
+                  className={`text-3xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+                >
                   {t('events.title')}
                 </h1>
                 <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -175,7 +183,9 @@ export default function EventsPage() {
           </div>
 
           {/* Tab Navigation */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6 animate-fade-in`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm mb-6 animate-fade-in`}
+          >
             <div className="flex overflow-x-auto">
               <button
                 onClick={() => setActiveTab('explore')}
@@ -202,101 +212,127 @@ export default function EventsPage() {
 
           {/* Filters */}
           {activeTab === 'explore' && (
-            <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}>
-            <div className="flex items-center gap-2 mb-4">
-              <Filter size={20} className={`${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
-              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.filters.title')}</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Time Filter */}
-              <div>
-                <label htmlFor="time-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.time')}</label>
-                <select
-                  id="time-filter"
-                  value={selectedTimeFilter}
-                  onChange={(e) => setSelectedTimeFilter(e.target.value as any)}
-                  aria-label="Filter events by time"
-                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    isDarkMode
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 mb-8 border backdrop-blur-sm animate-fade-in`}
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Filter size={20} className={`${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
+                <h2
+                  className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
                 >
-                  <option value="all">{t('events.filters.all')}</option>
-                  <option value="upcoming">{t('events.filters.upcoming')}</option>
-                  <option value="past">{t('events.filters.past')}</option>
-                </select>
+                  {t('events.filters.title')}
+                </h2>
               </div>
 
-              {/* Category Filter */}
-              <div>
-                <label htmlFor="category-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.category')}</label>
-                <select
-                  id="category-filter"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  aria-label="Filter events by category"
-                  className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    isDarkMode
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category === 'All' ? 'all' : category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Search */}
-              <div>
-                <label htmlFor="search-events" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.search')}</label>
-                <div className="relative">
-                  <Search
-                    size={18}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
-                  <input
-                    id="search-events"
-                    type="text"
-                    placeholder={t('events.filters.searchPlaceholder')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Time Filter */}
+                <div>
+                  <label
+                    htmlFor="time-filter"
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
+                    {t('events.filters.time')}
+                  </label>
+                  <select
+                    id="time-filter"
+                    value={selectedTimeFilter}
+                    onChange={(e) => setSelectedTimeFilter(e.target.value as any)}
+                    aria-label="Filter events by time"
+                    className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                       isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        ? 'bg-gray-700 border-gray-600 text-white'
+                        : 'bg-white border-gray-300 text-gray-900'
                     }`}
-                  />
+                  >
+                    <option value="all">{t('events.filters.all')}</option>
+                    <option value="upcoming">{t('events.filters.upcoming')}</option>
+                    <option value="past">{t('events.filters.past')}</option>
+                  </select>
+                </div>
+
+                {/* Category Filter */}
+                <div>
+                  <label
+                    htmlFor="category-filter"
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
+                    {t('events.filters.category')}
+                  </label>
+                  <select
+                    id="category-filter"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    aria-label="Filter events by category"
+                    className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      isDarkMode
+                        ? 'bg-gray-700 border-gray-600 text-white'
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                  >
+                    {categories.map((category) => (
+                      <option key={category} value={category === 'All' ? 'all' : category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Search */}
+                <div>
+                  <label
+                    htmlFor="search-events"
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
+                    {t('events.filters.search')}
+                  </label>
+                  <div className="relative">
+                    <Search
+                      size={18}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      id="search-events"
+                      type="text"
+                      placeholder={t('events.filters.searchPlaceholder')}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Location Filter */}
+                <div>
+                  <label
+                    htmlFor="location-filter"
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
+                    {t('events.filters.location')}
+                  </label>
+                  <div className="relative">
+                    <MapPin
+                      size={18}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
+                    <input
+                      id="location-filter"
+                      type="text"
+                      placeholder={t('events.filters.locationPlaceholder')}
+                      value={locationFilter}
+                      onChange={(e) => setLocationFilter(e.target.value)}
+                      className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        isDarkMode
+                          ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      }`}
+                    />
+                  </div>
                 </div>
               </div>
-
-              {/* Location Filter */}
-              <div>
-                <label htmlFor="location-filter" className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('events.filters.location')}</label>
-                <div className="relative">
-                  <MapPin
-                    size={18}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
-                  <input
-                    id="location-filter"
-                    type="text"
-                    placeholder={t('events.filters.locationPlaceholder')}
-                    value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      isDarkMode
-                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
-                    }`}
-                  />
-                </div>
-              </div>
-            </div>
             </div>
           )}
 
@@ -318,16 +354,25 @@ export default function EventsPage() {
           {/* Explore Events Tab */}
           {activeTab === 'explore' && !loading && !error && (
             <>
-              <div className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}>
+              <div
+                className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}
+              >
                 <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                  {t('events.showing')} {filteredEvents.length} {filteredEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')}
+                  {t('events.showing')} {filteredEvents.length}{' '}
+                  {filteredEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')}
                 </p>
               </div>
 
               {filteredEvents.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}>
+                <div
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}
+                >
                   <Calendar size={64} className="mx-auto mb-4 text-gray-400" />
-                  <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.empty.noEvents')}</h3>
+                  <h3
+                    className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
+                    {t('events.empty.noEvents')}
+                  </h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     {t('events.empty.adjustFilters')}
                   </p>
@@ -339,7 +384,9 @@ export default function EventsPage() {
                       key={event.id}
                       href={`/events/${event.id}`}
                       className={`block ${
-                        isDarkMode ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800' : 'bg-white/90 border-gray-100 hover:bg-gray-50'
+                        isDarkMode
+                          ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800'
+                          : 'bg-white/90 border-gray-100 hover:bg-gray-50'
                       } rounded-2xl shadow-lg border backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
@@ -411,7 +458,8 @@ export default function EventsPage() {
                             >
                               <Users size={16} />
                               <span>
-                                {event.registeredCount || 0} / {event.maxAttendees} {t('events.registered')}
+                                {event.registeredCount || 0} / {event.maxAttendees}{' '}
+                                {t('events.registered')}
                               </span>
                               {event.spotsAvailable !== null &&
                                 event.spotsAvailable !== undefined &&
@@ -434,16 +482,26 @@ export default function EventsPage() {
           {/* My Events Tab */}
           {activeTab === 'my-events' && !loading && !error && (
             <>
-              <div className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}>
+              <div
+                className={`mb-4 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm`}
+              >
                 <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                  {t('events.showing')} {myEvents.length} {myEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')} you created
+                  {t('events.showing')} {myEvents.length}{' '}
+                  {myEvents.length === 1 ? t('events.empty.event') : t('events.empty.events')} you
+                  created
                 </p>
               </div>
 
               {myEvents.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}>
+                <div
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-12 border backdrop-blur-sm text-center`}
+                >
                   <Calendar size={64} className="mx-auto mb-4 text-gray-400" />
-                  <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('events.myEvents.noEvents')}</h3>
+                  <h3
+                    className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
+                    {t('events.myEvents.noEvents')}
+                  </h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     {t('events.myEvents.noEventsDescription')}
                   </p>
@@ -461,7 +519,9 @@ export default function EventsPage() {
                     <div
                       key={event.id}
                       className={`block ${
-                        isDarkMode ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800' : 'bg-white/90 border-gray-100 hover:bg-gray-50'
+                        isDarkMode
+                          ? 'bg-gray-800/90 border-gray-700 hover:bg-gray-800'
+                          : 'bg-white/90 border-gray-100 hover:bg-gray-50'
                       } rounded-2xl shadow-lg border backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-xl animate-fade-in`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
@@ -483,13 +543,15 @@ export default function EventsPage() {
 
                         {/* Status Badge */}
                         <div className="absolute top-4 left-4">
-                          <span className={`px-3 py-1 backdrop-blur-sm text-sm font-medium rounded-full ${
-                            event.status === 'APPROVED'
-                              ? 'bg-green-100/90 text-green-800'
-                              : event.status === 'PENDING'
-                              ? 'bg-yellow-100/90 text-yellow-800'
-                              : 'bg-red-100/90 text-red-800'
-                          }`}>
+                          <span
+                            className={`px-3 py-1 backdrop-blur-sm text-sm font-medium rounded-full ${
+                              event.status === 'APPROVED'
+                                ? 'bg-green-100/90 text-green-800'
+                                : event.status === 'PENDING'
+                                  ? 'bg-yellow-100/90 text-yellow-800'
+                                  : 'bg-red-100/90 text-red-800'
+                            }`}
+                          >
                             {event.status}
                           </span>
                         </div>
@@ -546,7 +608,8 @@ export default function EventsPage() {
                             >
                               <Users size={16} />
                               <span>
-                                {event.registeredCount || 0} / {event.maxAttendees} {t('events.registered')}
+                                {event.registeredCount || 0} / {event.maxAttendees}{' '}
+                                {t('events.registered')}
                               </span>
                             </div>
                           )}
@@ -564,7 +627,9 @@ export default function EventsPage() {
                             <Link
                               href={`/events/${event.id}/edit`}
                               className={`px-4 py-2 ${
-                                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
+                                isDarkMode
+                                  ? 'bg-gray-700 hover:bg-gray-600'
+                                  : 'bg-gray-200 hover:bg-gray-300'
                               } rounded-lg text-sm font-medium transition-colors`}
                             >
                               {t('events.edit')}

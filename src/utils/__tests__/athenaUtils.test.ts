@@ -112,7 +112,7 @@ describe('getQuickActions', () => {
     const actions = getQuickActions('library');
 
     expect(actions).toHaveLength(3);
-    expect(actions.every(action => action.route === '/library')).toBe(true);
+    expect(actions.every((action) => action.route === '/library')).toBe(true);
   });
 
   it('falls back to general actions for unknown intents', () => {
@@ -154,8 +154,7 @@ describe('calculateConfidence', () => {
   });
 
   it('caps at 100%', () => {
-    const confidence = calculateConfidence(
-      'lost and found something missing', 'lost_found');
+    const confidence = calculateConfidence('lost and found something missing', 'lost_found');
     expect(confidence).toBeLessThanOrEqual(100);
   });
 

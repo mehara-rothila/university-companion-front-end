@@ -11,11 +11,11 @@ interface AuthGuardProps {
   allowedRoles?: string[];
 }
 
-export default function AuthGuard({ 
-  children, 
+export default function AuthGuard({
+  children,
   requireAuth = true,
   redirectTo = '/login',
-  allowedRoles 
+  allowedRoles,
 }: AuthGuardProps) {
   const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function AuthGuard({
     // Check role authorization (normalize to lowercase for comparison)
     if (allowedRoles && user) {
       const userRoleLower = user.role.toLowerCase();
-      const hasAllowedRole = allowedRoles.some(role => role.toLowerCase() === userRoleLower);
+      const hasAllowedRole = allowedRoles.some((role) => role.toLowerCase() === userRoleLower);
       if (!hasAllowedRole) {
         router.push('/dashboard'); // Redirect to dashboard if role not allowed
         return;

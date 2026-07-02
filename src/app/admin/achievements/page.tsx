@@ -9,7 +9,19 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { achievementService } from '@/services/achievementService';
 import type { StudentAchievement } from '@/types/achievement';
-import { Trophy, CheckCircle, XCircle, AlertCircle, Calendar, Trash2, Filter, User, Pencil, Upload, ImageIcon } from 'lucide-react';
+import {
+  Trophy,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Calendar,
+  Trash2,
+  Filter,
+  User,
+  Pencil,
+  Upload,
+  ImageIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import { fileUploadService } from '@/services/fileUploadService';
 
@@ -53,14 +65,14 @@ export default function AdminAchievementsPage() {
         try {
           data = await achievementService.getAllAchievements();
           if (filter !== 'ALL') {
-            data = data.filter(achievement => achievement.status === filter);
+            data = data.filter((achievement) => achievement.status === filter);
           }
         } catch {
           const approved = await achievementService.getApprovedAchievements();
           const pending = await achievementService.getPendingAchievements();
           data = [...approved, ...pending];
           if (filter !== 'ALL') {
-            data = data.filter(achievement => achievement.status === filter);
+            data = data.filter((achievement) => achievement.status === filter);
           }
         }
       }
@@ -101,7 +113,9 @@ export default function AdminAchievementsPage() {
 
     try {
       setActionLoading(true);
-      await achievementService.rejectAchievement(selectedAchievement.id, { reason: rejectionReason });
+      await achievementService.rejectAchievement(selectedAchievement.id, {
+        reason: rejectionReason,
+      });
       setShowRejectModal(false);
       setSelectedAchievement(null);
       setRejectionReason('');
@@ -184,14 +198,14 @@ export default function AdminAchievementsPage() {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      'Competition': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-      'Academic': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      'Project': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-      'Award': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-      'Research': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-      'Sports': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-      'Cultural': 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-      'Leadership': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+      Competition: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+      Academic: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+      Project: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+      Award: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+      Research: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+      Sports: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+      Cultural: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+      Leadership: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
       'Community Service': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     };
     return colors[category] || 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300';
@@ -200,13 +214,29 @@ export default function AdminAchievementsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'APPROVED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">{t('admin.achievements.approved')}</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            {t('admin.achievements.approved')}
+          </span>
+        );
       case 'PENDING':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">{t('admin.achievements.pending')}</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+            {t('admin.achievements.pending')}
+          </span>
+        );
       case 'REJECTED':
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">{t('admin.achievements.rejected')}</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+            {t('admin.achievements.rejected')}
+          </span>
+        );
       default:
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">{status}</span>;
+        return (
+          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -214,13 +244,28 @@ export default function AdminAchievementsPage() {
     return (
       <AuthGuard>
         <Navigation />
-        <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+        >
           <AnimatedBackground variant="dashboard" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-            <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+            <div
+              className={`p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+            >
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-red-500 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
                   {t('admin.common.accessDeniedMessage')}
@@ -236,16 +281,20 @@ export default function AdminAchievementsPage() {
   return (
     <AuthGuard>
       <Navigation />
-      <main className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}>
-
+      <main
+        className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
+      >
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
-
           {/* Header */}
           <div className="mb-8">
-            <div className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}>
-              <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}>
+            <div
+              className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+            >
+              <h1
+                className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}
+              >
                 <Trophy className="h-10 w-10 mr-3 text-yellow-500" />
                 {t('admin.achievements.title')}
               </h1>
@@ -256,10 +305,14 @@ export default function AdminAchievementsPage() {
           </div>
 
           {/* Filter Tabs */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-4 mb-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-4 mb-8`}
+          >
             <div className="flex items-center gap-2 mb-4">
               <Filter className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
-              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('admin.achievements.filterByStatus')}</span>
+              <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {t('admin.achievements.filterByStatus')}
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -314,11 +367,15 @@ export default function AdminAchievementsPage() {
           </div>
 
           {/* Stats */}
-          <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6 mb-8`}>
+          <div
+            className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-6 mb-8`}
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {filter === 'ALL' ? t('admin.achievements.totalAchievements') : `${t(`admin.achievements.${filter.toLowerCase()}`)} ${t('achievements')}`}
+                  {filter === 'ALL'
+                    ? t('admin.achievements.totalAchievements')
+                    : `${t(`admin.achievements.${filter.toLowerCase()}`)} ${t('achievements')}`}
                 </p>
                 <p className="text-3xl font-bold text-yellow-500">{achievements.length}</p>
               </div>
@@ -328,18 +385,35 @@ export default function AdminAchievementsPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}>
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/70' : 'bg-white/70'} backdrop-blur-sm rounded-2xl p-12 text-center`}
+            >
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
-              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('admin.achievements.loading')}</p>
+              <p className={`mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {t('admin.achievements.loading')}
+              </p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+            <div
+              className={`mb-6 p-4 rounded-lg ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}
+            >
               <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-red-500 mr-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <p className={`${isDarkMode ? 'text-red-300' : 'text-red-800'} font-medium`}>
                   {error}
@@ -352,9 +426,15 @@ export default function AdminAchievementsPage() {
           {!loading && !error && (
             <>
               {achievements.length === 0 ? (
-                <div className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}>
+                <div
+                  className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg border backdrop-blur-sm p-12 text-center`}
+                >
                   <CheckCircle size={64} className="mx-auto mb-4 text-green-500" />
-                  <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{t('admin.achievements.noAchievements')}</h3>
+                  <h3
+                    className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
+                    {t('admin.achievements.noAchievements')}
+                  </h3>
                   <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
                     {t('admin.achievements.noAchievementsMatch')}
                   </p>
@@ -385,7 +465,9 @@ export default function AdminAchievementsPage() {
 
                           {/* Category Badge */}
                           <div className="absolute top-4 left-4">
-                            <span className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(achievement.category)}`}>
+                            <span
+                              className={`px-3 py-1 text-sm font-medium rounded-full ${getCategoryColor(achievement.category)}`}
+                            >
                               {achievement.category}
                             </span>
                           </div>
@@ -398,7 +480,11 @@ export default function AdminAchievementsPage() {
 
                         {/* Achievement Details */}
                         <div className="flex-1 p-6">
-                          <h3 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>{achievement.title}</h3>
+                          <h3
+                            className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                          >
+                            {achievement.title}
+                          </h3>
                           <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             {achievement.description}
                           </p>
@@ -409,7 +495,8 @@ export default function AdminAchievementsPage() {
                               <div className="flex items-center gap-2 text-sm">
                                 <Calendar size={16} className="text-yellow-500" />
                                 <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                  {t('admin.achievements.achieved')} {formatDate(achievement.achievementDate)}
+                                  {t('admin.achievements.achieved')}{' '}
+                                  {formatDate(achievement.achievementDate)}
                                 </span>
                               </div>
                             )}
@@ -418,17 +505,21 @@ export default function AdminAchievementsPage() {
                             <div className="flex items-center gap-2 text-sm">
                               <Calendar size={16} className="text-blue-500" />
                               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                {t('admin.achievements.submitted')} {formatDate(achievement.createdAt)}
+                                {t('admin.achievements.submitted')}{' '}
+                                {formatDate(achievement.createdAt)}
                               </span>
                             </div>
                           </div>
 
                           {/* Student Info */}
-                          <div className={`text-sm mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}>
+                          <div
+                            className={`text-sm mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/50'}`}
+                          >
                             <div className="flex items-center gap-2 mb-2">
                               <User size={14} className="text-yellow-500" />
                               <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-                                <strong>{t('admin.achievements.student')}</strong> {achievement.studentName}
+                                <strong>{t('admin.achievements.student')}</strong>{' '}
+                                {achievement.studentName}
                               </span>
                             </div>
                             <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
@@ -453,7 +544,8 @@ export default function AdminAchievementsPage() {
                               {t('admin.achievements.editImage')}
                             </button>
 
-                            {(achievement.status === 'PENDING' || achievement.status === 'REJECTED') && (
+                            {(achievement.status === 'PENDING' ||
+                              achievement.status === 'REJECTED') && (
                               <button
                                 onClick={() => handleApprove(achievement.id)}
                                 disabled={actionLoading}
@@ -464,7 +556,8 @@ export default function AdminAchievementsPage() {
                               </button>
                             )}
 
-                            {(achievement.status === 'PENDING' || achievement.status === 'APPROVED') && (
+                            {(achievement.status === 'PENDING' ||
+                              achievement.status === 'APPROVED') && (
                               <button
                                 onClick={() => openRejectModal(achievement)}
                                 disabled={actionLoading}
@@ -496,17 +589,23 @@ export default function AdminAchievementsPage() {
           {/* Rejection Modal */}
           {showRejectModal && selectedAchievement && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mr-4">
                     <XCircle className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {t('admin.achievements.rejectAchievement')}
                   </h2>
                 </div>
 
-                <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                >
                   {selectedAchievement.imageUrl && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedAchievement.imageUrl)}`}
@@ -515,13 +614,21 @@ export default function AdminAchievementsPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedAchievement.title}</p>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedAchievement.category} • {selectedAchievement.studentName}</p>
+                    <p
+                      className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                    >
+                      {selectedAchievement.title}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {selectedAchievement.category} • {selectedAchievement.studentName}
+                    </p>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     {t('admin.achievements.rejectionReason')}
                   </label>
                   <textarea
@@ -543,7 +650,9 @@ export default function AdminAchievementsPage() {
                     disabled={actionLoading || !rejectionReason.trim()}
                     className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                   >
-                    {actionLoading ? t('admin.achievements.rejecting') : t('admin.achievements.confirmReject')}
+                    {actionLoading
+                      ? t('admin.achievements.rejecting')
+                      : t('admin.achievements.confirmReject')}
                   </button>
 
                   <button
@@ -554,7 +663,9 @@ export default function AdminAchievementsPage() {
                     }}
                     disabled={actionLoading}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     {t('admin.achievements.cancel')}
@@ -567,17 +678,23 @@ export default function AdminAchievementsPage() {
           {/* Delete Modal */}
           {showDeleteModal && selectedAchievement && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
                     <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
-                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {t('admin.achievements.deleteAchievement')}
                   </h2>
                 </div>
 
-                <div className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
+                <div
+                  className={`flex items-center gap-3 p-3 rounded-lg mb-4 ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                >
                   {selectedAchievement.imageUrl && (
                     <img
                       src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedAchievement.imageUrl)}`}
@@ -586,15 +703,23 @@ export default function AdminAchievementsPage() {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedAchievement.title}</p>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{selectedAchievement.category} • {selectedAchievement.studentName}</p>
+                    <p
+                      className={`font-medium truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}
+                    >
+                      {selectedAchievement.title}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {selectedAchievement.category} • {selectedAchievement.studentName}
+                    </p>
                   </div>
                 </div>
 
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
                   {t('admin.achievements.deleteConfirm')}
                 </p>
-                <p className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}>
+                <p
+                  className={`text-sm ${isDarkMode ? 'text-red-400' : 'text-red-600'} mb-6 font-medium`}
+                >
                   {t('admin.achievements.deleteWarning')}
                 </p>
 
@@ -605,7 +730,9 @@ export default function AdminAchievementsPage() {
                     disabled={actionLoading}
                     className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                   >
-                    {actionLoading ? t('admin.achievements.deleting') : t('admin.achievements.deletePermanently')}
+                    {actionLoading
+                      ? t('admin.achievements.deleting')
+                      : t('admin.achievements.deletePermanently')}
                   </button>
 
                   <button
@@ -616,7 +743,9 @@ export default function AdminAchievementsPage() {
                     }}
                     disabled={actionLoading}
                     className={`px-4 py-2 ${
-                      isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      isDarkMode
+                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                     } rounded-lg font-medium transition-all duration-200`}
                   >
                     {t('admin.achievements.cancel')}
@@ -629,22 +758,32 @@ export default function AdminAchievementsPage() {
           {/* Image Edit Modal */}
           {showImageModal && selectedAchievement && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}>
+              <div
+                className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-xl max-w-md w-full p-6`}
+              >
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-4">
                     <ImageIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <h2 className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
+                  <h2
+                    className={`text-xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
+                  >
                     {t('admin.achievements.editAchievementImage')}
                   </h2>
                 </div>
 
                 {/* Current Image Preview */}
-                <div className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}>
-                  <p className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <div
+                  className={`mb-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}`}
+                >
+                  <p
+                    className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     {t('admin.achievements.currentImage')}
                   </p>
-                  <div className={`w-full h-40 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} flex items-center justify-center`}>
+                  <div
+                    className={`w-full h-40 rounded-lg overflow-hidden ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} flex items-center justify-center`}
+                  >
                     {selectedAchievement.imageUrl ? (
                       <img
                         src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/upload/image/serve?url=${encodeURIComponent(selectedAchievement.imageUrl)}`}
@@ -653,8 +792,14 @@ export default function AdminAchievementsPage() {
                       />
                     ) : (
                       <div className="text-center">
-                        <Trophy className={`w-12 h-12 mx-auto ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{t('admin.achievements.noImage')}</p>
+                        <Trophy
+                          className={`w-12 h-12 mx-auto ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}
+                        />
+                        <p
+                          className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                        >
+                          {t('admin.achievements.noImage')}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -662,13 +807,21 @@ export default function AdminAchievementsPage() {
 
                 {/* Upload New Image */}
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                  >
                     {t('admin.achievements.uploadNewImage')}
                   </label>
-                  <label className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isDarkMode ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}>
-                    <Upload className={`w-5 h-5 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+                  <label
+                    className={`flex items-center justify-center w-full px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${isDarkMode ? 'border-gray-600 hover:border-purple-500 bg-gray-700/30' : 'border-gray-300 hover:border-purple-500 bg-gray-50'}`}
+                  >
+                    <Upload
+                      className={`w-5 h-5 mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}
+                    />
                     <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {imageUploading ? t('admin.achievements.uploading') : t('admin.achievements.clickToUpload')}
+                      {imageUploading
+                        ? t('admin.achievements.uploading')
+                        : t('admin.achievements.clickToUpload')}
                     </span>
                     <input
                       type="file"
@@ -699,7 +852,9 @@ export default function AdminAchievementsPage() {
                       disabled={imageUploading}
                       className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all duration-200"
                     >
-                      {imageUploading ? t('admin.achievements.removing') : t('admin.achievements.removeImage')}
+                      {imageUploading
+                        ? t('admin.achievements.removing')
+                        : t('admin.achievements.removeImage')}
                     </button>
                   )}
                 </div>
