@@ -394,20 +394,20 @@ You can also upload images or PDFs for me to analyze! What would you like help w
       className={`relative ${isDarkMode
         ? 'bg-gradient-to-br from-gray-800/95 via-gray-900/95 to-gray-800/95 border-purple-500/30'
         : 'bg-gradient-to-br from-white/95 via-purple-50/30 to-white/95 border-purple-300/40'
-        } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[calc(100vh-180px)] md:h-[700px] flex flex-col overflow-hidden group hover:shadow-purple-500/20 transition-all duration-500`}
+        } rounded-3xl shadow-2xl border-2 backdrop-blur-xl h-[calc(100vh-150px)] md:h-[calc(100vh-120px)] md:min-h-[600px] flex flex-col overflow-hidden group hover:shadow-purple-500/20 transition-all duration-500`}
     >
       {/* Animated gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 via-blue-600/5 to-purple-600/5 animate-gradient-shift pointer-events-none"></div>
 
       {/* Header */}
-      <div className={`relative z-10 p-3 md:p-5 border-b-2 ${isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'} backdrop-blur-md`}>
-        <div className="flex items-center">
-          <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+      <div className={`relative z-10 p-3 md:px-5 md:py-3 border-b-2 ${isDarkMode ? 'border-purple-500/30 bg-gray-900/50' : 'border-purple-300/40 bg-white/50'} backdrop-blur-md`}>
+        <div className="flex items-center flex-wrap md:flex-nowrap gap-y-3">
+          <div className="relative w-12 h-12 bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg flex-shrink-0">
             <Bot className="w-7 h-7 text-white" />
             {/* Pulsing indicator */}
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h3 className={`font-bold text-base md:text-lg ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Athena AI Assistant
             </h3>
@@ -416,11 +416,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
               <span className="truncate">University of Moratuwa • Google Gemini</span>
             </p>
           </div>
-        </div>
 
-        {/* Token Usage Display */}
-        <div className="mt-4">
-          <TokenUsageDisplay compact={true} />
+          {/* Token usage inline with the title; wraps to its own row on small screens */}
+          <div className="w-full md:w-auto md:flex-1 md:max-w-xl md:ml-4">
+            <TokenUsageDisplay compact={true} />
+          </div>
         </div>
       </div>
 
