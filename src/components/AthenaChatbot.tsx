@@ -363,11 +363,19 @@ You can also upload images or PDFs for me to analyze! What would you like help w
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response from chatbot');
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonErr) {
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+        }
+        throw new Error('Invalid JSON response from server');
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || `Failed to get response from chatbot (${response.status})`);
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -398,13 +406,13 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
       // Refresh token display after successful response
       setTimeout(() => triggerTokenRefresh(), 100);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Chat error:', error);
 
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '❌ Sorry, I encountered an error. Please try again.',
+        content: `❌ Sorry, I encountered an error: ${error?.message || 'Please try again.'}`,
         timestamp: new Date(),
       };
 
