@@ -76,7 +76,7 @@ class TokenCountingService {
         limit: dailyLimit,
         resetTime: this.getNextResetTime(),
         sessionsToday: 0, // Not provided by backend, but we can track locally
-        remainingTokens: data.tokensRemaining || this.DAILY_LIMIT,
+        remainingTokens: data.tokensRemaining ?? this.DAILY_LIMIT,
         percentageUsed: dailyLimit > 0 ? (tokensUsed / dailyLimit) * 100 : 0,
       };
     } catch (error) {
