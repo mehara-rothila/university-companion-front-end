@@ -732,7 +732,7 @@ export default function NotificationsPage() {
                               <h5
                                 className={`font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}
                               >
-                                {t(`notifications.settings.categoryLabels.${category}`)}
+                                {t(`notificationsPage.settings.categoryLabels.${category}`)}
                               </h5>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -774,7 +774,7 @@ export default function NotificationsPage() {
                                     <span
                                       className={`ml-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                                     >
-                                      {t(`notifications.settings.${category}Options.${setting}`)}
+                                      {t(`notificationsPage.settings.${category}Options.${setting}`)}
                                     </span>
                                   </label>
                                 ))}
@@ -800,7 +800,7 @@ export default function NotificationsPage() {
                       {Object.entries(settings.delivery).map(([method, enabled]) => (
                         <label key={method} className="flex items-center justify-between">
                           <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {t(`notifications.settings.deliveryOptions.${method}`)}
+                            {t(`notificationsPage.settings.deliveryOptions.${method}`)}
                           </span>
                           <input
                             type="checkbox"
