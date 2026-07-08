@@ -33,6 +33,28 @@ export default function TokenUsageDisplay({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchTokenUsage = async () => {
+    if (!user?.id) return;
+
+    try {
+      setError(null);
+      // Try backend first
+      const usage = await tokenCountingService.getTokenUsageFromBackend();
+      setTokensUsed(usage.used);
+      setTokensRemaining(usage.remainingTokens);
+      setDailyLimit(usage.limit);
+      setLoading(false);
+    } catch (err) {
+      console.warn('Backend unavailable, using local storage:', err);
+      // Fall back to local storage
+      const localUsage = tokenCountingService.getTokenUsage();
+      setTokensUsed(localUsage.used);
+      setTokensRemaining(localUsage.remainingTokens);
+      setDailyLimit(localUsage.limit);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!user?.id) {
       setLoading(false);
@@ -57,28 +79,6 @@ export default function TokenUsageDisplay({
       fetchTokenUsage();
     }
   }, [refreshTrigger]);
-
-  const fetchTokenUsage = async () => {
-    if (!user?.id) return;
-
-    try {
-      setError(null);
-      // Try backend first
-      const usage = await tokenCountingService.getTokenUsageFromBackend();
-      setTokensUsed(usage.used);
-      setTokensRemaining(usage.remainingTokens);
-      setDailyLimit(usage.limit);
-      setLoading(false);
-    } catch (err) {
-      console.warn('Backend unavailable, using local storage:', err);
-      // Fall back to local storage
-      const localUsage = tokenCountingService.getTokenUsage();
-      setTokensUsed(localUsage.used);
-      setTokensRemaining(localUsage.remainingTokens);
-      setDailyLimit(localUsage.limit);
-      setLoading(false);
-    }
-  };
 
   if (!user) {
     return (
