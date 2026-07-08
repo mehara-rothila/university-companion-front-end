@@ -49,7 +49,7 @@ export default function TokenUsageDisplay({
     return () => {
       tokenUsageRefreshCallback = null;
     };
-  }, []);
+  }, [fetchTokenUsage]);
 
   // Refresh when parent triggers it
   useEffect(() => {
