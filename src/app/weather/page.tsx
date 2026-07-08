@@ -41,6 +41,7 @@ export default function WeatherPage() {
   const { isDarkMode } = useDarkMode();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentWeather, setCurrentWeather] = useState<WeatherData>({
     temperature: 0,
     condition: '',
@@ -58,25 +59,29 @@ export default function WeatherPage() {
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>([]);
   const [fullWeatherData, setFullWeatherData] = useState<any>(null);
 
+  const fetchWeatherData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await weatherService.getWeather();
+      if (data) {
+        setCurrentWeather(data.current);
+        setHourlyForecast(data.hourly);
+        setDailyForecast(data.daily);
+        setFullWeatherData(data);
+      } else {
+        setError('Failed to load weather data. Please check if the backend service is running and weather API keys are configured.');
+      }
+    } catch (err) {
+      console.error('Failed to fetch weather data:', err);
+      setError('An unexpected error occurred while fetching weather data.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fetch weather data on component mount
   useEffect(() => {
-    const fetchWeatherData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await weatherService.getWeather();
-        if (data) {
-          setCurrentWeather(data.current);
-          setHourlyForecast(data.hourly);
-          setDailyForecast(data.daily);
-          setFullWeatherData(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch weather data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchWeatherData();
   }, []);
 
@@ -138,6 +143,34 @@ export default function WeatherPage() {
             <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               {t('weatherPage.loading')}
             </p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        <Navigation />
+        <main
+          className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-blue-50 to-gray-100'} transition-colors duration-300 flex items-center justify-center relative z-10`}
+        >
+          <div className="text-center max-w-md mx-auto px-4 py-8 rounded-3xl border-2 backdrop-blur-xl shadow-2xl bg-white/90 dark:bg-gray-800/90 border-red-500/30">
+            <div className="text-red-500 text-5xl mb-4">⚠️</div>
+            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+              Weather Data Unavailable
+            </h2>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+              {error}
+            </p>
+            <button
+              onClick={() => fetchWeatherData()}
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-600 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/50 hover:scale-105 active:scale-95 transition-all duration-300"
+            >
+              Try Again
+            </button>
           </div>
         </main>
       </>
