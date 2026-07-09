@@ -114,8 +114,9 @@ export default function Dashboard() {
     },
   ]);
 
-  // Active features list - Now includes AI Assistant, Library, Weather, Notifications, Events, and Social
+  // Active features list - Now includes AI Assistant, Library, Weather, Notifications, Events, Social, and Academic
   const activeFeatures = [
+    'academic',
     'lost-found',
     'financial-aid',
     'challenges',

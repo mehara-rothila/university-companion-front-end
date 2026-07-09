@@ -7,6 +7,8 @@ import { useDarkMode } from '@/app/context/DarkModeContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { useAuth } from '@/app/context/AuthContext';
+import axios from 'axios';
 
 // --- Interfaces ---
 interface CalendarEvent {
@@ -68,20 +70,73 @@ interface AIRecommendation {
   confidence: number;
 }
 
-type ActiveTab = 'calendar' | 'assignments' | 'courses' | 'analytics';
+interface StudySpace {
+  id: number;
+  name: string;
+  building: string;
+  floor: number;
+  room: string;
+  capacity: number;
+  defaultNoiseLevel: string;
+  status: 'EMPTY' | 'MODERATE' | 'CROWDED';
+}
+
+type ActiveTab = 'calendar' | 'assignments' | 'courses' | 'analytics' | 'spaces';
 
 export default function AcademicPage() {
   const { isDarkMode } = useDarkMode();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTab>('calendar');
   const [isLoading, setIsLoading] = useState(true);
   const [showAddEventModal, setShowAddEventModal] = useState(false);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
 
+  // Study Spaces states
+  const [studySpaces, setStudySpaces] = useState<StudySpace[]>([]);
+  const [votingSpaceId, setVotingSpaceId] = useState<number | null>(null);
+
   // Mock data
   const [courses, setCourses] = useState<Course[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  const fetchStudySpaces = async () => {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${backendUrl}/api/study-spaces`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      setStudySpaces(response.data);
+    } catch (err) {
+      console.error('Failed to fetch study spaces:', err);
+    }
+  };
+
+  const handleVoteSpace = async (spaceId: number, status: string) => {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to submit a crowd report.');
+        return;
+      }
+      await axios.post(`${backendUrl}/api/study-spaces/${spaceId}/vote`, { status }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchStudySpaces();
+      setVotingSpaceId(null);
+      alert('Thank you for reporting!');
+    } catch (err) {
+      console.error('Failed to report occupancy:', err);
+      alert('Failed to submit report. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    fetchStudySpaces();
+  }, []);
 
   // Initialize mock data
   useEffect(() => {
@@ -655,6 +710,7 @@ export default function AcademicPage() {
                 { id: 'assignments', label: 'Assignments', icon: '📝' },
                 { id: 'courses', label: 'Courses', icon: '📚' },
                 { id: 'analytics', label: 'Performance', icon: '📊' },
+                { id: 'spaces', label: 'Study Zones', icon: '🏫' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -1370,6 +1426,117 @@ export default function AcademicPage() {
               </div>
             </div>
           )}
+
+          {activeTab === 'spaces' && (
+            <div
+              className={`${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/90 border-gray-100'} rounded-2xl shadow-lg p-6 border backdrop-blur-sm animate-fade-in`}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3
+                    className={`text-xl font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-1`}
+                  >
+                    Campus Study Zones
+                  </h3>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Real-time crowdedness indicator powered by crowdsourced student reports
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {studySpaces.length > 0 ? (
+                  studySpaces.map((space) => (
+                    <div
+                      key={space.id}
+                      className={`p-5 rounded-2xl border ${isDarkMode ? 'bg-gray-700/30 border-gray-600' : 'bg-gray-50/50 border-gray-200'} transition-all duration-300 hover:shadow-md relative`}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4
+                            className={`font-semibold text-lg ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}
+                          >
+                            {space.name}
+                          </h4>
+                          <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {space.building} • Floor {space.floor} • Room {space.room}
+                          </p>
+                        </div>
+                        <span
+                          className={`text-xs px-2.5 py-1 rounded-full font-bold shadow-sm ${
+                            space.status === 'EMPTY'
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                              : space.status === 'MODERATE'
+                                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                          }`}
+                        >
+                          {space.status}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 mb-4 text-sm">
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Max Capacity:</span>
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
+                            {space.capacity} Students
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Noise Level:</span>
+                          <span className="font-medium text-gray-700 dark:text-gray-300 capitalize">
+                            {space.defaultNoiseLevel}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-gray-200/20">
+                        {votingSpaceId === space.id ? (
+                          <div className="flex gap-1.5 w-full">
+                            <button
+                              onClick={() => handleVoteSpace(space.id, 'EMPTY')}
+                              className="flex-1 py-1 text-xs font-bold rounded-lg bg-green-500 hover:bg-green-600 text-white transition-colors"
+                            >
+                              Empty
+                            </button>
+                            <button
+                              onClick={() => handleVoteSpace(space.id, 'MODERATE')}
+                              className="flex-1 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white transition-colors"
+                            >
+                              Moderate
+                            </button>
+                            <button
+                              onClick={() => handleVoteSpace(space.id, 'CROWDED')}
+                              className="flex-1 py-1 text-xs font-bold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
+                            >
+                              Busy
+                            </button>
+                            <button
+                              onClick={() => setVotingSpaceId(null)}
+                              className="px-2 py-1 text-xs font-medium rounded-lg bg-gray-300 text-gray-700 dark:bg-gray-600 dark:text-gray-200"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setVotingSpaceId(space.id)}
+                            className="w-full py-1.5 text-xs font-semibold rounded-lg text-purple-700 dark:text-purple-400 bg-purple-100/50 hover:bg-purple-100 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 transition-colors"
+                          >
+                            📢 Report Crowd Level
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full py-12 text-center text-gray-500">
+                    No campus study zones configured yet.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Add Event Modal */}
@@ -1486,6 +1653,7 @@ export default function AcademicPage() {
             </div>
           </div>
         )}
+
       </main>
     </>
   );
