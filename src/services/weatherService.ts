@@ -36,23 +36,81 @@ interface WeatherResponse {
 }
 
 class WeatherService {
-  private backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  private readonly backendUrl = this.normalizeBackendUrl(process.env.NEXT_PUBLIC_API_URL);
+  private readonly requestTimeoutMs = 8000;
 
   async getWeather(): Promise<WeatherResponse | null> {
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timeoutId = controller
+      ? setTimeout(() => {
+          controller.abort();
+        }, this.requestTimeoutMs)
+      : undefined;
+
     try {
-      const response = await fetch(`${this.backendUrl}/api/weather/current`);
+      const response = await fetch(`${this.backendUrl}/api/weather/current`, {
+        cache: 'no-store',
+        headers: {
+          Accept: 'application/json',
+        },
+        signal: controller?.signal,
+      });
 
       if (!response.ok) {
-        console.error('Failed to fetch weather from backend:', response.statusText);
+        console.warn(
+          `Weather service returned ${response.status || 'an error'} ${response.statusText || ''}`.trim()
+        );
         return null;
       }
 
-      const data: WeatherResponse = await response.json();
+      const data = await response.json();
+      if (!this.isWeatherResponse(data)) {
+        console.warn('Weather service returned an unexpected response shape');
+        return null;
+      }
+
       return data;
     } catch (error) {
-      console.error('Error fetching weather from backend:', error);
+      console.warn(
+        this.isAbortError(error)
+          ? 'Weather service request timed out'
+          : 'Weather service is unavailable'
+      );
       return null;
+    } finally {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     }
+  }
+
+  private normalizeBackendUrl(url?: string): string {
+    const fallbackUrl = 'http://localhost:8080';
+    const normalized = (url || fallbackUrl).trim();
+    return (normalized || fallbackUrl).replace(/\/+$/, '');
+  }
+
+  private isWeatherResponse(data: unknown): data is WeatherResponse {
+    if (!data || typeof data !== 'object') {
+      return false;
+    }
+
+    const candidate = data as Partial<WeatherResponse>;
+    return Boolean(
+      candidate.current &&
+        typeof candidate.current === 'object' &&
+        Array.isArray(candidate.hourly) &&
+        Array.isArray(candidate.daily)
+    );
+  }
+
+  private isAbortError(error: unknown): boolean {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'name' in error &&
+      (error as { name?: string }).name === 'AbortError'
+    );
   }
 }
 

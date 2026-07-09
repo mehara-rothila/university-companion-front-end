@@ -6,7 +6,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { CloudRain, Wind, Droplets, Eye, Sun, CloudSun, Cloud, CloudDrizzle } from 'lucide-react';
-import { weatherService } from '@/services/weatherService';
+import { weatherService, WeatherResponse } from '@/services/weatherService';
 import WeatherChatbot from '@/components/WeatherChatbot';
 
 interface WeatherData {
@@ -57,7 +57,7 @@ export default function WeatherPage() {
 
   const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>([]);
-  const [fullWeatherData, setFullWeatherData] = useState<any>(null);
+  const [fullWeatherData, setFullWeatherData] = useState<WeatherResponse | null>(null);
 
   const fetchWeatherData = async () => {
     setIsLoading(true);
