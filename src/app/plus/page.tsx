@@ -91,15 +91,19 @@ export default function PlusPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-2">
-                <span
-                  className={`text-4xl sm:text-5xl font-bold ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`}
+              <div className="flex justify-center mb-2">
+                <div
+                  className={`inline-flex flex-col sm:flex-row items-center justify-center gap-x-3 gap-y-1 ${isDarkMode ? 'bg-gray-800/60 border-gray-700/50' : 'bg-white/80 border-gray-200'} backdrop-blur-sm border rounded-2xl px-6 py-4 shadow-sm`}
                 >
-                  LKR&nbsp;490
-                </span>
-                <span className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  / month · or LKR&nbsp;4,900 / year (2 months free)
-                </span>
+                  <span
+                    className={`text-4xl sm:text-5xl font-bold ${isDarkMode ? 'text-amber-400' : 'text-amber-500'}`}
+                  >
+                    LKR&nbsp;490
+                  </span>
+                  <span className={`text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    / month · or LKR&nbsp;4,900 / year (2 months free)
+                  </span>
+                </div>
               </div>
             </div>
           </section>
