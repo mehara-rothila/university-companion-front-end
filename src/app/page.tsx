@@ -22,6 +22,7 @@ import {
   Star,
   Shield,
   Zap,
+  Crown,
 } from 'lucide-react';
 
 export default function Home() {
@@ -146,6 +147,13 @@ export default function Home() {
                       <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   )}
+                  <Link
+                    href="/plus"
+                    className="group flex items-center px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 focus:from-amber-600 focus:to-yellow-600 text-white rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-xl transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-amber-500/50"
+                  >
+                    <Crown className="mr-2 h-5 w-5" />
+                    Athena Plus
+                  </Link>
                 </div>
 
                 {/* Rotating Feature Showcase */}
