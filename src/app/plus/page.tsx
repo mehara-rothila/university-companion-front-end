@@ -23,40 +23,60 @@ export default function PlusPage() {
   const { isDarkMode } = useDarkMode();
   const { isAuthenticated } = useAuth();
 
-  // What actually changes when a student upgrades — the core of the pitch.
-  const changes = [
-    { label: 'AI usage', free: '100,000 tokens / day', plus: 'Unlimited', highlight: 'no daily cap' },
-    { label: 'AI model', free: 'Standard', plus: 'Priority — fastest & most capable' },
-    { label: 'PDF & past-paper analysis', free: '3 per day', plus: 'Unlimited + advanced exam prep', highlight: 'unlimited' },
-    { label: 'Image analysis', free: '3 per day', plus: 'Unlimited, higher resolution', highlight: 'unlimited' },
-    { label: 'Upload size & context', free: 'Standard', plus: 'Larger uploads, longer context' },
-    { label: 'Chat history', free: 'Last 7 days', plus: 'Saved & organised forever' },
-    { label: 'When you hit the limit', free: 'Athena pauses', plus: 'Never interrupted' },
-    { label: 'New features', free: '—', plus: 'Early access' },
-    { label: 'Experience', free: 'Standard', plus: 'Ad-free' },
-    { label: 'Support', free: 'Community', plus: 'Priority support' },
-    { label: 'All campus features', free: 'Included', plus: 'Included' },
+  // What actually changes when a student upgrades — grouped across the whole app.
+  const sections = [
+    {
+      title: 'Athena AI',
+      rows: [
+        { label: 'AI usage', free: '100,000 tokens / day', plus: 'Unlimited', highlight: 'no daily cap' },
+        { label: 'AI model', free: 'Standard', plus: 'Priority — fastest & most capable' },
+        { label: 'PDF & past-paper analysis', free: '3 per day', plus: 'Unlimited + advanced exam prep', highlight: 'unlimited' },
+        { label: 'Image analysis', free: '3 per day', plus: 'Unlimited, higher resolution', highlight: 'unlimited' },
+        { label: 'Upload size & context', free: 'Standard', plus: 'Larger uploads, longer context' },
+        { label: 'Chatbot file storage', free: '100 MB', plus: '10 GB for notes, PDFs & images', highlight: '100×' },
+        { label: 'Chat history', free: 'Last 7 days', plus: 'Saved & organised forever' },
+        { label: 'When you hit the limit', free: 'Athena pauses', plus: 'Never interrupted' },
+      ],
+    },
+    {
+      title: 'Across campus',
+      rows: [
+        { label: 'Profile', free: 'Standard', plus: 'Plus crown badge + exclusive themes' },
+        { label: 'Challenges & competitions', free: 'Standard challenges', plus: 'Plus-only challenges, 2× reward points', highlight: '2× points' },
+        { label: 'Event registration', free: 'General queue', plus: 'Early-bird access + priority waitlist' },
+        { label: 'Your events & book listings', free: 'Standard visibility', plus: '2 free boosts every month' },
+        { label: 'Study spaces', free: 'Live occupancy view', plus: 'Alerts when your favourite space frees up' },
+        { label: 'Weather', free: "Today's forecast", plus: '7-day outlook + severe-weather alerts' },
+        { label: 'Career tools', free: 'Standard resources', plus: 'AI CV & cover-letter review' },
+        { label: 'New features', free: '—', plus: 'Early access' },
+        { label: 'Experience', free: 'Standard', plus: 'Ad-free' },
+        { label: 'Support', free: 'Community', plus: 'Priority support' },
+      ],
+    },
   ];
 
   const freeFeatures = [
     '100,000 AI tokens per day',
-    'Standard model',
     '3 PDF / image analyses per day',
+    '100 MB chatbot file storage',
     'Chat history kept for 7 days',
-    'Pauses when the daily limit is reached',
+    'Standard challenges & event queue',
+    "Today's weather & live study spaces",
     'All campus features included',
   ];
 
   const plusFeatures = [
     'Unlimited AI chat — no daily cap',
-    'Priority model — fastest & most capable',
-    'Unlimited PDF & image analysis',
+    'Priority model + unlimited PDF & image analysis',
     'Advanced past-paper & exam-prep mode',
-    'Larger uploads & longer context',
-    'Saved, organised chat history',
-    'Early access to new features',
-    'Ad-free experience',
-    'Priority support',
+    '10 GB chatbot storage for notes, PDFs & images',
+    'Chat history saved forever',
+    'Plus crown badge & exclusive themes',
+    'Plus-only challenges with 2× reward points',
+    'Early-bird event registration & priority waitlist',
+    '2 free boosts a month for your events & listings',
+    'Study-space alerts & 7-day weather outlook',
+    'AI CV review · ad-free · priority support',
   ];
 
   return (
@@ -96,8 +116,8 @@ export default function PlusPage() {
                 <p
                   className={`text-lg sm:text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}
                 >
-                  Everything on the Smart University Companion stays free. Plus supercharges the one
-                  thing students lean on hardest — your Athena AI study companion.
+                  One upgrade for your whole campus life — unlimited Athena AI, plus perks across
+                  challenges, events, study spaces, weather, career tools and more.
                 </p>
               </div>
 
@@ -130,7 +150,7 @@ export default function PlusPage() {
                   What changes when you go Plus
                 </h2>
                 <p className={`text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Same app, same free features — a much bigger Athena.
+                  Not just AI — Plus upgrades every corner of the app.
                 </p>
               </div>
 
@@ -162,37 +182,47 @@ export default function PlusPage() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {changes.map((row, i) => (
-                        <tr
-                          key={i}
-                          className={`${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} ${i < changes.length - 1 ? 'border-b' : ''}`}
-                        >
+                    {sections.map((section) => (
+                      <tbody key={section.title}>
+                        <tr>
                           <td
-                            className={`px-6 py-4 text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-900'}`}
+                            colSpan={3}
+                            className={`px-6 pt-5 pb-2 text-xs font-bold uppercase tracking-wider ${isDarkMode ? 'text-amber-400/90 bg-gray-900/30' : 'text-amber-600 bg-amber-50/60'}`}
                           >
-                            {row.label}
-                          </td>
-                          <td
-                            className={`px-6 py-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} whitespace-nowrap`}
-                          >
-                            {row.free}
-                          </td>
-                          <td className="px-6 py-4 text-sm whitespace-nowrap">
-                            <span className={`${isDarkMode ? 'text-gray-100' : 'text-gray-900'} font-medium`}>
-                              {row.plus}
-                            </span>
-                            {row.highlight && (
-                              <span
-                                className={`ml-2 inline-block text-xs font-semibold px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'}`}
-                              >
-                                {row.highlight}
-                              </span>
-                            )}
+                            {section.title}
                           </td>
                         </tr>
-                      ))}
-                    </tbody>
+                        {section.rows.map((row, i) => (
+                          <tr
+                            key={row.label}
+                            className={`${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} ${i < section.rows.length - 1 ? 'border-b' : ''}`}
+                          >
+                            <td
+                              className={`px-6 py-4 text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-900'}`}
+                            >
+                              {row.label}
+                            </td>
+                            <td
+                              className={`px-6 py-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                            >
+                              {row.free}
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <span className={`${isDarkMode ? 'text-gray-100' : 'text-gray-900'} font-medium`}>
+                                {row.plus}
+                              </span>
+                              {row.highlight && (
+                                <span
+                                  className={`ml-2 inline-block text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'}`}
+                                >
+                                  {row.highlight}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    ))}
                   </table>
                 </div>
               </div>
