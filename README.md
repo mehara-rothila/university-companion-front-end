@@ -102,6 +102,7 @@ Backend base URL from `NEXT_PUBLIC_API_URL`. Protected calls send `Authorization
 **Image** — `POST /api/upload/image` · `GET /api/upload/image/serve?url=` · `DELETE /api/upload/image?imageUrl=`
 **Financial Aid** — `GET|POST /api/financial-aid/applications` · `PUT|DELETE /api/financial-aid/applications/{id}` · `GET /api/financial-aid/stats`
 **Admin** — `GET /api/admin/users` · `PUT|DELETE /api/admin/users/{id}` · `PATCH /api/admin/users/{id}/toggle-status`
+**Study Spaces** — `GET /api/study-spaces` · `POST /api/study-spaces/{id}/vote` · `POST /api/admin/study-spaces` · `DELETE /api/admin/study-spaces/{id}`
 **Notifications** — `GET /api/notifications/user/{userId}` · `GET .../unread/count` · `PUT /{id}/read`
 **AI Chatbot** — `POST /api/chatbot/chat` `{ message, imageUrls?, pdfUrls? }` (Gemini; text + image + PDF)
 **WebSocket** — `CONNECT /ws` · `SUBSCRIBE /topic/notifications/{userId}`
