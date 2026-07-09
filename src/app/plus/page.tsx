@@ -25,27 +25,37 @@ export default function PlusPage() {
 
   // What actually changes when a student upgrades — the core of the pitch.
   const changes = [
-    { label: 'Daily AI tokens', free: '500,000', plus: '5,000,000', highlight: '10× more' },
-    { label: 'AI model', free: 'Standard', plus: 'Priority — faster & sharper' },
-    { label: 'PDF & past-paper analysis', free: 'Basic', plus: 'Advanced exam prep' },
-    { label: 'Image analysis', free: 'Included', plus: 'Higher limits' },
-    { label: 'Daily cap interruptions', free: 'Pauses at the limit', plus: 'None' },
-    { label: 'Support', free: 'Standard', plus: 'Priority' },
+    { label: 'AI usage', free: '100,000 tokens / day', plus: 'Unlimited', highlight: 'no daily cap' },
+    { label: 'AI model', free: 'Standard', plus: 'Priority — fastest & most capable' },
+    { label: 'PDF & past-paper analysis', free: '3 per day', plus: 'Unlimited + advanced exam prep', highlight: 'unlimited' },
+    { label: 'Image analysis', free: '3 per day', plus: 'Unlimited, higher resolution', highlight: 'unlimited' },
+    { label: 'Upload size & context', free: 'Standard', plus: 'Larger uploads, longer context' },
+    { label: 'Chat history', free: 'Last 7 days', plus: 'Saved & organised forever' },
+    { label: 'When you hit the limit', free: 'Athena pauses', plus: 'Never interrupted' },
+    { label: 'New features', free: '—', plus: 'Early access' },
+    { label: 'Experience', free: 'Standard', plus: 'Ad-free' },
+    { label: 'Support', free: 'Community', plus: 'Priority support' },
     { label: 'All campus features', free: 'Included', plus: 'Included' },
   ];
 
   const freeFeatures = [
-    '500,000 AI tokens every day',
-    'Chat, image & PDF analysis',
-    'Standard model with daily reset',
-    'Every campus feature included',
+    '100,000 AI tokens per day',
+    'Standard model',
+    '3 PDF / image analyses per day',
+    'Chat history kept for 7 days',
+    'Pauses when the daily limit is reached',
+    'All campus features included',
   ];
 
   const plusFeatures = [
-    '5,000,000 AI tokens every day (10×)',
-    'Priority model — faster, sharper answers',
-    'Advanced PDF & past-paper exam prep',
-    'No mid-session cap interruptions',
+    'Unlimited AI chat — no daily cap',
+    'Priority model — fastest & most capable',
+    'Unlimited PDF & image analysis',
+    'Advanced past-paper & exam-prep mode',
+    'Larger uploads & longer context',
+    'Saved, organised chat history',
+    'Early access to new features',
+    'Ad-free experience',
     'Priority support',
   ];
 
