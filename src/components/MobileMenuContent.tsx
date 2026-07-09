@@ -8,7 +8,6 @@ import {
   HelpCircle,
   LogIn,
   UserPlus,
-  User,
   Bot,
   MapPin,
   Calendar,
@@ -17,17 +16,18 @@ import {
   Settings,
   Cloud,
   FolderOpen,
-  Globe,
   UserCircle,
   LayoutDashboard,
   Bell,
-  AlertTriangle,
   ChevronDown,
   ChevronUp,
   GraduationCap,
   Library,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useBackground } from '@/app/context/BackgroundContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { getThumbnailUrl } from '@/utils/imageUtils';
 
@@ -38,6 +38,7 @@ interface MobileMenuContentProps {
 
 const MobileMenuContent = ({ closeMenu, emergencyCount }: MobileMenuContentProps) => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { isBackgroundEnabled, toggleBackground } = useBackground();
   const { t } = useTranslation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -90,6 +91,32 @@ const MobileMenuContent = ({ closeMenu, emergencyCount }: MobileMenuContentProps
 
       {/* Divider */}
       <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
+      {/* Display Settings */}
+      <button
+        type="button"
+        onClick={toggleBackground}
+        aria-pressed={isBackgroundEnabled}
+        className="w-full flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
+      >
+        <span className="text-sm flex items-center font-medium">
+          {isBackgroundEnabled ? (
+            <Eye className="h-4 w-4 mr-2 text-purple-600 dark:text-purple-400" />
+          ) : (
+            <EyeOff className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400" />
+          )}
+          Animated background
+        </span>
+        <span
+          className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+            isBackgroundEnabled
+              ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300'
+              : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+          }`}
+        >
+          {isBackgroundEnabled ? 'On' : 'Off'}
+        </span>
+      </button>
 
       {/* Campus Features Section - Collapsible */}
       <div>

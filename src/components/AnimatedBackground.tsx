@@ -3,6 +3,7 @@
 
 import { useState, useEffect, memo } from 'react';
 import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useBackground } from '@/app/context/BackgroundContext';
 
 // Seeded random function for deterministic values
 function seededRandom(seed: number) {
@@ -17,13 +18,16 @@ interface AnimatedBackgroundProps {
 function AnimatedBackground({ variant = 'default' }: AnimatedBackgroundProps) {
   const [isClient, setIsClient] = useState(false);
   const { isDarkMode } = useDarkMode();
-
-  // Use variant for potential future background variations
-  const backgroundType = variant === 'dashboard' ? 'enhanced' : 'standard';
+  const { isBackgroundEnabled } = useBackground();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Global on/off switch — skips all particle work and renders nothing when disabled
+  if (!isBackgroundEnabled) {
+    return null;
+  }
 
   // Generate deterministic particles using seeded random with better distribution - OPTIMIZED for performance
   const particles = [...Array(200)].map((_, i) => {
@@ -125,52 +129,8 @@ function AnimatedBackground({ variant = 'default' }: AnimatedBackgroundProps) {
     }
   };
 
-  // Adaptive glass orb colors - Keep glassy effect in dark mode!
-  const getGlassOrbGradients = () => {
-    if (isDarkMode) {
-      return [
-        'bg-gradient-to-br from-blue-100/20 to-cyan-100/15',
-        'bg-gradient-to-br from-purple-100/18 to-pink-100/12',
-        'bg-gradient-to-br from-emerald-100/18 to-teal-100/12',
-        'bg-gradient-to-br from-rose-100/15 to-pink-100/10',
-        'bg-gradient-to-br from-indigo-100/16 to-blue-100/11',
-      ];
-    } else {
-      return [
-        'bg-gradient-to-br from-blue-200/30 to-cyan-200/20',
-        'bg-gradient-to-br from-purple-200/25 to-pink-200/15',
-        'bg-gradient-to-br from-emerald-200/25 to-teal-200/15',
-        'bg-gradient-to-br from-rose-200/20 to-pink-200/10',
-        'bg-gradient-to-br from-indigo-200/22 to-blue-200/12',
-      ];
-    }
-  };
-
-  // Adaptive border colors - Bright borders for glassmorphism in dark mode
-  const getBorderColors = () => {
-    if (isDarkMode) {
-      return [
-        'border-blue-200/30',
-        'border-purple-200/25',
-        'border-emerald-200/25',
-        'border-rose-200/20',
-        'border-indigo-200/28',
-      ];
-    } else {
-      return [
-        'border-blue-300/40',
-        'border-purple-300/30',
-        'border-emerald-300/25',
-        'border-rose-300/25',
-        'border-indigo-300/30',
-      ];
-    }
-  };
-
   const symbolColors = getSymbolColors();
   const equationColors = getEquationColors();
-  const glassOrbGradients = getGlassOrbGradients();
-  const borderColors = getBorderColors();
 
   return (
     <>
@@ -697,7 +657,10 @@ function AnimatedBackground({ variant = 'default' }: AnimatedBackgroundProps) {
       {/* --- END: Global Styles & Animations --- */}
 
       {/* --- START: Multi-Layered Animated Background --- */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
+      <div
+        className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0"
+        data-background-variant={variant}
+      >
         {/* Layer 1: Floating Symbols - Original + a few additions */}
         <div className={`absolute top-[7%] left-[13%] ${symbolColors[0]} text-9xl floating-icon`}>
           ∑

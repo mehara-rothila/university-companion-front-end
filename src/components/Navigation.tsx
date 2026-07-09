@@ -2,30 +2,22 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useDarkMode } from '@/app/context/DarkModeContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useBackground } from '@/app/context/BackgroundContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import {
-  Home,
-  BookOpen,
-  HelpCircle,
   LogIn,
-  UserPlus,
-  User,
-  Bot,
-  MapPin,
-  Calendar,
   Heart,
   LogOut,
   Settings,
-  Cloud,
   FolderOpen,
   Globe,
   UserCircle,
   LayoutDashboard,
   Bell,
-  AlertTriangle,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import axios from 'axios';
 import MobileMenuContent from './MobileMenuContent';
@@ -35,7 +27,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const { isDarkMode } = useDarkMode();
+  const { isBackgroundEnabled, toggleBackground } = useBackground();
   const { user, isAuthenticated, logout } = useAuth();
   const { locale, setLocale, t } = useTranslation();
 
@@ -53,8 +45,12 @@ const Navigation = () => {
     return languages.find((lang) => lang.code === locale) || languages[1];
   };
 
+  interface EmergencyNotificationSummary {
+    currentUserDismissed?: boolean;
+  }
+
   // Fetch active emergency count
-  const fetchEmergencyCount = async () => {
+  const fetchEmergencyCount = useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
@@ -69,13 +65,17 @@ const Navigation = () => {
       });
 
       // Count non-dismissed emergencies
-      const activeCount = response.data?.filter((e: any) => !e.currentUserDismissed).length || 0;
+      const activeCount = Array.isArray(response.data)
+        ? response.data.filter((emergency: EmergencyNotificationSummary) => {
+            return !emergency.currentUserDismissed;
+          }).length
+        : 0;
       setEmergencyCount(activeCount);
     } catch (error) {
       console.error('Failed to fetch emergency count:', error);
       setEmergencyCount(0);
     }
-  };
+  }, [API_BASE, isAuthenticated]);
 
   // Fetch emergency count on mount and when user changes
   useEffect(() => {
@@ -88,7 +88,7 @@ const Navigation = () => {
     } else {
       setEmergencyCount(0);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, fetchEmergencyCount]);
 
   // Effect to close mobile menu on resize
   useEffect(() => {
@@ -218,6 +218,35 @@ const Navigation = () => {
               {t('nav.admin')}
             </Link>
           )}
+
+          {/* Animated Background Toggle */}
+          <button
+            type="button"
+            onClick={toggleBackground}
+            aria-pressed={isBackgroundEnabled}
+            aria-label={
+              isBackgroundEnabled ? 'Turn off animated background' : 'Turn on animated background'
+            }
+            title={
+              isBackgroundEnabled ? 'Turn off animated background' : 'Turn on animated background'
+            }
+            className={`relative p-2 rounded-lg transition-colors duration-200 ${
+              isBackgroundEnabled
+                ? 'text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            {isBackgroundEnabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+            <span className="sr-only">
+              {isBackgroundEnabled ? 'Animated background on' : 'Animated background off'}
+            </span>
+            <span
+              aria-hidden="true"
+              className={`absolute right-1.5 top-1.5 h-2 w-2 rounded-full ${
+                isBackgroundEnabled ? 'bg-green-500' : 'bg-gray-400 dark:bg-gray-500'
+              }`}
+            />
+          </button>
 
           {/* Language Switcher */}
           <div className="relative">
