@@ -1116,6 +1116,43 @@ export default function AdminPanel() {
               </div>
             </Link>
 
+            {/* Study Spaces Management */}
+            <Link href="/admin/study-spaces">
+              <div
+                className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-indigo-900/20 to-indigo-800/20 border-indigo-700/30' : 'bg-gradient-to-br from-indigo-50/90 to-indigo-100/90 border-indigo-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer h-full flex flex-col`}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    className={`p-3 rounded-lg ${isDarkMode ? 'bg-indigo-800/50' : 'bg-indigo-100'} flex-shrink-0`}
+                  >
+                    <BookOpen
+                      className={`w-8 h-8 ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'}`}
+                    />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3
+                    className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-2`}
+                  >
+                    Study Zones
+                  </h3>
+                  <p
+                    className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 leading-relaxed`}
+                  >
+                    Manage campus study locations, configure capacity, floor levels, building information, and view reported crowd levels
+                  </p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span
+                    className={`text-sm font-medium ${isDarkMode ? 'text-indigo-300' : 'text-indigo-600'} flex items-center justify-end`}
+                  >
+                    Manage Study Zones
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+
             {/* System Settings */}
             <div
               className={`glass-card ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border-purple-700/30' : 'bg-gradient-to-br from-purple-50/90 to-purple-100/90 border-purple-200/50'} backdrop-blur-lg border p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 cursor-pointer opacity-60 h-full flex flex-col`}
