@@ -44,16 +44,32 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const t = (key: string, variables?: Record<string, string | number>): string => {
     const keys = key.split('.');
     let value: unknown = messages[locale];
+    let found = true;
 
     for (const k of keys) {
       if (typeof value === 'object' && value !== null && k in value) {
         value = (value as Record<string, unknown>)[k];
       } else {
-        return key; // Return key if translation not found
+        found = false;
+        break;
       }
     }
 
-    let result = typeof value === 'string' ? value : key;
+    // Fallback to English if translation is missing in the current locale
+    if (!found || typeof value !== 'string') {
+      value = enMessages;
+      found = true;
+      for (const k of keys) {
+        if (value && typeof value === 'object' && k in value) {
+          value = (value as Record<string, unknown>)[k];
+        } else {
+          found = false;
+          break;
+        }
+      }
+    }
+
+    let result = found && typeof value === 'string' ? value : key;
 
     // Replace variables like {{name}} with actual values
     if (variables) {
