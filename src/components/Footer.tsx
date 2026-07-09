@@ -236,6 +236,18 @@ export default function Footer() {
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
               </p>
+              <p className="mt-1 flex items-center justify-center md:justify-start space-x-1">
+                <span>Designed &amp; built by</span>
+                <a
+                  href="https://rothila.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center font-medium ${isDarkMode ? 'text-purple-400 hover:text-purple-300' : 'text-purple-600 hover:text-purple-700'} transition-colors`}
+                >
+                  Mehara
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </a>
+              </p>
             </div>
 
             {/* Back to Top Button */}
