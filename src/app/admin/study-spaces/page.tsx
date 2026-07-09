@@ -115,7 +115,7 @@ export default function AdminStudySpacesPage() {
   };
 
   return (
-    <AuthGuard requiredRole="ADMIN">
+    <AuthGuard allowedRoles={['admin']}>
       <Navigation />
       <main
         className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-b from-gray-900 to-gray-800' : 'bg-gradient-to-b from-gray-50 to-gray-100'} transition-colors duration-300 relative overflow-hidden`}
