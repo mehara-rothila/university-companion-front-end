@@ -7,7 +7,8 @@ import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import axios from 'axios';
-import { Shield, Filter, Search, Download, Eye, User, Clock, FileText } from 'lucide-react';
+import Link from 'next/link';
+import { Shield, Filter, Search, Download, Eye, User, Clock, FileText, ArrowLeft } from 'lucide-react';
 
 interface AuditLog {
   id: number;
@@ -202,8 +203,19 @@ export default function AuditLogsPage() {
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+          {/* Breadcrumbs */}
+          <div className="mb-6 flex items-center justify-between">
+            <Link
+              href="/admin"
+              className={`inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 shadow-sm backdrop-blur-sm transition-all duration-200`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back to Admin Panel
+            </Link>
+          </div>
+
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8 p-6 rounded-2xl border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm animate-fade-in">
             <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
               <Shield className="text-blue-600" size={40} />
               Audit Logs

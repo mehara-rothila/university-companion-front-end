@@ -8,7 +8,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import Navigation from '@/components/Navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import axios from 'axios';
-import { AlertTriangle, ChevronRight, Trash2, Eye, EyeOff, X } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Trash2, Eye, EyeOff, X, ArrowLeft } from 'lucide-react';
 
 interface EmergencyNotification {
   id: number;
@@ -265,10 +265,21 @@ export default function AdminEmergency() {
         )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+          {/* Breadcrumbs */}
+          <div className="mb-6 flex items-center justify-between">
+            <Link
+              href="/admin"
+              className={`inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 shadow-sm backdrop-blur-sm transition-all duration-200`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back to Admin Panel
+            </Link>
+          </div>
+
           {/* Header */}
           <div className="mb-8 animate-fade-in">
             <div
-              className={`p-6 rounded-2xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/90'} backdrop-blur-sm shadow-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
+              className={`p-6 rounded-2xl border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex-1">
@@ -284,13 +295,7 @@ export default function AdminEmergency() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                  <Link href="/admin">
-                    <button
-                      className={`px-4 py-2 rounded-lg transition-all duration-200 font-medium ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`}
-                    >
-                      Back
-                    </button>
-                  </Link>
+
                   <button
                     onClick={() => setShowCreateModal(true)}
                     className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center whitespace-nowrap"

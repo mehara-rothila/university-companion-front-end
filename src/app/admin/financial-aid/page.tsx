@@ -14,7 +14,8 @@ import financialAidService, {
   DonationAnalytics,
 } from '@/services/financialAidService';
 import { User } from '@/app/context/AuthContext';
-import { Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { Trash2, ArrowLeft } from 'lucide-react';
 
 export default function AdminFinancialAidPage() {
   const { isDarkMode } = useDarkMode();
@@ -326,8 +327,19 @@ export default function AdminFinancialAidPage() {
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+          {/* Breadcrumbs */}
+          <div className="mb-6 flex items-center justify-between">
+            <Link
+              href="/admin"
+              className={`inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 shadow-sm backdrop-blur-sm transition-all duration-200`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back to Admin Panel
+            </Link>
+          </div>
+
           {/* Header */}
-          <div className="mb-8 animate-fade-in">
+          <div className="mb-8 animate-fade-in p-6 rounded-2xl border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm">
             <div className="text-center">
               <h1
                 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}

@@ -9,7 +9,9 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import AuthGuard from '@/components/AuthGuard';
 import { eventService } from '@/services/eventService';
 import type { Event } from '@/types/event';
+import Link from 'next/link';
 import {
+  ArrowLeft,
   Calendar,
   MapPin,
   Users,
@@ -264,10 +266,21 @@ export default function AdminEventsPage() {
         <AnimatedBackground variant="dashboard" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 pt-24">
+          {/* Breadcrumbs */}
+          <div className="mb-6 flex items-center justify-between">
+            <Link
+              href="/admin"
+              className={`inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 shadow-sm backdrop-blur-sm transition-all duration-200`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+              Back to Admin Panel
+            </Link>
+          </div>
+
           {/* Header */}
           <div className="mb-8">
             <div
-              className={`text-center p-6 rounded-xl ${isDarkMode ? 'bg-gray-900/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg`}
+              className={`text-center p-6 rounded-2xl border bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm`}
             >
               <h1
                 className={`text-4xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-900'} mb-4 flex items-center justify-center`}
