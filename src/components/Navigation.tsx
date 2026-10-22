@@ -240,12 +240,6 @@ const Navigation = () => {
             <span className="sr-only">
               {isBackgroundEnabled ? 'Animated background on' : 'Animated background off'}
             </span>
-            <span
-              aria-hidden="true"
-              className={`absolute right-1.5 top-1.5 h-2 w-2 rounded-full ${
-                isBackgroundEnabled ? 'bg-green-500' : 'bg-gray-400 dark:bg-gray-500'
-              }`}
-            />
           </button>
 
           {/* Language Switcher */}

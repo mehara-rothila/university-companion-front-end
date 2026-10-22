@@ -22,6 +22,42 @@ interface AthenaChatbotProps {
   isDarkMode: boolean;
 }
 
+interface ChatbotApiResponse {
+  success?: boolean;
+  response?: string;
+  error?: string;
+  inputTokens?: number;
+  outputTokens?: number;
+}
+
+const getBackendUrl = () => {
+  return (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080').replace(/\/+$/, '');
+};
+
+const getReadableChatError = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return 'Athena could not complete that request. Please try again.';
+  }
+
+  const message = error.message || '';
+  const lower = message.toLowerCase();
+
+  if (lower.includes('failed to fetch') || lower.includes('networkerror')) {
+    return 'Athena cannot reach the server right now. Please check your connection and try again.';
+  }
+
+  if (
+    lower.includes('temporarily busy') ||
+    lower.includes('high demand') ||
+    lower.includes('service unavailable') ||
+    lower.includes('503')
+  ) {
+    return 'Athena is temporarily busy because the AI service is under high demand. Please try again in a few minutes.';
+  }
+
+  return message || 'Athena could not complete that request. Please try again.';
+};
+
 // --- Lightweight markdown renderer for assistant replies (headings, bold, italic, code, lists) ---
 function renderInlineMarkdown(text: string, keyPrefix: string): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
@@ -217,7 +253,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
   // Upload file to S3 via backend
   const uploadFileToS3 = async (file: File, fileType: 'image' | 'pdf'): Promise<string> => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     const formData = new FormData();
@@ -273,7 +309,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
     fileType: 'image' | 'pdf',
     fileSize: number
   ) => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    const backendUrl = getBackendUrl();
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     // Validate inputs
@@ -334,7 +370,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
     setIsLoading(true);
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const backendUrl = getBackendUrl();
 
       // Prepare request with file URLs
       const imageUrls = uploadedFiles
@@ -363,10 +399,10 @@ You can also upload images or PDFs for me to analyze! What would you like help w
         }),
       });
 
-      let data;
+      let data: ChatbotApiResponse;
       try {
         data = await response.json();
-      } catch (jsonErr) {
+      } catch {
         if (!response.ok) {
           throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
         }
@@ -406,13 +442,13 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
       // Refresh token display after successful response
       setTimeout(() => triggerTokenRefresh(), 100);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Chat error:', error);
 
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `❌ Sorry, I encountered an error: ${error?.message || 'Please try again.'}`,
+        content: `Sorry, ${getReadableChatError(error)}`,
         timestamp: new Date(),
       };
 
