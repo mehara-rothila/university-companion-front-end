@@ -31,6 +31,11 @@ export const useBrowserNotifications = () => {
       return false;
     }
 
+    if (Notification.permission === 'denied') {
+      setPermission('denied');
+      return false;
+    }
+
     if (permission === 'granted') {
       return true;
     }
@@ -53,13 +58,9 @@ export const useBrowserNotifications = () => {
       return null;
     }
 
-    // Request permission if not granted
     if (permission !== 'granted') {
-      const granted = await requestPermission();
-      if (!granted) {
-        console.warn('Notification permission denied');
-        return null;
-      }
+      console.warn('Browser notification permission not granted');
+      return null;
     }
 
     try {
@@ -70,7 +71,7 @@ export const useBrowserNotifications = () => {
         tag: options.tag || 'university-notification',
         requireInteraction: options.requireInteraction ?? false,
         silent: options.silent ?? false,
-        // @ts-ignore - vibrate is supported in mobile browsers but not in TS types
+        // @ts-expect-error - vibrate is supported in mobile browsers but not in TS types
         vibrate: [200, 100, 200], // Vibration pattern for mobile
         timestamp: Date.now(),
       });

@@ -29,6 +29,8 @@ export default function EmergencyNotificationBanner() {
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const API_BASE = `${API_BASE_URL}/api`;
+  const shouldAutoRequestNotificationPermission =
+    process.env.NEXT_PUBLIC_AUTO_REQUEST_NOTIFICATIONS === 'true';
 
   // Helper to check if token is a valid JWT (has 3 parts separated by dots)
   const isValidJWT = (token: string | null): boolean => {
@@ -59,7 +61,7 @@ export default function EmergencyNotificationBanner() {
 
   // Request browser notification permission on mount
   useEffect(() => {
-    if (user && isValidJWT(token)) {
+    if (shouldAutoRequestNotificationPermission && user && isValidJWT(token)) {
       // Request permission for browser notifications
       requestPermission().then((granted) => {
         if (granted) {
@@ -69,7 +71,7 @@ export default function EmergencyNotificationBanner() {
         }
       });
     }
-  }, [user, token]);
+  }, [shouldAutoRequestNotificationPermission, user, token, requestPermission]);
 
   // Load active emergencies on mount
   useEffect(() => {
