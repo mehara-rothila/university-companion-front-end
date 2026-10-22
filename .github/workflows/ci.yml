@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, master ]
 
+# The job only reads the code, so the token gets no write access.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,6 +17,9 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        # Don't leave the token in .git/config where npm scripts could read it.
+        persist-credentials: false
 
     - name: Set up Node.js 20
       uses: actions/setup-node@v4
