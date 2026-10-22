@@ -661,6 +661,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
               </div>
             ))}
           </div>
+          {uploadedFiles.some((f) => f.type === 'pdf') && (
+            <p className={`mt-2 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              PDFs stay attached so you can ask follow-up questions. Remove them when you&apos;re done.
+            </p>
+          )}
         </div>
       )}
 
