@@ -254,3 +254,13 @@ export const calculateTypingDuration = (responseLength: number): number => {
 
   return Math.min(baseDuration + responseLength * perCharDuration, maxDuration);
 };
+
+/**
+ * Which attachments to keep once a message has been sent. Images belong to the message they
+ * were sent with, but PDFs stay attached so follow-up questions can use them too (the backend
+ * indexes a PDF once, so asking again is cheap). Files added while the reply was loading stay.
+ */
+export const filesToKeepAfterSending = <T extends { type: 'image' | 'pdf' }>(
+  current: T[],
+  sent: T[]
+): T[] => current.filter((file) => file.type === 'pdf' || !sent.includes(file));
