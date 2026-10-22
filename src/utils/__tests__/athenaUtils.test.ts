@@ -11,6 +11,7 @@ import {
   formatResponse,
   containsSensitiveInfo,
   calculateTypingDuration,
+  filesToKeepAfterSending,
 } from '../athenaUtils';
 
 describe('generateId', () => {
@@ -199,5 +200,23 @@ describe('calculateTypingDuration', () => {
 
   it('caps at 5 seconds', () => {
     expect(calculateTypingDuration(10000)).toBe(5000);
+  });
+});
+
+describe('filesToKeepAfterSending', () => {
+  const pdf = { type: 'pdf' as const, name: 'notes.pdf' };
+  const image = { type: 'image' as const, name: 'photo.png' };
+
+  it('keeps sent PDFs but drops sent images', () => {
+    expect(filesToKeepAfterSending([pdf, image], [pdf, image])).toEqual([pdf]);
+  });
+
+  it('keeps images added while the reply was loading', () => {
+    const later = { type: 'image' as const, name: 'later.png' };
+    expect(filesToKeepAfterSending([pdf, image, later], [pdf, image])).toEqual([pdf, later]);
+  });
+
+  it('keeps nothing when only images were attached', () => {
+    expect(filesToKeepAfterSending([image], [image])).toEqual([]);
   });
 });
