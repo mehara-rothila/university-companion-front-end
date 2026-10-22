@@ -20,6 +20,45 @@ interface Emergency {
   dismissed: boolean;
 }
 
+interface EmergencyApiResponse {
+  id: number;
+  title: string;
+  message: string;
+  type: string;
+  priority: string;
+  createdAt: string;
+  expiresAt?: string | null;
+  currentUserDismissed?: boolean;
+}
+
+interface EmergencySocketMessage {
+  id: number | string;
+  title: string;
+  message: string;
+  type: string;
+  priority: string;
+  timestamp: string;
+  expiresAt?: string;
+}
+
+interface HttpStatusError {
+  response?: {
+    status?: number;
+  };
+}
+
+type WindowWithWebkitAudioContext = Window & {
+  webkitAudioContext?: typeof AudioContext;
+};
+
+const getErrorStatus = (error: unknown) => {
+  if (typeof error !== 'object' || error === null || !('response' in error)) {
+    return undefined;
+  }
+
+  return (error as HttpStatusError).response?.status;
+};
+
 export default function EmergencyNotificationBanner() {
   const { isDarkMode } = useDarkMode();
   const { user, token } = useAuth();
@@ -153,29 +192,30 @@ export default function EmergencyNotificationBanner() {
         return;
       }
 
-      const response = await axios.get(`${API_BASE}/emergency/active`, {
+      const response = await axios.get<EmergencyApiResponse[]>(`${API_BASE}/emergency/active`, {
         headers: getAuthHeaders(),
       });
 
       if (response.data) {
         const activeEmergencies = response.data
-          .filter((e: any) => !e.currentUserDismissed)
-          .map((e: any) => ({
+          .filter((e) => !e.currentUserDismissed)
+          .map((e) => ({
             id: e.id,
             title: e.title,
             message: e.message,
             type: e.type,
             priority: e.priority,
             timestamp: e.createdAt,
-            expiresAt: e.expiresAt,
+            expiresAt: e.expiresAt ?? undefined,
             dismissed: false,
           }));
 
         setEmergencies(activeEmergencies);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail if it's an auth error (400/401/403)
-      if (error.response && [400, 401, 403].includes(error.response.status)) {
+      const status = getErrorStatus(error);
+      if (status && [400, 401, 403].includes(status)) {
         console.log('Emergency notifications not available for this user');
       } else {
         console.error('Failed to load emergencies:', error);
@@ -183,9 +223,9 @@ export default function EmergencyNotificationBanner() {
     }
   };
 
-  const handleNewEmergency = (emergencyMsg: any) => {
+  const handleNewEmergency = (emergencyMsg: EmergencySocketMessage) => {
     const newEmergency: Emergency = {
-      id: parseInt(emergencyMsg.id),
+      id: Number(emergencyMsg.id),
       title: emergencyMsg.title,
       message: emergencyMsg.message,
       type: emergencyMsg.type,
@@ -219,7 +259,11 @@ export default function EmergencyNotificationBanner() {
 
   const playEmergencyAlert = () => {
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextConstructor =
+        window.AudioContext || (window as WindowWithWebkitAudioContext).webkitAudioContext;
+      if (!AudioContextConstructor) return;
+
+      const audioContext = new AudioContextConstructor();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -234,7 +278,7 @@ export default function EmergencyNotificationBanner() {
 
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
+    } catch {
       // Silently fail if audio context not available
     }
   };
@@ -250,8 +294,9 @@ export default function EmergencyNotificationBanner() {
       );
 
       setEmergencies((prev) => prev.filter((e) => e.id !== id));
-    } catch (error: any) {
-      if (error.response && [400, 401, 403].includes(error.response.status)) {
+    } catch (error: unknown) {
+      const status = getErrorStatus(error);
+      if (status && [400, 401, 403].includes(status)) {
         console.log('Unable to dismiss emergency - authentication issue');
       } else {
         console.error('Failed to dismiss emergency:', error);
@@ -271,8 +316,9 @@ export default function EmergencyNotificationBanner() {
 
       // Update emergency to acknowledged in UI
       setEmergencies((prev) => prev.map((e) => (e.id === id ? { ...e, dismissed: true } : e)));
-    } catch (error: any) {
-      if (error.response && [400, 401, 403].includes(error.response.status)) {
+    } catch (error: unknown) {
+      const status = getErrorStatus(error);
+      if (status && [400, 401, 403].includes(status)) {
         console.log('Unable to acknowledge emergency - authentication issue');
       } else {
         console.error('Failed to acknowledge emergency:', error);
@@ -289,9 +335,10 @@ export default function EmergencyNotificationBanner() {
           headers: getAuthHeaders(),
         }
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail for "seen" tracking - not critical
-      if (error.response && ![400, 401, 403].includes(error.response.status)) {
+      const status = getErrorStatus(error);
+      if (status && ![400, 401, 403].includes(status)) {
         console.error('Failed to mark emergency as seen:', error);
       }
     }
