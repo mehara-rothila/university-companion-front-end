@@ -5,6 +5,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { Upload, X, FileText, Image as ImageIcon, Send, Loader, Bot } from 'lucide-react';
 import TokenUsageDisplay, { triggerTokenRefresh } from './TokenUsageDisplay';
 import { tokenCountingService } from '@/services/tokenCountingService';
+import { filesToKeepAfterSending } from '@/utils/athenaUtils';
 
 interface Message {
   id: string;
@@ -422,9 +423,11 @@ You can also upload images or PDFs for me to analyze! What would you like help w
 
       setMessages((prev) => [...prev, assistantMessage]);
 
-      // Clear uploaded files after sending
-      uploadedFiles.forEach((f) => URL.revokeObjectURL(f.preview));
-      setUploadedFiles([]);
+      // Images are only for this message; PDFs stay attached for follow-up questions
+      uploadedFiles
+        .filter((f) => f.type === 'image')
+        .forEach((f) => URL.revokeObjectURL(f.preview));
+      setUploadedFiles((current) => filesToKeepAfterSending(current, uploadedFiles));
 
       // Record token usage with REAL token counts from backend
       const inputTokens = data.inputTokens || 0;
