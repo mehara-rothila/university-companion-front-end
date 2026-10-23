@@ -264,3 +264,26 @@ export const filesToKeepAfterSending = <T extends { type: 'image' | 'pdf' }>(
   current: T[],
   sent: T[]
 ): T[] => current.filter((file) => file.type === 'pdf' || !sent.includes(file));
+
+/** What each of the backend's assistant tools looks at, as shown under Athena's reply. */
+const TOOL_LABELS: Record<string, string> = {
+  find_upcoming_events: 'Upcoming events',
+  find_competitions: 'Competitions',
+  find_study_spaces: 'Study spaces',
+  search_lost_and_found: 'Lost & Found',
+  get_my_financial_aid_applications: 'Your aid applications',
+  search_my_documents: 'Your uploaded PDFs',
+};
+
+/**
+ * Labels for the tools the backend used to answer (its `toolsUsed`), in order and without
+ * repeats. A tool this list doesn't know yet still gets a readable label, so adding one to the
+ * backend can't break the chat.
+ */
+export const toolLabels = (toolsUsed?: string[] | null): string[] => {
+  if (!toolsUsed) return [];
+  const labels = toolsUsed.map(
+    (name) => TOOL_LABELS[name] ?? name.replace(/_/g, ' ').replace(/^\w/, (first) => first.toUpperCase())
+  );
+  return Array.from(new Set(labels));
+};
