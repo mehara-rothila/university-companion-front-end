@@ -243,4 +243,12 @@ describe('toolLabels', () => {
   it('gives a tool it does not know a readable label and drops repeats', () => {
     expect(toolLabels(['check_bus_times', 'check_bus_times'])).toEqual(['Check bus times']);
   });
+
+  it('labels names that match built-in object properties as plain text', () => {
+    expect(toolLabels(['constructor', '__proto__', 'toString'])).toEqual([
+      'Constructor',
+      'Proto',
+      'ToString',
+    ]);
+  });
 });
