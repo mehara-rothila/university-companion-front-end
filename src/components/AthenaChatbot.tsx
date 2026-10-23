@@ -2,10 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { Upload, X, FileText, Image as ImageIcon, Send, Loader, Bot } from 'lucide-react';
+import { Upload, X, FileText, Image as ImageIcon, Send, Loader, Bot, Search } from 'lucide-react';
 import TokenUsageDisplay, { triggerTokenRefresh } from './TokenUsageDisplay';
 import { tokenCountingService } from '@/services/tokenCountingService';
-import { filesToKeepAfterSending } from '@/utils/athenaUtils';
+import { filesToKeepAfterSending, toolLabels } from '@/utils/athenaUtils';
 
 interface Message {
   id: string;
@@ -17,6 +17,8 @@ interface Message {
     name: string;
     url: string;
   }>;
+  /** What Athena looked up to answer, from the backend's `toolsUsed`. */
+  toolsUsed?: string[];
 }
 
 interface AthenaChatbotProps {
@@ -29,6 +31,7 @@ interface ChatbotApiResponse {
   error?: string;
   inputTokens?: number;
   outputTokens?: number;
+  toolsUsed?: string[];
 }
 
 const getBackendUrl = () => {
@@ -87,6 +90,33 @@ function renderInlineMarkdown(text: string, keyPrefix: string): React.ReactNode[
   }
   if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
   return nodes;
+}
+
+/** "Checked: Upcoming events · Study spaces" under a reply, so students can see what Athena looked up. */
+function ToolsUsedNote({ toolsUsed, isDarkMode }: { toolsUsed?: string[]; isDarkMode: boolean }) {
+  const labels = toolLabels(toolsUsed);
+  if (labels.length === 0) return null;
+
+  return (
+    <div
+      className={`mt-2 flex flex-wrap items-center gap-1.5 text-xs ${
+        isDarkMode ? 'text-gray-400' : 'text-gray-500'
+      }`}
+    >
+      <Search className="w-3 h-3" aria-hidden="true" />
+      <span>Checked:</span>
+      {labels.map((label) => (
+        <span
+          key={label}
+          className={`px-2 py-0.5 rounded-full ${
+            isDarkMode ? 'bg-gray-600/60 text-gray-200' : 'bg-purple-50 text-purple-700'
+          }`}
+        >
+          {label}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function MarkdownMessage({ content }: { content: string }) {
@@ -419,6 +449,7 @@ You can also upload images or PDFs for me to analyze! What would you like help w
         role: 'assistant',
         content: data.response || data.error || 'Sorry, I could not process that.',
         timestamp: new Date(),
+        toolsUsed: data.toolsUsed,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -564,7 +595,10 @@ You can also upload images or PDFs for me to analyze! What would you like help w
               )}
 
               {message.role === 'assistant' ? (
-                <MarkdownMessage content={message.content} />
+                <>
+                  <MarkdownMessage content={message.content} />
+                  <ToolsUsedNote toolsUsed={message.toolsUsed} isDarkMode={isDarkMode} />
+                </>
               ) : (
                 <p className="text-xs md:text-sm whitespace-pre-wrap leading-relaxed">
                   {message.content}

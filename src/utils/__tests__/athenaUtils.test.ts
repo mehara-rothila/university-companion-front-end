@@ -12,6 +12,7 @@ import {
   containsSensitiveInfo,
   calculateTypingDuration,
   filesToKeepAfterSending,
+  toolLabels,
 } from '../athenaUtils';
 
 describe('generateId', () => {
@@ -218,5 +219,36 @@ describe('filesToKeepAfterSending', () => {
 
   it('keeps nothing when only images were attached', () => {
     expect(filesToKeepAfterSending([image], [image])).toEqual([]);
+  });
+});
+
+describe('toolLabels', () => {
+  it('names what Athena looked up, in order', () => {
+    expect(toolLabels(['find_upcoming_events', 'find_study_spaces'])).toEqual([
+      'Upcoming events',
+      'Study spaces',
+    ]);
+    expect(toolLabels(['search_my_documents', 'get_my_financial_aid_applications'])).toEqual([
+      'Your uploaded PDFs',
+      'Your aid applications',
+    ]);
+  });
+
+  it('returns nothing when no tools ran', () => {
+    expect(toolLabels(undefined)).toEqual([]);
+    expect(toolLabels(null)).toEqual([]);
+    expect(toolLabels([])).toEqual([]);
+  });
+
+  it('gives a tool it does not know a readable label and drops repeats', () => {
+    expect(toolLabels(['check_bus_times', 'check_bus_times'])).toEqual(['Check bus times']);
+  });
+
+  it('labels names that match built-in object properties as plain text', () => {
+    expect(toolLabels(['constructor', '__proto__', 'toString'])).toEqual([
+      'Constructor',
+      'Proto',
+      'ToString',
+    ]);
   });
 });
